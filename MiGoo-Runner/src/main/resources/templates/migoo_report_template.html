@@ -1,0 +1,290 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}"></title>
+    <style>
+        body {
+            background-color: #f2f2f2;
+            color: #333;
+            margin: 0 auto;
+            width: 960px;
+            font-size: 20px;
+        }
+
+        #summary, #details {
+            width: 960px;
+        }
+
+        #summary th {
+            background-color: skyblue;
+            padding: 5px 12px;
+        }
+
+        #summary td {
+            background-color: lightblue;
+            text-align: center;
+            padding: 4px 8px;
+        }
+
+        #details th {
+            background-color: skyblue;
+            padding: 5px 12px;
+        }
+
+        #details td {
+            background-color: lightblue;
+            padding: 5px 12px;
+        }
+
+        #details .detail {
+            background-color: lightgrey;
+            font-size: smaller;
+            padding: 5px 10px;
+            text-align: center;
+        }
+
+        #details .success {
+            background-color: greenyellow;
+        }
+
+        #details .error {
+            background-color: red;
+        }
+
+        #details .failure {
+            background-color: salmon;
+        }
+
+        #details .skipped {
+            background-color: gray;
+        }
+
+        .button {
+            font-size: 1em;
+            padding: 6px;
+            width: 4em;
+            text-align: center;
+            background-color: #06d85f;
+            border-radius: 20px/50px;
+            cursor: pointer;
+            transition: all 0.3s ease-out;
+        }
+
+        a.button {
+            color: gray;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background: #2cffbd;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            transition: opacity 500ms;
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .overlay:target {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .popup {
+            margin: 70px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            width: 50%;
+            position: relative;
+            transition: all 3s ease-in-out;
+        }
+
+        .popup h2 {
+            margin-top: 0;
+            color: #333;
+            font-family: Tahoma, Arial, sans-serif;
+        }
+
+        .popup .close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            transition: all 200ms;
+            font-size: 30px;
+            font-weight: bold;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .popup .close:hover {
+            color: #06d85f;
+        }
+
+        .popup .content {
+            max-height: 80%;
+            overflow: auto;
+            text-align: left;
+            font-size: 16px;
+        }
+
+        @media screen and (max-width: 700px) {
+            .box {
+                width: 70%;
+            }
+
+            .popup {
+                width: 70%;
+            }
+        }
+
+    </style>
+</head>
+<body>
+<h1 th:text="${report}"></h1>
+
+
+<h2>Summary</h2>
+<table id="summary">
+
+    <tr>
+        <th>START AT</th>
+        <td colspan="4" th:text="${summary.startAt}"></td>
+    </tr>
+    <tr>
+        <th>DURATION</th>
+        <td colspan="4" th:text="${summary.duration}"></td>
+    </tr>
+    <tr>
+        <th>PLATFORM</th>
+        <td th:text="${platform.httpclient}"></td>
+        <td th:text="${platform.jdk }"></td>
+        <td colspan="2" th:text="${platform.os }"></td>
+    </tr>
+    <tr>
+        <th>TOTAL</th>
+        <th>SUCCESS</th>
+        <th>FAILED</th>
+        <th>ERROR</th>
+        <th>SKIPPED</th>
+        <!-- <th>ExpectedFailure</th>
+        <th>UnexpectedSuccess</th> -->
+    </tr>
+    <tr>
+        <td th:text="${summary.total}"></td>
+        <td th:text="${summary.success}"></td>
+        <td th:text="${summary.failed}"></td>
+        <td th:text="${summary.error}"></td>
+        <td th:text="${summary.skipped}"></td>
+        <!-- <td>{{stat.expectedFailures}}</td>
+        <td>{{stat.unexpectedSuccesses}}</td> -->
+    </tr>
+</table>
+
+
+<h2>Details</h2>
+<table id="details">
+    <tr>
+        <th>Status</th>
+        <th>Name</th>
+        <th>Response Time</th>
+        <th>Detail</th>
+    </tr>
+
+    <tr th:each="record : ${records}" th:id="${record.index}">
+        <td th:class="${record.status}" style="width:5em;" th:text="${record.status}">
+        </td>
+        <td th:text="${record.name}">
+        </td>
+        <td style="text-align:center;width:6em;" th:text="${record.time}"></td>
+        <td class="detail">
+            <a class="button" th:href="${record.detail.log_href}">log</a>
+            <div th:id="${record.detail.log_id}" class="overlay">
+                <div class="popup">
+                    <h2>Request and Response data</h2>
+                    <a class="close" th:href="${record.record_href}">&times;</a>
+
+                    <div class="content">
+                        <h3>Request:</h3>
+                        <div style="overflow: auto">
+                            <table>
+                                <tr>
+                                    <th>url</th>
+                                    <td th:text="${record.detail.log.request.url}"></td>
+                                </tr>
+                                <tr>
+                                    <th>method</th>
+                                    <td th:text="${record.detail.log.request.method}"></td>
+                                </tr>
+                                <tr>
+                                    <th>headers</th>
+                                    <td>
+                                        <div th:each="headers: ${record.detail.log.request.headers}">
+                                            <span th:each="header: ${headers}">
+                                                <per th:text="${header.getName()}"></per>
+                                                <per>:  </per>
+                                                <per th:text="${header.getValue()}"></per>
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>body</th>
+                                    <td>
+                                        <pre th:text="${record.detail.log.request.body}"></pre>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <h3>Response:</h3>
+                        <div style="overflow: auto">
+                            <table>
+                                <tr>
+                                    <th>status_code</th>
+                                    <td th:text="${record.detail.log.response.statusCode}"></td>
+                                </tr>
+                                <tr>
+                                    <th>headers</th>
+                                    <td>
+                                        <div th:each="headers: ${record.detail.log.response.headers}">
+                                            <span th:each="header: ${headers}">
+                                                <per th:text="${header.getName()}"></per>
+                                                <per>:  </per>
+                                                <per th:text="${header.getValue()}"></per>
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>body</th>
+                                    <td>
+                                        <pre th:text="${record.detail.log.response.body}"></pre>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a class="button" th:href="${record.detail.track_href}" th:if="${record.detail.track}">track</a>
+            <div th:id="${record.detail.track_id}" class="overlay">
+                <div class="popup">
+                    <h2>Trace Back Message</h2>
+                    <a class="close" th:href="${record.record_href}">&times;</a>
+                    <div class="content"><pre th:utext="${record.detail.track}"></pre></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
