@@ -9,7 +9,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.LoggerFactory;
 import xyz.migoo.utils.Log;
 
 import javax.net.ssl.SSLContext;
@@ -36,7 +35,7 @@ import static xyz.migoo.http.Request.UTF8;
 public class Client {
 
     private CloseableHttpClient httpClient;
-    private static Log log = new Log(LoggerFactory.getLogger(Client.class));
+    private static Log log = new Log(Client.class);
     protected static final String HTTPS = "https";
 
     /**

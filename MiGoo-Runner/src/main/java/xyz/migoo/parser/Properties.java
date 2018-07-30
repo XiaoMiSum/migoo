@@ -1,6 +1,5 @@
 package xyz.migoo.parser;
 
-import org.slf4j.LoggerFactory;
 import xyz.migoo.exception.ParserException;
 import xyz.migoo.utils.Log;
 
@@ -11,28 +10,26 @@ import java.io.*;
  */
 public class Properties implements Parser {
 
-    private static Log log = new Log(LoggerFactory.getLogger(Properties.class));
+    private final static String SUFFIX = ".properties";
+    private final static Log LOG = new Log(Properties.class);
 
-    private String file;
+    private String path;
     private java.util.Properties props;
 
-    public Properties(String file) {
-        this.file = file;
+    public Properties(String path) {
+        this.path = path;
     }
 
-    private Properties read(String file) {
+    private Properties read(String path) {
         this.props = new java.util.Properties();
-        try {
-            Parser.super.validation(file,".properties");
-        }catch (Exception e){
-            log.error(e.getMessage(), e);
-            throw new ParserException(e.getMessage() + ". file path : " + file);
+        File file = new File(path);
+        if (!Parser.super.validation(file, SUFFIX)){
+            throw new ParserException("this file not a ' " + SUFFIX + " ' file : " + file);
         }
-
         try (InputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
             this.props.load(inputStream);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOG.error(e.getMessage(), e);
             throw new ParserException(e.getMessage() + ". file path : " + file);
         }
         return this;
@@ -41,20 +38,19 @@ public class Properties implements Parser {
     private Properties read() {
         this.props = new java.util.Properties();
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        InputStream is = classloader.getResourceAsStream(this.file);
+        InputStream is = classloader.getResourceAsStream(this.path);
         try {
             this.props.load(is);
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
-            throw new ParserException(e.getMessage() + ". file path : " + file);
+            LOG.error(e.getMessage(), e);
+            throw new ParserException(e.getMessage() + ". file path : " + path);
         }
         return this;
     }
 
-
-    public String getValue(String key) {
-        if(this.file.startsWith("/")){
-            this.read(this.file);
+    public String get(String key) {
+        if(this.path.startsWith(File.separator)){
+            this.read(this.path);
         }else {
             this.read();
         }

@@ -1,10 +1,10 @@
 package xyz.migoo.runner;
 
 import xyz.migoo.http.Response;
+import xyz.migoo.parser.CaseSet;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author xiaomi
@@ -15,16 +15,20 @@ public class CaseSuite extends junit.framework.TestSuite{
     private List<String> failures;
     private List<Response> responses;
     private TestResult testResult;
+    private StringBuilder testName;
 
-    public CaseSuite(List<Map<String, Object>> caseSets){
+    public CaseSuite(List<CaseSet> caseSets){
         responses = new ArrayList<>();
         failures = new ArrayList<>();
         testResult = new TestResult();
-        for (Map<String, Object> caseSet: caseSets){
+        testName = new StringBuilder();
+        for (CaseSet caseSet: caseSets){
             TestSuite suite = new TestSuite(caseSet, this);
+            testName.append(caseSet.getName()).append("&");
             addTest(suite);
         }
     }
+
     protected TestResult testResult(){
         return testResult;
     }
@@ -43,5 +47,9 @@ public class CaseSuite extends junit.framework.TestSuite{
 
     public List<Response> responses(){
         return this.responses;
+    }
+
+    public String name(){
+        return testName.delete(testName.length() - 1, testName.length()).toString();
     }
 }

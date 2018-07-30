@@ -1,5 +1,6 @@
 package xyz.migoo.http;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.http.Header;
 import java.util.Locale;
 
@@ -8,8 +9,8 @@ import java.util.Locale;
  */
 public class Response {
 
-    public static final int SUCCESS = 200;
-    private final String COOKIE = "cookie";
+    private static final int SUCCESS = 200;
+    private static final int ERROR = 0;
 
     private int statusCode;
     private Header[] headers;
@@ -56,6 +57,14 @@ public class Response {
         return this.statusCode == SUCCESS;
     }
 
+    public boolean isError() {
+        return this.statusCode == ERROR;
+    }
+
+    public boolean isNotFound() {
+        return this.statusCode == ERROR;
+    }
+
     public int statusCode() {
         return statusCode;
     }
@@ -66,6 +75,15 @@ public class Response {
 
     public String body() {
         return body;
+    }
+
+    public JSON json() {
+        try {
+            return (JSON) JSON.parse(body);
+        }catch (Exception e){
+            return null;
+        }
+
     }
 
     public long duration() {

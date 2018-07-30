@@ -8,7 +8,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.message.BasicHeader;
-import org.slf4j.LoggerFactory;
 import xyz.migoo.exception.RequestException;
 import xyz.migoo.utils.Log;
 import xyz.migoo.utils.MapUtil;
@@ -27,7 +26,7 @@ public class Request {
 
     public static final String UTF8 = "UTF-8";
 
-    private static Log log = new Log(LoggerFactory.getLogger(Request.class));
+    private static Log log = new Log(Request.class);
 
     private String url;
     private String method;
@@ -77,7 +76,7 @@ public class Request {
 
 
     public static class Builder {
-        private static final Pattern pattern = Pattern.compile(
+        private static final Pattern PATTERN = Pattern.compile(
                 "^http[s]*://[\\w\\.\\-]+(:\\d*)*(?:/|(?:/[\\w\\.\\-]+)*)?$", Pattern.CASE_INSENSITIVE);
 
         private String url;
@@ -253,7 +252,7 @@ public class Request {
         }
 
         private boolean urlCheck(String url){
-            return pattern.matcher(url).find();
+            return PATTERN.matcher(url).find();
         }
 
     }

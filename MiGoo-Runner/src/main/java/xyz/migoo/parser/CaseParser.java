@@ -1,84 +1,84 @@
 package xyz.migoo.parser;
 
 import com.alibaba.fastjson.JSONArray;
-import org.slf4j.LoggerFactory;
 import xyz.migoo.exception.ParserException;
 import xyz.migoo.utils.Log;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author xiaomi
  */
 public class CaseParser implements Parser {
 
-    private static Log log = new Log(LoggerFactory.getLogger(CaseParser.class));
-    private JSONArray jsonArray;
-    private File file;
+    private final static String SUFFIX = ".json";
+    private static Log log = new Log(CaseParser.class);
+    private List<CaseSet> caseSets;
 
-    public CaseParser(String file) {
-        this.read(file);
+    public CaseParser(){
+        caseSets = new ArrayList<>();
     }
 
-    private void read(String path) {
-        try {
-            this.file = Parser.super.validation(path, ".json");
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new ParserException(e.getMessage() + ". file path : " + path);
+    public List<CaseSet> loadCaseSets(String path){
+        File file = new File(path);
+        if (file.isDirectory()){
+            String[] fList = file.list();
+            for (String f : fList){
+                if (!path.endsWith(File.separator)){
+                    path = path + File.separator;
+                }
+                this.loadCaseSets(path + f);
+            }
+        }else {
+            if (Parser.super.validation(file, SUFFIX)){
+                this.loadCaseByFile(path);
+            }
         }
+        return this.caseSets;
+    }
+
+    private void loadCaseByFile(String file) {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             StringBuilder stringBuilder = new StringBuilder();
             while ((line = reader.readLine()) != null) {
                 stringBuilder.append(line);
             }
-            this.jsonArray = JSONArray.parseArray(stringBuilder.toString());
+            this.caseSets(JSONArray.parseArray(stringBuilder.toString()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new ParserException( e.getMessage() + ". file path : " + path);
+            throw new ParserException( e.getMessage() + ". file path : " + file);
         }
     }
 
-    private String name(int index){
-        return jsonArray.getJSONObject(index).getString("name");
-    }
-
-    private Map request(int index){
-        return jsonArray.getJSONObject(index).getObject("request",Map.class);
-    }
-
-    private List cases(int index){
-        JSONArray jsonArray = this.jsonArray.getJSONObject(index).getJSONArray("case");
-        List list = new ArrayList(jsonArray.size());
-        for (int i = 0; i < jsonArray.size(); i++) {
-            Map map =  jsonArray.getObject(i,Map.class);
-            list.add(map);
+    private List<CaseSet.Case> cases(JSONArray jsonArray, int index){
+        JSONArray caseJsonArray = jsonArray.getJSONObject(index).getJSONArray("case");
+        List<CaseSet.Case> caseList = new ArrayList(caseJsonArray.size());
+        for (int i = 0; i < caseJsonArray.size(); i++) {
+            CaseSet.Case aCase = new CaseSet.Case();
+            aCase.setBody(caseJsonArray.getJSONObject(i).getJSONObject("body"));
+            aCase.setTitle(caseJsonArray.getJSONObject(i).getString("title"));
+            aCase.setValidate(caseJsonArray.getJSONObject(i).getJSONArray("validate"));
+            caseList.add(aCase);
         }
-        return list;
+        return caseList;
     }
 
-    public List<Map<String, Object>> caseSets(){
-        List<Map<String, Object>> caseSets = new ArrayList<>();
-        for (int i = 0; i < jsonArray.size(); i++) {
-            List cases = this.cases(i);
-            String name = this.name(i);
-            Map request = this.request(i);
+    private List<CaseSet> caseSets(JSONArray jsonArray){
+        for (int index = 0; index < jsonArray.size(); index++) {
+            String name = jsonArray.getJSONObject(index).getString("name");
 
-            Map<String, Object> config = new HashMap<>(2);
-            config.put("path", file.getPath());
-            config.put("request", request);
+            CaseSet.Config config = new CaseSet.Config();
+            config.setRequest(jsonArray.getJSONObject(index).getJSONObject("request"));
 
-            Map<String, Object> map = new HashMap<>(cases.size());
-            map.put("name", name);
-            map.put("config", config);
-            map.put("cases", cases);
+            CaseSet caseSet = new CaseSet();
+            caseSet.setName(name);
+            caseSet.setConfig(config);
+            caseSet.setCases(this.cases(jsonArray, index));
 
-            caseSets.add(map);
+            caseSets.add(caseSet);
         }
         return caseSets;
     }

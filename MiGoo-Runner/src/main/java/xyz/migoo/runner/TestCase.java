@@ -1,7 +1,7 @@
 package xyz.migoo.runner;
 
-import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ValidatorException;
+import xyz.migoo.parser.CaseSet;
 
 
 /**
@@ -10,17 +10,17 @@ import xyz.migoo.exception.ValidatorException;
  */
 public class TestCase extends junit.framework.TestCase{
 
-    private RequestRunner runner;
-    private JSONObject testCase;
+    private Task task;
+    private CaseSet.Case testCase;
 
-    public TestCase(String testName,RequestRunner runner, JSONObject testCase){
+    public TestCase(String testName, Task task, CaseSet.Case testCase){
         super(testName);
-        this.runner = runner;
+        this.task = task;
         this.testCase = testCase;
     }
 
     @Override
     public void runTest() throws ValidatorException {
-        this.runner.run(this.testCase);
+        this.task.run(this.testCase);
     }
 }

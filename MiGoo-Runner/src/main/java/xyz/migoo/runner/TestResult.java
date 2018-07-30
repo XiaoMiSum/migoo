@@ -34,35 +34,39 @@ public class TestResult extends junit.framework.TestResult{
         int id = 1;
         for (Response response : responses){
             Map<String, Object> record = new HashMap<>(4);
-            Map<String, Object> detail = new HashMap<>(2);
-            detail.put("log", this.log(response));
             record.put("status", "success");
-            detail.put("track", null);
-            for (String failure : failures) {
-                if (failure.equals(response.request().title())) {
-                    for (TestFailure testFailure : fFailures){
-                        TestCase testCase = (TestCase)testFailure.failedTest();
-                        if (testCase.getName().equals(failure)) {
-                            Throwable throwable = testFailure.thrownException();
-                            detail.put("track", throwable.getMessage());
-                        }
-                    }
-                    record.put("status", "failure");
-                }
-            }
-            detail.put("track_id", "track_" + id);
-            detail.put("log_id", "log_" + id);
-            detail.put("track_href", "#track_" + id);
-            detail.put("log_href", "#log_" + id);
             record.put("name", response.request().title());
             record.put("time", response.duration() / 1000.000f + "  seconds");
-            record.put("detail", detail);
+            record.put("detail", this.detail(response, record, id));
             record.put("record_id", "record_" + id);
             record.put("record_href", "#record_" + id);
             records.add(record);
             id ++;
         }
         return records;
+    }
+
+    private synchronized Map<String, Object> detail(Response response, Map<String, Object> record, int id){
+        Map<String, Object> detail = new HashMap<>(2);
+        detail.put("log", this.log(response));
+        detail.put("track", null);
+        for (String failure : failures) {
+            if (failure.equals(response.request().title())) {
+                for (TestFailure testFailure : fFailures){
+                    TestCase testCase = (TestCase)testFailure.failedTest();
+                    if (testCase.getName().equals(failure)) {
+                        Throwable throwable = testFailure.thrownException();
+                        detail.put("track", throwable.getMessage());
+                    }
+                }
+                record.put("status", "failure");
+            }
+        }
+        detail.put("track_id", "track_" + id);
+        detail.put("log_id", "log_" + id);
+        detail.put("track_href", "#track_" + id);
+        detail.put("log_href", "#log_" + id);
+        return detail;
     }
 
     private synchronized Map<String, Object> summary(){

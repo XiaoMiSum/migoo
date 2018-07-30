@@ -11,9 +11,8 @@ public class Test {
 
     @org.junit.Test
     public void testApi(){
-        TestResult result = new Runner().run("/Users/xiaomi/PycharmProjects/water-block/mg/TestCase/test_case.json"
-        ,"","");
-
-
+        TestResult result = new Runner().run(
+                "/Users/kogome/IdeaProjects/MiGoo/TestCase/test_case.json",
+                "");
     }
 }

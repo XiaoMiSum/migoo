@@ -1,6 +1,7 @@
 package xyz.migoo.utils;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
 * @author xiaomi
@@ -15,8 +16,8 @@ public class Log {
 
     private Logger logger;
 
-    public Log(Logger logger) {
-        this.logger = logger;
+    public Log(Class<?> clazz) {
+        this.logger = LoggerFactory.getLogger(clazz);
     }
 
     public void trace(String s) {
@@ -60,6 +61,7 @@ public class Log {
             case Log.LOG_TYPE_ERROR:
                 error(s);
                 break;
+            default:
         }
     }
 }

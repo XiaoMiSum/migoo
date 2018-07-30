@@ -6,7 +6,12 @@ import com.alibaba.fastjson.JSONObject;
 import junit.framework.Assert;
 import xyz.migoo.exception.ValidatorException;
 import xyz.migoo.http.Response;
+import xyz.migoo.utils.Function;
+import xyz.migoo.utils.Log;
 import xyz.migoo.utils.StringUtil;
+
+import static xyz.migoo.config.Platform.CHECK_BODY;
+import static xyz.migoo.config.Platform.CHECK_CODE;
 
 /**
  * @author xiaomi
@@ -14,10 +19,21 @@ import xyz.migoo.utils.StringUtil;
  */
 public class Validator extends Assert {
 
+    private static Log log = new Log(Validator.class);
+
     private Validator() {
     }
 
     public static void validation(Response response, JSON validate) throws ValidatorException {
+        if (response.isError()){
+            throw new ValidatorException("request error. please check your network .\n"
+                    + "\t" +  response.error());
+        }
+
+        if (response.isNotFound()){
+            throw new ValidatorException("error 404. please check your url: \n"
+                    + "\t" + response.request().url());
+        }
         if (validate instanceof JSONObject) {
             validation(response,(JSONObject) validate);
         }
@@ -27,61 +43,54 @@ public class Validator extends Assert {
 
     }
 
-    private static void validation(Response response, JSONObject validate) throws ValidatorException {
-        evalValidate(response, validate);
-        String types = validate.getString("types").toLowerCase();
-        String actual = validate.getString("actual");
-        String expect = validate.getString("expect");
-        String check = validate.getString("check");
-        validation(check, types, actual, expect);
-    }
-
     private static void validation(Response response, JSONArray validate) throws ValidatorException {
         for (int i = 0; i < validate.size(); i++) {
             validation(response, validate.getJSONObject(i));
         }
     }
 
-    private synchronized static void validation(String check, String types, String actual, String expect) throws ValidatorException {
-        boolean equals = "==".equals(types) || "eq".equals(types) || "equal".equals(types)
-                || "equals".equals(types) || "is".equals(types);
-        boolean contain = "contain".equals(types) || "contains".equals(types) || "ct".equals(types);
-        boolean result = false;
-        if (equals){
-            result = equals(actual, expect);
+    private static void validation(Response response, JSONObject validate) throws ValidatorException {
+        try {
+            String types = validate.getString("types").toLowerCase();
+            evalValidate(response, validate);
+            String actual = validate.getString("actual").toLowerCase();
+            String expect = validate.getString("expect").toLowerCase();
+            String check = validate.getString("check");
+            validation(check, types, actual, expect);
+        }catch (Exception e){
+            throw new ValidatorException(StringUtil.getStackTrace(e));
         }
-        if (contain){
-            result = contain(actual, expect);
+
+    }
+
+    private static void evalValidate(Response response, JSONObject validate){
+        String check = validate.getString("check");
+        if (CHECK_BODY.contains(check)){
+            validate.put("actual", response.body());
+        }
+        if (CHECK_CODE.contains(check)){
+            validate.put("actual", response.statusCode());
+            validate.put("types", "equals");
+        }
+    }
+
+    private synchronized static void validation(String check, String types, String actual, String expect) throws ValidatorException {
+        boolean result ;
+        try {
+            Function.functionLoader(types);
+            result = Function.validation(actual,expect);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new ValidatorException(e.getMessage());
         }
         if (!result){
             StringBuilder errorMsg = new StringBuilder();
-            errorMsg.append("check result: " + result + "\n")
+            errorMsg.append("check result: " + false + "\n")
                     .append("\tcheck point: ").append(check).append("\n")
                     .append("\tcheck actual: ").append(actual).append("\n")
                     .append("\tcheck expect: ").append(expect).append("\n")
                     .append("\tcheck type: ").append(types).append("\n");
             throw new ValidatorException(errorMsg.toString());
-        }
-    }
-
-    private static boolean equals(String actual, String expect){
-        return actual.equals(expect);
-    }
-
-    private static boolean contain(String actual, String expect){
-        return StringUtil.contains(actual, expect);
-    }
-
-    private static void evalValidate(Response response, JSONObject validate){
-        String check = validate.getString("check");
-        boolean body = "body".equals(check) || "content".equals(check);
-        if (body){
-            validate.put("actual", response.body());
-        }
-        boolean code = "statusCode".equals(check) || "status".equals(check) || "code".equals(check);
-        if (code){
-            validate.put("actual", response.statusCode());
-            validate.put("types", "equals");
         }
     }
 }

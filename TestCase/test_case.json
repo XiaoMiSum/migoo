@@ -1,0 +1,52 @@
+[
+  {
+    "name": "the test suite name",
+    "request": {
+      "url": "http://127.0.0.1:8080/login/login",
+      "method": "post",
+      "headers": {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
+    },
+    "case": [
+      {
+        "title": "正确的用户名\\密码登录，返回值包等于期望值",
+        "body": {
+          "user": "admin",
+          "pwd": "123456qq"
+        },
+        "validate": [
+          {
+            "check": "statusCode",
+            "expect": 200,
+            "types": "=="
+          },
+          {
+            "check": "body",
+            "expect": "success",
+            "types": "eq"
+          }
+        ]
+      },
+      {
+        "title": "错误的用户名\\密码登录，返回值包含期望值",
+        "body": {
+          "user": "admin",
+          "pwd": "123456"
+        },
+        "validate":[
+          {
+            "check": "statusCode",
+            "expect": 200,
+            "types": "=="
+          },
+          {
+            "check": "body",
+            "expect": "error",
+            "types": "contain"
+          }
+        ]
+      }
+    ]
+  }
+]

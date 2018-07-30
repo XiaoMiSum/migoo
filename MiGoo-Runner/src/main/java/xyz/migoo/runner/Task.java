@@ -1,34 +1,32 @@
 package xyz.migoo.runner;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.alibaba.fastjson.JSON;
 import xyz.migoo.exception.ValidatorException;
 import xyz.migoo.http.Client;
 import xyz.migoo.http.Request;
 import xyz.migoo.http.Response;
+import xyz.migoo.parser.CaseSet;
 import xyz.migoo.utils.Log;
 
 /**
  * @author xiaomi
  * @date 2018/7/24 20:34
  */
-public class RequestRunner {
+public class Task {
 
     private Request request;
     private TestSuite testSuite;
-    private static Log log = new Log(LoggerFactory.getLogger(RequestRunner.class));
+    private static Log log = new Log(Task.class);
 
-    public RequestRunner(Request request, TestSuite testSuite){
+    public Task(Request request, TestSuite testSuite){
         this.request = request;
         this.testSuite = testSuite;
     }
 
-    public void run(JSONObject testCase) throws ValidatorException {
+    public synchronized void run(CaseSet.Case testCase) throws ValidatorException {
         Response response = new Client().execute(this.request);
         this.testSuite.response(response);
-        JSONArray validate = testCase.getJSONArray("validate");
+        JSON validate = testCase.getValidate();
         try {
             Validator.validation(response, validate);
         }catch (ValidatorException e){
@@ -36,6 +34,5 @@ public class RequestRunner {
             this.testSuite.failures(response.request().title());
             throw new ValidatorException(e.getMessage().replaceAll("\n","</br>"));
         }
-
     }
 }
