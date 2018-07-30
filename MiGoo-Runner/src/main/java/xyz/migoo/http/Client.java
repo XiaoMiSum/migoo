@@ -126,10 +126,10 @@ public class Client {
             SSLContext sslContext = this.getSslContext(request.certificate());
             builder.setSSLContext(sslContext);
         }
-        if (request.proxy() != null){
+        if (request.proxy() != null) {
             builder.setProxy(request.proxy());
         }
-        httpClient = builder.setConnectionTimeToLive(20, TimeUnit.SECONDS).build();
+        httpClient = builder.setConnectionTimeToLive(request.timeOut(), TimeUnit.SECONDS).build();
     }
 
     /**
@@ -146,6 +146,9 @@ public class Client {
         }
         StringEntity entity = new UrlEncodedFormEntity(pairList, Charset.forName(UTF8));
         entity.setContentEncoding(UTF8);
+        if (request.contentType() != null) {
+            entity.setContentType(request.contentType());
+        }
         httpMethods.setEntity(entity);
     }
 
@@ -159,10 +162,8 @@ public class Client {
         if (request.headers() == null || request.headers().size() == 0) {
             return;
         }
-        log.info("setting request header:");
         for (Header header : request.headers()) {
             httpMethods.setHeader(header);
-            log.info(">>  " + header.getName() + ": " + header.getValue());
         }
     }
 
@@ -184,7 +185,7 @@ public class Client {
             response.body(EntityUtils.toString(httpResponse.getEntity(), UTF8).trim().toLowerCase());
             response.statusCode(httpResponse.getStatusLine().getStatusCode());
             httpResponse.close();
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
             response.error(e.getMessage());
             response.headers(null);
@@ -202,7 +203,6 @@ public class Client {
     }
 
     /**
-     *
      * @param crt https 的证书
      * @return 返回一个 安全的 HTTP CLIENT
      */
@@ -211,9 +211,7 @@ public class Client {
             SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, new TrustManager[]{new X509Trust(crt)}, new SecureRandom());
             return sslContext;
-        } catch (NoSuchAlgorithmException e) {
-            log.error("set ssl exception", e);
-        } catch (KeyManagementException e) {
+        } catch (Exception e) {
             log.error("set ssl exception", e);
         }
         return null;

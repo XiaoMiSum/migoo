@@ -132,5 +132,7 @@ types详细值，请查看配置文件 application.properties
 
 3.运行测试类 Test.class；
 
-4.查看测试报告 "./Mi-Goo/reports/xxxxx-2018-07-26 13:29:30.html"
+4.查看测试报告 "./MiGoo-Runner/reports/xxxxx-2018-07-26 13:29:30.html"；
 
+**JDK**
+请在 JDK 1.8 及以上版本中运行或开发测试脚本；

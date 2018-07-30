@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 public class Request {
 
     public static final String UTF8 = "UTF-8";
+    private static final String CONTENT_TYPE = "Content-Type";
 
     private static Log log = new Log(Request.class);
 
@@ -35,6 +36,8 @@ public class Request {
     private List<Header> header;
     private HttpHost httpHost;
     private String title;
+    private Header contentType;
+    private int timeOut;
 
     private Request(Builder builder) {
         this.url = builder.url;
@@ -44,9 +47,10 @@ public class Request {
         this.header = builder.headers;
         this.httpHost = builder.httpHost;
         this.title = builder.title;
+        this.timeOut = builder.timeOut;
     }
 
-    public HttpHost proxy(){
+    public HttpHost proxy() {
         return this.httpHost;
     }
 
@@ -74,6 +78,22 @@ public class Request {
         return this.body;
     }
 
+    public Header contentType() {
+        if (this.contentType != null) {
+            return contentType;
+        }
+        for (Header header : header) {
+            if (header.getName().toLowerCase().equals(CONTENT_TYPE.toLowerCase())) {
+                this.contentType = header;
+            }
+        }
+        return contentType;
+    }
+
+    public int timeOut() {
+        return timeOut;
+    }
+
 
     public static class Builder {
         private static final Pattern PATTERN = Pattern.compile(
@@ -86,12 +106,13 @@ public class Request {
         private List<Header> headers;
         private HttpHost httpHost;
         private String title;
+        private int timeOut = 20;
 
         public Builder() {
         }
 
-        public Builder title(String title){
-            this.title= title;
+        public Builder title(String title) {
+            this.title = title;
             return this;
         }
 
@@ -99,12 +120,12 @@ public class Request {
             HttpHost httpHost = null;
             try {
                 JSONObject json = JSONObject.parseObject(proxy);
-                httpHost = new HttpHost(json.getString("host"),json.getIntValue("port"));
-            }catch (Exception e){
+                httpHost = new HttpHost(json.getString("host"), json.getIntValue("port"));
+            } catch (Exception e) {
                 String regex = ":";
-                if (StringUtil.containsIgnoreCase(proxy,regex)){
+                if (StringUtil.containsIgnoreCase(proxy, regex)) {
                     String[] host = proxy.split(regex);
-                    httpHost = new HttpHost(host[0],Integer.valueOf(host[1]));
+                    httpHost = new HttpHost(host[0], Integer.valueOf(host[1]));
                 }
             }
             this.httpHost = httpHost;
@@ -133,7 +154,7 @@ public class Request {
             }
             this.headers = new ArrayList<>(headers.size());
             Set<Map.Entry<String, Object>> set = headers.entrySet();
-            for (Map.Entry entry : set){
+            for (Map.Entry entry : set) {
                 this.headers.add(new BasicHeader(String.valueOf(entry.getKey()),
                         String.valueOf(entry.getValue())));
             }
@@ -188,10 +209,17 @@ public class Request {
             return this;
         }
 
+        public Builder timeOut(int timeOut) {
+            if (timeOut > this.timeOut){
+                this.timeOut = timeOut;
+            }
+            return this;
+        }
+
         public Builder body(Object body) {
             this.body = MapUtil.toMap(body);
             if (body instanceof String) {
-                this.body = MapUtil.toMap((String) body);
+                this.body = MapUtil.toMap(body);
                 return this;
             }
             if (body instanceof Map) {
@@ -233,7 +261,7 @@ public class Request {
                         }
                     }
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 log.error(e.getMessage());
                 throw new RequestException(e.getMessage());
             }
@@ -251,9 +279,8 @@ public class Request {
             return method.equals(HttpGet.METHOD_NAME);
         }
 
-        private boolean urlCheck(String url){
+        private boolean urlCheck(String url) {
             return PATTERN.matcher(url).find();
         }
-
     }
 }

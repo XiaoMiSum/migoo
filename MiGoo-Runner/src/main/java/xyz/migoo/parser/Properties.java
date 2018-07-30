@@ -49,6 +49,9 @@ public class Properties implements Parser {
     }
 
     public String get(String key) {
+        if (props != null){
+            return props.getProperty(key);
+        }
         if(this.path.startsWith(File.separator)){
             this.read(this.path);
         }else {
