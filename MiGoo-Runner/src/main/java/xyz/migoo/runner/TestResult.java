@@ -71,7 +71,7 @@ public class TestResult extends junit.framework.TestResult{
 
     private synchronized Map<String, Object> summary(){
         Map<String, Object> summary = new HashMap<>(7);
-        summary.put("startAt", DateUtil.format(startAt(), DateUtil.YYYY_MM_DD_HH_MM_SS));
+        summary.put("startAt", DateUtil.format(DateUtil.yyyy_MM_dd_HH_mm_ss,startAt()));
         summary.put("duration", duration() / 1000.000f + " seconds");
         summary.put("total", size());
         summary.put("success", successCount());

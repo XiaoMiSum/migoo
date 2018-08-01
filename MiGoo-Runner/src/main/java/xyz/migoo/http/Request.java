@@ -217,14 +217,11 @@ public class Request {
         }
 
         public Builder body(Object body) {
-            this.body = MapUtil.toMap(body);
-            if (body instanceof String) {
-                this.body = MapUtil.toMap(body);
-                return this;
-            }
             if (body instanceof Map) {
                 this.body = (Map<Object, Object>) body;
                 return this;
+            }else {
+                this.body = MapUtil.toMap(body);
             }
             if (body == null) {
                 this.body = new HashMap<>(0);

@@ -1,8 +1,5 @@
 package xyz.migoo.utils;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 
 import java.lang.reflect.Field;
@@ -24,12 +21,6 @@ public class MapUtil {
         try {
             if (object instanceof String){
                 return toMap((String) object);
-            }
-            if (object instanceof JSONObject){
-                return toMap((JSONObject)object);
-            }
-            if (object instanceof JSONArray){
-                return toMap((JSONArray)object);
             }
             return toMap(object,true);
         } catch (IllegalAccessException e) {
@@ -66,43 +57,18 @@ public class MapUtil {
      * @param jsonString JSON字符串
      * @return
      */
-    private static Map<Object, Object> toMap(String jsonString) {
+    public static Map<Object, Object> toMap(String jsonString) {
         try {
-            Object json = JSON.parse(jsonString);
-            if (json instanceof JSONObject){
-                return toMap((JSONObject)json);
+            JSONObject jsonObject = JSONObject.parseObject(jsonString);
+            Set<Map.Entry<String, Object>> collection =jsonObject.entrySet();
+            Map<Object, Object> map = new HashMap<>(collection.size());
+            for (Map.Entry<String, Object> entry : collection){
+                map.put(entry.getKey(),entry.getValue());
             }
-            if (json instanceof JSONArray){
-                return toMap((JSONArray)json);
-            }
+            return map;
+        }catch (Exception e){
             return null;
-        }catch (JSONException e){
-            return null;
         }
-    }
-
-    private static Map toMap(JSONArray jsonArray){
-        Map<Object, Object> map = new HashMap<>(jsonArray.size());
-        for (int i = 0; i < jsonArray.size(); i++) {
-            Object json =  jsonArray.get(i);
-            if (json instanceof JSONObject){
-                map.put(i, toMap((JSONObject)json));
-            }else if (json instanceof JSONArray){
-                map.put(i, toMap((JSONArray)json));
-            }else {
-                map.put(i, json);
-            }
-        }
-        return map;
-    }
-
-    private static Map toMap(JSONObject jsonObject){
-        Set<Map.Entry<String, Object>> collection =jsonObject.entrySet();
-        Map<Object, Object> map = new HashMap<>(collection.size());
-        for (Map.Entry<String, Object> entry : collection){
-            map.put(entry.getKey(),entry.getValue());
-        }
-        return map;
     }
 
 }

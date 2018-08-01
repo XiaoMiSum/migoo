@@ -92,7 +92,7 @@ public class Report {
 
     private static String report(String name , String template){
         File file = new File(System.getProperty("user.dir") + "/reports/" + name + "-" +
-                DateUtil.format(System.currentTimeMillis(), DateUtil.YYYYMMDD_HH_MM_SS) + ".html");
+                DateUtil.format(DateUtil.YYYYMMDD_HH_MM_SS, System.currentTimeMillis()) + ".html");
        try(Writer writer = new FileWriter(file)){
            writer.write(template);
        }catch (Exception e){
