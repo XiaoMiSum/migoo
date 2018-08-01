@@ -1,8 +1,7 @@
 package xyz.migoo.parser;
 
 import com.alibaba.fastjson.JSONArray;
-import xyz.migoo.exception.ParserException;
-import xyz.migoo.utils.Log;
+import xyz.migoo.reader.JSONReader;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -14,7 +13,6 @@ import java.util.List;
 public class CaseParser implements Parser {
 
     private final static String SUFFIX = ".json";
-    private static Log log = new Log(CaseParser.class);
     private List<CaseSet> caseSets;
 
     public CaseParser(){
@@ -32,25 +30,13 @@ public class CaseParser implements Parser {
                 this.loadCaseSets(path + f);
             }
         }else {
-            if (Parser.super.validation(file, SUFFIX)){
-                this.loadCaseByFile(path);
+            if (file.getName().endsWith(SUFFIX)){
+                JSONReader reader = new JSONReader(file);
+                JSONArray json = (JSONArray)reader.read();
+                this.caseSets(json);
             }
         }
         return this.caseSets;
-    }
-
-    private void loadCaseByFile(String file) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            StringBuilder stringBuilder = new StringBuilder();
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-            this.caseSets(JSONArray.parseArray(stringBuilder.toString()));
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new ParserException( e.getMessage() + ". file path : " + file);
-        }
     }
 
     private List<CaseSet.Case> cases(JSONArray jsonArray, int index){
