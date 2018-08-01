@@ -16,7 +16,7 @@ public class Report {
     private static final Log log = new Log(Report.class);
     private static IReport report;
 
-    public static void create(String filePath) {
+    private static void create(String filePath) {
         report = new HtmlReport();
         File file;
         if (StringUtil.isBlank(filePath)) {
@@ -53,6 +53,9 @@ public class Report {
     }
 
     public static void report(String message, String result) {
+        if (report == null) {
+            create("");
+        }
         report.report(message, result);
         log.info("set case title: " + message + ", result: " + result);
     }

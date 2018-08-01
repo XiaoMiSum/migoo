@@ -43,7 +43,10 @@ public class Report {
     }
 
     /**
-     * 使用 Thymeleaf 渲染 HTML * @param template HTML模板 * @param params 参数 * @return 渲染后的HTML
+     * 使用 Thymeleaf 渲染 HTML
+     * @param template HTML模板
+     * @param report 报告数据
+     * @return 渲染后的HTML
      */
     private static String render(String template, Map<String, Object> report) {
         template = loadTemplate(template);
@@ -91,9 +94,12 @@ public class Report {
     }
 
     private static String report(String name , String template){
-        File file = new File(System.getProperty("user.dir") + "/reports/" + name + "-" +
-                DateUtil.format(DateUtil.YYYYMMDD_HH_MM_SS, System.currentTimeMillis()) + ".html");
-       try(Writer writer = new FileWriter(file)){
+        File file = new File(new File(System.getProperty("user.dir")).getParent() + "/Reports/");
+        if (!file.exists()){
+         file.mkdir();
+        }
+       try(Writer writer = new FileWriter(file.getPath() + name + "-" +
+               DateUtil.format(DateUtil.YYYYMMDD_HH_MM_SS) + ".html")){
            writer.write(template);
        }catch (Exception e){
            log.error(e.getMessage(), e);

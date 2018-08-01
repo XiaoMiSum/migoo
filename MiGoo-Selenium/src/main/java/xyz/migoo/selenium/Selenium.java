@@ -1,11 +1,10 @@
 package xyz.migoo.selenium;
 
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import xyz.migoo.config.DataStore;
+import xyz.migoo.config.Config;
 import xyz.migoo.exception.SeleniumException;
 import xyz.migoo.utils.DateUtil;
 import xyz.migoo.utils.Log;
-import xyz.migoo.utils.Os;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -27,6 +26,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -52,7 +52,7 @@ public class Selenium {
      * @param option 确定 true ，取消 false
      */
     public void alert(boolean option) {
-        DateUtil.sleep(DataStore.D_WAIT_SHORT_TIME);
+        DateUtil.sleep(Config.SHORT_TIME);
         try {
             Alert alert = driver.switchTo().alert();
             log.info("get object " + "alert");
@@ -88,12 +88,12 @@ public class Selenium {
      * @param id
      */
     public void click(String id) {
-        DateUtil.sleep(DataStore.D_WAIT_SHORT_TIME);
+        DateUtil.sleep(Config.SHORT_TIME);
         try {
             driver.findElement(this.parseObject(id)).click();
             log.info("get and click object " + id);
         } catch (Exception e) {
-            log.error("get object exception.",e);
+            log.error("get object exception.", e);
         }
     }
 
@@ -120,7 +120,7 @@ public class Selenium {
             webElement = driver.findElement(this.parseObject(id));
             log.info("get object " + id);
         } catch (Exception e) {
-            log.error("get object exception.",e);
+            log.error("get object exception.", e);
         }
         return webElement;
     }
@@ -131,12 +131,12 @@ public class Selenium {
      * @param script
      */
     public void executeJavaScript(String script) {
-        DateUtil.sleep(DataStore.D_WAIT_SHORT_TIME);
+        DateUtil.sleep(Config.SHORT_TIME);
         try {
             ((JavascriptExecutor) driver).executeScript(script);
             log.info("Javascript execute success.");
         } catch (Exception e) {
-            log.error("Javascript execute exception.",e);
+            log.error("Javascript execute exception.", e);
         }
     }
 
@@ -144,12 +144,12 @@ public class Selenium {
      * 访问url
      */
     public void get(String url) {
-        DateUtil.sleep(DataStore.D_WAIT_SHORT_TIME);
+        DateUtil.sleep(Config.SHORT_TIME);
         try {
             driver.get(url);
             log.info("input url: " + url);
         } catch (WebDriverException e) {
-            log.error("input url exception.",e);
+            log.error("input url exception.", e);
         }
     }
 
@@ -160,14 +160,14 @@ public class Selenium {
      * @return
      */
     public String getText(String id) {
-        DateUtil.sleep(DataStore.D_WAIT_SHORT_TIME);
+        DateUtil.sleep(Config.SHORT_TIME);
         String text = null;
         try {
             text = driver.findElement(this.parseObject(id)).getText();
             log.info("get object " + id);
             log.info("get object value" + text);
         } catch (NoSuchElementException e) {
-            log.error("get object exception.",e);
+            log.error("get object exception.", e);
         }
         return text;
     }
@@ -176,13 +176,13 @@ public class Selenium {
      * 获取页面Title
      */
     public String getTitle() {
-        DateUtil.sleep(DataStore.D_WAIT_SHORT_TIME);
+        DateUtil.sleep(Config.SHORT_TIME);
         String title = null;
         try {
             title = driver.getTitle();
             log.info("get title: " + title);
         } catch (NoSuchElementException e) {
-            log.error("get title exception.",e);
+            log.error("get title exception.", e);
         }
         return title;
     }
@@ -209,14 +209,14 @@ public class Selenium {
      * @return
      */
     public String getAttribute(String id, String key) {
-        DateUtil.sleep(DataStore.D_WAIT_SHORT_TIME);
+        DateUtil.sleep(Config.SHORT_TIME);
         String text = null;
         try {
             text = driver.findElement(this.parseObject(id)).getAttribute(key);
             log.info("get object " + id);
             log.info("get object attribute: " + text);
         } catch (NoSuchElementException e) {
-            log.error("get object exception.",e);
+            log.error("get object exception.", e);
         }
         return text;
     }
@@ -233,7 +233,7 @@ public class Selenium {
             log.info("get object " + id);
             return true;
         } catch (NoSuchElementException e) {
-            log.error("get object exception.",e);
+            log.error("get object exception.", e);
             return false;
         }
     }
@@ -245,7 +245,7 @@ public class Selenium {
      * @param text 元素的文字
      */
     public void list(String id, String text) {
-        DateUtil.sleep(DataStore.D_WAIT_SHORT_TIME);
+        DateUtil.sleep(Config.SHORT_TIME);
         try {
             List<WebElement> list = driver.findElements(this.parseObject(id));
             log.info("get object " + id);
@@ -257,9 +257,9 @@ public class Selenium {
                 }
             }
         } catch (Exception e) {
-            log.error("get object exception.",e);
+            log.error("get object exception.", e);
         }
-        DateUtil.sleep(DataStore.D_WAIT_SHORT_TIME);
+        DateUtil.sleep(Config.SHORT_TIME);
     }
 
     /**
@@ -268,16 +268,16 @@ public class Selenium {
      * @param id
      */
     public void moveToElement(String id) {
-        DateUtil.sleep(DataStore.D_WAIT_SHORT_TIME);
+        DateUtil.sleep(Config.SHORT_TIME);
         try {
             Actions actions = new Actions(driver);
             actions.moveToElement(driver.findElement(this.parseObject(id))).perform();
             log.info("get object " + id);
             log.info("mouse move to " + id + " success.");
         } catch (Exception e) {
-            log.error("get object exception.",e);
+            log.error("get object exception.", e);
         }
-        DateUtil.sleep(DataStore.D_WAIT_SHORT_TIME);
+        DateUtil.sleep(Config.SHORT_TIME);
     }
 
     /**
@@ -288,7 +288,7 @@ public class Selenium {
      * @param times 按压次数，操作键盘上的特殊按键时需传递此参数，且必须大于等于1
      */
     public void robot(String text, int times) {
-        DateUtil.sleep(DataStore.D_WAIT_MEDIUM_TIME);
+        DateUtil.sleep(Config.MEDIUM_TIME);
         try {
             RobotKeyboard robot = RobotKeyboard.getInstance();
             if (times < 1) {
@@ -310,16 +310,16 @@ public class Selenium {
      * @param text
      */
     public void select(String id, String text) {
-        DateUtil.sleep(DataStore.D_WAIT_SHORT_TIME);
+        DateUtil.sleep(Config.SHORT_TIME);
         try {
             Select select = new Select(driver.findElement(this.parseObject(id)));
             log.info("get object " + id);
             select.selectByVisibleText(text);
             log.info("click object " + text);
         } catch (Exception e) {
-            log.error("get object exception.",e);
+            log.error("get object exception.", e);
         }
-        DateUtil.sleep(DataStore.D_WAIT_SHORT_TIME);
+        DateUtil.sleep(Config.SHORT_TIME);
     }
 
     /**
@@ -329,7 +329,7 @@ public class Selenium {
      * @param text
      */
     public void sendKeys(String id, String text) {
-        DateUtil.sleep(DataStore.D_WAIT_SHORT_TIME);
+        DateUtil.sleep(Config.SHORT_TIME);
         try {
             WebElement webElement = driver.findElement(this.parseObject(id));
             log.info("get object " + id);
@@ -338,7 +338,7 @@ public class Selenium {
             webElement.sendKeys(text);
             log.info("enter \"" + text + "\" in the object");
         } catch (Exception e) {
-            log.error("get object exception.",e);
+            log.error("get object exception.", e);
         }
     }
 
@@ -364,7 +364,7 @@ public class Selenium {
      * @param windowName
      */
     public void swithchToWindow(String windowName) {
-        DateUtil.sleep(DataStore.D_WAIT_SHORT_TIME);
+        DateUtil.sleep(Config.SHORT_TIME);
         try {
             for (String s : driver.getWindowHandles()) {
                 if (driver.getTitle().equals(windowName)) {
@@ -374,9 +374,9 @@ public class Selenium {
                 }
             }
         } catch (Exception e) {
-            log.error("switching window exception.",e);
+            log.error("switching window exception.", e);
         }
-        DateUtil.sleep(DataStore.D_WAIT_SHORT_TIME);
+        DateUtil.sleep(Config.SHORT_TIME);
     }
 
     /**
@@ -396,38 +396,45 @@ public class Selenium {
     }
 
     private By parseObject(String object) {
-        if (object.startsWith(DataStore.SELENIUM_XPATH_1) || object.startsWith(DataStore.SELENIUM_XPATH_2)) {
+        if (object.startsWith(Config.XPATH_1) || object.startsWith(Config.XPATH_2)) {
             return By.xpath(object);
-        } else if (object.startsWith(DataStore.SELENIUM_LINK + DataStore.SELENIUM_BASE)) {
-            object = object.substring(object.indexOf(DataStore.SELENIUM_BASE) + 1);
+        } else if (object.startsWith(Config.LINK)) {
+            object = object.substring(object.indexOf(Config.SPLIT) + 1);
             return By.linkText(object);
-        } else if (object.startsWith(DataStore.SELENIUM_XPATH_3 + DataStore.SELENIUM_BASE)) {
-            object = object.substring(object.indexOf(DataStore.SELENIUM_BASE) + 1);
+        } else if (object.startsWith(Config.XPATH_3)) {
+            object = object.substring(object.indexOf(Config.SPLIT) + 1);
             return By.xpath(object);
-        } else if (object.startsWith(DataStore.SELENIUM_ID + DataStore.SELENIUM_BASE)) {
-            object = object.substring(object.indexOf(DataStore.SELENIUM_BASE) + 1);
+        } else if (object.startsWith(Config.ID)) {
+            object = object.substring(object.indexOf(Config.SPLIT) + 1);
             return By.id(object);
-        } else if (object.startsWith(DataStore.SELENIUM_PARTIAL_LINK + DataStore.SELENIUM_BASE)) {
-            object = object.substring(object.indexOf(DataStore.SELENIUM_BASE) + 1);
+        } else if (object.startsWith(Config.PARTIAL_LINK)) {
+            object = object.substring(object.indexOf(Config.SPLIT) + 1);
             return By.partialLinkText(object);
-        } else if (object.startsWith(DataStore.SELENIUM_CSS + DataStore.SELENIUM_BASE)) {
-            object = object.substring(object.indexOf(DataStore.SELENIUM_BASE) + 1);
+        } else if (object.startsWith(Config.CSS)) {
+            object = object.substring(object.indexOf(Config.SPLIT) + 1);
             return By.cssSelector(object);
-        } else if (object.startsWith(DataStore.SELENIUM_CLASS + DataStore.SELENIUM_BASE)) {
-            object = object.substring(object.indexOf(DataStore.SELENIUM_BASE) + 1);
+        } else if (object.startsWith(Config.CLASS)) {
+            object = object.substring(object.indexOf(Config.SPLIT) + 1);
             return By.className(object);
-        } else if (object.startsWith(DataStore.SELENIUM_TAG_NAME + DataStore.SELENIUM_BASE)) {
-            object = object.substring(object.indexOf(DataStore.SELENIUM_BASE) + 1);
+        } else if (object.startsWith(Config.TAG_NAME)) {
+            object = object.substring(object.indexOf(Config.SPLIT) + 1);
             return By.tagName(object);
-        } else if (object.startsWith(DataStore.SELENIUM_NAME + DataStore.SELENIUM_BASE)) {
-            object = object.substring(object.indexOf(DataStore.SELENIUM_BASE) + 1);
+        } else if (object.startsWith(Config.NAME)) {
+            object = object.substring(object.indexOf(Config.SPLIT) + 1);
             return By.name(object);
         } else {
             return null;
         }
     }
 
+    private boolean is(String object, String prefix) {
+        return object.startsWith(prefix);
+    }
+
     public static class Builder {
+
+        private final static boolean IS_WINDOWS =
+                System.getProperty("os.name").toLowerCase(Locale.US).contains("windows");
 
         private WebDriver driver;
 
@@ -448,7 +455,7 @@ public class Selenium {
                 case FIREFOX:
                     //设置火狐浏览器安装路径，driver路径，加载当前系统用户配置文件
                     FirefoxOptions firefoxOptions = new FirefoxOptions();
-                    if (Os.OS_WINDOWS){
+                    if (IS_WINDOWS) {
                         System.setProperty(GeckoDriverService.GECKO_DRIVER_EXE_PROPERTY, configuration.driver());
                         FirefoxProfile profile = new FirefoxProfile(new File(configuration.profile()));
                         firefoxOptions.setProfile(profile);
@@ -483,7 +490,7 @@ public class Selenium {
                     log.info("driver == null. please check configuration");
                     throw new SeleniumException("driver == null. please check configuration");
             }
-            log.info( "init driver success.");
+            log.info("init driver success.");
             return this;
         }
 
