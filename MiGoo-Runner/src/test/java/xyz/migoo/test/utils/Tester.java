@@ -6,8 +6,7 @@ package xyz.migoo.test.utils;
  */
 public class Tester {
 
-    public static String getWithdrawalToken(String param){
-        String[] params = param.split(",");
-        return "测试通过";
+    public static String getPwd(String param){
+        return param;
     }
 }

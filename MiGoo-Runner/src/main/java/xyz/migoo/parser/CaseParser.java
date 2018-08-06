@@ -49,7 +49,6 @@ public class CaseParser implements Parser {
             JSONArray validate = jsonCases.getJSONObject(i).getJSONArray("validate");
             JSONObject setUp = jsonCases.getJSONObject(i).getJSONObject("setUp.hook");
 
-
             Variable.bindVariable(variables, body);
 
             CaseSet.Case aCase = new CaseSet.Case();
