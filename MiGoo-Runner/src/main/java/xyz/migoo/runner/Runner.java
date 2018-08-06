@@ -19,7 +19,7 @@ public class Runner {
     public TestResult run(String path, String template){
         CaseSuite caseSuite = this.initTestSuite(path);
         TestResult result = new TestRunner().run(caseSuite);
-        Report.generateReport(result.report(), caseSuite.name(), template);
+        //Report.generateReport(result.report(), caseSuite.name(), template);
         return result;
     }
 

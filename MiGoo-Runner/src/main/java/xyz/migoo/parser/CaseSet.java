@@ -47,6 +47,7 @@ public class CaseSet {
         private String title;
         private JSONObject body;
         private JSON validate;
+        private JSONObject setUp;
 
         public String getTitle() {
             return title;
@@ -70,6 +71,14 @@ public class CaseSet {
 
         public void setValidate(JSON validate) {
             this.validate = validate;
+        }
+
+        public JSONObject getSetUp() {
+            return setUp;
+        }
+
+        public void setSetUp(JSONObject setUp) {
+            this.setUp = setUp;
         }
     }
 

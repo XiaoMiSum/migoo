@@ -4,34 +4,44 @@ import com.alibaba.fastjson.JSON;
 import xyz.migoo.exception.ReaderException;
 import xyz.migoo.utils.Log;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 
 /**
  * @author xiaomi
  */
-@SuppressWarnings("AlibabaClassNamingShouldBeCamel")
 public class JSONReader implements Reader {
 
     private final static String SUFFIX = ".json";
     private final static Log LOG = new Log(JSONReader.class);
     private JSON json;
-    private File file;
+    private String path;
 
     public JSONReader(String path) {
-        this(new File(path));
+        this.path = path;
     }
 
-    public JSONReader(File file) {
-        this.file = file;
-    }
-
-    public JSON read() {
-        if (!Reader.super.validation(file, SUFFIX)) {
-            throw new ReaderException("this file not a ' " + SUFFIX + " ' file : " + file);
+    public JSON read(){
+        InputStream inputStream;
+        try {
+            if(this.path.startsWith(File.separator)){
+                File file = new File(path);
+                if (!Reader.super.validation(file, SUFFIX)) {
+                    throw new ReaderException("this file not a ' " + SUFFIX + " ' file : " + file);
+                }
+                inputStream = new FileInputStream(file);
+            }else {
+                ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+                inputStream = classloader.getResourceAsStream(this.path);
+            }
+        }catch (Exception e){
+            LOG.error(e.getMessage(), e);
+            throw new ReaderException("file read exception: " + e.getMessage());
         }
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        return this.read(inputStream);
+    }
+
+    private JSON read(InputStream inputStream) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             String line;
             StringBuilder stringBuilder = new StringBuilder();
             while ((line = reader.readLine()) != null) {
@@ -44,7 +54,7 @@ public class JSONReader implements Reader {
             }
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
-            throw new ReaderException(e.getMessage() + ". file path : " + file);
+            throw new ReaderException(e.getMessage() + ". file path : " + this.path);
         }
         return json;
     }

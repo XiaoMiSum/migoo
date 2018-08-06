@@ -1,7 +1,9 @@
 package xyz.migoo.parser;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.reader.JSONReader;
+import xyz.migoo.utils.Variable;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -39,14 +41,22 @@ public class CaseParser implements Parser {
         return this.caseSets;
     }
 
-    private List<CaseSet.Case> cases(JSONArray jsonArray, int index){
-        JSONArray caseJsonArray = jsonArray.getJSONObject(index).getJSONArray("case");
-        List<CaseSet.Case> caseList = new ArrayList(caseJsonArray.size());
-        for (int i = 0; i < caseJsonArray.size(); i++) {
+    private List<CaseSet.Case> cases(JSONArray jsonCases, JSONObject variables){
+        List<CaseSet.Case> caseList = new ArrayList(jsonCases.size());
+        for (int i = 0; i < jsonCases.size(); i++) {
+            String title = jsonCases.getJSONObject(i).getString("title");
+            JSONObject body = jsonCases.getJSONObject(i).getJSONObject("body");
+            JSONArray validate = jsonCases.getJSONObject(i).getJSONArray("validate");
+            JSONObject setUp = jsonCases.getJSONObject(i).getJSONObject("setUp.hook");
+
+
+            Variable.bindVariable(variables, body);
+
             CaseSet.Case aCase = new CaseSet.Case();
-            aCase.setBody(caseJsonArray.getJSONObject(i).getJSONObject("body"));
-            aCase.setTitle(caseJsonArray.getJSONObject(i).getString("title"));
-            aCase.setValidate(caseJsonArray.getJSONObject(i).getJSONArray("validate"));
+            aCase.setBody(body);
+            aCase.setTitle(title);
+            aCase.setValidate(validate);
+            aCase.setSetUp(setUp);
             caseList.add(aCase);
         }
         return caseList;
@@ -54,15 +64,20 @@ public class CaseParser implements Parser {
 
     private List<CaseSet> caseSets(JSONArray jsonArray){
         for (int index = 0; index < jsonArray.size(); index++) {
-            String name = jsonArray.getJSONObject(index).getString("name");
+            JSONObject testCases = jsonArray.getJSONObject(index);
+            String name = testCases.getString("name");
+            JSONObject jsonConfig = testCases.getJSONObject("config");
+            JSONArray jsonCases = testCases.getJSONArray("case");
 
             CaseSet.Config config = new CaseSet.Config();
-            config.setRequest(jsonArray.getJSONObject(index).getJSONObject("request"));
+            config.setRequest(jsonConfig.getJSONObject("request"));
+
+            JSONObject variables = jsonConfig.getJSONObject("variables");
 
             CaseSet caseSet = new CaseSet();
             caseSet.setName(name);
             caseSet.setConfig(config);
-            caseSet.setCases(this.cases(jsonArray, index));
+            caseSet.setCases(this.cases(jsonCases, variables));
 
             caseSets.add(caseSet);
         }

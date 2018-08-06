@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class Platform {
 
-
+    private Platform(){}
 
     private static final Properties PROPERTIES = new Properties("application.properties");
 
@@ -33,5 +33,8 @@ public class Platform {
 
     public static final List CHECK_CODE = Arrays.asList(
             StringUtil.trim(PROPERTIES.get("check.code")).split(","));
+
+    public static final List VARIABLE_OPERATE_REQUEST = Arrays.asList(
+            StringUtil.trim(PROPERTIES.get("variable.operate.request")).split(","));
 
 }

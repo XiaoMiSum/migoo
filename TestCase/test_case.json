@@ -1,23 +1,40 @@
 [
   {
     "name": "the test suite name",
-    "request": {
-      "url": "http://127.0.0.1:8080/login/login",
-      "method": "post",
-      "headers": {
-        "Content-Type": "application/x-www-form-urlencoded"
+    "config": {
+      "variables":{
+        "token": 11223344556677889900
+      },
+      "request": {
+        "url": "http://127.0.0.1:8080/login/login",
+        "method": "post",
+        "headers": {
+          "Content-Type": "application/x-www-form-urlencoded"
+        }
       }
     },
     "case": [
       {
         "title": "正确的用户名\\密码登录，返回值包等于期望值",
+        "setUp.hook": {
+          "withdrawalToken": "${getWithdrawalToken(12,23,34)}"
+        },
         "body": {
-          "user": "admin",
-          "pwd": "123456qq"
+          "token": "$token",
+          "withdrawalToken": "$withdrawalToken",
+          "phoneCode": "admin",
+          "emailCode": "123456qq",
+          "googleCode": "admin",
+          "address": "123456qq",
+          "coin": "admin",
+          "coinType": "123456qq",
+          "memo": "admin",
+          "amount": "123456qq",
+          "label": "admin"
         },
         "validate": [
           {
-            "check": "statusCode",
+            "check": "$check",
             "expect": 200,
             "types": "=="
           },
@@ -25,25 +42,6 @@
             "check": "body",
             "expect": "success",
             "types": "eq"
-          }
-        ]
-      },
-      {
-        "title": "错误的用户名\\密码登录，返回值包含期望值",
-        "body": {
-          "user": "admin",
-          "pwd": "123456"
-        },
-        "validate":[
-          {
-            "check": "statusCode",
-            "expect": 200,
-            "types": "=="
-          },
-          {
-            "check": "body",
-            "expect": "error",
-            "types": "contain"
           }
         ]
       }

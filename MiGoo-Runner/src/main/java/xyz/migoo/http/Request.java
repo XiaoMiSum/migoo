@@ -161,6 +161,16 @@ public class Request {
             return this;
         }
 
+        public Builder headers(String headers) {
+            try {
+                JSONObject json = JSONObject.parseObject(headers);
+                this.headers(json);
+            }catch (Exception e){
+                this.headers = null;
+            }
+            return this;
+        }
+
         public Builder certificate(String certificate) {
             if (StringUtil.isNotBlank(certificate)) {
                 this.certificate = new File(certificate);

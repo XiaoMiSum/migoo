@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.http.Request;
 import xyz.migoo.http.Response;
 import xyz.migoo.parser.CaseSet;
+import xyz.migoo.utils.Variable;
 
 /**
  * @author xiaomi
@@ -30,7 +31,12 @@ public class TestSuite extends junit.framework.TestSuite{
         Request.Builder builder = new Request.Builder().url(url).method(method).headers(headers);
         for (CaseSet.Case testCase : caseSet.getCases()) {
             String title = testCase.getTitle();
-            Request request = builder.body(testCase.getBody()).title(title).build();
+            JSONObject body = testCase.getBody();
+            JSONObject setUp = testCase.getSetUp();
+
+            Variable.bindVariable(setUp, body);
+
+            Request request = builder.body(body).title(title).build();
             Task task = new Task(request, this);
             this.addTest(title, task, testCase);
         }
