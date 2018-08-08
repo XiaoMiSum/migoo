@@ -1,5 +1,7 @@
 package xyz.migoo.config;
 
+import java.util.Locale;
+
 /**
 * @author xiaomi
  */
@@ -21,4 +23,6 @@ public class Config {
     public static final String TAG_NAME = "tagname=";
     public static final String NAME = "name=";
     public static final String SPLIT = "=";
+
+    public static final boolean WINDOWS = System.getProperty("os.name").toLowerCase(Locale.US).contains("windows");
 }

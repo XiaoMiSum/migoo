@@ -8,22 +8,25 @@ import java.io.*;
 /**
  * @author xiaomi
  */
-public class Properties implements Reader {
+public class PropertiesReader extends AbstractReader {
 
     private final static String SUFFIX = ".properties";
-    private final static Log LOG = new Log(Properties.class);
+    private final static Log LOG = new Log(PropertiesReader.class);
 
     private String path;
     private java.util.Properties props;
 
-    public Properties(String path) {
+    public PropertiesReader(String path) {
         this.path = path;
     }
 
-    private Properties read(String path) {
+    /**
+     * 从项目外的指定目录中读取 properties 文件
+     */
+    private PropertiesReader read(String path) {
         this.props = new java.util.Properties();
         File file = new File(path);
-        if (!Reader.super.validation(file, SUFFIX)){
+        if (!super.validation(file, SUFFIX)){
             throw new ReaderException("this file not a ' " + SUFFIX + " ' file : " + file);
         }
         try (InputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
@@ -35,7 +38,11 @@ public class Properties implements Reader {
         return this;
     }
 
-    private Properties read() {
+    /**
+     * 从 resources 目录中读取 properties 文件
+     * @return
+     */
+    private PropertiesReader read() {
         this.props = new java.util.Properties();
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         InputStream is = classloader.getResourceAsStream(this.path);
@@ -52,7 +59,7 @@ public class Properties implements Reader {
         if (props != null){
             return props.getProperty(key);
         }
-        if(this.path.startsWith(File.separator)){
+        if(super.isOutsideFile(this.path)){
             this.read(this.path);
         }else {
             this.read();

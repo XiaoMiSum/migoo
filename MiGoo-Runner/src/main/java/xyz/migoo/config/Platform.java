@@ -1,6 +1,6 @@
 package xyz.migoo.config;
 
-import xyz.migoo.parser.Properties;
+import xyz.migoo.reader.PropertiesReader;
 import xyz.migoo.utils.StringUtil;
 
 import java.util.Arrays;
@@ -14,7 +14,7 @@ public class Platform {
 
     private Platform(){}
 
-    private static final Properties PROPERTIES = new Properties("application.properties");
+    private static final PropertiesReader PROPERTIES = new PropertiesReader("application.properties");
 
     public static final String HTTPCLIENT_VERSION = PROPERTIES.get("httpClient.version");
 
@@ -34,7 +34,14 @@ public class Platform {
     public static final List CHECK_CODE = Arrays.asList(
             StringUtil.trim(PROPERTIES.get("check.code")).split(","));
 
-    public static final List VARIABLE_OPERATE_REQUEST = Arrays.asList(
-            StringUtil.trim(PROPERTIES.get("variable.operate.request")).split(","));
+    public static final boolean MAIL_SEND = Boolean.valueOf(PROPERTIES.get("mail.send").trim());
+
+    public static final String MAIL_IMAP_HOST = PROPERTIES.get("mail.imap.host").trim();
+
+    public static final String MAIL_SEND_FROM = PROPERTIES.get("mail.send.from").trim();
+
+    public static final String MAIL_SEND_PASS = PROPERTIES.get("mail.send.pass").trim();
+
+    public static final String[] MAIL_SEND_TO_LIST = PROPERTIES.get("mail.send.toList").split(",");
 
 }

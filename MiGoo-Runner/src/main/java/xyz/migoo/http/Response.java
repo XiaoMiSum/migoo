@@ -11,6 +11,7 @@ public class Response {
 
     private static final int SUCCESS = 200;
     private static final int ERROR = 0;
+    private static final int NOT_FOUND = 404;
 
     private int statusCode;
     private Header[] headers;
@@ -62,7 +63,7 @@ public class Response {
     }
 
     public boolean isNotFound() {
-        return this.statusCode == ERROR;
+        return this.statusCode == NOT_FOUND;
     }
 
     public int statusCode() {

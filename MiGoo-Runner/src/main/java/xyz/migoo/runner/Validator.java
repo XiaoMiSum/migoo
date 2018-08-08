@@ -26,12 +26,12 @@ public class Validator extends Assert {
 
     public static void validation(Response response, JSON validate) throws ValidatorException {
         if (response.isError()){
-            throw new ValidatorException("request error. please check your network .\n"
+            throw new ValidatorException("request error. please check network .\n"
                     + "\t" +  response.error());
         }
 
         if (response.isNotFound()){
-            throw new ValidatorException("error 404. please check your url: \n"
+            throw new ValidatorException("error 404. please check url: \n"
                     + "\t" + response.request().url());
         }
         if (validate instanceof JSONObject) {

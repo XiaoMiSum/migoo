@@ -2,10 +2,10 @@ package xyz.migoo.selenium;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import xyz.migoo.exception.SeleniumException;
-import xyz.migoo.utils.Os;
 import xyz.migoo.utils.StringUtil;
 
 import static org.openqa.selenium.remote.BrowserType.*;
+import static xyz.migoo.config.Config.WINDOWS;
 
 /**
  * @author xiaomi
@@ -116,14 +116,14 @@ public class Configuration {
                 throw new SeleniumException("browser == null");
             }
             if (this.permitsDriver(this.browser) && StringUtil.isBlank(this.driver)
-                    && Os.OS_WINDOWS) {
+                    && WINDOWS) {
                 throw new SeleniumException("driver == null");
             }
             if (this.isFirefox(this.browser) && StringUtil.isBlank(this.bin)) {
                 throw new SeleniumException("fireFox bin == null");
             }
             if (this.permitsProfile(this.browser) && StringUtil.isBlank(this.profile)
-                    && Os.OS_WINDOWS){
+                    && WINDOWS){
                 throw new SeleniumException("profile path == null");
             }
             if (this.isHtmlUnit(this.browser) && this.version == null){

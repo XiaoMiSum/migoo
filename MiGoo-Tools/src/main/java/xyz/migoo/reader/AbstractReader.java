@@ -7,7 +7,9 @@ import java.io.File;
 /**
  * @author xiaomi
  */
-public interface Reader {
+public abstract class AbstractReader {
+
+    private static final String DOT = ".";
 
     /**
      * 文件合法性检查，传入的文件路径不能为 null "" 文件夹
@@ -15,7 +17,7 @@ public interface Reader {
      * @param suffix 指定的文件后缀
      * @return
      */
-    default boolean validation(File file, String suffix){
+    protected boolean validation(File file, String suffix){
         if (!file.exists()){
             throw new ReaderException("file not found : " + file.getPath());
         }
@@ -26,5 +28,9 @@ public interface Reader {
             throw new ReaderException("file length == 0");
         }
         return true;
+    }
+
+    protected boolean isOutsideFile(String path){
+        return path.startsWith(File.separator) || path.startsWith(DOT);
     }
 }

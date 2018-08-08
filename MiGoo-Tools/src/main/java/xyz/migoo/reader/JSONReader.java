@@ -10,16 +10,18 @@ import java.io.*;
 /**
  * @author xiaomi
  */
-public class JSONReader implements Reader {
+public class JSONReader extends AbstractReader {
 
     private final static String SUFFIX = ".json";
     private final static Log LOG = new Log(JSONReader.class);
     private JSON json;
     private String path;
-    File file;
+    private File file;
+
     public JSONReader(String path) {
         this.path = path;
     }
+
     public JSONReader(File file) {
         this.file = file;
     }
@@ -28,7 +30,7 @@ public class JSONReader implements Reader {
         InputStream inputStream;
         try {
             if(StringUtil.isNotBlank(this.path)){
-                if (this.path.startsWith(File.separator)){
+                if (super.isOutsideFile(path)){
                     file = new File(path);
                     inputStream = this.file();
                 }else {
@@ -46,7 +48,7 @@ public class JSONReader implements Reader {
     }
 
     private InputStream file() throws FileNotFoundException {
-        if (!Reader.super.validation(file, SUFFIX)) {
+        if (!super.validation(file, SUFFIX)) {
             throw new ReaderException("this file not a ' " + SUFFIX + " ' file : " + file);
         }
         return new FileInputStream(file);

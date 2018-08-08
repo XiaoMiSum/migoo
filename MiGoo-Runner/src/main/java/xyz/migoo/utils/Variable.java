@@ -1,6 +1,5 @@
 package xyz.migoo.utils;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.VariableException;
 
@@ -16,7 +15,7 @@ import java.util.regex.Pattern;
  */
 public class Variable {
 
-    private static  final Pattern PATTERN = Pattern.compile("^\\$\\{(\\w+)\\(([\\$\\w =,]*)\\)\\}");
+    private static  final Pattern PATTERN = Pattern.compile("^\\$\\{(\\w+)\\(([\\$\\w[-]* =,]*)\\)\\}");
 
     private Variable() {
     }
