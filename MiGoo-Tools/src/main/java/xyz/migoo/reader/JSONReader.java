@@ -32,13 +32,13 @@ public class JSONReader extends AbstractReader {
             if(StringUtil.isNotBlank(this.path)){
                 if (super.isOutsideFile(path)){
                     file = new File(path);
-                    inputStream = this.file();
+                    inputStream = this.inputStream();
                 }else {
                     ClassLoader classloader = Thread.currentThread().getContextClassLoader();
                     inputStream = classloader.getResourceAsStream(this.path);
                 }
             }else {
-                inputStream = this.file();
+                inputStream = this.inputStream();
             }
         }catch (Exception e){
             LOG.error(e.getMessage(), e);
@@ -47,7 +47,7 @@ public class JSONReader extends AbstractReader {
         return this.read(inputStream);
     }
 
-    private InputStream file() throws FileNotFoundException {
+    private InputStream inputStream() throws FileNotFoundException {
         if (!super.validation(file, SUFFIX)) {
             throw new ReaderException("this file not a ' " + SUFFIX + " ' file : " + file);
         }

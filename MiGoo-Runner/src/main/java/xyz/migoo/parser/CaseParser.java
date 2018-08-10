@@ -2,6 +2,7 @@ package xyz.migoo.parser;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.config.Dict;
 import xyz.migoo.reader.JSONReader;
 import xyz.migoo.utils.Variable;
 
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * @author xiaomi
  */
-public class CaseParser implements Parser {
+public class CaseParser{
 
     private final static String SUFFIX = ".json";
     private List<CaseSet> caseSets;
@@ -44,10 +45,10 @@ public class CaseParser implements Parser {
     private List<CaseSet.Case> cases(JSONArray jsonCases, JSONObject variables){
         List<CaseSet.Case> caseList = new ArrayList(jsonCases.size());
         for (int i = 0; i < jsonCases.size(); i++) {
-            String title = jsonCases.getJSONObject(i).getString("title");
-            JSONObject body = jsonCases.getJSONObject(i).getJSONObject("body");
-            JSONArray validate = jsonCases.getJSONObject(i).getJSONArray("validate");
-            JSONObject setUp = jsonCases.getJSONObject(i).getJSONObject("setUp.hook");
+            String title = jsonCases.getJSONObject(i).getString(Dict.CASE_TITLE);
+            JSONObject body = jsonCases.getJSONObject(i).getJSONObject(Dict.CASE_BODY);
+            JSONArray validate = jsonCases.getJSONObject(i).getJSONArray(Dict.VALIDATE);
+            JSONObject setUp = jsonCases.getJSONObject(i).getJSONObject(Dict.CASE_SETUP_HOOK);
 
             Variable.bindVariable(variables, body);
 
@@ -64,14 +65,14 @@ public class CaseParser implements Parser {
     private List<CaseSet> caseSets(JSONArray jsonArray){
         for (int index = 0; index < jsonArray.size(); index++) {
             JSONObject testCases = jsonArray.getJSONObject(index);
-            String name = testCases.getString("name");
-            JSONObject jsonConfig = testCases.getJSONObject("config");
-            JSONArray jsonCases = testCases.getJSONArray("case");
+            String name = testCases.getString(Dict.NAME);
+            JSONObject jsonConfig = testCases.getJSONObject(Dict.CONFIG);
+            JSONArray jsonCases = testCases.getJSONArray(Dict.CASE);
 
             CaseSet.Config config = new CaseSet.Config();
-            config.setRequest(jsonConfig.getJSONObject("request"));
+            config.setRequest(jsonConfig.getJSONObject(Dict.CONFIG_REQUEST));
 
-            JSONObject variables = jsonConfig.getJSONObject("variables");
+            JSONObject variables = jsonConfig.getJSONObject(Dict.CONFIG_VARIABLES);
 
             CaseSet caseSet = new CaseSet();
             caseSet.setName(name);

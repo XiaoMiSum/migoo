@@ -17,6 +17,8 @@ public class Variable {
 
     private static  final Pattern PATTERN = Pattern.compile("^\\$\\{(\\w+)\\(([\\$\\w[-]* =,]*)\\)\\}");
 
+    private static Method[] methods = null;
+
     private Variable() {
     }
 
@@ -54,8 +56,10 @@ public class Variable {
     private static String function(String methodName, String params) {
         String value = "";
         try {
-            Class clazz = Class.forName("xyz.migoo.test.utils.Tester");
-            Method[] methods = clazz.getDeclaredMethods();
+            if(methods == null){
+                Class clazz = Class.forName("xyz.migoo.test.utils.Tester");
+                methods = clazz.getDeclaredMethods();
+            }
             for (Method method : methods) {
                 if (methodName.equals(method.getName())) {
                     value = (String) method.invoke(null, params);
