@@ -2,8 +2,10 @@ package xyz.migoo.report;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import xyz.migoo.config.Platform;
 import xyz.migoo.exception.ReportException;
 import xyz.migoo.utils.DateUtil;
+import xyz.migoo.utils.EmailUtil;
 import xyz.migoo.utils.Log;
 import xyz.migoo.utils.StringUtil;
 
@@ -29,7 +31,7 @@ public class Report {
     private Report(){
     }
 
-    public static String generateReport(Map<String, Object> report, String reportName, String templates){
+    public static String generateReport(Map<String, Object> report, String reportName, String templates, boolean isMain){
         if (StringUtil.isBlank(templates)){
             templates = "templates/migoo_report_template.html";
         }
@@ -39,7 +41,12 @@ public class Report {
         report.put("report", "Test Report:  " + reportName);
         report.put("title", reportName + " - TestReport");
         report.put("platform", platform());
-        return report(reportName, render(templates, report));
+        String content = render(templates, report);
+        File file = report(reportName, content, isMain);
+        if (Platform.MAIL_SEND){
+            EmailUtil.sendEmail(content, file);
+        }
+        return file.getPath();
     }
 
     /**
@@ -93,8 +100,14 @@ public class Report {
         return stringBuilder.toString();
     }
 
-    private static String report(String name , String template){
-        File file = new File(new File(System.getProperty("user.dir")).getParent() + "/Reports/");
+    private static File report(String name , String template, boolean isMain){
+
+        File file = new File(System.getProperty("user.dir"));
+        if (isMain){
+            file = new File(file.getPath() + "/Reports/");
+        }else {
+            file = new File(file.getParent() + "/Reports/");
+        }
         if (!file.exists()){
          file.mkdir();
         }
@@ -105,7 +118,7 @@ public class Report {
            log.error(e.getMessage(), e);
            throw new ReportException("create report error , file path " + file.getPath());
        }
-       return file.getPath();
+       return file;
     }
 
 }
