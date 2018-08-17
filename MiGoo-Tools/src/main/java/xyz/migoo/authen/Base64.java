@@ -1,4 +1,4 @@
-package xyz.migoo.rsa;
+package xyz.migoo.authen;
 
 /**
 * @author xiaomi

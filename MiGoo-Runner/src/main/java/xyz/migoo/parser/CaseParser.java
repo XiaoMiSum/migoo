@@ -50,6 +50,8 @@ public class CaseParser{
             JSONArray validate = jsonCases.getJSONObject(i).getJSONArray(Dict.VALIDATE);
             JSONObject setUp = jsonCases.getJSONObject(i).getJSONObject(Dict.CASE_SETUP_HOOK);
 
+            // 将 setUp.hook 中使用变量的参数 替换成变量值
+            Variable.bindVariable(variables, setUp, Dict.CASE_SETUP_HOOK);
             Variable.bindVariable(variables, body);
 
             CaseSet.Case aCase = new CaseSet.Case();

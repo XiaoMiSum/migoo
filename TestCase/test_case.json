@@ -17,7 +17,7 @@
       {
         "title": "正确的用户名\\密码登录，返回值包等于期望值",
         "setUp.hook": {
-          "pwd": "${getPwd(123456)}"
+          "pwd": "${getPwd($user)}"
         },
         "body": {
           "user": "$user",

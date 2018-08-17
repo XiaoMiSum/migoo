@@ -1,4 +1,4 @@
-package xyz.migoo.md5;
+package xyz.migoo.authen;
 
 import java.security.MessageDigest;
 
@@ -7,7 +7,7 @@ import java.security.MessageDigest;
  * @date 2017/3/27.
  */
 public final class MD5 {
-    private final static String[] hexDigits = {"0", "1", "2", "3", "4", "5", "6", "7",
+    private final static String[] HEX_DIGITS = {"0", "1", "2", "3", "4", "5", "6", "7",
             "8", "9", "a", "b", "c", "d", "e", "f"};
 
     private MD5() {
@@ -40,7 +40,7 @@ public final class MD5 {
         }
         int d1 = n / 16;
         int d2 = n % 16;
-        return hexDigits[d1] + hexDigits[d2];
+        return HEX_DIGITS[d1] + HEX_DIGITS[d2];
     }
 
     /**

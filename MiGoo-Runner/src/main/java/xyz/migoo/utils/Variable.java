@@ -1,6 +1,7 @@
 package xyz.migoo.utils;
 
 import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.config.Dict;
 import xyz.migoo.exception.VariableException;
 
 import java.lang.reflect.Method;
@@ -15,8 +16,7 @@ import java.util.regex.Pattern;
  */
 public class Variable {
 
-    private static  final Pattern PATTERN = Pattern.compile("^\\$\\{(\\w+)\\(([\\$\\w[-]* =,]*)\\)\\}");
-
+    private static final Pattern PATTERN = Pattern.compile("^\\$\\{(\\w+)\\(([\\$\\w[-]*, ]*)\\)\\}");
     private static Method[] methods = null;
 
     private Variable() {
@@ -26,27 +26,48 @@ public class Variable {
         if (variables == null || body == null) {
             return;
         }
-        bindVariableByJSONObject(variables, body);
+        bindVariable(variables, body , Dict.CASE_BODY);
+    }
+
+    public static void bindVariable(JSONObject variables, JSONObject body, String leave) {
+        if (variables == null || body == null) {
+            return;
+        }
+        bindVariableByJSONObject(variables, body, leave);
     }
 
     /**
-     * 绑定变量，从 variables 中取出 key，再通过 key 从 body 中取出 value
+     * 绑定变量，从 CONFIG_VARIABLES 中取出 key，再通过 key 从 body 中取出 value
      * 当 value = $key 时，则认为需要将 body 的 value 替换为变量的 value
      *
      * @param variables 变量列表 JSONObject
      * @param body      需要被替换的 JSONObject
      */
-    private static void bindVariableByJSONObject(JSONObject variables, JSONObject body) {
-        for (String key : variables.keySet()) {
-            String object = body.getString(key);
-            if (StringUtil.isNotBlank(object)) {
-                String variablesValue = variables.getString(key);
-                Matcher matcher = PATTERN.matcher(variablesValue);
-                if (matcher.find()){
-                    body.put(key, function(matcher.group(1), matcher.group(2)));
-                }else {
-                    if (object.equals("$" + key)) {
-                        body.put(key, variables.getString(key));
+    private static void bindVariableByJSONObject(JSONObject variables, JSONObject body, String leave) {
+        if (leave.equals(Dict.CASE_BODY)) {
+            for (String variable : variables.keySet()) {
+                String object = body.getString(variable);
+                if (StringUtil.isNotBlank(object)) {
+                    String variablesValue = variables.getString(variable);
+                    Matcher matcher = PATTERN.matcher(variablesValue);
+                    if (matcher.find()) {
+                        body.put(variable, function(matcher.group(1), matcher.group(2)));
+                    }
+                    if (object.equals("$" + variable)) {
+                        body.put(variable, variables.getString(variable));
+                    }
+                }
+            }
+        }
+        if (leave.equals(Dict.CASE_SETUP_HOOK)) {
+            for (String variable : variables.keySet()) {
+                String object = variables.getString(variable);
+                String regex = "$" + variable;
+                for (String key : body.keySet()){
+                    String object2 = body.getString(key);
+                    if (StringUtil.contains(object2, regex)){
+                        String object3 = object2.replace(regex, object);
+                        body.put(key, object3);
                     }
                 }
             }
@@ -56,8 +77,8 @@ public class Variable {
     private static String function(String methodName, String params) {
         String value = "";
         try {
-            if(methods == null){
-                Class clazz = Class.forName("xyz.migoo.test.utils.Tester");
+            if (methods == null){
+                Class clazz = Class.forName("xyz.migoo.test.utils.ExpandedTester");
                 methods = clazz.getDeclaredMethods();
             }
             for (Method method : methods) {

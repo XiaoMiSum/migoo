@@ -1,4 +1,4 @@
-package xyz.migoo.md5;
+package xyz.migoo.authen;
 
 /**
  * @author Administrator

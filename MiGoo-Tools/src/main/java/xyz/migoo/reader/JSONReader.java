@@ -20,25 +20,21 @@ public class JSONReader extends AbstractReader {
 
     public JSONReader(String path) {
         this.path = path;
+        this.file = new File(path);
     }
 
     public JSONReader(File file) {
         this.file = file;
+        this.path = file.getPath();
     }
 
     public JSON read(){
-        InputStream inputStream;
+        InputStream inputStream = null;
         try {
-            if(StringUtil.isNotBlank(this.path)){
-                if (super.isOutsideFile(path)){
-                    file = new File(path);
-                    inputStream = this.inputStream();
-                }else {
-                    ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-                    inputStream = classloader.getResourceAsStream(this.path);
-                }
-            }else {
+            if (super.isOutsideFile(path)){
                 inputStream = this.inputStream();
+            }else {
+                inputStream = getClass().getResourceAsStream(this.path);
             }
         }catch (Exception e){
             LOG.error(e.getMessage(), e);
@@ -69,6 +65,14 @@ public class JSONReader extends AbstractReader {
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             throw new ReaderException(e.getMessage() + ". file path : " + this.path);
+        }finally {
+            if (inputStream != null){
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return json;
     }
