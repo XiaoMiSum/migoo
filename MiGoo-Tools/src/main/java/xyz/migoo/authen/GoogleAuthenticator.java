@@ -28,14 +28,22 @@ public class GoogleAuthenticator {
 
     public static final String RANDOM_NUMBER_ALGORITHM = "SHA1PRNG";
 
+    private static final int LENGTH = 5;
+
+    private static final int SCRATCH_CODE_LENGTH = 8;
+
+    private static final int BYTES_PER_SCRATCH_CODE = 4;
+
+    private final int maxWindowSize = 17;
+
     /**
      * default 3 - max 17 (from google docs)最多可偏移的时间
      */
-    int window_size = 3;
+    int windowSize = 3;
 
     public void setWindowSize(int s) {
-        if (s >= 1 && s <= 17) {
-            window_size = s;
+        if (s >= 1 && s <= maxWindowSize) {
+            windowSize = s;
         }
     }
 
@@ -46,7 +54,7 @@ public class GoogleAuthenticator {
      * @param secretKey
      * @return
      */
-    public static Boolean checkAuthCode(String codes, String secretKey) {
+    public static Boolean check(String codes, String secretKey) {
         long code = Long.parseLong(codes);
         long t = System.currentTimeMillis();
         GoogleAuthenticator ga = new GoogleAuthenticator();
@@ -55,12 +63,12 @@ public class GoogleAuthenticator {
         return r;
     }
 
-    public static String genAuthCode(String secretKey) {
+    public static String sign(String secretKey) {
         long t = (System.currentTimeMillis() / 1000L) / 30L;
         byte[] decodedKey = new Base32().decode(secretKey);
         try {
             String code = String.valueOf(verifyCode(decodedKey, t));
-            if (code.length() == 5){
+            if (code.length() == LENGTH){
                 code = "0" + code;
             }
             return code;
@@ -107,7 +115,7 @@ public class GoogleAuthenticator {
         long t = (timeMsec / 1000L) / 30L;
         // Window is used to check codes generated in the near past.
         // You can use this value to tune how far you're willing to go.
-        for (int i = -window_size; i <= window_size; ++i) {
+        for (int i = -windowSize; i <= windowSize; ++i) {
             long hash;
             try {
                 hash = verifyCode(decodedKey, t + i);
@@ -129,7 +137,7 @@ public class GoogleAuthenticator {
     private static int verifyCode(byte[] key, long t) throws NoSuchAlgorithmException, InvalidKeyException {
         byte[] data = new byte[8];
         long value = t;
-        for (int i = 8; i-- > 0; value >>>= 8) {
+        for (int i = SCRATCH_CODE_LENGTH; i-- > 0; value >>>= SCRATCH_CODE_LENGTH) {
             data[i] = (byte) value;
         }
         SecretKeySpec signKey = new SecretKeySpec(key, "HmacSHA1");
@@ -139,7 +147,7 @@ public class GoogleAuthenticator {
         int offset = hash[20 - 1] & 0xF;
         // We're using a long because Java hasn't got unsigned int.
         long truncatedHash = 0;
-        for (int i = 0; i < 4; ++i) {
+        for (int i = 0; i < BYTES_PER_SCRATCH_CODE; ++i) {
             truncatedHash <<= 8;
             // We are dealing with signed bytes:
             // we just keep the first byte.
