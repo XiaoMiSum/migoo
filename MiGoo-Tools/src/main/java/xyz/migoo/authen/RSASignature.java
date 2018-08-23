@@ -6,6 +6,9 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import java.io.File;
+import java.io.FileReader;
+import java.io.Reader;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -197,5 +200,20 @@ public class RSASignature {
 		} catch (BadPaddingException e) {
 			throw new Exception("密文数据已损坏");
 		}
+	}
+
+
+	public static void main(String[] args) throws Exception {
+            File inFile = new File("/Users/kogome/pub.key");
+            long fileLen = inFile.length();
+            Reader reader = new FileReader(inFile);
+            char[] content = new char[(int) fileLen];
+            reader.read(content);
+            String s = new String(content);
+            s = s.replaceAll("\n","");
+            s = s.replaceAll("-","");
+            s = s.replaceAll("END PUBLIC KEY","");
+            s = s.replaceAll("BEGIN PUBLIC KEY","");
+        System.out.println(s);
 	}
 }

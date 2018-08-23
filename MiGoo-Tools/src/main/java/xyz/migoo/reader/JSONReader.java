@@ -34,7 +34,8 @@ public class JSONReader extends AbstractReader {
             if (super.isOutsideFile(path)){
                 inputStream = this.inputStream();
             }else {
-                inputStream = getClass().getResourceAsStream(this.path);
+                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+                inputStream = classLoader.getResourceAsStream(this.path);
             }
         }catch (Exception e){
             LOG.error(e.getMessage(), e);

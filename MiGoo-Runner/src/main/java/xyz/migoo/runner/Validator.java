@@ -117,15 +117,23 @@ public class Validator extends Assert {
     private static void function(String searchChar){
         if (CHECK_BODY.contains(searchChar)) {
             function = Dict.FUNCTION_BODY;
+            return;
         }
         if (CHECK_CODE.contains(searchChar)) {
             function = Dict.FUNCTION_STATUS;
+            return;
         }
         if (FUNCTION_EQUALS.contains(searchChar)) {
             function = Dict.VALIDATE_TYPE_EQUALS;
+            return;
         }
         if (FUNCTION_CONTAINS.contains(searchChar)) {
             function = Dict.VALIDATE_TYPE_CONTAINS;
+            return;
+        }
+        if (isJson(searchChar)) {
+            function = Dict.ACTUAL_JSON;
+            return;
         }
         if (function == null){
             throw new ValidatorException("'function' is null");

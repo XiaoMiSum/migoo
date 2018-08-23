@@ -5,6 +5,7 @@ import xyz.migoo.utils.StringUtil;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * @author xiaomi
@@ -22,16 +23,28 @@ public class Platform {
 
     public static final String OS_VERSION = System.getProperty("os.name") + "  " + System.getProperty("os.version");
 
-    public static final List FUNCTION_EQUALS = Arrays.asList(
+    public static final List<String> FUNCTION_EQUALS = Arrays.asList(
             StringUtil.trim(PROPERTIES.get("function.equals")).split(","));
 
-    public static final List FUNCTION_CONTAINS = Arrays.asList(
+    public static final List<String> FUNCTION_CONTAINS = Arrays.asList(
             StringUtil.trim(PROPERTIES.get("function.contains")).split(","));
 
-    public static final List CHECK_BODY = Arrays.asList(
+    private static final List<String> CHECK_JSON = Arrays.asList(
+            StringUtil.trim(PROPERTIES.get("check.json")).split(","));
+
+    public static boolean isJson(String str){
+        for (String key : CHECK_JSON){
+            if (Pattern.compile(key).matcher(str).find()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static final List<String> CHECK_BODY = Arrays.asList(
             StringUtil.trim(PROPERTIES.get("check.body")).split(","));
 
-    public static final List CHECK_CODE = Arrays.asList(
+    public static final List<String> CHECK_CODE = Arrays.asList(
             StringUtil.trim(PROPERTIES.get("check.code")).split(","));
 
     public static final boolean MAIL_SEND = Boolean.valueOf(PROPERTIES.get("mail.send").trim());

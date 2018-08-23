@@ -41,4 +41,6 @@ public class Dict {
 
     public static final String FUNCTION_STATUS = "status";
 
+    public static final String ACTUAL_JSON = "json";
+
 }

@@ -1,6 +1,7 @@
 package xyz.migoo.http;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.http.Header;
 import java.util.Locale;
 
@@ -78,9 +79,9 @@ public class Response {
         return body;
     }
 
-    public JSON json() {
+    public JSONObject json() {
         try {
-            return (JSON) JSON.parse(body);
+            return JSONObject.parseObject(body);
         }catch (Exception e){
             return null;
         }

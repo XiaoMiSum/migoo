@@ -16,8 +16,6 @@ import javax.net.ssl.TrustManager;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +43,6 @@ public class Client {
      * @return Response
      */
     public Response execute(Request request) {
-        log.info("request method: " + request.method());
         if (HttpGet.METHOD_NAME.equals(request.method())) {
             return doGet(request);
         }

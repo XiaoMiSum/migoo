@@ -44,7 +44,8 @@ public class PropertiesReader extends AbstractReader {
      */
     private PropertiesReader read() {
         this.props = new java.util.Properties();
-        InputStream is = this.getClass().getResourceAsStream(this.path);
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        InputStream is = classLoader.getResourceAsStream(this.path);
         try {
             this.props.load(is);
         } catch (IOException e) {
