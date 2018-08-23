@@ -52,6 +52,11 @@ types详细值，请查看配置文件 application.properties
                             "check": "body", 
                             "expect": "succ", 
                             "types": "contain"
+                        },
+                        {
+                            "check": "body.code", 
+                            "expect": "200", 
+                            "types": "eq"
                         }
                     ]
                 },                 
