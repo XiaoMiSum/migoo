@@ -24,16 +24,9 @@
           "pwd": "$pwd"
         },
         "validate": [
-          {
-            "check": "$check",
-            "expect": 200,
-            "types": "=="
-          },
-          {
-            "check": "body",
-            "expect": "success",
-            "types": "eq"
-          }
+          {"check": "status", "expect": 200, "types": "=="},
+          {"check": "body.msg", "expect": "success", "types": "eq"},
+          {"check": "body.data", "expect": "", "types": "null"}
         ]
       }
     ]

@@ -8,7 +8,6 @@ import xyz.migoo.config.Dict;
 import xyz.migoo.exception.ValidatorException;
 import xyz.migoo.http.Response;
 import xyz.migoo.utils.Function;
-import xyz.migoo.utils.Log;
 import xyz.migoo.utils.StringUtil;
 
 import java.lang.reflect.Method;
@@ -53,7 +52,7 @@ public class Validator extends Assert {
     }
 
     private static void validation(Response response, JSONObject validate) throws ValidatorException {
-        String types = validate.getString(Dict.VALIDATE_TYPE).toLowerCase();
+        String types = validate.getString(Dict.VALIDATE_TYPE);
         String check = validate.getString(Dict.VALIDATE_CHECK);
         Object expect = validate.get(Dict.VALIDATE_EXPECT);
 
@@ -116,11 +115,11 @@ public class Validator extends Assert {
 
     private static void function(String searchChar){
         if (CHECK_BODY.contains(searchChar)) {
-            function = Dict.FUNCTION_BODY;
+            function = Dict.EVAL_ACTUAL_BODY;
             return;
         }
         if (CHECK_CODE.contains(searchChar)) {
-            function = Dict.FUNCTION_STATUS;
+            function = Dict.EVAL_ACTUAL_STATUS;
             return;
         }
         if (FUNCTION_EQUALS.contains(searchChar)) {
@@ -131,8 +130,16 @@ public class Validator extends Assert {
             function = Dict.VALIDATE_TYPE_CONTAINS;
             return;
         }
+        if (FUNCTION_IS_EMPTY.contains(searchChar)) {
+            function = Dict.VALIDATE_TYPE_IS_EMPTY;
+            return;
+        }
+        if (FUNCTION_IS_NOT_EMPTY.contains(searchChar)) {
+            function = Dict.VALIDATE_TYPE_IS_NOT_EMPTY;
+            return;
+        }
         if (isJson(searchChar)) {
-            function = Dict.ACTUAL_JSON;
+            function = Dict.EVAL_ACTUAL_JSON;
             return;
         }
         if (function == null){

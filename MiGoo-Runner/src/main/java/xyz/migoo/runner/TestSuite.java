@@ -28,7 +28,7 @@ public class TestSuite extends junit.framework.TestSuite{
         String method = requestConfig.getString("method");
         JSONObject headers = requestConfig.getJSONObject("headers");
 
-        Request.Builder builder = new Request.Builder().url(url).method(method).headers(headers);
+        Request.Builder builder = new Request.Builder().method(method).headers(headers);
         for (CaseSet.Case testCase : caseSet.getCases()) {
             String title = testCase.getTitle();
             JSONObject body = testCase.getBody();
@@ -36,7 +36,7 @@ public class TestSuite extends junit.framework.TestSuite{
 
             Variable.bindVariable(setUp, body);
 
-            Request request = builder.body(body).title(title).build();
+            Request request = builder.url(url).body(body).title(title).build();
             Task task = new Task(request, this);
             this.addTest(title, task, testCase);
         }

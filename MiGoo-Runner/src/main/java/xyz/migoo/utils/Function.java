@@ -1,6 +1,7 @@
 package xyz.migoo.utils;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.config.Dict;
 import xyz.migoo.http.Response;
@@ -54,7 +55,7 @@ public class Function {
 
     public static void status(Response response, JSONObject validate) {
         validate.put(Dict.VALIDATE_ACTUAL, response.statusCode());
-        validate.put(Dict.VALIDATE_TYPE, Dict.VALIDATE_TYPE_EQUALS);
+        validate.put(Dict.VALIDATE_TYPE, Dict.VALIDATE_TYPE_IS_EMPTY);
     }
 
     public static boolean equals(Object actual, Object expect) {
@@ -66,6 +67,20 @@ public class Function {
 
     public static boolean contains(Object actual, Object expect) {
         return StringUtil.contains((String) actual, (String) expect);
+    }
+
+    public static boolean isEmpty(Object actual, Object expect) {
+        if (actual instanceof JSONObject){
+            return ((JSONObject) actual).isEmpty();
+        }
+        if (actual instanceof JSONArray){
+            return ((JSONArray) actual).isEmpty();
+        }
+        return actual == null ? true : "".equals(actual);
+    }
+
+    public static boolean isNotEmpty(Object actual, Object expect) {
+        return !isEmpty(actual, expect);
     }
 
 /*    public static void main(String[] args) {

@@ -37,10 +37,14 @@ public class Dict {
 
     public static final String VALIDATE_TYPE_CONTAINS = "contains";
 
-    public static final String FUNCTION_BODY = "body";
+    public static final String VALIDATE_TYPE_IS_EMPTY = "isEmpty";
 
-    public static final String FUNCTION_STATUS = "status";
+    public static final String VALIDATE_TYPE_IS_NOT_EMPTY = "isNotEmpty";
 
-    public static final String ACTUAL_JSON = "json";
+    public static final String EVAL_ACTUAL_BODY = "body";
+
+    public static final String EVAL_ACTUAL_STATUS = "status";
+
+    public static final String EVAL_ACTUAL_JSON = "json";
 
 }

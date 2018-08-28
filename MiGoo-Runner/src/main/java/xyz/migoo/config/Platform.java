@@ -29,6 +29,14 @@ public class Platform {
     public static final List<String> FUNCTION_CONTAINS = Arrays.asList(
             StringUtil.trim(PROPERTIES.get("function.contains")).split(","));
 
+
+    public static final List<String> FUNCTION_IS_EMPTY = Arrays.asList(
+            StringUtil.trim(PROPERTIES.get("function.isEmpty")).split(","));
+
+    public static final List<String> FUNCTION_IS_NOT_EMPTY = Arrays.asList(
+            StringUtil.trim(PROPERTIES.get("function.isNotEmpty")).split(","));
+
+
     private static final List<String> CHECK_JSON = Arrays.asList(
             StringUtil.trim(PROPERTIES.get("check.json")).split(","));
 
