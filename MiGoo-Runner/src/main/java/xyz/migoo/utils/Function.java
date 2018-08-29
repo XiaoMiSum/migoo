@@ -7,6 +7,8 @@ import xyz.migoo.config.Dict;
 import xyz.migoo.http.Response;
 
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author xiaomi
@@ -42,13 +44,31 @@ public class Function {
         Object value = "----";
         // 2. 通过 key 从 response 中 获取对应的值
         JSONObject json = response.json();
-        for (int i = 0; i < keys.length; i++){
-            if (keys.length >= 2 & i+2 < keys.length){
-                json = json.getJSONObject(keys[i+1]);
-            }else if (keys.length >= 2 & i+1 < keys.length){
-                value = json.get(keys[i+1]);
+        for (int i = 0; i < keys.length; i++) {
+            // keys.length >= 2 代表是 多层嵌套 json
+            // 当 i + 2 > keys.length 时 说明 是多层嵌套 json 的最后一层 json 对象
+            if (keys.length >= 2 && i + 2 < keys.length) {
+                json = json.getJSONObject(keys[i + 1]);
+            // 当 i + 1 > keys.length 时 从 最后一层 json 对象中 获取 key值
+            } else if (keys.length >= 2 && i + 1 < keys.length) {
+                value = json.get(keys[i + 1]);
             }
         }
+        // 3. 设置 实际值到 validate 对象中
+        validate.put(Dict.VALIDATE_ACTUAL, value);
+    }
+
+    public static void html(Response response, JSONObject validate) {
+        // 1. 从 validate 获取 取值的 key
+        String[] keys = validate.getString(Dict.VALIDATE_CHECK).split("\\.");
+        String[] select = new String[keys.length - 1];
+        for (int i = 0; i < select.length; i++) {
+            if (select.length >= 2 & i + 1 <= select.length) {
+                select[i] = keys[i + 1];
+            }
+        }
+        // 2. 通过 key 从 response.body (html) 中 获取对应的值
+        String value = HtmlUtil.parse(response.body(), select);
         // 3. 设置 实际值到 validate 对象中
         validate.put(Dict.VALIDATE_ACTUAL, value);
     }
@@ -59,42 +79,57 @@ public class Function {
     }
 
     public static boolean equals(Object actual, Object expect) {
-        if(expect instanceof String && !(actual instanceof String)){
+        if (expect instanceof String && !(actual instanceof String)) {
             actual = String.valueOf(actual);
+            return actual.equals(expect);
         }
-        return actual.equals(expect);
+        if (expect instanceof JSON) {
+            return actual.equals(expect);
+        }
+        return actual == expect;
     }
 
     public static boolean contains(Object actual, Object expect) {
-        return StringUtil.contains((String) actual, (String) expect);
+        if (actual instanceof String) {
+            return StringUtil.contains((String) actual, (String) expect);
+        }
+        if (actual instanceof Map) {
+            Map map = (Map) actual;
+            return map.containsKey(expect) || map.containsValue(expect);
+        }
+        if (actual instanceof List) {
+            return ((List) actual).contains(expect);
+        }
+        return false;
     }
 
     public static boolean isEmpty(Object actual, Object expect) {
-        if (actual instanceof JSONObject){
+        if (actual instanceof JSONObject) {
             return ((JSONObject) actual).isEmpty();
         }
-        if (actual instanceof JSONArray){
+        if (actual instanceof JSONArray) {
             return ((JSONArray) actual).isEmpty();
         }
-        return actual == null ? true : "".equals(actual);
+        if (actual instanceof String) {
+            return StringUtil.isBlank((String) actual);
+        }
+        return actual == null;
     }
 
     public static boolean isNotEmpty(Object actual, Object expect) {
         return !isEmpty(actual, expect);
     }
 
-/*    public static void main(String[] args) {
-        Response response = new Response();
-        response.body("{" +
-                "    \"status\": 200," +
-                "    \"error_code\": 200," +
-                "    \"data\": {" +
-                "        \"withdrawalToken\": \"64fda979-5eb1-3943-11bd-b7bf14d00d4b13p5c36oeQIv9jzBjq12j0w2r9ClqcUK3dR7gttFpToG02TMLT1\"" +
-                "   }" +
-                "}");
-        JSONObject json = JSONObject.parseObject("{\"check\": \"body.data.withdrawalToken\", \"expect\": 200, \"types\": \"eq\"}");
-
-        json(response, json);
-    }*/
-
+    public static void main(String[] args) {
+        String[] keys = "html.#login".split("\\.");
+        String[] select = new String[keys.length - 1];
+        for (int i = 0; i < select.length; i++) {
+            if (select.length >= 1 & i + 1 <= select.length) {
+                select[i] = keys[i + 1];
+            }
+            System.out.println(select[i]);
+        }
+        // 2. 通过 key 从 response 中 获取对应的值
+        //String value = HtmlUtil.parse(response.body(), select);
+    }
 }

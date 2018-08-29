@@ -142,6 +142,10 @@ public class Validator extends Assert {
             function = Dict.EVAL_ACTUAL_JSON;
             return;
         }
+        if (isHtml(searchChar)) {
+            function = Dict.EVAL_ACTUAL_HTML;
+            return;
+        }
         if (function == null){
             throw new ValidatorException("'function' is null");
         }

@@ -24,21 +24,24 @@ public class Platform {
     public static final String OS_VERSION = System.getProperty("os.name") + "  " + System.getProperty("os.version");
 
     public static final List<String> FUNCTION_EQUALS = Arrays.asList(
-            StringUtil.trim(PROPERTIES.get("function.equals")).split(","));
+            StringUtil.trimAny(PROPERTIES.get("function.equals")).split(","));
 
     public static final List<String> FUNCTION_CONTAINS = Arrays.asList(
-            StringUtil.trim(PROPERTIES.get("function.contains")).split(","));
+            StringUtil.trimAny(PROPERTIES.get("function.contains")).split(","));
 
 
     public static final List<String> FUNCTION_IS_EMPTY = Arrays.asList(
-            StringUtil.trim(PROPERTIES.get("function.isEmpty")).split(","));
+            StringUtil.trimAny(PROPERTIES.get("function.isEmpty")).split(","));
 
     public static final List<String> FUNCTION_IS_NOT_EMPTY = Arrays.asList(
-            StringUtil.trim(PROPERTIES.get("function.isNotEmpty")).split(","));
-
+            StringUtil.trimAny(PROPERTIES.get("function.isNotEmpty")).split(","));
 
     private static final List<String> CHECK_JSON = Arrays.asList(
-            StringUtil.trim(PROPERTIES.get("check.json")).split(","));
+            StringUtil.trimAny(PROPERTIES.get("check.json")).split(","));
+
+
+    private static final List<String> CHECK_HTML = Arrays.asList(
+            StringUtil.trimAny(PROPERTIES.get("check.html")).split(","));
 
     public static boolean isJson(String str){
         for (String key : CHECK_JSON){
@@ -49,11 +52,20 @@ public class Platform {
         return false;
     }
 
+    public static boolean isHtml(String str){
+        for (String key : CHECK_JSON){
+            if (Pattern.compile(key).matcher(str).find()){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static final List<String> CHECK_BODY = Arrays.asList(
-            StringUtil.trim(PROPERTIES.get("check.body")).split(","));
+            StringUtil.trimAny(PROPERTIES.get("check.body")).split(","));
 
     public static final List<String> CHECK_CODE = Arrays.asList(
-            StringUtil.trim(PROPERTIES.get("check.code")).split(","));
+            StringUtil.trimAny(PROPERTIES.get("check.code")).split(","));
 
     public static final boolean MAIL_SEND = Boolean.valueOf(PROPERTIES.get("mail.send").trim());
 

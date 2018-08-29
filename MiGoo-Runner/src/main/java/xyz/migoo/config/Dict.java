@@ -47,4 +47,6 @@ public class Dict {
 
     public static final String EVAL_ACTUAL_JSON = "json";
 
+    public static final String EVAL_ACTUAL_HTML = "html";
+
 }
