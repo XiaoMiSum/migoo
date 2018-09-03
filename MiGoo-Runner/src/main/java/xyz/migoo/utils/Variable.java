@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  */
 public class Variable {
 
-    private static final Pattern PATTERN = Pattern.compile("^\\$\\{(\\w+)\\(([\\$\\w[-]*, ]*)\\)\\}");
+    public static final Pattern PATTERN = Pattern.compile("^\\$\\{(\\w+)\\(([\\$\\w[-]*, ]*)\\)\\}");
     private static Method[] methods = null;
 
     private Variable() {
@@ -51,7 +51,7 @@ public class Variable {
                     String variablesValue = variables.getString(variable);
                     Matcher matcher = PATTERN.matcher(variablesValue);
                     if (matcher.find()) {
-                        body.put(variable, function(matcher.group(1), matcher.group(2)));
+                        variables.put(variable, function(matcher.group(1), matcher.group(2)));
                     }
                     if (object.equals("$" + variable)) {
                         body.put(variable, variables.getString(variable));
@@ -59,7 +59,7 @@ public class Variable {
                 }
             }
         }
-        if (leave.equals(Dict.CASE_SETUP_HOOK)) {
+        if (leave.equals(Dict.CASE_SETUP)) {
             for (String variable : variables.keySet()) {
                 String object = variables.getString(variable);
                 String regex = "$" + variable;
@@ -78,7 +78,7 @@ public class Variable {
         String value = "";
         try {
             if (methods == null){
-                Class clazz = Class.forName("xyz.migoo.test.utils.ExpandedTester");
+                Class clazz = Class.forName("xyz.migoo.test.utils.Variable");
                 methods = clazz.getDeclaredMethods();
             }
             for (Method method : methods) {

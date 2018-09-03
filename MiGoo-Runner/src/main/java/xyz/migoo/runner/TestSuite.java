@@ -1,9 +1,11 @@
 package xyz.migoo.runner;
 
 import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.config.Dict;
 import xyz.migoo.http.Request;
 import xyz.migoo.http.Response;
 import xyz.migoo.parser.CaseSet;
+import xyz.migoo.utils.Hook;
 import xyz.migoo.utils.Variable;
 
 /**
@@ -23,6 +25,8 @@ public class TestSuite extends junit.framework.TestSuite{
 
     private void init(CaseSet caseSet){
         JSONObject requestConfig = caseSet.getConfig().getRequest();
+        // beforeClass
+        Hook.hook(requestConfig, Dict.CONFIG_BEFORE_CLASS);
 
         String url = requestConfig.getString("url");
         String method = requestConfig.getString("method");
@@ -35,6 +39,8 @@ public class TestSuite extends junit.framework.TestSuite{
             JSONObject setUp = testCase.getSetUp();
 
             Variable.bindVariable(setUp, body);
+            // before
+            Hook.hook(setUp, Dict.CASE_SETUP_BEFORE);
 
             Request request = builder.url(url).body(body).title(title).build();
             Task task = new Task(request, this);

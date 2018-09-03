@@ -22,7 +22,16 @@ public class CaseParser{
         caseSets = new ArrayList<>();
     }
 
-    public List<CaseSet> loadCaseSets(String path){
+    public List<CaseSet> loadCaseSets(String pathOrSet){
+        try {
+
+        }catch (Exception e){
+            loadCaseSetsByFile(pathOrSet);
+        }
+        return this.caseSets;
+    }
+
+    private void loadCaseSetsByFile(String path){
         File file = new File(path);
         if (file.isDirectory()){
             String[] fList = file.list();
@@ -39,7 +48,17 @@ public class CaseParser{
                 this.caseSets(json);
             }
         }
-        return this.caseSets;
+    }
+
+    private void loadCaseSetBySet(Object set){
+        JSONArray caseArray;
+        if (set instanceof JSONObject){
+            caseArray = new JSONArray(1);
+            caseArray.add(set);
+        }else {
+            caseArray = (JSONArray) set;
+        }
+        this.caseSets(caseArray);
     }
 
     private List<CaseSet.Case> cases(JSONArray jsonCases, JSONObject variables){
@@ -48,10 +67,10 @@ public class CaseParser{
             String title = jsonCases.getJSONObject(i).getString(Dict.CASE_TITLE);
             JSONObject body = jsonCases.getJSONObject(i).getJSONObject(Dict.CASE_BODY);
             JSONArray validate = jsonCases.getJSONObject(i).getJSONArray(Dict.VALIDATE);
-            JSONObject setUp = jsonCases.getJSONObject(i).getJSONObject(Dict.CASE_SETUP_HOOK);
+            JSONObject setUp = jsonCases.getJSONObject(i).getJSONObject(Dict.CASE_SETUP);
 
             // 将 setUp.hook 中使用变量的参数 替换成变量值
-            Variable.bindVariable(variables, setUp, Dict.CASE_SETUP_HOOK);
+            Variable.bindVariable(variables, setUp, Dict.CASE_SETUP);
             Variable.bindVariable(variables, body);
 
             CaseSet.Case aCase = new CaseSet.Case();

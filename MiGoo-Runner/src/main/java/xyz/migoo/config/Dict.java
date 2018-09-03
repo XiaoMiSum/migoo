@@ -15,13 +15,17 @@ public class Dict {
 
     public static final String CONFIG_REQUEST = "request";
 
+    public static final String CONFIG_BEFORE_CLASS = "beforeClass";
+
     public static final String CASE = "case";
 
     public static final String CASE_BODY = "body";
 
     public static final String CASE_TITLE = "title";
 
-    public static final String CASE_SETUP_HOOK = "setUp.hook";
+    public static final String CASE_SETUP = "setUp";
+
+    public static final String CASE_SETUP_BEFORE = "before";
 
     public static final String VALIDATE = "validate";
 
