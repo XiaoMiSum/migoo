@@ -84,6 +84,7 @@ public class CaseSet {
 
     public static class Config{
         private JSONObject request;
+        private JSONObject variables;
 
         public JSONObject getRequest() {
             return request;
@@ -91,6 +92,14 @@ public class CaseSet {
 
         public void setRequest(JSONObject request) {
             this.request = request;
+        }
+
+        public JSONObject getVariables() {
+            return variables;
+        }
+
+        public void setVariables(JSONObject variables) {
+            this.variables = variables;
         }
     }
 

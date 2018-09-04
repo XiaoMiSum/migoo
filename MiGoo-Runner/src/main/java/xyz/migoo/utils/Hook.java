@@ -27,6 +27,9 @@ public class Hook {
      */
     public static void hook(JSONObject variables, String key) {
         JSONArray json = variables.getJSONArray(key);
+        if (json.isEmpty()){
+            return;
+        }
         for (int i = 0; i< json.size(); i++){
             String value = json.getString(i);
             Matcher matcher = PATTERN.matcher(value);

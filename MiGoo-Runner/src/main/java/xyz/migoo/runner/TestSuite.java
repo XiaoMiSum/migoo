@@ -26,7 +26,7 @@ public class TestSuite extends junit.framework.TestSuite{
     private void init(CaseSet caseSet){
         JSONObject requestConfig = caseSet.getConfig().getRequest();
         // beforeClass
-        Hook.hook(requestConfig, Dict.CONFIG_BEFORE_CLASS);
+        Hook.hook(caseSet.getConfig().getVariables(), Dict.CONFIG_BEFORE_CLASS);
 
         String url = requestConfig.getString("url");
         String method = requestConfig.getString("method");

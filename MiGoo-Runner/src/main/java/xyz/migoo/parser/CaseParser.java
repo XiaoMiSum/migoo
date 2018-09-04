@@ -1,5 +1,6 @@
 package xyz.migoo.parser;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.config.Dict;
@@ -24,7 +25,7 @@ public class CaseParser{
 
     public List<CaseSet> loadCaseSets(String pathOrSet){
         try {
-
+            loadCaseSetBySet(JSON.parse(pathOrSet));
         }catch (Exception e){
             loadCaseSetsByFile(pathOrSet);
         }
@@ -89,11 +90,13 @@ public class CaseParser{
             String name = testCases.getString(Dict.NAME);
             JSONObject jsonConfig = testCases.getJSONObject(Dict.CONFIG);
             JSONArray jsonCases = testCases.getJSONArray(Dict.CASE);
+            JSONObject variables = jsonConfig.getJSONObject(Dict.CONFIG_VARIABLES);
 
             CaseSet.Config config = new CaseSet.Config();
             config.setRequest(jsonConfig.getJSONObject(Dict.CONFIG_REQUEST));
+            config.setVariables(variables);
 
-            JSONObject variables = jsonConfig.getJSONObject(Dict.CONFIG_VARIABLES);
+            Variable.bindVariable(variables, variables, Dict.CASE_SETUP);
 
             CaseSet caseSet = new CaseSet();
             caseSet.setName(name);
