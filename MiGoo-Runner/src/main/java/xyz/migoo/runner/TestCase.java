@@ -1,8 +1,7 @@
 package xyz.migoo.runner;
 
+import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ValidatorException;
-import xyz.migoo.parser.CaseSet;
-
 
 /**
  * @author xiaomi
@@ -11,9 +10,9 @@ import xyz.migoo.parser.CaseSet;
 public class TestCase extends junit.framework.TestCase{
 
     private Task task;
-    private CaseSet.Case testCase;
+    private JSONObject testCase;
 
-    public TestCase(String testName, Task task, CaseSet.Case testCase){
+    public TestCase(String testName, Task task, JSONObject testCase){
         super(testName);
         this.task = task;
         this.testCase = testCase;

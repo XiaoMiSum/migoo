@@ -26,6 +26,9 @@ public class Hook {
      * @param key      需要被替换的 JSONObject
      */
     public static void hook(JSONObject variables, String key) {
+        if (variables ==null || variables.isEmpty()){
+            return;
+        }
         JSONArray json = variables.getJSONArray(key);
         if (json.isEmpty()){
             return;

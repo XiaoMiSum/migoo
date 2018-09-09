@@ -35,6 +35,13 @@ public class Client {
     private CloseableHttpClient httpClient;
     private static Log log = new Log(Client.class);
     protected static final String HTTPS = "https";
+    private Request request;
+
+    public Client(){}
+
+    public Client(Request request){
+        this.request = request;
+    }
 
     /**
      * 执行请求，返回 Response 对象
@@ -56,6 +63,10 @@ public class Client {
             return doDelete(request);
         }
         return doGet(request);
+    }
+
+    public Response execute(){
+        return execute(this.request);
     }
 
     /**

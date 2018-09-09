@@ -23,53 +23,33 @@ public class Variable {
     }
 
     public static void bindVariable(JSONObject variables, JSONObject body) {
-        if (variables == null || body == null) {
+        if (variables == null || body == null || variables.isEmpty() || body.isEmpty()) {
             return;
         }
-        bindVariable(variables, body , Dict.CASE_BODY);
-    }
-
-    public static void bindVariable(JSONObject variables, JSONObject body, String leave) {
-        if (variables == null || body == null) {
-            return;
-        }
-        bindVariableByJSONObject(variables, body, leave);
-    }
-
-    /**
-     * 绑定变量，从 CONFIG_VARIABLES 中取出 key，再通过 key 从 body 中取出 value
-     * 当 value = $key 时，则认为需要将 body 的 value 替换为变量的 value
-     *
-     * @param variables 变量列表 JSONObject
-     * @param body      需要被替换的 JSONObject
-     */
-    private static void bindVariableByJSONObject(JSONObject variables, JSONObject body, String leave) {
-        if (leave.equals(Dict.CASE_BODY)) {
-            for (String variable : variables.keySet()) {
-                String object = body.getString(variable);
-                if (StringUtil.isNotBlank(object)) {
-                    String variablesValue = variables.getString(variable);
-                    Matcher matcher = PATTERN.matcher(variablesValue);
-                    if (matcher.find()) {
-                        variables.put(variable, function(matcher.group(1), matcher.group(2)));
-                    }
-                    if (object.equals("$" + variable)) {
-                        body.put(variable, variables.getString(variable));
-                    }
+        for (String variable : variables.keySet()) {
+            String value = variables.getString(variable);
+            String regex = "$" + variable;
+            for (String key : body.keySet()){
+                String object = body.getString(key);
+                if (StringUtil.contains(object, regex)){
+                    body.put(key, object.replace(regex, value));
                 }
             }
         }
-        if (leave.equals(Dict.CASE_SETUP)) {
-            for (String variable : variables.keySet()) {
-                String object = variables.getString(variable);
-                String regex = "$" + variable;
-                for (String key : body.keySet()){
-                    String object2 = body.getString(key);
-                    if (StringUtil.contains(object2, regex)){
-                        String object3 = object2.replace(regex, object);
-                        body.put(key, object3);
-                    }
-                }
+    }
+
+    public static void evalVariable(JSONObject variables){
+        if (variables == null || variables.isEmpty()){
+            return;
+        }
+        for (String key : variables.keySet()){
+            Object object = variables.get(key);
+            if (!(object instanceof String)){
+                continue;
+            }
+            Matcher matcher = PATTERN.matcher((String)object);
+            if (matcher.find()){
+                variables.put(key, function(matcher.group(1), matcher.group(2)));
             }
         }
     }

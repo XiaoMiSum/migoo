@@ -1,10 +1,12 @@
 package xyz.migoo.runner;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.parser.CaseParser;
-import xyz.migoo.parser.CaseSet;
 import xyz.migoo.report.Report;
-import xyz.migoo.utils.StringUtil;
+import xyz.migoo.utils.EmailUtil;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -22,15 +24,34 @@ public class Runner {
         this.isMain = isMain;
     }
 
-    public TestResult run(String path, String template){
-        CaseSuite caseSuite = this.initTestSuite(path);
+    public TestResult run(String testSet){
+        CaseSuite caseSuite = this.initTestSuite(testSet);
         TestResult result = new TestRunner().run(caseSuite);
-        Report.generateReport(result.report(), caseSuite.name(), template, isMain);
+        Report.generateReport(result.report(), caseSuite.name(), true, isMain);
         return result;
     }
 
+    public void execute(String caseSetOrPath){
+        try {
+            JSON.parse(caseSetOrPath);
+            this.run(caseSetOrPath);
+        }catch (Exception e){
+            File file = new File(caseSetOrPath);
+            if (file.isDirectory()){
+                for (String f: file.list()){
+                    run(file.getPath() + f);
+                }
+            }else {
+                CaseSuite caseSuite = this.initTestSuite(caseSetOrPath);
+                TestResult result = new TestRunner().run(caseSuite);
+                Report.generateReport(result.report(), caseSuite.name(), false, isMain);
+                EmailUtil.sendEmail(isMain);
+            }
+        }
+    }
+
     private CaseSuite initTestSuite(String path){
-        List<CaseSet> caseSets = new CaseParser().loadCaseSets(path);
+        List<JSONObject> caseSets = new CaseParser().loadCaseSets(path);
         return new CaseSuite(caseSets);
     }
 

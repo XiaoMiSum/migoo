@@ -1,7 +1,8 @@
 package xyz.migoo.runner;
 
+import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.config.Dict;
 import xyz.migoo.http.Response;
-import xyz.migoo.parser.CaseSet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,14 +18,14 @@ public class CaseSuite extends junit.framework.TestSuite{
     private TestResult testResult;
     private StringBuilder testName;
 
-    public CaseSuite(List<CaseSet> caseSets){
+    public CaseSuite(List<JSONObject> caseSets){
         responses = new ArrayList<>();
         failures = new ArrayList<>();
         testResult = new TestResult();
         testName = new StringBuilder();
-        for (CaseSet caseSet: caseSets){
+        for (JSONObject caseSet: caseSets){
             TestSuite suite = new TestSuite(caseSet, this);
-            testName.append(caseSet.getName()).append("&");
+            testName.append(caseSet.getString(Dict.NAME)).append("&");
             addTest(suite);
         }
     }

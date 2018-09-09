@@ -17,13 +17,13 @@ import java.util.List;
 public class CaseParser{
 
     private final static String SUFFIX = ".json";
-    private List<CaseSet> caseSets;
+    private List<JSONObject> caseSets;
 
     public CaseParser(){
         caseSets = new ArrayList<>();
     }
 
-    public List<CaseSet> loadCaseSets(String pathOrSet){
+    public List<JSONObject> loadCaseSets(String pathOrSet){
         try {
             loadCaseSetBySet(JSON.parse(pathOrSet));
         }catch (Exception e){
@@ -62,48 +62,21 @@ public class CaseParser{
         this.caseSets(caseArray);
     }
 
-    private List<CaseSet.Case> cases(JSONArray jsonCases, JSONObject variables){
-        List<CaseSet.Case> caseList = new ArrayList(jsonCases.size());
-        for (int i = 0; i < jsonCases.size(); i++) {
-            String title = jsonCases.getJSONObject(i).getString(Dict.CASE_TITLE);
-            JSONObject body = jsonCases.getJSONObject(i).getJSONObject(Dict.CASE_BODY);
-            JSONArray validate = jsonCases.getJSONObject(i).getJSONArray(Dict.VALIDATE);
-            JSONObject setUp = jsonCases.getJSONObject(i).getJSONObject(Dict.CASE_SETUP);
-
-            // 将 setUp.hook 中使用变量的参数 替换成变量值
-            Variable.bindVariable(variables, setUp, Dict.CASE_SETUP);
-            Variable.bindVariable(variables, body);
-
-            CaseSet.Case aCase = new CaseSet.Case();
-            aCase.setBody(body);
-            aCase.setTitle(title);
-            aCase.setValidate(validate);
-            aCase.setSetUp(setUp);
-            caseList.add(aCase);
-        }
-        return caseList;
-    }
-
-    private List<CaseSet> caseSets(JSONArray jsonArray){
+    private List<JSONObject> caseSets(JSONArray jsonArray){
         for (int index = 0; index < jsonArray.size(); index++) {
             JSONObject testCases = jsonArray.getJSONObject(index);
-            String name = testCases.getString(Dict.NAME);
-            JSONObject jsonConfig = testCases.getJSONObject(Dict.CONFIG);
-            JSONArray jsonCases = testCases.getJSONArray(Dict.CASE);
-            JSONObject variables = jsonConfig.getJSONObject(Dict.CONFIG_VARIABLES);
-
-            CaseSet.Config config = new CaseSet.Config();
-            config.setRequest(jsonConfig.getJSONObject(Dict.CONFIG_REQUEST));
-            config.setVariables(variables);
-
-            Variable.bindVariable(variables, variables, Dict.CASE_SETUP);
-
-            CaseSet caseSet = new CaseSet();
-            caseSet.setName(name);
-            caseSet.setConfig(config);
-            caseSet.setCases(this.cases(jsonCases, variables));
-
-            caseSets.add(caseSet);
+            JSONObject variables = testCases.getJSONObject(Dict.CONFIG).getJSONObject(Dict.CONFIG_VARIABLES);
+            Variable.evalVariable(variables);
+            Variable.bindVariable(variables, testCases);
+            JSONArray caseArray = testCases.getJSONArray(Dict.CASE);
+            for (int i = 0; i < caseArray.size(); i++) {
+                JSONObject jsonCase = caseArray.getJSONObject(i);
+                JSONObject setUp = jsonCase.getJSONObject(Dict.CASE_SETUP);
+                Variable.evalVariable(setUp);
+                Variable.bindVariable(setUp, jsonCase);
+            }
+            testCases.put(Dict.CASE, caseArray);
+            caseSets.add(testCases);
         }
         return caseSets;
     }

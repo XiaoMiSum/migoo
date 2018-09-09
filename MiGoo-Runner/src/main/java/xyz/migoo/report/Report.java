@@ -31,19 +31,16 @@ public class Report {
     private Report(){
     }
 
-    public static String generateReport(Map<String, Object> report, String reportName, String templates, boolean isMain){
-        if (StringUtil.isBlank(templates)){
-            templates = "templates/migoo_report_template.html";
-        }
+    public static String generateReport(Map<String, Object> report, String reportName, boolean sendEmail, boolean isMain){
         if (StringUtil.isBlank(reportName)){
             reportName = "Auto Test Report";
         }
         report.put("report", "Test Report:  " + reportName);
         report.put("title", reportName + " - TestReport");
         report.put("platform", platform());
-        String content = render(templates, report);
+        String content = render("templates/migoo_report_template.html", report);
         File file = report(reportName, content, isMain);
-        if (Platform.MAIL_SEND){
+        if (sendEmail && Platform.MAIL_SEND){
             EmailUtil.sendEmail(content, file);
         }
         return file.getPath();
