@@ -4,11 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.config.Dict;
+import xyz.migoo.config.Platform;
 import xyz.migoo.http.Response;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 /**
  * @author xiaomi
@@ -16,9 +19,31 @@ import java.util.Map;
  */
 public class Function {
 
-    public static Method[] functionLoader() {
+    private static Map<String, Method> methodMap = null;
+
+    public static Map<String, Method> functionLoader() {
         Method[] methods = Function.class.getDeclaredMethods();
-        return methods;
+        Map<String, Method> map = new HashMap<>(methods.length);
+        for (Method method : methods){
+            map.put(method.getName(), method);
+        }
+        return map;
+    }
+
+    public static void evalExpect(JSONObject validate) throws Exception{
+        String value = validate.getString(Dict.VALIDATE_EXPECT);
+        Matcher matcher = Variable.PATTERN.matcher(value);
+        if (matcher.find()) {
+            if (methodMap == null) {
+                Class clazz = Class.forName(Platform.EXTENDS_VALIDATOR);
+
+                Method[] methods = clazz.getDeclaredMethods();
+                for (Method method : methods) {
+                    methodMap.put(method.getName(), method);
+                }
+            }
+            methodMap.get(matcher.group(1)).invoke(null, validate, matcher.group(2));
+        }
     }
 
     public static void body(Response response, JSONObject validate) {

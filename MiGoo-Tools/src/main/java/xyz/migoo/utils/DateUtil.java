@@ -10,11 +10,12 @@ public class DateUtil {
 
     private static Log log = new Log(DateUtil.class);
 
-    public static String yyyyMMddHHmmss = "yyyyMMddHHmmss";
-    public static String yyyyMMdd = "yyyyMMdd";
-    public static String yyyy_MM_dd_HH_mm_ss = "yyyy-MM-dd HH:mm:ss";
-    public static String YYYYMMDD_HH_MM_SS = "yyyy-MM-dd HH-mm-ss";
-    public static String yyyy_MM_dd = "yyyy-MM-dd";
+    public static final String YYYY_MMDD_HHMMSS = "yyyyMMddHHmmss";
+    public static final String YYYY_MMDD = "yyyyMMdd";
+    public static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
+    public static final String YYYY_MMDD_HH_MM_SS = "yyyy-MM-dd HH-mm-ss";
+    public static final String YYYY_MM_DD = "yyyy-MM-dd";
+    public static final String TODAY = format(YYYY_MMDD);
 
     public static String format(String pattern,long time) {
         return new SimpleDateFormat(pattern).format(time);

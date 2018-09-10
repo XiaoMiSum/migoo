@@ -201,7 +201,7 @@ public class HtmlFormatter extends Formatter {
 		buf.append(recordStore.getActual());
 		buf.append("</td> \n ");
 		buf.append("<td>");
-		buf.append(DateUtil.format(DateUtil.yyyy_MM_dd_HH_mm_ss,rec.getMillis()));
+		buf.append(DateUtil.format(DateUtil.YYYY_MM_DD_HH_MM_SS,rec.getMillis()));
 		buf.append("</td> \n ");
 		buf.append("<td>");
 		String result = recordStore.getResult();
@@ -271,8 +271,8 @@ public class HtmlFormatter extends Formatter {
 					+ "\n <th scope=\"col\"><b>执行总数</b></th><th scope=\"col\"><b>成功数量</b></th>"
 					+ "\n <th scope=\"col\"><b>失败数量</b></th><th scope=\"col\"><b>成功率</b></th>"
 					+ "\n <th scope=\"col\"><b>失败率</b></th></tr><tbody>"
-					+ "\n <tr><td>" + DateUtil.format(DateUtil.yyyy_MM_dd_HH_mm_ss,startTime) + "</td>"
-					+ "\n <td>" + DateUtil.format(DateUtil.yyyy_MM_dd_HH_mm_ss,endTime) + "</td>"
+					+ "\n <tr><td>" + DateUtil.format(DateUtil.YYYY_MM_DD_HH_MM_SS,startTime) + "</td>"
+					+ "\n <td>" + DateUtil.format(DateUtil.YYYY_MM_DD_HH_MM_SS,endTime) + "</td>"
 					+ "\n <td>" + DateUtil.format(startTime, endTime) + "</td>"
 					+ "\n <td>"+ total + "</td>"
 					+ "\n <td><span class=\"green\">" + recordStore.getPass() + "</span></td>"

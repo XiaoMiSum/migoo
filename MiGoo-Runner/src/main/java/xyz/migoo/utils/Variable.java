@@ -2,9 +2,11 @@ package xyz.migoo.utils;
 
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.config.Dict;
+import xyz.migoo.config.Platform;
 import xyz.migoo.exception.VariableException;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,7 +19,7 @@ import java.util.regex.Pattern;
 public class Variable {
 
     public static final Pattern PATTERN = Pattern.compile("^\\$\\{(\\w+)\\(([\\$\\w[-]*, ]*)\\)\\}");
-    private static Method[] methods = null;
+    private static Map<String, Method> methodMap = null;
 
     private Variable() {
     }
@@ -55,17 +57,16 @@ public class Variable {
     }
 
     private static String function(String methodName, String params) {
-        String value = "";
+        String value;
         try {
-            if (methods == null){
-                Class clazz = Class.forName("xyz.migoo.test.utils.Variable");
-                methods = clazz.getDeclaredMethods();
-            }
-            for (Method method : methods) {
-                if (methodName.equals(method.getName())) {
-                    value = (String) method.invoke(null, params);
+            if (methodName == null){
+                Class clazz = Class.forName(Platform.EXTENDS_VARIABLE);
+                Method[] methods = clazz.getDeclaredMethods();
+                for (Method method : methods) {
+                    methodMap.put(method.getName(), method);
                 }
             }
+            value = (String) methodMap.get(methodName).invoke(null, params);
         }catch (Exception e){
             throw new VariableException(StringUtil.getStackTrace(e));
         }

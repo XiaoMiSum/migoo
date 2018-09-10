@@ -26,15 +26,15 @@ public class EmailUtil {
         }
         File path = new File(System.getProperty("user.dir"));
         if (isMain){
-            path = new File(path.getPath() + "/Reports/");
+            path = new File(path.getPath() + File.separator + "Reports" + File.separator + DateUtil.TODAY);
         }else {
-            path = new File(path.getParent() + "/Reports/");
+            path = new File(path.getParent() + File.separator + "Reports" + File.separator + DateUtil.TODAY);
         }
         String subject = "自动化测试报告";
         try {
-            File file = ZipUtil.zipFile(path.getPath(), "reports");
+            path = ZipUtil.zipFile(path.getPath(), "reports");
             SendEmail.send(MAIL_SEND_FROM, MAIL_SEND_PASS, MAIL_SEND_FROM, MAIL_SEND_TO_LIST,
-                    file, MAIL_IMAP_HOST, subject,"附件，请查收～");
+                    path, MAIL_IMAP_HOST, subject,"附件，请查收～");
         } catch (IOException e) {
             e.printStackTrace();
         }

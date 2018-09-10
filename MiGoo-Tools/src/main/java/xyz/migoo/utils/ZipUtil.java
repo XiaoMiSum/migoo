@@ -27,7 +27,8 @@ public class ZipUtil {
         if (source.isDirectory()){
             fileSet.setDir(source);
             path = source.getPath() + File.separator;
-        }else {
+        }
+        if(source.isFile()){
             fileSet.setFile(source);
             path = source.getParent() + File.separator;
         }

@@ -11,6 +11,7 @@ import xyz.migoo.utils.Function;
 import xyz.migoo.utils.StringUtil;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import static xyz.migoo.config.Platform.*;
 
@@ -20,7 +21,7 @@ import static xyz.migoo.config.Platform.*;
  */
 public class Validator extends Assert {
 
-    private static Method[] methods = null;
+    private static Map<String, Method> methods = null;
     private static String function;
 
     private Validator() {
@@ -28,13 +29,10 @@ public class Validator extends Assert {
 
     public static void validation(Response response, JSON validate) throws ValidatorException {
         if (response.isError()) {
-            throw new ValidatorException("request error. please check your network .\n"
-                    + "\t" + response.error());
+            throw new ValidatorException("request error. please check your network .\n" + "\t" + response.error());
         }
-
         if (response.isNotFound()) {
-            throw new ValidatorException("error 404. please check your url: \n"
-                    + "\t" + response.request().url());
+            throw new ValidatorException("error 404. please check your url: \n" + "\t" + response.request().url());
         }
         if (validate instanceof JSONObject) {
             validation(response, (JSONObject) validate);
@@ -42,7 +40,6 @@ public class Validator extends Assert {
         if (validate instanceof JSONArray) {
             validation(response, (JSONArray) validate);
         }
-
     }
 
     private static void validation(Response response, JSONArray validate) throws ValidatorException {
@@ -55,14 +52,11 @@ public class Validator extends Assert {
         String types = validate.getString(Dict.VALIDATE_TYPE);
         String check = validate.getString(Dict.VALIDATE_CHECK);
         Object expect = validate.get(Dict.VALIDATE_EXPECT);
-
         if (methods == null) {
             methods = Function.functionLoader();
         }
         evalValidate(response, validate);
-
         Object actual = validate.get(Dict.VALIDATE_ACTUAL);
-
         try {
             validation(check, types, actual, expect);
         } catch (Exception e) {
@@ -80,9 +74,12 @@ public class Validator extends Assert {
     private static void evalValidate(Response response, JSONObject validate) throws ValidatorException {
         function(validate.getString(Dict.VALIDATE_CHECK));
         try {
-            for (Method method : methods) {
-                if (method.getName().equals(function)) {
-                    method.invoke(null, response, validate);
+            for (String key : validate.keySet()){
+                if (key.equals(Dict.VALIDATE_CHECK)){
+                    methods.get(function).invoke(null, response, validate);
+                }
+                if (key.equals(Dict.VALIDATE_EXPECT)){
+                    Function.evalExpect(validate);
                 }
             }
         } catch (Exception e) {
@@ -92,13 +89,9 @@ public class Validator extends Assert {
 
     private synchronized static void validation(String check, String types, Object actual, Object expect) throws ValidatorException {
         function(types);
-        boolean result = false;
+        boolean result;
         try {
-            for (Method method : methods) {
-                if (method.getName().equals(function)) {
-                    result = (boolean) method.invoke(null, actual, expect);
-                }
-            }
+            result = (boolean) methods.get(function).invoke(null, actual, expect);
         } catch (Exception e) {
             throw new ValidatorException(e.getMessage());
         }

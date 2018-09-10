@@ -2,8 +2,10 @@ package xyz.migoo.utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.config.Platform;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.regex.Matcher;
 
 import static xyz.migoo.utils.Variable.PATTERN;
@@ -15,7 +17,7 @@ import static xyz.migoo.utils.Variable.PATTERN;
  */
 public class Hook {
 
-    private static Method[] methods = null;
+    private static Map<String, Method> methodMap = null;
 
     private Hook() {
     }
@@ -44,15 +46,14 @@ public class Hook {
 
     private static void function(String methodName, String params) {
         try {
-            if (methods == null){
-                Class clazz = Class.forName("xyz.migoo.test.utils.Function");
-                methods = clazz.getDeclaredMethods();
-            }
-            for (Method method : methods) {
-                if (methodName.equals(method.getName())) {
-                    method.invoke(null, params);
+            if (methodMap == null){
+                Class clazz = Class.forName(Platform.EXTENDS_HOOK);
+                Method[] methods = clazz.getDeclaredMethods();
+                for (Method method : methods) {
+                    methodMap.put(method.getName(), method);
                 }
             }
+            methodMap.get(methodName).invoke(null, params);
         }catch (Exception e){
             // 不处理异常
         }

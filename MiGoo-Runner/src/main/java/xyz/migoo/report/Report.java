@@ -109,7 +109,7 @@ public class Report {
          file.mkdir();
         }
        try(Writer writer = new FileWriter(file.getPath() + name + "-" +
-               DateUtil.format(DateUtil.YYYYMMDD_HH_MM_SS) + ".html")){
+               DateUtil.format(DateUtil.YYYY_MMDD_HH_MM_SS) + ".html")){
            writer.write(template);
        }catch (Exception e){
            log.error(e.getMessage(), e);

@@ -77,4 +77,10 @@ public class Platform {
 
     public static final String[] MAIL_SEND_TO_LIST = PROPERTIES.get("mail.send.toList").split(",");
 
+    public static final String EXTENDS_VARIABLE = PROPERTIES.get("extends.variable").trim();
+
+    public static final String EXTENDS_HOOK = PROPERTIES.get("extends.hook").trim();
+
+    public static final String EXTENDS_VALIDATOR = PROPERTIES.get("extends.validator").trim();
+
 }
