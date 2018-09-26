@@ -1,8 +1,9 @@
 package xyz.migoo.http;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.http.Header;
+import xyz.migoo.utils.StringUtil;
+
 import java.util.Locale;
 
 /**
@@ -75,6 +76,27 @@ public class Response {
         return headers;
     }
 
+    public JSONObject cookie(){
+        if (headers == null || headers.length == 0){
+            return null;
+        }
+        String[] tmp = null;
+        for (Header header : headers){
+            if (StringUtil.containsIgnoreCase(header.getName(), "cookie")){
+                tmp = header.getValue().split(";");
+            }
+        }
+        JSONObject cookie = null;
+        if (tmp != null && tmp.length != 0){
+            cookie = new JSONObject(tmp.length);
+            for (String s : tmp){
+                String[] ss = s.split("=");
+                cookie.put(ss[0], ss[1]);
+            }
+        }
+        return cookie;
+    }
+
     public String body() {
         return body;
     }
@@ -85,7 +107,6 @@ public class Response {
         }catch (Exception e){
             return null;
         }
-
     }
 
     public long duration() {

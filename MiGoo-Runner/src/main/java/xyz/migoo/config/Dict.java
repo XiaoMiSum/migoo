@@ -29,6 +29,8 @@ public class Dict {
 
     public static final String CASE_SETUP_BEFORE = "before";
 
+    public static final String CASE_SETUP_AFTER = "after";
+
     public static final String VALIDATE = "validate";
 
     public static final String VALIDATE_CHECK = "check";

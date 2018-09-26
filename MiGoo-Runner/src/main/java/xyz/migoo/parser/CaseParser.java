@@ -27,12 +27,12 @@ public class CaseParser{
         try {
             loadCaseSetBySet(JSON.parse(pathOrSet));
         }catch (Exception e){
-            loadCaseSetsByFile(pathOrSet);
+            loadCaseSetsByPath(pathOrSet);
         }
         return this.caseSets;
     }
 
-    private void loadCaseSetsByFile(String path){
+    private void loadCaseSetsByPath(String path){
         File file = new File(path);
         if (file.isDirectory()){
             String[] fList = file.list();
@@ -43,10 +43,19 @@ public class CaseParser{
                 this.loadCaseSets(path + f);
             }
         }else {
-            if (file.getName().endsWith(SUFFIX)){
-                JSONReader reader = new JSONReader(file);
-                JSONArray json = (JSONArray)reader.read();
-                this.caseSets(json);
+            this.loadCaseSetsByFile(file);
+        }
+    }
+
+    private void loadCaseSetsByFile(File file){
+        if (file.getName().endsWith(SUFFIX)){
+            JSONReader reader = new JSONReader(file);
+            JSON json = reader.read();
+            if (json instanceof JSONArray) {
+                this.caseSets((JSONArray) json);
+            }else{
+                JSONArray jsonArray = new JSONArray(1);
+                jsonArray.add(json);
             }
         }
     }
@@ -67,13 +76,13 @@ public class CaseParser{
             JSONObject testCases = jsonArray.getJSONObject(index);
             JSONObject variables = testCases.getJSONObject(Dict.CONFIG).getJSONObject(Dict.CONFIG_VARIABLES);
             Variable.evalVariable(variables);
-            Variable.bindVariable(variables, testCases);
+            Variable.bindVariable(variables, variables);
             JSONArray caseArray = testCases.getJSONArray(Dict.CASE);
             for (int i = 0; i < caseArray.size(); i++) {
                 JSONObject jsonCase = caseArray.getJSONObject(i);
                 JSONObject setUp = jsonCase.getJSONObject(Dict.CASE_SETUP);
                 Variable.evalVariable(setUp);
-                Variable.bindVariable(setUp, jsonCase);
+                Variable.bindVariable(setUp, setUp);
             }
             testCases.put(Dict.CASE, caseArray);
             caseSets.add(testCases);

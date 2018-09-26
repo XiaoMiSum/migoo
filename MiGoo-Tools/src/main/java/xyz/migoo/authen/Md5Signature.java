@@ -22,8 +22,6 @@ public class Md5Signature {
      */
     public static boolean check(String content, String sign, String key) {
         String md5 = md5Encode(content + key).toUpperCase();
-        System.out.println("content:"+content);
-        System.out.println("md5 sign:"+md5);
         if (md5.equals(sign)) {
             return true;
         } else{

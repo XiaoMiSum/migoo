@@ -29,7 +29,6 @@ public class Platform {
     public static final List<String> FUNCTION_CONTAINS = Arrays.asList(
             StringUtil.trimAny(PROPERTIES.get("function.contains")).split(","));
 
-
     public static final List<String> FUNCTION_IS_EMPTY = Arrays.asList(
             StringUtil.trimAny(PROPERTIES.get("function.isEmpty")).split(","));
 
@@ -38,7 +37,6 @@ public class Platform {
 
     private static final List<String> CHECK_JSON = Arrays.asList(
             StringUtil.trimAny(PROPERTIES.get("check.json")).split(","));
-
 
     private static final List<String> CHECK_HTML = Arrays.asList(
             StringUtil.trimAny(PROPERTIES.get("check.html")).split(","));
@@ -65,7 +63,7 @@ public class Platform {
             StringUtil.trimAny(PROPERTIES.get("check.body")).split(","));
 
     public static final List<String> CHECK_CODE = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.get("check.code")).split(","));
+            StringUtil.trimAny(PROPERTIES.get("check.status")).split(","));
 
     public static final boolean MAIL_SEND = Boolean.valueOf(PROPERTIES.get("mail.send").trim());
 

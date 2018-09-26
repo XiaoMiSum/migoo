@@ -7,6 +7,7 @@ import xyz.migoo.exception.ValidatorException;
 import xyz.migoo.http.Client;
 import xyz.migoo.http.Request;
 import xyz.migoo.http.Response;
+import xyz.migoo.utils.Hook;
 import xyz.migoo.utils.Log;
 
 /**
@@ -25,7 +26,9 @@ public class Task {
     }
 
     public synchronized void run(JSONObject testCase) throws ValidatorException {
+        Hook.hook(testCase.getJSONObject(Dict.CASE_SETUP), Dict.CASE_SETUP_BEFORE);
         Response response = new Client().execute(this.request);
+        Hook.hook(testCase.getJSONObject(Dict.CASE_SETUP), Dict.CASE_SETUP_AFTER);
         this.testSuite.response(response);
         JSON validate = (JSON)testCase.get(Dict.VALIDATE);
         try {

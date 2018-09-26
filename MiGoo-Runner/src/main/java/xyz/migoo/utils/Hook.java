@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.config.Platform;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 
@@ -32,7 +33,7 @@ public class Hook {
             return;
         }
         JSONArray json = variables.getJSONArray(key);
-        if (json.isEmpty()){
+        if (json ==null || json.isEmpty()){
             return;
         }
         for (int i = 0; i< json.size(); i++){
@@ -49,6 +50,7 @@ public class Hook {
             if (methodMap == null){
                 Class clazz = Class.forName(Platform.EXTENDS_HOOK);
                 Method[] methods = clazz.getDeclaredMethods();
+                methodMap = new HashMap<>(methods.length);
                 for (Method method : methods) {
                     methodMap.put(method.getName(), method);
                 }
@@ -56,6 +58,7 @@ public class Hook {
             methodMap.get(methodName).invoke(null, params);
         }catch (Exception e){
             // 不处理异常
+            e.printStackTrace();
         }
     }
 

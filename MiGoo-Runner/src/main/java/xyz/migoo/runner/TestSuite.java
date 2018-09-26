@@ -27,26 +27,30 @@ public class TestSuite extends junit.framework.TestSuite{
         JSONObject config = caseSet.getJSONObject(Dict.CONFIG);
         JSONArray testCases = caseSet.getJSONArray(Dict.CASE);
         JSONObject configRequest = config.getJSONObject(Dict.CONFIG_REQUEST);
-        Hook.hook(config.getJSONObject(Dict.CONFIG_VARIABLES), Dict.CONFIG_BEFORE_CLASS);
+        JSONObject variables = config.getJSONObject(Dict.CONFIG_VARIABLES);
+        Variable.bindVariable(variables, variables.getString(Dict.CONFIG_BEFORE_CLASS));
+        Variable.evalVariable(variables);
+        Variable.bindVariable(variables, variables.getString(Dict.CONFIG_BEFORE_CLASS));
+        Hook.hook(variables, Dict.CONFIG_BEFORE_CLASS);
         JSONObject headers = configRequest.getJSONObject("headers");
         Request.Builder builder = new Request.Builder().method(configRequest.getString("method"));
         for (int i = 0; i < testCases.size(); i++) {
             JSONObject testCase = testCases.getJSONObject(i);
-            String title = testCase.getString(Dict.CASE_TITLE);
+            Variable.bindVariable(variables, testCase);
             JSONObject setUp = testCase.getJSONObject(Dict.CASE_SETUP);
-            JSONObject caseHeaders = testCase.getJSONObject(Dict.CASE_HEADERS);
+            Variable.bindVariable(setUp, setUp.getString(Dict.CASE_SETUP_BEFORE));
             Variable.evalVariable(setUp);
             Variable.bindVariable(setUp, testCase);
-            Hook.hook(setUp, Dict.CASE_SETUP_BEFORE);
-            if (caseHeaders != null || !caseHeaders.isEmpty()){
+            JSONObject caseHeaders = testCase.getJSONObject(Dict.CASE_HEADERS);
+            if (caseHeaders != null && !caseHeaders.isEmpty()){
                 headers.putAll(caseHeaders);
             }
             Request request = builder.headers(headers)
-                                     .url(configRequest.getString("url"))
-                                     .body(testCase.getJSONObject(Dict.CASE_BODY))
-                    .title(title).build();
+                    .url(configRequest.getString("url"))
+                    .body(testCase.getJSONObject(Dict.CASE_BODY))
+                    .title(testCase.getString(Dict.CASE_TITLE)).build();
             Task task = new Task(request, this);
-            this.addTest(title, task, testCase);
+            this.addTest(testCase.getString(Dict.CASE_TITLE), task, testCase);
         }
     }
 

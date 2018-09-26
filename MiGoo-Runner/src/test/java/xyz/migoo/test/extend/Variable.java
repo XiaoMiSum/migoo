@@ -1,4 +1,4 @@
-package xyz.migoo.test.utils;
+package xyz.migoo.test.extend;
 
 /**
  * 变量扩展

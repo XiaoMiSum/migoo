@@ -32,6 +32,9 @@ public class Function {
 
     public static void evalExpect(JSONObject validate) throws Exception{
         String value = validate.getString(Dict.VALIDATE_EXPECT);
+        if (StringUtil.isEmpty(value)){
+            return;
+        }
         Matcher matcher = Variable.PATTERN.matcher(value);
         if (matcher.find()) {
             if (methodMap == null) {
@@ -106,12 +109,8 @@ public class Function {
     public static boolean equals(Object actual, Object expect) {
         if (expect instanceof String && !(actual instanceof String)) {
             actual = String.valueOf(actual);
-            return actual.equals(expect);
         }
-        if (expect instanceof JSON) {
-            return actual.equals(expect);
-        }
-        return actual == expect;
+        return actual.equals(expect);
     }
 
     public static boolean contains(Object actual, Object expect) {
@@ -123,7 +122,7 @@ public class Function {
             return map.containsKey(expect) || map.containsValue(expect);
         }
         if (actual instanceof List) {
-            return ((List) actual).contains(expect);
+            return ((List)actual).contains(expect);
         }
         return false;
     }
@@ -145,16 +144,4 @@ public class Function {
         return !isEmpty(actual, expect);
     }
 
-    public static void main(String[] args) {
-        String[] keys = "html.#login".split("\\.");
-        String[] select = new String[keys.length - 1];
-        for (int i = 0; i < select.length; i++) {
-            if (select.length >= 1 & i + 1 <= select.length) {
-                select[i] = keys[i + 1];
-            }
-            System.out.println(select[i]);
-        }
-        // 2. 通过 key 从 response 中 获取对应的值
-        //String value = HtmlUtil.parse(response.body(), select);
-    }
 }

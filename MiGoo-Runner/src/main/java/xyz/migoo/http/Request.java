@@ -1,6 +1,7 @@
 package xyz.migoo.http;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.client.methods.HttpDelete;
@@ -10,11 +11,9 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.message.BasicHeader;
 import xyz.migoo.exception.RequestException;
 import xyz.migoo.utils.Log;
-import xyz.migoo.utils.MapUtil;
 import xyz.migoo.utils.StringUtil;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -32,7 +31,8 @@ public class Request {
     private String url;
     private String method;
     private File certificate;
-    private Map<Object, Object> body;
+    private JSONObject body;
+    private JSONObject cookie;
     private List<Header> header;
     private HttpHost httpHost;
     private String title;
@@ -43,6 +43,7 @@ public class Request {
         this.url = builder.url;
         this.method = builder.method;
         this.body = builder.body;
+        this.cookie = builder.cookie;
         this.certificate = builder.certificate;
         this.header = builder.headers;
         this.httpHost = builder.httpHost;
@@ -74,8 +75,11 @@ public class Request {
         return this.header;
     }
 
-    public Map<Object, Object> body() {
+    public JSONObject body() {
         return this.body;
+    }
+    public JSONObject cookie() {
+        return this.cookie;
     }
 
     public Header contentType() {
@@ -90,6 +94,11 @@ public class Request {
         return contentType;
     }
 
+    protected boolean isFrom(){
+        Header header = this.contentType();
+        return header == null || !StringUtil.containsIgnoreCase(header.getValue(),"json");
+    }
+
     public int timeOut() {
         return timeOut;
     }
@@ -102,7 +111,8 @@ public class Request {
         private String url;
         private String method;
         private File certificate;
-        private Map<Object, Object> body;
+        private JSONObject body;
+        private JSONObject cookie;
         private List<Header> headers;
         private HttpHost httpHost;
         private String title;
@@ -227,16 +237,36 @@ public class Request {
         }
 
         public Builder body(Object body) {
-            if (body instanceof Map) {
-                this.body = (Map<Object, Object>) body;
-                return this;
-            }else {
-                this.body = MapUtil.toMap(body);
-            }
             if (body == null) {
-                this.body = new HashMap<>(0);
+                this.body = new JSONObject(0);
                 return this;
             }
+            if (body instanceof JSONObject) {
+                this.body = (JSONObject) body;
+                return this;
+            }
+            if (body instanceof String){
+                this.body = JSONObject.parseObject((String) body);
+                return this;
+            }
+            this.body = JSONObject.parseObject(JSONObject.toJSONString(body, SerializerFeature.SortField));
+            return this;
+        }
+
+        public Builder cookie(Object cookie) {
+            if (cookie == null) {
+                this.cookie = new JSONObject(0);
+                return this;
+            }
+            if (cookie instanceof JSONObject) {
+                this.cookie = (JSONObject) cookie;
+                return this;
+            }
+            if (cookie instanceof String){
+                this.cookie = JSONObject.parseObject((String) cookie);
+                return this;
+            }
+            this.cookie = JSONObject.parseObject(JSONObject.toJSONString(cookie, SerializerFeature.SortField));
             return this;
         }
 
@@ -252,27 +282,21 @@ public class Request {
                     throw new RequestException("certificate can not be directory . certificate path : " + certificate);
                 }
                 if (body == null || body.size() == 0) {
-                    if (this.permitsRequestBody(method)) {
-                        throw new RequestException("method ' " + method + " ' must have a request body.");
-                    }
-                } else {
                     if (this.noneRequestBody(method)) {
                         StringBuilder sb = new StringBuilder();
-                        try {
-                            for (Map.Entry<Object, Object> key : body.entrySet()) {
-                                sb.append(key.getKey()).append("=").append(URLEncoder.encode(String.valueOf(key.getValue()), UTF8)).append("&");
-                            }
-                            url = url + "?" + sb.toString().substring(0, sb.length() - 1);
-                        } catch (UnsupportedEncodingException e) {
-                            throw new RequestException("method ' " + method + " ' format url failure");
+                        for (String key : body.keySet()) {
+                            sb.append(key)
+                                    .append("=")
+                                    .append(URLEncoder.encode(body.getString(key), UTF8))
+                                    .append("&");
                         }
+                        url = url + "?" + sb.toString().substring(0, sb.length() - 1);
                     }
                 }
             } catch (Exception e) {
                 log.error(e.getMessage());
                 throw new RequestException(e.getMessage());
             }
-
             return new Request(this);
         }
 

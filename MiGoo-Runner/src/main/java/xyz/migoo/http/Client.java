@@ -1,15 +1,20 @@
 package xyz.migoo.http;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import xyz.migoo.utils.Log;
+import xyz.migoo.utils.StringUtil;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -19,7 +24,6 @@ import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static xyz.migoo.http.Request.UTF8;
@@ -137,6 +141,21 @@ public class Client {
         if (request.proxy() != null) {
             builder.setProxy(request.proxy());
         }
+        if (request.cookie() != null && !request.cookie().isEmpty()){
+            JSONObject jsonCookie = request.cookie();
+            CookieStore cookieStore = new BasicCookieStore();
+            String name = null, value = null;
+            for (String key : jsonCookie.keySet()){
+                if (StringUtil.containsIgnoreCase(key, "SESSID")){
+                    name = key; value = jsonCookie.getString(key);
+                }
+            }
+            BasicClientCookie cookie = new BasicClientCookie(name, value);
+            cookie.setDomain(jsonCookie.getString("domain"));
+            cookie.setPath(jsonCookie.getString("path"));
+            cookieStore.addCookie(cookie);
+            builder.setDefaultCookieStore(cookieStore);
+        }
         httpClient = builder.setConnectionTimeToLive(request.timeOut(), TimeUnit.SECONDS).build();
     }
 
@@ -147,12 +166,20 @@ public class Client {
      * @param httpMethods 请求方法
      */
     private void setEntity(Request request, HttpEntityEnclosingRequestBase httpMethods) {
-        Map<Object, Object> body = request.body();
-        List<NameValuePair> pairList = new ArrayList<>(body.size());
-        for (Map.Entry<Object, Object> entry : body.entrySet()) {
-            pairList.add(new BasicNameValuePair(String.valueOf(entry.getKey()), String.valueOf(entry.getValue())));
+        JSONObject body = request.body();
+        if (body.isEmpty()){
+            return;
         }
-        StringEntity entity = new UrlEncodedFormEntity(pairList, Charset.forName(UTF8));
+        StringEntity entity;
+        if (request.isFrom()){
+            List<NameValuePair> pairList = new ArrayList<>(body.size());
+            for (String key : body.keySet()) {
+                pairList.add(new BasicNameValuePair(key, body.getString(key)));
+            }
+            entity = new UrlEncodedFormEntity(pairList, Charset.forName(UTF8));
+        }else {
+            entity = new StringEntity(body.toJSONString(), Charset.forName(UTF8));
+        }
         entity.setContentEncoding(UTF8);
         if (request.contentType() != null) {
             entity.setContentType(request.contentType());

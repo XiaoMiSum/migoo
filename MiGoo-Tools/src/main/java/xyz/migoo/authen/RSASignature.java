@@ -2,64 +2,53 @@ package xyz.migoo.authen;
 
 import org.apache.commons.codec.binary.Base64;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
 import java.security.*;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 /**
  * RSA签名验签类
-* @author xiaomi
+ * @author xiaomi
  */
 public class RSASignature {
 	/**
 	 * 签名算法
 	 */
-	public static final String SIGN_ALGORITHMS = "SHA1WithRSA";
+	public static final String RSA_SIGNATURE = "NONEwithRSA";
 
-	/**
-	 * RSA签名
-	 *
-	 * @param content    待签名数据
-	 * @param privateKey 商户私钥
-	 * @param encode     字符集编码
-	 * @return 签名值
-	 */
-	public static String sign(String content, String privateKey, String encode) {
-		return sign(content, Base64.decodeBase64(privateKey), encode);
+	public static String sign(String content, String privateKey){
+		return encryptByPrivateKey(content, privateKey);
 	}
 
-	public static String sign(String content, byte[] priBytes) {
-		return sign(content, priBytes, "utf-8");
+	public static boolean verify(String content, String sign, String publicKey) {
+		try {
+			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+			PublicKey pubKey = keyFactory.generatePublic(new X509EncodedKeySpec(Base64.decodeBase64(publicKey)));
+			Signature signature = Signature.getInstance(RSA_SIGNATURE);
+			signature.initVerify(pubKey);
+			signature.update(content.getBytes("utf-8"));
+			return signature.verify(Base64.decodeBase64(sign));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	/**
-	 * 密钥签名
-	 *
-	 * @param content
-	 * @param privateKey
+	 * 私钥加密
+	 * @param content      加密明文
+	 * @param privateKey   私钥
 	 * @return
 	 */
-	public static String sign(String content, String privateKey) {
-		return sign(content, Base64.decodeBase64(privateKey), "utf-8");
-	}
-
-	private static String sign(String content, byte[] priBytes, String encode) {
+	public static String encryptByPrivateKey(String content, String privateKey) {
 		try {
-			PKCS8EncodedKeySpec privatePKCS8 = new PKCS8EncodedKeySpec(priBytes);
+			PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.decodeBase64(privateKey));
 			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-			PrivateKey priKey = keyFactory.generatePrivate(privatePKCS8);
-			Signature signature = Signature.getInstance(SIGN_ALGORITHMS);
+			PrivateKey priKey = keyFactory.generatePrivate(keySpec);
+			Signature signature = Signature.getInstance(RSA_SIGNATURE);
 			signature.initSign(priKey);
-			signature.update(content.getBytes(encode));
+			signature.update(content.getBytes("utf-8"));
 			byte[] signed = signature.sign();
 			return Base64.encodeBase64String(signed);
 		} catch (Exception e) {
@@ -69,151 +58,70 @@ public class RSASignature {
 	}
 
 	/**
-	 * RSA验签名检查
-	 *
-	 * @param content   待签名数据
-	 * @param sign      签名值
-	 * @param publicKey 分配给开发商公钥
-	 * @param encode    字符集编码
-	 * @return 布尔值
-	 */
-	public static boolean check(String content, String sign, String publicKey, String encode) {
-		return doCheck(content, sign, Base64.decodeBase64(publicKey), encode);
-	}
-
-	/**
-	 * RSA验签名检查
-	 *
-	 * @param content
-	 * @param sign
-	 * @param publicKey
+	 * 公钥加密
+	 * @param content      加密明文
+	 * @param publicKey    公钥
 	 * @return
 	 */
-	public static boolean check(String content, String sign, String publicKey) {
-		return check(content, sign, publicKey, "utf-8");
-	}
-
-	private static boolean doCheck(String content, String sign, byte[] pubBytes, String encode) {
+	public static String encryptByPublicKey(String content, String publicKey) {
 		try {
+			X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.decodeBase64(publicKey));
 			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-			byte[] encodedKey = pubBytes;
-			PublicKey pubKey = keyFactory.generatePublic(new X509EncodedKeySpec(encodedKey));
-			Signature signature = Signature.getInstance(SIGN_ALGORITHMS);
-			signature.initVerify(pubKey);
-			signature.update(content.getBytes(encode));
-			return signature.verify(Base64.decodeBase64(sign));
+			PublicKey pubKey = keyFactory.generatePublic(keySpec);
+			Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
+			cipher.init(Cipher.ENCRYPT_MODE, pubKey);
+			byte[] signed = cipher.doFinal(content.getBytes("utf-8"));
+			return Base64.encodeBase64String(signed);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return false;
-	}
-
-
-	/**
-	 * 公钥加密过程
-	 *
-	 * @param publicKey     公钥
-	 * @param plainTextData 明文数据
-	 * @return
-	 * @throws Exception 加密过程中的异常信息
-	 */
-	public static byte[] encrypt(RSAPublicKey publicKey, byte[] plainTextData) throws Exception {
-		return encrypt(plainTextData, publicKey);
+		return null;
 	}
 
 	/**
-	 * 私钥加密过程
-	 *
-	 * @param privateKey    私钥
-	 * @param plainTextData 明文数据
+	 * 私钥解密
+	 * @param content     加密后的字符串
+	 * @param privateKey  私钥
 	 * @return
-	 * @throws Exception 加密过程中的异常信息
 	 */
-
-	public static byte[] encrypt(RSAPrivateKey privateKey, byte[] plainTextData) throws Exception {
-		return encrypt(plainTextData, privateKey);
-	}
-
-	private static byte[] encrypt(byte[] plainTextData, Key key) throws Exception {
-		if (key == null) {
-			throw new Exception("加密私钥为空, 请设置");
-		}
-		Cipher cipher = null;
+	public static String decryptByPrivateKey(String content, String privateKey) {
 		try {
-			// 使用默认RSA
-			cipher = Cipher.getInstance("RSA");
-			cipher.init(Cipher.ENCRYPT_MODE, key);
-			byte[] output = cipher.doFinal(plainTextData);
-			return output;
-		} catch (NoSuchAlgorithmException e) {
-			throw new Exception("无此加密算法");
-		} catch (NoSuchPaddingException e) {
+			// 取得私钥
+			PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.decodeBase64(privateKey));
+			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+			PrivateKey priKey = keyFactory.generatePrivate(keySpec);
+			// 对数据解密
+			Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
+			cipher.init(Cipher.DECRYPT_MODE, priKey);
+			byte[] signed = cipher.doFinal(Base64.decodeBase64(content));
+			return new String(signed, "utf-8");
+		}catch (Exception e){
 			e.printStackTrace();
-			return null;
-		} catch (IllegalBlockSizeException e) {
-			throw new Exception("明文长度非法");
-		} catch (BadPaddingException e) {
-			throw new Exception("明文数据已损坏");
 		}
+		return null;
 	}
 
 	/**
-	 * 私钥解密过程
-	 *
-	 * @param privateKey 私钥
-	 * @param cipherData 密文数据
-	 * @return 明文
-	 * @throws Exception 解密过程中的异常信息
-	 */
-	public static byte[] decrypt(RSAPrivateKey privateKey, byte[] cipherData) throws Exception {
-		return decrypt(cipherData, privateKey);
-	}
-
-	/**
-	 * 公钥解密过程
-	 *
+	 * 公钥解密
+	 * @param content    加密后的字符串
 	 * @param publicKey  公钥
-	 * @param cipherData 密文数据
-	 * @return 明文
-	 * @throws Exception 解密过程中的异常信息
+	 * @return
 	 */
-	public static byte[] decrypt(RSAPublicKey publicKey, byte[] cipherData) throws Exception {
-		return decrypt(cipherData, publicKey);
-	}
-
-	private static byte[] decrypt(byte[] cipherData, Key key) throws Exception {
-		if (key == null) {
-			throw new Exception("解密私钥为空, 请设置");
-		}
+	public static String decryptByPublicKey(String content, String publicKey) {
 		try {
-			// 使用默认RSA
-			Cipher cipher = Cipher.getInstance("RSA");
-			cipher.init(Cipher.DECRYPT_MODE, key);
-			byte[] output = cipher.doFinal(cipherData);
-			return output;
-		} catch (NoSuchAlgorithmException e) {
-			throw new Exception("无此解密算法");
-		} catch (NoSuchPaddingException e) {
-			return null;
-		} catch (IllegalBlockSizeException e) {
-			throw new Exception("密文长度非法");
-		} catch (BadPaddingException e) {
-			throw new Exception("密文数据已损坏");
+			// 取得私钥
+			X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.decodeBase64(publicKey));
+			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+			PublicKey pubKey = keyFactory.generatePublic(keySpec);
+			// 对数据解密
+			Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
+			cipher.init(Cipher.DECRYPT_MODE, pubKey);
+			byte[] signed = cipher.doFinal(Base64.decodeBase64(content));
+			return new String(signed, "utf-8");
+		}catch (Exception e){
+			e.printStackTrace();
 		}
+		return null;
 	}
 
-
-	public static void main(String[] args) throws Exception {
-            File inFile = new File("/Users/kogome/pub.key");
-            long fileLen = inFile.length();
-            Reader reader = new FileReader(inFile);
-            char[] content = new char[(int) fileLen];
-            reader.read(content);
-            String s = new String(content);
-            s = s.replaceAll("\n","");
-            s = s.replaceAll("-","");
-            s = s.replaceAll("END PUBLIC KEY","");
-            s = s.replaceAll("BEGIN PUBLIC KEY","");
-        System.out.println(s);
-	}
 }

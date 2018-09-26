@@ -35,6 +35,7 @@ public class EmailUtil {
             path = ZipUtil.zipFile(path.getPath(), "reports");
             SendEmail.send(MAIL_SEND_FROM, MAIL_SEND_PASS, MAIL_SEND_FROM, MAIL_SEND_TO_LIST,
                     path, MAIL_IMAP_HOST, subject,"附件，请查收～");
+            path.delete();
         } catch (IOException e) {
             e.printStackTrace();
         }
