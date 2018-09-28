@@ -36,17 +36,21 @@ public class Runner {
             JSON.parse(caseSetOrPath);
             this.run(caseSetOrPath);
         }catch (Exception e){
-            File file = new File(caseSetOrPath);
-            if (file.isDirectory()){
-                for (String f: file.list()){
-                    run(file.getPath() + f);
-                }
-            }else {
-                CaseSuite caseSuite = this.initTestSuite(caseSetOrPath);
-                TestResult result = new TestRunner().run(caseSuite);
-                Report.generateReport(result.report(), caseSuite.name(), false, isMain);
-                EmailUtil.sendEmail(isMain);
+            this.runByPath(caseSetOrPath);
+        }
+    }
+
+    private void runByPath(String caseSetOrPath){
+        File file = new File(caseSetOrPath);
+        if (file.isDirectory()){
+            for (String f: file.list()){
+                runByPath(file.getPath() + File.separator + f);
             }
+        }else {
+            CaseSuite caseSuite = this.initTestSuite(caseSetOrPath);
+            TestResult result = new TestRunner().run(caseSuite);
+            Report.generateReport(result.report(), caseSuite.name(), false, isMain);
+            EmailUtil.sendEmail(isMain);
         }
     }
 
@@ -54,6 +58,4 @@ public class Runner {
         List<JSONObject> caseSets = new CaseParser().loadCaseSets(path);
         return new CaseSuite(caseSets);
     }
-
-
 }

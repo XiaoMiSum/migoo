@@ -1,0 +1,58 @@
+name: the test suite name
+config:
+  variables:
+    beforeClass:
+      - ${hook(beforeClass)}
+  request:
+    url: http://migoo.xyz/api/login
+    method: post
+    headers:
+      Content-Type: application/json
+case:
+  - title: 未注册的用户登录
+    setUp:
+      user: migoo1
+      pwd: ${getPwd($user)}
+      before:
+        - ${hook(before)}
+      after:
+        - ${hook(after)}
+    body:
+      user: $user
+      pwd: $pwd
+    validate:
+      - {check: status, expect: 200, types: ==}
+      - {check: $.status, expect: 411, types: eq}
+      - {check: body.data, expect: null, types: null }
+
+  - title: 密码错误登录
+    setUp:
+      user: migoo
+      password: 123456
+      before:
+        - ${hook(before)}
+      after:
+        - ${hook2(after,before)}
+    body:
+      user: $user
+      password: $password
+    validate:
+      - {check: status, expect: 200, types: ==}
+      - {check: $.status, expect: ${setValue(411)}, types: eq}
+      - {check: body.data, expect: null, types: null }
+
+  - title: 正确的用户名密码登录
+    setUp:
+      user: migoo
+      password: 123456qq
+      before:
+        - ${hook(before)}
+      after:
+        - ${hook(after)}
+    body:
+      user: $user
+      password: $password
+    validate:
+      - {check: status, expect: 200, types: ==}
+      - {check: $.status, expect: 200, types: eq}
+      - {check: body.token, expect: null, types: isNotNull }

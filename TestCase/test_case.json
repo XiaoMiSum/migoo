@@ -3,30 +3,66 @@
     "name": "the test suite name",
     "config": {
       "variables":{
-        "user": "admin"
+        "user": "migoo",
+        "beforeClass": ["${hook(beforeClass)}"]
       },
       "request": {
-        "url": "http://127.0.0.1:8080/login/login",
+        "url": "http://migoo.xyz/api/login",
         "method": "post",
         "headers": {
-          "Content-Type": "application/x-www-form-urlencoded"
+          "Content-Type": "application/json"
         }
       }
     },
     "case": [
       {
-        "title": "正确的用户名\\密码登录，返回值包等于期望值",
+        "title": "未注册的用户",
         "setUp": {
-          "pwd": "${getPwd($user)}"
+          "pwd": "123456qq",
+          "before": ["${hook(before)}"],
+          "after": ["${hook(after)}"]
         },
         "body": {
-          "user": "$user",
-          "pwd": "$pwd"
+          "user": "migoo1",
+          "password": "$pwd"
         },
         "validate": [
           {"check": "status", "expect": 200, "types": "=="},
-          {"check": "body.msg", "expect": "success", "types": "eq"},
+          {"check": "$.status", "expect": "411", "types": "eq"},
           {"check": "body.data", "expect": "", "types": "null"}
+        ]
+      },
+      {
+        "title": "密码错误",
+        "setUp": {
+          "pwd": "${getPwd($user)}",
+          "before": ["${hook(before)}"],
+          "after": ["${hook2(after,before)}"]
+        },
+        "body": {
+          "user": "$user",
+          "password": "123456"
+        },
+        "validate": [
+          {"check": "status", "expect": 200, "types": "=="},
+          {"check": "$.status", "expect": 411, "types": "eq"},
+          {"check": "body.data", "expect": null, "types": "null"}
+        ]
+      },
+      {
+        "title": "未注册的用户",
+        "setUp": {
+          "before": ["${hook(before)}"],
+          "after": ["${hook(after)}"]
+        },
+        "body": {
+          "user": "$user",
+          "password": "123456qq"
+        },
+        "validate": [
+          {"check": "status", "expect": 200, "types": "=="},
+          {"check": "$.status", "expect": "200", "types": "eq"},
+          {"check": "body.data", "expect": "", "types": "isNotNull"}
         ]
       }
     ]

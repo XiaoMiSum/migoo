@@ -23,7 +23,6 @@ import static xyz.migoo.config.Platform.OS_VERSION;
  */
 public class Report {
 
-
     private static Log log = new Log(Report.class);
     private final static String TEMPLATE_CLASS = "templates";
     private final static TemplateEngine TEMPLATE_ENGINE = new TemplateEngine();
@@ -98,7 +97,6 @@ public class Report {
     }
 
     private static File report(String name , String template, boolean isMain){
-
         File file = new File(System.getProperty("user.dir"));
         if (isMain){
             file = new File(file.getPath() + "/Reports/");

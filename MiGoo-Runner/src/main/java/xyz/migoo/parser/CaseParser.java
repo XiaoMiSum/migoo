@@ -17,7 +17,6 @@ import java.util.List;
  */
 public class CaseParser{
 
-    private final static String SUFFIX = ".json";
     private List<JSONObject> caseSets;
 
     public CaseParser(){

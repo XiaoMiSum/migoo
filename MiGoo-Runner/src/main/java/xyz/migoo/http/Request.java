@@ -9,7 +9,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.message.BasicHeader;
-import sun.security.krb5.KdcComm;
 import xyz.migoo.exception.RequestException;
 import xyz.migoo.utils.Log;
 import xyz.migoo.utils.StringUtil;
@@ -263,17 +262,20 @@ public class Request {
                 this.cookie = JSONObject.parseObject((String) cookie);
                 return this;
             }
-            this.cookie = JSONObject.parseObject(JSONObject.toJSONString(cookie, SerializerFeature.SortField));
+            this.cookie = (JSONObject)JSONObject.toJSON(cookie);
             return this;
         }
 
         public Request build() {
             try {
-                if (StringUtil.isBlank(this.url) || !this.urlCheck(this.url)) {
+                if (StringUtil.isBlank(this.url) || !this.urlCheck()) {
                     throw new RequestException("url == null or not a url :  " + url);
                 }
                 if (StringUtil.isBlank(method)) {
                     throw new RequestException("method == null || method.length() == 0");
+                }
+                if (!this.methodCheck()){
+                    throw new RequestException("unknown method ' " + method + " '");
                 }
                 if (certificate != null && certificate.isDirectory()) {
                     throw new RequestException("certificate can not be directory . certificate path : " + certificate);
@@ -307,8 +309,15 @@ public class Request {
             return method.equals(HttpGet.METHOD_NAME);
         }
 
-        private boolean urlCheck(String url) {
+        private boolean urlCheck() {
             return PATTERN.matcher(url).find();
+        }
+
+        private boolean methodCheck() {
+            return HttpGet.METHOD_NAME.equals(method)
+                    || HttpPost.METHOD_NAME.equals(method)
+                    || HttpPut.METHOD_NAME.equals(method)
+                    || HttpDelete.METHOD_NAME.equals(method);
         }
     }
 }
