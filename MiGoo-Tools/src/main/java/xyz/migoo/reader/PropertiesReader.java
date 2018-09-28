@@ -1,69 +1,55 @@
 package xyz.migoo.reader;
 
+import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ReaderException;
 import xyz.migoo.utils.Log;
 
 import java.io.*;
+import java.util.Properties;
 
 /**
  * @author xiaomi
  */
-public class PropertiesReader extends AbstractReader {
+public class PropertiesReader extends AbstractReader implements Reader{
 
-    private final static String SUFFIX = ".properties";
     private final static Log LOG = new Log(PropertiesReader.class);
 
     private String path;
-    private java.util.Properties props;
+    private File file;
+    private JSONObject json;
 
     public PropertiesReader(String path) {
         this.path = path;
     }
 
-    /**
-     * 从项目外的指定目录中读取 properties 文件
-     */
-    private PropertiesReader read(String path) {
-        this.props = new java.util.Properties();
-        File file = new File(path);
-        if (!super.validation(file, SUFFIX)){
-            throw new ReaderException("this file not a ' " + SUFFIX + " ' file : " + file);
-        }
-        try (InputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
-            this.props.load(inputStream);
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-            throw new ReaderException(e.getMessage() + ". file path : " + file);
-        }
-        return this;
+    public PropertiesReader(File file) {
+        this.file = file;
     }
 
-    /**
-     * 从 resources 目录中读取 properties 文件
-     * @return
-     */
-    private PropertiesReader read() {
-        this.props = new java.util.Properties();
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        InputStream is = classLoader.getResourceAsStream(this.path);
+    @Override
+    public JSONObject read(){
+        if (path != null){
+            super.stream(ReaderFactory.PROS_SUFFIX, path);
+        }
+        if (file != null){
+            super.stream(ReaderFactory.PROS_SUFFIX, file);
+        }
+        Properties props = new Properties();
         try {
-            this.props.load(is);
+            props.load(inputStream);
         } catch (IOException e) {
             LOG.error(e.getMessage(), e);
-            throw new ReaderException(e.getMessage() + ". file path : " + path);
+            throw new ReaderException("file read exception: " + e.getMessage());
         }
-        return this;
+        json = (JSONObject)JSONObject.toJSON(props);
+        return json;
     }
 
+    @Override
     public String get(String key) {
-        if (props != null){
-            return props.getProperty(key);
+        if (json == null){
+            read();
         }
-        if(super.isOutsideFile(this.path)){
-            this.read(this.path);
-        }else {
-            this.read();
-        }
-        return props.getProperty(key);
+        return json.getString(key);
     }
 }

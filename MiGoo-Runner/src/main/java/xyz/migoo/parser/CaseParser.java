@@ -4,7 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.config.Dict;
-import xyz.migoo.reader.JSONReader;
+import xyz.migoo.reader.Reader;
+import xyz.migoo.reader.ReaderFactory;
 import xyz.migoo.utils.Variable;
 
 import java.io.*;
@@ -48,8 +49,9 @@ public class CaseParser{
     }
 
     private void loadCaseSetsByFile(File file){
-        if (file.getName().endsWith(SUFFIX)){
-            JSONReader reader = new JSONReader(file);
+        String suffix = ReaderFactory.suffix(file.getName());
+        if (suffix != null){
+            Reader reader = ReaderFactory.getReader(suffix, file);
             JSON json = reader.read();
             if (json instanceof JSONArray) {
                 this.caseSets((JSONArray) json);
