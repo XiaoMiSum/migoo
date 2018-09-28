@@ -31,7 +31,7 @@ public class TestSuite extends junit.framework.TestSuite{
         Variable.bindVariable(variables, variables.getString(Dict.CONFIG_BEFORE_CLASS));
         Variable.evalVariable(variables);
         Variable.bindVariable(variables, variables.getString(Dict.CONFIG_BEFORE_CLASS));
-        Hook.hook(variables, Dict.CONFIG_BEFORE_CLASS);
+        Hook.hook(variables.getJSONArray(Dict.CONFIG_BEFORE_CLASS));
         JSONObject headers = configRequest.getJSONObject("headers");
         Request.Builder builder = new Request.Builder().method(configRequest.getString("method"));
         for (int i = 0; i < testCases.size(); i++) {
@@ -50,6 +50,7 @@ public class TestSuite extends junit.framework.TestSuite{
                     .body(testCase.getJSONObject(Dict.CASE_BODY))
                     .title(testCase.getString(Dict.CASE_TITLE)).build();
             Task task = new Task(request, this);
+            testCase.put(Dict.CASE_SETUP, setUp);
             this.addTest(testCase.getString(Dict.CASE_TITLE), task, testCase);
         }
     }

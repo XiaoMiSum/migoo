@@ -9,6 +9,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.message.BasicHeader;
+import sun.security.krb5.KdcComm;
 import xyz.migoo.exception.RequestException;
 import xyz.migoo.utils.Log;
 import xyz.migoo.utils.StringUtil;
@@ -33,7 +34,7 @@ public class Request {
     private File certificate;
     private JSONObject body;
     private JSONObject cookie;
-    private List<Header> header;
+    private List<Header> headers;
     private HttpHost httpHost;
     private String title;
     private Header contentType;
@@ -45,7 +46,7 @@ public class Request {
         this.body = builder.body;
         this.cookie = builder.cookie;
         this.certificate = builder.certificate;
-        this.header = builder.headers;
+        this.headers = builder.headers;
         this.httpHost = builder.httpHost;
         this.title = builder.title;
         this.timeOut = builder.timeOut;
@@ -72,7 +73,7 @@ public class Request {
     }
 
     public List<Header> headers() {
-        return this.header;
+        return this.headers;
     }
 
     public JSONObject body() {
@@ -86,11 +87,11 @@ public class Request {
         if (this.contentType != null) {
             return contentType;
         }
-        for (Header header : header) {
+        headers.forEach(header -> {
             if (header.getName().toLowerCase().equals(CONTENT_TYPE.toLowerCase())) {
                 this.contentType = header;
             }
-        }
+        });
         return contentType;
     }
 
@@ -163,11 +164,7 @@ public class Request {
                 return this;
             }
             this.headers = new ArrayList<>(headers.size());
-            Set<Map.Entry<String, Object>> set = headers.entrySet();
-            for (Map.Entry entry : set) {
-                this.headers.add(new BasicHeader(String.valueOf(entry.getKey()),
-                        String.valueOf(entry.getValue())));
-            }
+            headers.forEach((k, v) -> this.headers.add(new BasicHeader(k, String.valueOf(v))));
             return this;
         }
 

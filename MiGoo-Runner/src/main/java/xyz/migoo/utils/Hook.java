@@ -25,19 +25,14 @@ public class Hook {
 
     /**
      *
-     * @param variables  config  或 case
-     * @param key      需要被替换的 JSONObject
+     * @param hook 待执行的方法列表
      */
-    public static void hook(JSONObject variables, String key) {
-        if (variables ==null || variables.isEmpty()){
+    public static void hook(JSONArray hook) {
+        if (hook ==null || hook.isEmpty()){
             return;
         }
-        JSONArray json = variables.getJSONArray(key);
-        if (json ==null || json.isEmpty()){
-            return;
-        }
-        for (int i = 0; i< json.size(); i++){
-            String value = json.getString(i);
+        for (int i = 0; i < hook.size(); i++){
+            String value = hook.getString(i);
             Matcher matcher = PATTERN.matcher(value);
             if (matcher.find()){
                 function(matcher.group(1), matcher.group(2));

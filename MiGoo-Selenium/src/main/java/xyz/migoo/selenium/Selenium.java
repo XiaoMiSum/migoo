@@ -73,9 +73,7 @@ public class Selenium {
      */
     public void addCookie(Set<Cookie> cookies) {
         try {
-            for (Cookie cookie : cookies) {
-                driver.manage().addCookie(cookie);
-            }
+            cookies.forEach(cookie -> driver.manage().addCookie(cookie));
             log.info("add cookies success.");
         } catch (WebDriverException e) {
             log.error("add cookies" + " exception.", e);

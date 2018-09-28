@@ -37,9 +37,7 @@ public class Validator extends Assert {
     }
 
     private static void validation(Response response, JSONArray validate) throws ValidatorException {
-        for (int i = 0; i < validate.size(); i++) {
-            validation(response, validate.getJSONObject(i));
-        }
+        validate.forEach(json -> validation(response, (JSONObject) json));
     }
 
     private static void validation(Response response, JSONObject validate) throws ValidatorException {

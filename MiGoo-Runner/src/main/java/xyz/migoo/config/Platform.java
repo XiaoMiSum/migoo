@@ -51,7 +51,7 @@ public class Platform {
     }
 
     public static boolean isHtml(String str){
-        for (String key : CHECK_JSON){
+        for (String key : CHECK_HTML){
             if (Pattern.compile(key).matcher(str).find()){
                 return true;
             }

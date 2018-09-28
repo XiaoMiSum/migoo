@@ -39,7 +39,6 @@ public class Function {
         if (matcher.find()) {
             if (methodMap == null) {
                 Class clazz = Class.forName(Platform.EXTENDS_VALIDATOR);
-
                 Method[] methods = clazz.getDeclaredMethods();
                 for (Method method : methods) {
                     methodMap.put(method.getName(), method);

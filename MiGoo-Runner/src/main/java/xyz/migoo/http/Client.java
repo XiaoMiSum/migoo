@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static xyz.migoo.http.Request.UTF8;
@@ -39,6 +41,7 @@ public class Client {
     private CloseableHttpClient httpClient;
     private static Log log = new Log(Client.class);
     protected static final String HTTPS = "https";
+    private static final String SESSION = "SESSID";
     private Request request;
 
     public Client(){}
@@ -54,19 +57,18 @@ public class Client {
      * @return Response
      */
     public Response execute(Request request) {
-        if (HttpGet.METHOD_NAME.equals(request.method())) {
-            return doGet(request);
+        switch (request.method()) {
+            case HttpGet.METHOD_NAME:
+                return doGet(request);
+            case HttpPost.METHOD_NAME:
+                return doPost(request);
+            case HttpPut.METHOD_NAME:
+                return doPut(request);
+            case HttpDelete.METHOD_NAME:
+                return doDelete(request);
+            default:
+                return doGet(request);
         }
-        if (HttpPost.METHOD_NAME.equals(request.method())) {
-            return doPost(request);
-        }
-        if (HttpPut.METHOD_NAME.equals(request.method())) {
-            return doPut(request);
-        }
-        if (HttpDelete.METHOD_NAME.equals(request.method())) {
-            return doDelete(request);
-        }
-        return doGet(request);
     }
 
     public Response execute(){
@@ -144,13 +146,14 @@ public class Client {
         if (request.cookie() != null && !request.cookie().isEmpty()){
             JSONObject jsonCookie = request.cookie();
             CookieStore cookieStore = new BasicCookieStore();
-            String name = null, value = null;
-            for (String key : jsonCookie.keySet()){
-                if (StringUtil.containsIgnoreCase(key, "SESSID")){
-                    name = key; value = jsonCookie.getString(key);
+            Map<String, String> map = new HashMap<>(2);
+            request.cookie().forEach((key, value) -> {
+                if (StringUtil.containsIgnoreCase(key, SESSION)){
+                    map.put("name", key);
+                    map.put("value", String.valueOf(value));
                 }
-            }
-            BasicClientCookie cookie = new BasicClientCookie(name, value);
+            });
+            BasicClientCookie cookie = new BasicClientCookie(map.get("name"), map.get("value"));
             cookie.setDomain(jsonCookie.getString("domain"));
             cookie.setPath(jsonCookie.getString("path"));
             cookieStore.addCookie(cookie);
@@ -173,9 +176,7 @@ public class Client {
         StringEntity entity;
         if (request.isFrom()){
             List<NameValuePair> pairList = new ArrayList<>(body.size());
-            for (String key : body.keySet()) {
-                pairList.add(new BasicNameValuePair(key, body.getString(key)));
-            }
+            body.forEach((key, value) -> pairList.add(new BasicNameValuePair(key, String.valueOf(value))));
             entity = new UrlEncodedFormEntity(pairList, Charset.forName(UTF8));
         }else {
             entity = new StringEntity(body.toJSONString(), Charset.forName(UTF8));
@@ -197,9 +198,7 @@ public class Client {
         if (request.headers() == null || request.headers().size() == 0) {
             return;
         }
-        for (Header header : request.headers()) {
-            httpMethods.setHeader(header);
-        }
+        request.headers().forEach( header -> httpMethods.addHeader(header));
     }
 
     /**

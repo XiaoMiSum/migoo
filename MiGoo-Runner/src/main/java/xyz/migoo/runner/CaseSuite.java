@@ -23,11 +23,11 @@ public class CaseSuite extends junit.framework.TestSuite{
         failures = new ArrayList<>();
         testResult = new TestResult();
         testName = new StringBuilder();
-        for (JSONObject caseSet: caseSets){
+        caseSets.forEach(caseSet ->{
             TestSuite suite = new TestSuite(caseSet, this);
             testName.append(caseSet.getString(Dict.NAME)).append("&");
             addTest(suite);
-        }
+        });
     }
 
     protected TestResult testResult(){
