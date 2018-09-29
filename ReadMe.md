@@ -1,23 +1,26 @@
-模仿 <a href="https://github.com/HttpRunner/HttpRunner">HttpRunner</a>
-基于 Junit 4.8、HTTP Client 4.5.5、thymeleaf 3.0.9.RELEASE 的一个测试工具，
-可通过指定格式的json文件读取测试数据，执行测试并生成测试报告。
+参考 <a href="https://github.com/HttpRunner/HttpRunner">HttpRunner</a>
+使用Java语言，基于Junit 4.8、HTTP Client 4.5.5、thymeleaf 3.0.9.RELEASE等开源项目实现的一个接口测试工具，
+可通过指定格式的json\yaml文件读取测试数据，执行测试并生成测试报告。
 
 **使用方式**
 
     @org.junit.Test
     public void testApi(){
-        TestResult result = new Runner().run("path","");
+        TestResult result = new Runner().run("path");
     }
     
-说明：Runner类提供 run方法，有两个参数
+    @org.junit.Test
+    public void testApi(){
+        new Runner().execute("path");
+    }
+    
+说明：Runner类提供 run\execute方法
 
-参数 path ：指定的测试用例文件或测试用例文件所在目录；
-
-参数 template：thymeleaf模版文件，可空，传入空值时，按默认模版生成测试报告。
+参数 path ：指定的测试用例文件、测试用例文件所在目录、指定格式的json文本；
 
 **测试用例**
 
-测试用例为 json 数组，详情见 TestCase/test_case.json
+测试用例为 json 或 json数组，详情见 TestCase/test_case.json、TestCase/test_case2.json、TestCase/test_case.yml
 
 **关于验证**
 
@@ -25,67 +28,9 @@
 
 types详细值，请查看配置文件 application.properties
 
-    [
-        {
-            "name": "the test suite name",
-            "request": {
-                "url": "http://127.0.0.1:8080/login/login",
-                "method": "post",
-                "headers": {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                    }
-            },
-            "case": [
-                {
-                    "title": "正确的用户名\\密码登录，返回值包含期望值",
-                    "body": {
-                        "user": "admin",
-                        "pwd": "123456qq"
-                    },
-                    "validate": [
-                        {
-                            "check": "statusCode", 
-                            "expect": 200, 
-                            "types": "=="
-                        },
-                        {
-                            "check": "body", 
-                            "expect": "succ", 
-                            "types": "contain"
-                        },
-                        {
-                            "check": "body.code", 
-                            "expect": "200", 
-                            "types": "eq"
-                        }
-                    ]
-                },                 
-                {
-                    "title": "错误的用户名\\密码登录，返回值等于期望值",
-                    "body": {
-                        "user": "admin",
-                        "pwd": "123"
-                    },
-                    "validate":[
-                        {
-                            "check": "statusCode", 
-                            "expect": 200, 
-                            "types": "=="
-                        },
-                        {
-                            "check": "body", 
-                            "expect": "success", 
-                            "types": "eq"
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
-
 **测试报告**
 
-测试报告保存在项目根目录或模块根目录
+测试报告为HTML文件，使用 thymeleaf模板生成；
 
 报告中的数据来源于 TestResult.report，Map类型；
 
@@ -131,13 +76,11 @@ types详细值，请查看配置文件 application.properties
     
 **Demo**
 
-1.解压data/login.zip，放到tomcat/webapps目录；
+TestCase目录中提供了3个测试用例文件，分别提供了基础\进阶\高阶的示例。
 
-2.启动tomcat，如端口不是 8080，请修改 test_case.json中的 url；
+1.运行测试类 Test.class；
 
-3.运行测试类 Test.class；
-
-4.查看测试报告 "./MiGoo-Runner/reports/xxxxx-2018-07-26 13:29:30.html"；
+2.查看测试报告 "./Reports/xxxxx-2018-07-26 13:29:30.html"；
 
 **JDK**
 请在 JDK 1.8 及以上版本中运行或开发测试脚本；

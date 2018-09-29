@@ -1,4 +1,4 @@
-name: the test suite name
+name: 高阶 - 函数与hook
 config:
   variables:
     beforeClass:
