@@ -57,6 +57,7 @@ public class CaseParser{
             }else{
                 JSONArray jsonArray = new JSONArray(1);
                 jsonArray.add(json);
+                this.caseSets(jsonArray);
             }
         }
     }
