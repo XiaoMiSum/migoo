@@ -75,7 +75,7 @@ public class Validator extends Assert {
                 }
             }
         } catch (Exception e) {
-            throw new ValidatorException(e.getMessage());
+            throw new ValidatorException(StringUtil.getStackTrace(e));
         }
     }
 
@@ -85,7 +85,7 @@ public class Validator extends Assert {
         try {
             result = (boolean) methods.get(function).invoke(null, actual, expect);
         } catch (Exception e) {
-            throw new ValidatorException(e.getMessage());
+            throw new ValidatorException(StringUtil.getStackTrace(e));
         }
         if (!result) {
             StringBuilder errorMsg = new StringBuilder();
