@@ -20,7 +20,7 @@
       },
       "body": {
         "user": "migoo1",
-        "password": "$pwd"
+        "password": "$pwd$"
       },
       "validate": [
         {"check": "status", "expect": 200, "types": "=="},
@@ -30,11 +30,8 @@
     },
     {
       "title": "密码错误",
-      "setUp": {
-        "pwd": "${getPwd($user)}"
-      },
       "body": {
-        "user": "$user",
+        "user": "$user$",
         "password": "123456"
       },
       "validate": [
@@ -46,7 +43,7 @@
     {
       "title": "参数正确",
       "body": {
-        "user": "$user",
+        "user": "$user$",
         "password": "123456qq"
       },
       "validate": [

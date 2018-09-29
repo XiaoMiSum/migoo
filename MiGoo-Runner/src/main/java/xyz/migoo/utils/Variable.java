@@ -33,7 +33,7 @@ public class Variable {
             if (PATTERN.matcher(value).find()){
                 continue;
             }
-            String regex = "$" + variable;
+            String regex = "$" + variable + "$";
             for (String key : body.keySet()){
                 String object = body.getString(key);
                 if (StringUtil.contains(object, regex) && StringUtil.isNotBlank(value)){
@@ -52,7 +52,7 @@ public class Variable {
             if (PATTERN.matcher(value).find()){
                 continue;
             }
-            String regex = "$" + variable;
+            String regex = "$" + variable + "$";
             if (StringUtil.contains(body, regex)){
                 body.replace(regex, value);
             }

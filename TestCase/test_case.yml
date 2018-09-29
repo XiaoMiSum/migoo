@@ -12,14 +12,14 @@ case:
   - title: 未注册的用户登录
     setUp:
       user: migoo1
-      pwd: ${getPwd($user)}
+      password: ${getPwd($user$)}
       before:
         - ${hook(before)}
       after:
         - ${hook(after)}
     body:
-      user: $user
-      pwd: $pwd
+      user: $user$
+      password: $password$
     validate:
       - {check: status, expect: 200, types: ==}
       - {check: $.status, expect: 411, types: eq}
@@ -34,8 +34,8 @@ case:
       after:
         - ${hook2(after,before)}
     body:
-      user: $user
-      password: $password
+      user: $user$
+      password: $password$
     validate:
       - {check: status, expect: 200, types: ==}
       - {check: $.status, expect: ${setValue(411)}, types: eq}
@@ -50,8 +50,8 @@ case:
       after:
         - ${hook(after)}
     body:
-      user: $user
-      password: $password
+      user: $user$
+      password: $password$
     validate:
       - {check: status, expect: 200, types: ==}
       - {check: $.status, expect: 200, types: eq}
