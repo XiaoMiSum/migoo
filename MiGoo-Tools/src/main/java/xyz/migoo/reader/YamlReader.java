@@ -27,10 +27,10 @@ public class YamlReader extends AbstractReader implements Reader{
     @Override
     public JSON read(){
         if (path != null){
-            super.stream(ReaderFactory.PROS_SUFFIX, path);
+            super.stream(ReaderFactory.YAML_SUFFIX, path);
         }
         if (file != null){
-            super.stream(ReaderFactory.PROS_SUFFIX, file);
+            super.stream(ReaderFactory.YAML_SUFFIX, file);
         }
         Yaml yaml = new Yaml();
         Object object = yaml.load(inputStream);

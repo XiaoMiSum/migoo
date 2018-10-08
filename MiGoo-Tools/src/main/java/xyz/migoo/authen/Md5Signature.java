@@ -15,18 +15,14 @@ public class Md5Signature {
 
     /**
      * MD5验证签名
-     * @param content
-     * @param sign
-     * @param key
-     * @return
+     * @param content    签名明文
+     * @param sign       签名密文
+     * @param key        签名密钥
+     * @return boolean   验证结果
      */
     public static boolean check(String content, String sign, String key) {
         String md5 = md5Encode(content + key).toUpperCase();
-        if (md5.equals(sign)) {
-            return true;
-        } else{
-            return false;
-        }
+        return md5.equals(sign);
     }
 
     public static String sign(String content,String  key) {
