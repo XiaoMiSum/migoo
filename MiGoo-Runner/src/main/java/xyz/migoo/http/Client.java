@@ -1,7 +1,6 @@
 package xyz.migoo.http;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.http.Header;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -83,7 +82,7 @@ public class Client {
      */
     private Response doGet(Request request) {
         this.init(request);
-        HttpRequestBase httpGet = new HttpGet(request.url());
+        HttpGet httpGet = new HttpGet(request.url());
         this.setHeader(request, httpGet);
         return this.doExecute(httpGet, request);
     }
@@ -124,8 +123,9 @@ public class Client {
      */
     private Response doDelete(Request request) {
         this.init(request);
-        HttpRequestBase httpDelete = new HttpDelete(request.url());
+        HttpDelete httpDelete = new HttpDelete(request.url());
         this.setHeader(request, httpDelete);
+        this.setEntity(request, httpDelete);
         return this.doExecute(httpDelete, request);
     }
 

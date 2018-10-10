@@ -22,7 +22,7 @@ public class StringUtil extends StringUtils {
      * @param str
      * @return
      */
-    public static String nullToEmpty(String str) {
+    public static String toEmpty(String str) {
         return str == null || "NULL".equals(str.toUpperCase()) ? "" : str;
     }
 

@@ -1,11 +1,14 @@
 name: 高阶 - 函数与hook
 config:
   variables:
-    beforeClass:
-      - ${hook(beforeClass)}
+    var: test
+  beforeClass:
+    - ${hook(beforeClass)}
   request:
     url: http://migoo.xyz/api/login
     method: post
+    # restful风格的 get\delete请求时，设置该参数为 true
+    # restful: 1/0  t/f  T/F  y/n  Y/N  yes/no  YES/NO  true/false  TRUE/FALSE
     headers:
       Content-Type: application/json
 case:
@@ -13,10 +16,16 @@ case:
     setUp:
       user: migoo1
       password: ${getPwd($user$)}
-      before:
-        - ${hook(before)}
-      after:
-        - ${hook(after)}
+    before:
+      - ${hook(before)}
+    after:
+      - ${hook(after)}
+    # query: restful风格的 get\delete 请求时，url路径中的参数可在该属性中配置，使用方式与 body一样
+    # 特别注意 当delete请求 url路径含有参数，并携带body时，url路径中的参数必须使用 query来配置
+    # url示例：http://127.0.0.1/user/{id}
+    #query:
+    # user: $user$
+    # password: $password$
     body:
       user: $user$
       password: $password$
@@ -29,10 +38,10 @@ case:
     setUp:
       user: migoo
       password: 123456
-      before:
-        - ${hook(before)}
-      after:
-        - ${hook2(after,before)}
+    before:
+      - ${hook(before)}
+    after:
+      - ${hook2(after,before)}
     body:
       user: $user$
       password: $password$
@@ -45,10 +54,10 @@ case:
     setUp:
       user: migoo
       password: 123456qq
-      before:
-        - ${hook(before)}
-      after:
-        - ${hook(after)}
+    before:
+      - ${hook(before)}
+    after:
+      - ${hook(after)}
     body:
       user: $user$
       password: $password$

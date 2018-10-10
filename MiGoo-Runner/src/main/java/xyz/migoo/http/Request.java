@@ -12,6 +12,7 @@ import org.apache.http.message.BasicHeader;
 import xyz.migoo.exception.RequestException;
 import xyz.migoo.utils.Log;
 import xyz.migoo.utils.StringUtil;
+import xyz.migoo.utils.TypeUtil;
 
 import java.io.File;
 import java.net.URLEncoder;
@@ -78,6 +79,7 @@ public class Request {
     public JSONObject body() {
         return this.body;
     }
+
     public JSONObject cookie() {
         return this.cookie;
     }
@@ -94,9 +96,9 @@ public class Request {
         return contentType;
     }
 
-    protected boolean isFrom(){
+    protected boolean isFrom() {
         Header header = this.contentType();
-        return header == null || !StringUtil.containsIgnoreCase(header.getValue(),"json");
+        return header == null || !StringUtil.containsIgnoreCase(header.getValue(), "json");
     }
 
     public int timeOut() {
@@ -112,11 +114,13 @@ public class Request {
         private String method;
         private File certificate;
         private JSONObject body;
+        private JSONObject query;
         private JSONObject cookie;
         private List<Header> headers;
         private HttpHost httpHost;
         private String title;
         private int timeOut = 20;
+        private boolean isRestful = false;
 
         public Builder() {
         }
@@ -171,7 +175,7 @@ public class Request {
             try {
                 JSONObject json = JSONObject.parseObject(headers);
                 this.headers(json);
-            }catch (Exception e){
+            } catch (Exception e) {
                 this.headers = null;
             }
             return this;
@@ -226,8 +230,16 @@ public class Request {
         }
 
         public Builder timeOut(int timeOut) {
-            if (timeOut > this.timeOut){
+            if (timeOut > this.timeOut) {
                 this.timeOut = timeOut;
+            }
+            return this;
+        }
+
+        public Builder isRestful(Object value) {
+            Boolean b = TypeUtil.booleanOf(value);
+            if (b != null) {
+                isRestful = b.booleanValue();
             }
             return this;
         }
@@ -241,11 +253,28 @@ public class Request {
                 this.body = (JSONObject) body;
                 return this;
             }
-            if (body instanceof String){
+            if (body instanceof String) {
                 this.body = JSONObject.parseObject((String) body);
                 return this;
             }
             this.body = JSONObject.parseObject(JSONObject.toJSONString(body, SerializerFeature.SortField));
+            return this;
+        }
+
+        public Builder query(Object query) {
+            if (query == null) {
+                this.query = new JSONObject(0);
+                return this;
+            }
+            if (query instanceof JSONObject) {
+                this.query = (JSONObject) query;
+                return this;
+            }
+            if (query instanceof String) {
+                this.query = JSONObject.parseObject((String) query);
+                return this;
+            }
+            this.query = JSONObject.parseObject(JSONObject.toJSONString(query, SerializerFeature.SortField));
             return this;
         }
 
@@ -258,11 +287,11 @@ public class Request {
                 this.cookie = (JSONObject) cookie;
                 return this;
             }
-            if (cookie instanceof String){
+            if (cookie instanceof String) {
                 this.cookie = JSONObject.parseObject((String) cookie);
                 return this;
             }
-            this.cookie = (JSONObject)JSONObject.toJSON(cookie);
+            this.cookie = (JSONObject) JSONObject.toJSON(cookie);
             return this;
         }
 
@@ -274,39 +303,34 @@ public class Request {
                 if (StringUtil.isBlank(method)) {
                     throw new RequestException("method == null || method.length() == 0");
                 }
-                if (!this.methodCheck()){
+                if (!this.methodCheck()) {
                     throw new RequestException("unknown method ' " + method + " '");
                 }
                 if (certificate != null && certificate.isDirectory()) {
                     throw new RequestException("certificate can not be directory . certificate path : " + certificate);
                 }
-                if (body == null || body.size() == 0) {
-                    if (this.noneRequestBody(method)) {
+                if (body != null || query != null){
+                    JSONObject json = query != null ? query : body;
+                    if (method.equals(HttpGet.METHOD_NAME) || method.equals(HttpDelete.METHOD_NAME)){
                         StringBuilder sb = new StringBuilder();
-                        for (String key : body.keySet()) {
-                            sb.append(key)
-                                    .append("=")
-                                    .append(URLEncoder.encode(body.getString(key), UTF8))
-                                    .append("&");
+                        if (isRestful) {
+                            for (String key : json.keySet()) {
+                                sb.append("/").append(URLEncoder.encode(json.getString(key), UTF8));
+                            }
+                            url = url + sb;
+                        } else {
+                            for (String key : json.keySet()) {
+                                sb.append(key).append("=").append(URLEncoder.encode(json.getString(key), UTF8)).append("&");
+                            }
+                            url = url + "?" + sb.substring(0, sb.length() - 1);
                         }
-                        url = url + "?" + sb.toString().substring(0, sb.length() - 1);
                     }
                 }
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error(e.getMessage(), e);
                 throw new RequestException(e.getMessage());
             }
             return new Request(this);
-        }
-
-        private boolean permitsRequestBody(String method) {
-            return method.equals(HttpPost.METHOD_NAME)
-                    || method.equals(HttpPut.METHOD_NAME)
-                    || method.equals(HttpDelete.METHOD_NAME);
-        }
-
-        private boolean noneRequestBody(String method) {
-            return method.equals(HttpGet.METHOD_NAME);
         }
 
         private boolean urlCheck() {

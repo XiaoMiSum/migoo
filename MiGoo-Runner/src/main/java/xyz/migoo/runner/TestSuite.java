@@ -28,17 +28,15 @@ public class TestSuite extends junit.framework.TestSuite{
         JSONArray testCases = caseSet.getJSONArray(Dict.CASE);
         JSONObject configRequest = config.getJSONObject(Dict.CONFIG_REQUEST);
         JSONObject variables = config.getJSONObject(Dict.CONFIG_VARIABLES);
-        Variable.bindVariable(variables, variables.getString(Dict.CONFIG_BEFORE_CLASS));
         Variable.evalVariable(variables);
-        Variable.bindVariable(variables, variables.getString(Dict.CONFIG_BEFORE_CLASS));
-        Hook.hook(variables.getJSONArray(Dict.CONFIG_BEFORE_CLASS));
+        Variable.bindVariable(variables, caseSet);
+        Variable.evalVariable(variables);
+        Hook.hook(config.getJSONArray(Dict.CONFIG_BEFORE_CLASS));
         JSONObject headers = configRequest.getJSONObject("headers");
         Request.Builder builder = new Request.Builder().method(configRequest.getString("method"));
         for (int i = 0; i < testCases.size(); i++) {
             JSONObject testCase = testCases.getJSONObject(i);
-            Variable.bindVariable(variables, testCase);
             JSONObject setUp = testCase.getJSONObject(Dict.CASE_SETUP);
-            Variable.bindVariable(setUp, setUp.getString(Dict.CASE_SETUP_BEFORE));
             Variable.evalVariable(setUp);
             Variable.bindVariable(setUp, testCase);
             JSONObject caseHeaders = testCase.getJSONObject(Dict.CASE_HEADERS);

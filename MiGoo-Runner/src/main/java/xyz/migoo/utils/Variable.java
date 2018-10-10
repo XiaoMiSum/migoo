@@ -18,7 +18,8 @@ import java.util.regex.Pattern;
  */
 public class Variable {
 
-    public static final Pattern PATTERN = Pattern.compile("^\\$\\{(\\w+)\\((\\w*[:\\w+]*[=\\w]*[@\\w+\\.+\\w+]*[,\\w+]*)\\)\\}");
+    public static final Pattern PATTERN = Pattern.compile("^\\$\\{(\\w+)\\((.*)\\)\\}");
+    private static final String SEPARATOR = ",";
     private static Map<String, Method> methodMap = null;
 
     private Variable() {
@@ -43,8 +44,12 @@ public class Variable {
         }
     }
 
-    public static void bindVariable(JSONObject variables, String body) {
-        if (variables == null || body == null || variables.isEmpty() || body.isEmpty()) {
+    public static void bindVariable(JSONObject variables, String key) {
+        if (variables == null || StringUtil.isBlank(key) || variables.isEmpty()) {
+            return;
+        }
+        String body = variables.getString(key);
+        if (StringUtil.isBlank(body)){
             return;
         }
         for (String variable : variables.keySet()) {
@@ -71,10 +76,11 @@ public class Variable {
             Matcher matcher = PATTERN.matcher((String)object);
             if (matcher.find()){
                 String params = matcher.group(2);
-                if (StringUtil.isBlank(params)){
-                    params = "null";
+                if (params.contains("$")){
+                    continue;
                 }
-                String result = function(matcher.group(1), params);
+                functionLoader();
+                String result = invoke(matcher.group(1), params);
                 if (StringUtil.isNotEmpty(result)) {
                     variables.put(key, result);
                 }
@@ -82,10 +88,9 @@ public class Variable {
         }
     }
 
-    private static String function(String methodName, String params) {
-        String value;
+    private static void functionLoader() {
         try {
-            if (methodName == null){
+            if (methodMap == null){
                 Class clazz = Class.forName(Platform.EXTENDS_VARIABLE);
                 Method[] methods = clazz.getDeclaredMethods();
                 methodMap = new HashMap<>(methods.length);
@@ -93,8 +98,19 @@ public class Variable {
                     methodMap.put(method.getName(), method);
                 }
             }
-            if (StringUtil.isBlank(StringUtil.nullToEmpty(params))){
+        }catch (Exception e){
+            throw new VariableException(StringUtil.getStackTrace(e));
+        }
+    }
+
+    private static String invoke(String methodName, String params) {
+        String value;
+        try {
+            if (StringUtil.isBlank(params)){
                 value = (String) methodMap.get(methodName).invoke(null);
+            }else if(params.contains(SEPARATOR)){
+                Object[] o = new Object[]{params.split(SEPARATOR)};
+                value = (String) methodMap.get(methodName).invoke(null, o);
             }else {
                 value = (String) methodMap.get(methodName).invoke(null, params);
             }
