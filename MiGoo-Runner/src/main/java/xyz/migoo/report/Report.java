@@ -4,10 +4,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import xyz.migoo.config.Platform;
 import xyz.migoo.exception.ReportException;
-import xyz.migoo.utils.DateUtil;
-import xyz.migoo.utils.EmailUtil;
-import xyz.migoo.utils.Log;
-import xyz.migoo.utils.StringUtil;
+import xyz.migoo.reader.AbstractReader;
+import xyz.migoo.utils.*;
 
 import java.io.*;
 import java.util.HashMap;
@@ -37,7 +35,7 @@ public class Report {
         report.put("report", "Test Report:  " + reportName);
         report.put("title", reportName + " - TestReport");
         report.put("platform", platform());
-        String content = render("templates/migoo_report_template.html", report);
+        String content = render("classpath://templates/migoo_report_template.html", report);
         File file = report(reportName, content, isMain);
         if (sendEmail && Platform.MAIL_SEND){
             EmailUtil.sendEmail(content, file);
@@ -52,7 +50,7 @@ public class Report {
      * @return 渲染后的HTML
      */
     private static String render(String template, Map<String, Object> report) {
-        template = loadTemplate(template);
+        template = HtmlReader.read(template);
         Context context = new Context();
         context.setVariables(report);
         return TEMPLATE_ENGINE.process(template, context);
@@ -64,36 +62,6 @@ public class Report {
         platform.put("httpclient", "HTTP Client " + HTTPCLIENT_VERSION);
         platform.put("os", OS_VERSION);
         return platform;
-    }
-
-    private static String loadTemplate(String file){
-        InputStream is;
-        if (file.startsWith(TEMPLATE_CLASS)) {
-            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            is = classloader.getResourceAsStream(file);
-        }else {
-            try {
-                is = new BufferedInputStream(new FileInputStream(file));
-            } catch (FileNotFoundException e) {
-                log.error(e.getMessage(), e);
-                throw new ReportException("load template file error , file path " + file);
-            }
-        }
-        return read(is);
-    }
-
-    private static String read(InputStream is){
-        StringBuilder stringBuilder = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new ReportException("load template file error. " + e.getMessage());
-        }
-        return stringBuilder.toString();
     }
 
     private static File report(String name , String template, boolean isMain){
@@ -116,4 +84,21 @@ public class Report {
        return file;
     }
 
+    private static class HtmlReader extends AbstractReader{
+        private static final HtmlReader HTML_READER = new HtmlReader();
+        private static String read(String path){
+            HTML_READER.stream(".html", path);
+            StringBuilder stringBuilder = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(HTML_READER.inputStream))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    stringBuilder.append(line);
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                throw new ReportException("load template file error. " + e.getMessage());
+            }
+            return stringBuilder.toString();
+        }
+    }
 }
