@@ -16,11 +16,34 @@ import java.util.List;
 public class Runner {
 
     private boolean isMain = false;
+    private static Runner runner;
 
-    public Runner(){
+    public static Runner getInstance(boolean isMain){
+        if (runner == null){
+            synchronized (Runner.class){
+                if (runner == null){
+                    runner = new Runner(isMain);
+                }
+            }
+        }
+        return runner;
     }
 
-    public Runner(boolean isMain){
+    public static Runner getInstance(){
+        if (runner == null){
+            synchronized (Runner.class){
+                if (runner == null){
+                    runner = new Runner();
+                }
+            }
+        }
+        return runner;
+    }
+
+    private Runner(){
+    }
+
+    private Runner(boolean isMain){
         this.isMain = isMain;
     }
 

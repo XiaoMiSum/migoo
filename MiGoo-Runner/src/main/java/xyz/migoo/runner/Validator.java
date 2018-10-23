@@ -107,6 +107,10 @@ public class Validator extends Assert {
             function = Dict.EVAL_ACTUAL_STATUS;
             return;
         }
+        if (CHECK_REGEX.contains(searchChar)) {
+            function = Dict.EVAL_ACTUAL_REGEX;
+            return;
+        }
         if (FUNCTION_EQUALS.contains(searchChar)) {
             function = Dict.VALIDATE_TYPE_EQUALS;
             return;

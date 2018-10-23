@@ -62,6 +62,9 @@ public class Platform {
     public static final List<String> CHECK_BODY = Arrays.asList(
             StringUtil.trimAny(PROPERTIES.get("check.body")).split(","));
 
+    public static final List<String> CHECK_REGEX = Arrays.asList(
+            StringUtil.trimAny(PROPERTIES.get("check.regex")).split(","));
+
     public static final List<String> CHECK_CODE = Arrays.asList(
             StringUtil.trimAny(PROPERTIES.get("check.status")).split(","));
 

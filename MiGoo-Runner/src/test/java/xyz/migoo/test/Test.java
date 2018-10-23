@@ -1,27 +1,25 @@
 package xyz.migoo.test;
 
-import xyz.migoo.runner.Runner;
-import xyz.migoo.runner.TestResult;
 
 /**
  * @author xiaomi
  * @date 2018/7/25 15:10
  */
-public class Test {
+public class Test extends Base{
 
     @org.junit.Test
     public void testApiYaml(){
-        new Runner().execute("../TestCase/test_case.yml");
+        runner.execute("../TestCase/test_case.yml");
     }
 
     @org.junit.Test
     public void testApiJson1(){
-        new Runner().execute("../TestCase/test_case.json");
+        runner.execute("../TestCase/test_case.json");
     }
 
     @org.junit.Test
     public void testApiJson2(){
-        new Runner().execute("../TestCase/test_case2.json");
+        runner.execute("../TestCase/test_case2.json");
     }
 
     @org.junit.Test
@@ -95,7 +93,7 @@ public class Test {
                 "  ]" +
                 "}";
 
-        new Runner().execute(json);
-        new Runner().run(json);
+        runner.execute(json);
+        runner.run(json);
     }
 }

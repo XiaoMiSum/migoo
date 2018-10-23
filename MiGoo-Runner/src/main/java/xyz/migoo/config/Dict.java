@@ -51,6 +51,8 @@ public class Dict {
 
     public static final String EVAL_ACTUAL_BODY = "body";
 
+    public static final String EVAL_ACTUAL_REGEX = "regex";
+
     public static final String EVAL_ACTUAL_STATUS = "status";
 
     public static final String EVAL_ACTUAL_JSON = "json";

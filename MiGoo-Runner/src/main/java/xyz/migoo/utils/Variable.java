@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public class Variable {
 
     public static final Pattern PATTERN = Pattern.compile("^\\$\\{(\\w+)\\((.*)\\)\\}");
-    private static final String SEPARATOR = ",";
+    public static final String SEPARATOR = ",";
     private static Map<String, Method> methodMap = null;
 
     private Variable() {
@@ -59,7 +59,7 @@ public class Variable {
             }
             String regex = "$" + variable + "$";
             if (StringUtil.contains(body, regex)){
-                body.replace(regex, value);
+                variables.put(key, body.replace(regex, value));
             }
         }
     }
@@ -90,13 +90,14 @@ public class Variable {
 
     private static void functionLoader() {
         try {
-            if (methodMap == null){
-                Class clazz = Class.forName(Platform.EXTENDS_VARIABLE);
-                Method[] methods = clazz.getDeclaredMethods();
-                methodMap = new HashMap<>(methods.length);
-                for (Method method : methods) {
-                    methodMap.put(method.getName(), method);
-                }
+            if (methodMap != null) {
+                return;
+            }
+            Class clazz = Class.forName(Platform.EXTENDS_VARIABLE);
+            Method[] methods = clazz.getDeclaredMethods();
+            methodMap = new HashMap<>(methods.length);
+            for (Method method : methods) {
+                methodMap.put(method.getName(), method);
             }
         }catch (Exception e){
             throw new VariableException(StringUtil.getStackTrace(e));

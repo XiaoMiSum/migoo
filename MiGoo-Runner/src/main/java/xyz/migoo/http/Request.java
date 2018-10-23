@@ -257,7 +257,7 @@ public class Request {
                 this.body = JSONObject.parseObject((String) body);
                 return this;
             }
-            this.body = JSONObject.parseObject(JSONObject.toJSONString(body, SerializerFeature.SortField));
+            this.body = (JSONObject)JSONObject.toJSON(body);
             return this;
         }
 
@@ -274,7 +274,7 @@ public class Request {
                 this.query = JSONObject.parseObject((String) query);
                 return this;
             }
-            this.query = JSONObject.parseObject(JSONObject.toJSONString(query, SerializerFeature.SortField));
+            this.query = (JSONObject)JSONObject.toJSON(query);
             return this;
         }
 

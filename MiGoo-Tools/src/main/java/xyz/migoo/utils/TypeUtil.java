@@ -26,21 +26,21 @@ public class TypeUtil {
             return ((Number) value).intValue() == 1;
         }else {
             if (value instanceof String) {
-                String strVal = (String) value;
+                String strVal = ((String) value).toLowerCase();
                 if (StringUtil.isNotBlank(StringUtil.toEmpty(strVal))) {
                     return null;
                 }
-                if (TRUE.equalsIgnoreCase(strVal) || ONE.equals(strVal)) {
-                    return Boolean.TRUE.booleanValue();
+                if (TRUE.equals(strVal) || ONE.equals(strVal)) {
+                    return Boolean.TRUE;
                 }
-                if (FALSE.equalsIgnoreCase(strVal) || ZERO.equals(strVal)) {
-                    return Boolean.FALSE.booleanValue();
+                if (FALSE.equals(strVal) || ZERO.equals(strVal)) {
+                    return Boolean.FALSE;
                 }
-                if (Y.equalsIgnoreCase(strVal) || T.equalsIgnoreCase(strVal) || YES.equalsIgnoreCase(strVal)) {
-                    return Boolean.TRUE.booleanValue();
+                if (Y.equals(strVal) || T.equals(strVal) || YES.equals(strVal)) {
+                    return Boolean.TRUE;
                 }
-                if (F.equalsIgnoreCase(strVal) || N.equalsIgnoreCase(strVal) || NO.equalsIgnoreCase(strVal) ) {
-                    return Boolean.FALSE.booleanValue();
+                if (F.equals(strVal) || N.equals(strVal) || NO.equals(strVal) ) {
+                    return Boolean.FALSE;
                 }
             }
             throw new RuntimeException("can not cast to boolean, value : " + value);

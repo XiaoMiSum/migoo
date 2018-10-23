@@ -1,5 +1,7 @@
 package xyz.migoo.http;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.http.Header;
 import xyz.migoo.utils.StringUtil;
@@ -101,11 +103,15 @@ public class Response {
         return body;
     }
 
-    public JSONObject json() {
+    public JSON json() {
         try {
             return JSONObject.parseObject(body);
         }catch (Exception e){
-            return null;
+            try {
+                return JSONArray.parseArray(body);
+            }catch (Exception ex){
+                return null;
+            }
         }
     }
 

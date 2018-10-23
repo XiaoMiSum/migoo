@@ -34,43 +34,31 @@ public class StringUtil extends StringUtils {
         if (null == throwable) {
             return null;
         }
-        Writer result = null;
-        PrintWriter printWriter = null;
-        try {
-            result = new StringWriter();
-            printWriter = new PrintWriter(result);
-            throwable.printStackTrace(printWriter);
+        try (Writer result = new StringWriter(); PrintWriter print = new PrintWriter(result)){
+            throwable.printStackTrace(print);
             return result.toString();
-        } finally {
-            if (printWriter != null) {
-                printWriter.close();
-            }
-            if (result != null) {
-                try {
-                    result.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        }catch (IOException e){
+            e.printStackTrace();
+            return null;
         }
     }
 
-    public String random(int length){
+    public static String random(int length){
         return random(length, BASE_STR);
     }
 
     /**
      * 生成指定长度随机字符串
-     * @param length
-     * @param str
+     * @param length    随机字符串长度
+     * @param baseStr   基础字符串
      * @return
      */
-    public String random(int length, String str){
+    public static String random(int length, String baseStr){
         StringBuffer sb = new StringBuffer(length);
         Random random = new Random();
         for (int i = 0; i < length; i++){
-            int num = random.nextInt(str.length());
-            sb.append(str.charAt(num));
+            int num = random.nextInt(baseStr.length());
+            sb.append(baseStr.charAt(num));
         }
         return sb.toString();
     }

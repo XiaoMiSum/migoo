@@ -41,13 +41,20 @@ public class Client {
     private static Log log = new Log(Client.class);
     protected static final String HTTPS = "https";
     private static final String SESSION = "SESSID";
-    private Request request;
+    private static Client client;
 
-    public Client(){}
-
-    public Client(Request request){
-        this.request = request;
+    public static Client getInstance(){
+        if (client == null){
+            synchronized (Client.class){
+                if (client == null){
+                    client = new Client();
+                }
+            }
+        }
+        return client;
     }
+
+    private Client(){}
 
     /**
      * 执行请求，返回 Response 对象
@@ -68,10 +75,6 @@ public class Client {
             default:
                 return doGet(request);
         }
-    }
-
-    public Response execute(){
-        return execute(this.request);
     }
 
     /**

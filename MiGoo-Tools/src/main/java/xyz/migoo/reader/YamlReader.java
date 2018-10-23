@@ -14,7 +14,7 @@ public class YamlReader extends AbstractReader implements Reader{
 
     private String path;
     private File file;
-    private JSONObject json;
+    private JSON json;
 
     public YamlReader(String path){
         this.path = path;
@@ -34,7 +34,7 @@ public class YamlReader extends AbstractReader implements Reader{
         }
         Yaml yaml = new Yaml();
         Object object = yaml.load(inputStream);
-        json = (JSONObject)JSONObject.toJSON(object);
+        json = (JSON) JSON.toJSON(object);
         return json;
     }
 
@@ -43,6 +43,9 @@ public class YamlReader extends AbstractReader implements Reader{
         if (json == null){
             read();
         }
-        return json.getString(key);
+        if (json instanceof JSONObject){
+            return ((JSONObject) json).getString(key);
+        }
+        return null;
     }
 }

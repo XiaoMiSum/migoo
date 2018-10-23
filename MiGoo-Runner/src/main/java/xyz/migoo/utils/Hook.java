@@ -1,8 +1,8 @@
 package xyz.migoo.utils;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.config.Platform;
+import xyz.migoo.exception.VariableException;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 import static xyz.migoo.utils.Variable.PATTERN;
+import static xyz.migoo.utils.Variable.SEPARATOR;
 
 /**
  *
@@ -35,25 +36,40 @@ public class Hook {
             String value = hook.getString(i);
             Matcher matcher = PATTERN.matcher(value);
             if (matcher.find()){
-                function(matcher.group(1), matcher.group(2));
+                functionLoader();
+                invoke(matcher.group(1), matcher.group(2));
             }
         }
     }
 
-    private static void function(String methodName, String params) {
+    private static void functionLoader() {
         try {
-            if (methodMap == null){
-                Class clazz = Class.forName(Platform.EXTENDS_HOOK);
-                Method[] methods = clazz.getDeclaredMethods();
-                methodMap = new HashMap<>(methods.length);
-                for (Method method : methods) {
-                    methodMap.put(method.getName(), method);
-                }
+            if (methodMap != null){
+                return;
             }
-            methodMap.get(methodName).invoke(null, params);
+            Class clazz = Class.forName(Platform.EXTENDS_HOOK);
+            Method[] methods = clazz.getDeclaredMethods();
+            methodMap = new HashMap<>(methods.length);
+            for (Method method : methods) {
+                methodMap.put(method.getName(), method);
+            }
         }catch (Exception e){
-            // 不处理异常
-            e.printStackTrace();
+            throw new VariableException(StringUtil.getStackTrace(e));
+        }
+    }
+
+    private static void invoke(String methodName, String params) {
+        try {
+            if (StringUtil.isBlank(params)){
+                methodMap.get(methodName).invoke(null);
+            }else if(params.contains(SEPARATOR)){
+                Object[] o = new Object[]{params.split(SEPARATOR)};
+                methodMap.get(methodName).invoke(null, o);
+            }else {
+                methodMap.get(methodName).invoke(null, params);
+            }
+        }catch (Exception e){
+            throw new VariableException(StringUtil.getStackTrace(e));
         }
     }
 

@@ -19,6 +19,7 @@ public class Task {
     private Request request;
     private TestSuite testSuite;
     private static Log log = new Log(Task.class);
+    private static final Client CLIENT = Client.getInstance();
 
     public Task(Request request, TestSuite testSuite){
         this.request = request;
@@ -27,7 +28,7 @@ public class Task {
 
     public synchronized void run(JSONObject testCase) throws ValidatorException {
         Hook.hook(testCase.getJSONArray(Dict.CASE_BEFORE));
-        Response response = new Client().execute(this.request);
+        Response response = CLIENT.execute(this.request);
         Hook.hook(testCase.getJSONArray(Dict.CASE_AFTER));
         this.testSuite.response(response);
         JSON validate = (JSON)testCase.get(Dict.VALIDATE);

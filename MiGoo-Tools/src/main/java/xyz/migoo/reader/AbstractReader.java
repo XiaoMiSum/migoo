@@ -38,7 +38,7 @@ public abstract class AbstractReader {
         return path.toLowerCase().startsWith(CLASSPATH);
     }
 
-    protected InputStream stream(String suffix, String path){
+    protected void stream(String suffix, String path){
         try {
             if (!isClassPath(path)){
                 stream(suffix, new File(path));
@@ -51,7 +51,6 @@ public abstract class AbstractReader {
             LOG.error(e.getMessage(), e);
             throw new ReaderException("file read exception: " + e.getMessage());
         }
-        return inputStream;
     }
 
     protected void stream(String suffix, File file){

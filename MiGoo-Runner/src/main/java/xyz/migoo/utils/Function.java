@@ -3,6 +3,7 @@ package xyz.migoo.utils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPath;
 import xyz.migoo.config.Dict;
 import xyz.migoo.config.Platform;
 import xyz.migoo.http.Response;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author xiaomi
@@ -20,6 +22,8 @@ import java.util.regex.Matcher;
 public class Function {
 
     private static Map<String, Method> methodMap = null;
+    private static final String BODY_ = "body";
+    private static final String JSON_ = "json";
 
     public static Map<String, Method> functionLoader() {
         Method[] methods = Function.class.getDeclaredMethods();
@@ -49,8 +53,9 @@ public class Function {
     }
 
     public static void body(Response response, JSONObject validate) {
-        if (response.json() != null) {
-            validate.put(Dict.VALIDATE_ACTUAL, response.json());
+        JSONObject json = response.json();
+        if (json != null) {
+            validate.put(Dict.VALIDATE_ACTUAL, json);
             Object expect = validate.get(Dict.VALIDATE_EXPECT);
             // 如果不是 json 对象 则解析成 json 对象
             if (!(expect instanceof JSON)) {
@@ -66,22 +71,11 @@ public class Function {
     }
 
     public static void json(Response response, JSONObject validate) {
-        // 1. 从 validate 获取 取值的 key
-        String[] keys = validate.getString(Dict.VALIDATE_CHECK).split("\\.");
-        Object value = "----";
-        // 2. 通过 key 从 response 中 获取对应的值
-        JSONObject json = response.json();
-        for (int i = 0; i < keys.length; i++) {
-            // keys.length >= 2 代表是 多层嵌套 json
-            // 当 i + 2 > keys.length 时 说明 是多层嵌套 json 的最后一层 json 对象
-            if (keys.length >= 2 && i + 2 < keys.length) {
-                json = json.getJSONObject(keys[i + 1]);
-            // 当 i + 1 > keys.length 时 从 最后一层 json 对象中 获取 key值
-            } else if (keys.length >= 2 && i + 1 < keys.length) {
-                value = json.get(keys[i + 1]);
-            }
+        String path = validate.getString(Dict.VALIDATE_CHECK);
+        if (path.toLowerCase().startsWith(JSON_) || path.toLowerCase().startsWith(BODY_)){
+            path = "$" + path.substring(BODY_.length());
         }
-        // 3. 设置 实际值到 validate 对象中
+        Object value = JSONPath.read(response.body(), path);
         validate.put(Dict.VALIDATE_ACTUAL, value);
     }
 
@@ -141,6 +135,22 @@ public class Function {
 
     public static boolean isNotEmpty(Object actual, Object expect) {
         return !isEmpty(actual, expect);
+    }
+
+    public static boolean regex(Object actual, Object expect) {
+        String str = "";
+        if (actual instanceof JSON){
+            str = ((JSON) actual).toJSONString();
+        }
+        if (actual instanceof String){
+            str = actual.toString();
+        }
+        if (actual instanceof Number){
+            str = String.valueOf(actual);
+        }
+        Pattern pattern = Pattern.compile(expect.toString());
+        Matcher matcher = pattern.matcher(str);
+        return matcher.find();
     }
 
 }

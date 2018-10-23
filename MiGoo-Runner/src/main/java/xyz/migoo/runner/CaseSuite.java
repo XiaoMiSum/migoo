@@ -15,23 +15,17 @@ public class CaseSuite extends junit.framework.TestSuite{
 
     private List<String> failures;
     private List<Response> responses;
-    private TestResult testResult;
     private StringBuilder testName;
 
     public CaseSuite(List<JSONObject> caseSets){
         responses = new ArrayList<>();
         failures = new ArrayList<>();
-        testResult = new TestResult();
         testName = new StringBuilder();
         caseSets.forEach(caseSet ->{
             TestSuite suite = new TestSuite(caseSet, this);
             testName.append(caseSet.getString(Dict.NAME)).append("&");
             addTest(suite);
         });
-    }
-
-    protected TestResult testResult(){
-        return testResult;
     }
 
     protected void responses(Response responses){
