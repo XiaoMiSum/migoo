@@ -261,6 +261,34 @@ public class Selenium {
     }
 
     /**
+     * 新窗口打开 url
+     *
+     * @param url 要在新窗口打开的url
+     */
+    public void openNewWindow(String url) {
+        DateUtil.sleep(Config.SHORT_TIME);
+        try {
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript("window.open('" + url + "')");
+            log.info("open new window: " + url);
+        } catch (Exception e) {
+            log.error("open new window exception!", e);
+        }
+    }
+
+    /**
+     * 刷新浏览器
+     */
+    public void refresh() {
+        try {
+            driver.navigate().refresh();
+            log.info("refresh window");
+        } catch (Exception e) {
+            log.error("refresh window exception!", e);
+        }
+    }
+
+    /**
      * 使用JDK的Robot类进行键盘操作，多用于上传文件。
      * 使用此方法需要保持浏览器在最前端
      *
@@ -360,6 +388,46 @@ public class Selenium {
     }
 
     /**
+     * 切换 frame
+     *
+     * @param frameId frameId
+     */
+    public void swithchToFrame(String frameId) {
+        DateUtil.sleep(Config.SHORT_TIME);
+        try {
+            driver.switchTo().frame(frameId);
+            log.info("frame switch to: \"" + frameId + "\"");
+        } catch (Exception e) {
+            log.error("switching frame exception.", e);
+        }
+        DateUtil.sleep(Config.SHORT_TIME);
+    }
+
+    /**
+     * 返回上级 frame
+     */
+    public void switchToParentFrame() {
+        try {
+            driver.switchTo().parentFrame();
+            log.info("refresh window");
+        } catch (Exception e) {
+            log.error("refresh window exception!", e);
+        }
+    }
+
+    /**
+     * 返回最顶层 frame
+     */
+    public void switchToDefaultContent() {
+        try {
+            driver.switchTo().defaultContent();
+            log.info("refresh window");
+        } catch (Exception e) {
+            log.error("refresh window exception!", e);
+        }
+    }
+
+    /**
      * 获取 当前页面 url
      *
      * @return
@@ -414,6 +482,7 @@ public class Selenium {
         public Builder() {
 
         }
+
         /**
          * 初始化浏览器
          */
