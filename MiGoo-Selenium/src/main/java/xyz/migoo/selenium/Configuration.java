@@ -66,12 +66,14 @@ public class Configuration {
         }
 
         public Builder remote(String url) {
-            if (urlCheck(url)) {
-                try {
-                    this.url = new URL(url);
-                } catch (MalformedURLException e) {
-                    throw new SeleniumException("remote url == null");
-                }
+            if (!urlCheck(url)) {
+                throw new SeleniumException("check remote url exception");
+            }
+            try {
+                this.url = new URL(url);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                throw new SeleniumException("remote url == null");
             }
             return this;
         }
@@ -145,6 +147,9 @@ public class Configuration {
                 throw new SeleniumException("browser == null");
             }
             this.driver();
+            if (webDriver == null){
+                throw new SeleniumException("webDriver == null");
+            }
             return new Configuration(this);
         }
 
@@ -153,7 +158,7 @@ public class Configuration {
                 this.remote();
             } else {
                 if (driver != null) {
-                    this.system();
+                    this.driverPath();
                 }
                 this.local();
             }
@@ -217,7 +222,7 @@ public class Configuration {
             }
         }
 
-        private void system() {
+        private void driverPath() {
             switch (browser) {
                 case FIREFOX:
                     System.setProperty(GeckoDriverService.GECKO_DRIVER_EXE_PROPERTY, driver);

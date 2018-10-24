@@ -378,29 +378,29 @@ public class Selenium {
     private By parseObject(String object) {
         if (object.startsWith(Config.XPATH_1) || object.startsWith(Config.XPATH_2)) {
             return By.xpath(object);
-        } else if (object.startsWith(Config.LINK)) {
-            object = object.substring(object.indexOf(Config.SPLIT) + 1);
-            return By.linkText(object);
         } else if (object.startsWith(Config.XPATH_3)) {
-            object = object.substring(object.indexOf(Config.SPLIT) + 1);
+            object = object.substring(object.indexOf(Config.SPLITTER) + 1);
             return By.xpath(object);
+        } else if (object.startsWith(Config.LINK)) {
+            object = object.substring(object.indexOf(Config.SPLITTER) + 1);
+            return By.linkText(object);
         } else if (object.startsWith(Config.ID)) {
-            object = object.substring(object.indexOf(Config.SPLIT) + 1);
+            object = object.substring(object.indexOf(Config.SPLITTER) + 1);
             return By.id(object);
         } else if (object.startsWith(Config.PARTIAL_LINK)) {
-            object = object.substring(object.indexOf(Config.SPLIT) + 1);
+            object = object.substring(object.indexOf(Config.SPLITTER) + 1);
             return By.partialLinkText(object);
         } else if (object.startsWith(Config.CSS)) {
-            object = object.substring(object.indexOf(Config.SPLIT) + 1);
+            object = object.substring(object.indexOf(Config.SPLITTER) + 1);
             return By.cssSelector(object);
         } else if (object.startsWith(Config.CLASS)) {
-            object = object.substring(object.indexOf(Config.SPLIT) + 1);
+            object = object.substring(object.indexOf(Config.SPLITTER) + 1);
             return By.className(object);
         } else if (object.startsWith(Config.TAG_NAME)) {
-            object = object.substring(object.indexOf(Config.SPLIT) + 1);
+            object = object.substring(object.indexOf(Config.SPLITTER) + 1);
             return By.tagName(object);
         } else if (object.startsWith(Config.NAME)) {
-            object = object.substring(object.indexOf(Config.SPLIT) + 1);
+            object = object.substring(object.indexOf(Config.SPLITTER) + 1);
             return By.name(object);
         } else {
             return null;
