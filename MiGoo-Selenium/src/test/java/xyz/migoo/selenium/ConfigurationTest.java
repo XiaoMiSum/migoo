@@ -1,6 +1,5 @@
 package xyz.migoo.selenium;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
 import xyz.migoo.exception.SeleniumException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -72,41 +71,22 @@ public class ConfigurationTest {
         configuration = new Configuration.Builder().firefox().driver("/usr/usr").bin("").build();
     }
 
-    @Test(expected = SeleniumException.class)
-    public void profileNullAndFirefox(){
-        configuration = new Configuration.Builder().firefox().driver("/usr/usr").profile(null).build();
-    }
-
-    @Test(expected = SeleniumException.class)
-    public void profileEmptyAndFirefox(){
-        configuration = new Configuration.Builder().firefox().driver("/usr/usr").profile("").build();
-    }
-
-    @Test(expected = SeleniumException.class)
-    public void profileNullAndChrome(){
-        configuration = new Configuration.Builder().chrome().driver("/usr/usr").profile(null).build();
-    }
-
-    @Test(expected = SeleniumException.class)
-    public void profileEmptyAndChrome(){
-        configuration = new Configuration.Builder().chrome().driver("/usr/usr").profile("").build();
-    }
-
-    @Test(expected = SeleniumException.class)
+    @Test
     public void htmlUnit(){
-        configuration = new Configuration.Builder().htmlUnit(true, null).build();
+        configuration = new Configuration.Builder().htmlUnit().build();
+        Assert.assertNotNull(configuration);
     }
 
     public void test(){
-        configuration = new Configuration.Builder().htmlUnit(true,BrowserVersion.FIREFOX_52).build();
+        configuration = new Configuration.Builder().htmlUnit().build();
         Assert.assertNotNull(configuration);
-        configuration = new Configuration.Builder().chrome().driver("/usr/usr").profile("pp").build();
+        configuration = new Configuration.Builder().chrome().driver("/usr/usr").build();
         Assert.assertNotNull(configuration);
         configuration = new Configuration.Builder().edge().driver("/usr/usr").build();
         Assert.assertNotNull(configuration);
         configuration = new Configuration.Builder().ie().driver("/usr/usr").build();
         Assert.assertNotNull(configuration);
-        configuration = new Configuration.Builder().firefox().driver("/usr/usr").profile("pp").build();
+        configuration = new Configuration.Builder().firefox().driver("/usr/usr").build();
         Assert.assertNotNull(configuration);
         configuration = new Configuration.Builder().safari().build();
         Assert.assertNotNull(configuration);

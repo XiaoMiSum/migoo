@@ -1,36 +1,21 @@
 package xyz.migoo.selenium;
 
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import xyz.migoo.config.Config;
 import xyz.migoo.exception.SeleniumException;
 import xyz.migoo.utils.DateUtil;
 import xyz.migoo.utils.Log;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeDriverService;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.edge.EdgeDriverService;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.firefox.GeckoDriverService;
-import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.ie.InternetExplorerDriverService;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.support.ui.Select;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static org.openqa.selenium.remote.BrowserType.*;
 
 /**
  * 封装Selenium的常用api简化测试脚本开发
@@ -99,9 +84,6 @@ public class Selenium {
      * 关闭浏览器
      */
     public void exit() {
-        if (driver instanceof ChromeDriver) {
-            driver.close();
-        }
         driver.quit();
         log.info("test over, close driver");
     }
@@ -425,72 +407,21 @@ public class Selenium {
         }
     }
 
-    private boolean is(String object, String prefix) {
-        return object.startsWith(prefix);
-    }
-
     public static class Builder {
-
-        private final static boolean IS_WINDOWS =
-                System.getProperty("os.name").toLowerCase(Locale.US).contains("windows");
 
         private WebDriver driver;
 
         public Builder() {
-        }
 
+        }
         /**
          * 初始化浏览器
-         *
-         * @param configuration 配置信息
          */
         public Builder driver(Configuration configuration) {
-            log.info("init driver info");
-            log.info("browser type is ' " + configuration.browser() + " '");
-            log.info("driver exe is ' " + configuration.driver() + " '");
-            log.info("properties is ' " + configuration.profile() + " '");
-            switch (configuration.browser()) {
-                case FIREFOX:
-                    //设置火狐浏览器安装路径，driver路径，加载当前系统用户配置文件
-                    FirefoxOptions firefoxOptions = new FirefoxOptions();
-                    if (IS_WINDOWS) {
-                        System.setProperty(GeckoDriverService.GECKO_DRIVER_EXE_PROPERTY, configuration.driver());
-                        FirefoxProfile profile = new FirefoxProfile(new File(configuration.profile()));
-                        firefoxOptions.setProfile(profile);
-                        firefoxOptions.setBinary(configuration.bin());
-                    }
-                    firefoxOptions.setLegacy(false);
-                    this.driver = new FirefoxDriver(firefoxOptions);
-                    break;
-                case CHROME:
-                    System.setProperty(ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY, configuration.driver());
-                    ChromeOptions options = new ChromeOptions();
-                    options.addArguments("user-data-dir=" + configuration.profile());
-                    this.driver = new ChromeDriver(options);
-                    break;
-                case EDGE:
-                    System.setProperty(EdgeDriverService.EDGE_DRIVER_EXE_PROPERTY, configuration.driver());
-                    this.driver = new EdgeDriver();
-                    break;
-                case IE:
-                    System.setProperty(InternetExplorerDriverService.IE_DRIVER_EXE_PROPERTY, configuration.driver());
-                    this.driver = new InternetExplorerDriver();
-                    break;
-                case SAFARI:
-                    this.driver = new SafariDriver();
-                    break;
-                case HTMLUNIT:
-                    log.info("html unit driver version is \"" + configuration.version() + "\"");
-                    log.info("html unit driver enableJavascript is \"" + configuration.isEnableJavascript() + "\"");
-                    this.driver = new HtmlUnitDriver(configuration.version(), configuration.isEnableJavascript());
-                    break;
-                default:
-                    log.info("driver == null. please check configuration");
-                    throw new SeleniumException("driver == null. please check configuration");
-            }
-            log.info("init driver success.");
+            this.driver = configuration.driver();
             return this;
         }
+
 
         /**
          * 隐式等待，单位：秒
@@ -540,7 +471,6 @@ public class Selenium {
             return new Selenium(this);
         }
     }
-
 }
 
 

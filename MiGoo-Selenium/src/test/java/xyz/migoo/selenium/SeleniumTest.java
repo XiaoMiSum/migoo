@@ -29,8 +29,7 @@ public class SeleniumTest {
     @Ignore
     @Test
     public void fireFoxInWindows(){
-        Configuration config = new Configuration.Builder().firefox().bin("火狐exe路径")
-                .profile("火狐配置文件路径").driver("geckodriver.exe").build();
+        Configuration config = new Configuration.Builder().firefox().bin("火狐exe路径").driver("geckodriver.exe").build();
         selenium = new Selenium.Builder().driver(config).implicitlyWait(10).pageLoadTimeout(10).maximize().build();
         selenium.get("https://cn.bing.com");
         Assert.assertEquals("https://cn.bing.com/",selenium.url());

@@ -43,7 +43,7 @@ public class TypeUtil {
                     return Boolean.FALSE;
                 }
             }
-            throw new RuntimeException("can not cast to boolean, value : " + value);
+            return null;
         }
     }
 }
