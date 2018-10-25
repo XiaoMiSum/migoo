@@ -63,8 +63,7 @@ public class Hook {
             if (StringUtil.isBlank(params)){
                 methodMap.get(methodName).invoke(null);
             }else if(params.contains(SEPARATOR)){
-                Object[] o = new Object[]{params.split(SEPARATOR)};
-                methodMap.get(methodName).invoke(null, o);
+                methodMap.get(methodName).invoke(null, params.split(SEPARATOR));
             }else {
                 methodMap.get(methodName).invoke(null, params);
             }

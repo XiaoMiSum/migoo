@@ -110,8 +110,7 @@ public class Variable {
             if (StringUtil.isBlank(params)){
                 value = (String) methodMap.get(methodName).invoke(null);
             }else if(params.contains(SEPARATOR)){
-                Object[] o = new Object[]{params.split(SEPARATOR)};
-                value = (String) methodMap.get(methodName).invoke(null, o);
+                value = (String) methodMap.get(methodName).invoke(null, params.split(SEPARATOR));
             }else {
                 value = (String) methodMap.get(methodName).invoke(null, params);
             }
