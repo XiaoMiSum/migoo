@@ -202,6 +202,22 @@ public class Selenium {
     }
 
     /**
+     * 获取当前窗口名称
+     * @return
+     */
+    public String getWindowHandle() {
+        DateUtil.sleep(Config.SHORT_TIME);
+        String text = null;
+        try {
+            text = driver.getWindowHandle();
+            log.info("get activity window title: " + text);
+        } catch (NoSuchElementException e) {
+            log.error("get activity window title exception.", e);
+        }
+        return text;
+    }
+
+    /**
      * 判断元素是否显示
      *
      * @param id
@@ -266,14 +282,7 @@ public class Selenium {
      * @param url 要在新窗口打开的url
      */
     public void openNewWindow(String url) {
-        DateUtil.sleep(Config.SHORT_TIME);
-        try {
-            JavascriptExecutor js = (JavascriptExecutor) driver;
-            js.executeScript("window.open('" + url + "')");
-            log.info("open new window: " + url);
-        } catch (Exception e) {
-            log.error("open new window exception!", e);
-        }
+        this.executeJavaScript("window.open('" + url + "')");
     }
 
     /**
@@ -490,7 +499,6 @@ public class Selenium {
             this.driver = configuration.driver();
             return this;
         }
-
 
         /**
          * 隐式等待，单位：秒

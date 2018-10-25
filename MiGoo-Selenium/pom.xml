@@ -12,7 +12,8 @@
     <artifactId>MiGoo-Selenium</artifactId>
 
     <properties>
-        <selenium.version>3.13.0</selenium.version>
+        <selenium.version>3.14.0</selenium.version>
+        <appium.version>6.1.0</appium.version>
         <htmlunit.version>2.32.0</htmlunit.version>
     </properties>
 
@@ -34,6 +35,14 @@
             <artifactId>htmlunit-driver</artifactId>
             <version>${htmlunit.version}</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.appium/java-client -->
+        <dependency>
+            <groupId>io.appium</groupId>
+            <artifactId>java-client</artifactId>
+            <version>${appium.version}</version>
+        </dependency>
+
 
         <dependency>
             <groupId>junit</groupId>

@@ -53,7 +53,7 @@ public class Function {
     }
 
     public static void body(Response response, JSONObject validate) {
-        JSONObject json = response.json();
+        JSON json = response.json();
         if (json != null) {
             validate.put(Dict.VALIDATE_ACTUAL, json);
             Object expect = validate.get(Dict.VALIDATE_EXPECT);

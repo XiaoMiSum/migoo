@@ -10,6 +10,9 @@ public class Config {
 	public static final int MEDIUM_TIME =3;
 	public static final int LONG_TIME =10;
 
+	public static final String IOS = "ios";
+	public static final String ANDROID = "android";
+
     public static final String XPATH_1 = ".//";
     public static final String XPATH_2 = "//";
     public static final String XPATH_3 = "xpath=";
@@ -20,5 +23,10 @@ public class Config {
     public static final String CLASS = "class=";
     public static final String TAG_NAME = "tagname=";
     public static final String NAME = "name=";
+    public static final String ACCESSIBILITY_ID = "accessibilityId";
+    public static final String UIAUTOMATOR = "uiautomator";
+    public static final String UIAUTOMATION = "uiautomation";
+    public static final String PREDICATE = "predicate";
+    public static final String IOS_CLASS = "iosclass";
     public static final String SPLITTER = "=";
 }

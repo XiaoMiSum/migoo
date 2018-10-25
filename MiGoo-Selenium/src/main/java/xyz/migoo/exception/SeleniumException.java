@@ -8,4 +8,8 @@ public class SeleniumException extends RuntimeException {
     public SeleniumException(String message) {
         super(message);
     }
+
+    public SeleniumException(String message, Throwable t){
+        super(message, t);
+    }
 }
