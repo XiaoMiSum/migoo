@@ -5,7 +5,6 @@ import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import xyz.migoo.config.Config;
 import xyz.migoo.exception.AppiumException;
-import xyz.migoo.exception.SeleniumException;
 import xyz.migoo.utils.StringUtil;
 
 import java.net.MalformedURLException;
@@ -44,13 +43,13 @@ public class Configuration {
 
         public Builder remote(String url) {
             if (!urlCheck(url)) {
-                throw new SeleniumException("check remote url exception");
+                throw new AppiumException("check remote url exception");
             }
             try {
                 this.url = new URL(url);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
-                throw new SeleniumException("remote url == null");
+                throw new AppiumException("remote url == null");
             }
             return this;
         }
@@ -78,7 +77,7 @@ public class Configuration {
         public Configuration build() {
             this.driver();
             if (driver == null){
-                throw new SeleniumException("webDriver == null");
+                throw new AppiumException("driver == null");
             }
             return new Configuration(this);
         }
