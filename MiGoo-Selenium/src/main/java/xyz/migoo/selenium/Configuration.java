@@ -115,7 +115,9 @@ public class Configuration {
 
         public Builder htmlUnit(BrowserVersion version) {
             this.browser = HTMLUNIT;
-            this.version = version;
+            if(version != null){
+                this.version = version;
+            }
             return this;
         }
 

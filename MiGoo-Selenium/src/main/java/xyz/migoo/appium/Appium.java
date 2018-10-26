@@ -4,6 +4,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
+import io.appium.java_client.android.appmanagement.AndroidInstallApplicationOptions;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.touch.LongPressOptions;
 import io.appium.java_client.touch.TapOptions;
@@ -12,6 +13,7 @@ import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 import xyz.migoo.config.Config;
+import xyz.migoo.exception.AppiumException;
 import xyz.migoo.selenium.Selenium;
 import xyz.migoo.utils.DateUtil;
 import xyz.migoo.utils.Log;
@@ -339,8 +341,24 @@ public class Appium {
             return this;
         }
 
-        public Appium build() {
+        public Builder installApp(String appPath){
+            if (driver == null || driver instanceof IOSDriver){
+                return this;
+            }
+            AndroidInstallApplicationOptions options = new AndroidInstallApplicationOptions();
+            // 允许升级、重新安装
+            options.withReplaceEnabled();
+            // 允许标记为测试包
+            options.withAllowTestPackagesEnabled();
+            // 重置当前已开启的 App
+            driver.installApp(appPath, options);
+            return this;
+        }
 
+        public Appium build() {
+            if (driver == null){
+                throw new AppiumException("driver == null");
+            }
             return new Appium(this);
         }
     }
