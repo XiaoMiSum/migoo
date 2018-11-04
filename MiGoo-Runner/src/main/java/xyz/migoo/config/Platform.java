@@ -17,7 +17,7 @@ public class Platform {
 
     private static final PropertiesReader PROPERTIES = new PropertiesReader("application.properties");
 
-    public static final String HTTPCLIENT_VERSION = PROPERTIES.get("httpClient.version");
+    public static final String HTTP_CLIENT_VERSION = PROPERTIES.get("http.client.version");
 
     public static final String JDK_VERSION = System.getProperty("java.version");
 
@@ -76,7 +76,7 @@ public class Platform {
 
     public static final String MAIL_SEND_PASS = PROPERTIES.get("mail.send.pass").trim();
 
-    public static final String[] MAIL_SEND_TO_LIST = PROPERTIES.get("mail.send.toList").split(",");
+    public static final String[] MAIL_SEND_TO_LIST = StringUtil.trimAny(PROPERTIES.get("mail.send.toList")).split(",");
 
     public static final String EXTENDS_VARIABLE = PROPERTIES.get("extends.variable").trim();
 

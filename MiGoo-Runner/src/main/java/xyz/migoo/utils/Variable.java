@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  */
 public class Variable {
 
-    public static final Pattern PATTERN = Pattern.compile("^\\$\\{(\\w+)\\((.*)\\)\\}");
+    public static final Pattern PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
     public static final String SEPARATOR = ",";
     private static Map<String, Method> methodMap = null;
 
@@ -34,7 +34,7 @@ public class Variable {
             if (PATTERN.matcher(value).find()){
                 continue;
             }
-            String regex = "$" + variable + "$";
+            String regex = "${" + variable + "}";
             for (String key : body.keySet()){
                 String object = body.getString(key);
                 if (StringUtil.contains(object, regex) && StringUtil.isNotBlank(value)){
@@ -57,7 +57,7 @@ public class Variable {
             if (PATTERN.matcher(value).find()){
                 continue;
             }
-            String regex = "$" + variable + "$";
+            String regex = "${" + variable + "}";
             if (StringUtil.contains(body, regex)){
                 variables.put(key, body.replace(regex, value));
             }
@@ -119,5 +119,4 @@ public class Variable {
         }
         return value;
     }
-
 }

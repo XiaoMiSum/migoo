@@ -1,31 +1,27 @@
 package xyz.migoo.http;
 
-import com.alibaba.fastjson.JSONObject;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.CookieStore;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.cookie.BasicClientCookie;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import xyz.migoo.utils.Log;
-import xyz.migoo.utils.StringUtil;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import java.io.File;
-import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static xyz.migoo.http.Request.UTF8;
 
@@ -37,11 +33,11 @@ import static xyz.migoo.http.Request.UTF8;
  */
 public class Client {
 
-    private CloseableHttpClient httpClient;
+    private static final PoolingHttpClientConnectionManager POOLING = new PoolingHttpClientConnectionManager();
     private static Log log = new Log(Client.class);
-    protected static final String HTTPS = "https";
-    private static final String SESSION = "SESSID";
+    private static final String HTTPS = "https";
     private static Client client;
+    private CloseableHttpClient httpClient;
 
     public static Client getInstance(){
         if (client == null){
@@ -52,6 +48,11 @@ public class Client {
             }
         }
         return client;
+    }
+
+    static {
+        POOLING.setMaxTotal(20);
+        POOLING.setDefaultMaxPerRoute(2);
     }
 
     private Client(){}
@@ -85,7 +86,7 @@ public class Client {
      */
     private Response doGet(Request request) {
         this.init(request);
-        HttpGet httpGet = new HttpGet(request.url());
+        HttpGet httpGet = new HttpGet(this.setParameters(request));
         this.setHeader(request, httpGet);
         return this.doExecute(httpGet, request);
     }
@@ -126,7 +127,7 @@ public class Client {
      */
     private Response doDelete(Request request) {
         this.init(request);
-        HttpDelete httpDelete = new HttpDelete(request.url());
+        HttpDelete httpDelete = new HttpDelete(this.setParameters(request));
         this.setHeader(request, httpDelete);
         this.setEntity(request, httpDelete);
         return this.doExecute(httpDelete, request);
@@ -138,6 +139,10 @@ public class Client {
      * @param request 用于判断是否 https
      */
     private void init(Request request) {
+        RequestConfig config = RequestConfig.custom()
+                .setConnectTimeout(request.timeOut())
+                .setConnectionRequestTimeout(request.timeOut())
+                .build();
         HttpClientBuilder builder = HttpClientBuilder.create();
         if (request.url().toLowerCase().startsWith(HTTPS)) {
             SSLContext sslContext = this.getSslContext(request.certificate());
@@ -146,43 +151,43 @@ public class Client {
         if (request.proxy() != null) {
             builder.setProxy(request.proxy());
         }
-        if (request.cookie() != null && !request.cookie().isEmpty()){
-            JSONObject jsonCookie = request.cookie();
-            CookieStore cookieStore = new BasicCookieStore();
-            Map<String, String> map = new HashMap<>(2);
-            request.cookie().forEach((key, value) -> {
-                if (StringUtil.containsIgnoreCase(key, SESSION)){
-                    map.put("name", key);
-                    map.put("value", String.valueOf(value));
-                }
-            });
-            BasicClientCookie cookie = new BasicClientCookie(map.get("name"), map.get("value"));
-            cookie.setDomain(jsonCookie.getString("domain"));
-            cookie.setPath(jsonCookie.getString("path"));
-            cookieStore.addCookie(cookie);
-            builder.setDefaultCookieStore(cookieStore);
+        builder.setConnectionManager(POOLING).setDefaultRequestConfig(config);
+        httpClient = builder.build();
+    }
+
+    private URI setParameters(Request request){
+        try {
+            URIBuilder builder = new URIBuilder(request.url());
+            request.query().forEach((k, v) -> builder.addParameter(k, String.valueOf(v)));
+            return builder.build();
+        } catch (URISyntaxException e) {
+            log.error("setting query parameters exception", e);
         }
-        httpClient = builder.setConnectionTimeToLive(request.timeOut(), TimeUnit.SECONDS).build();
+        return null;
     }
 
     /**
      * 设置 请求 entity
+     * 如果是 restful风格的 api，则从 body中获取请求体
+     * 否则，从 query中获取请求参数
      *
      * @param request     请求实体 参数信息
      * @param httpMethods 请求方法
      */
     private void setEntity(Request request, HttpEntityEnclosingRequestBase httpMethods) {
-        JSONObject body = request.body();
-        if (body.isEmpty()){
+        if (request.body() == null && request.query() == null){
             return;
         }
         StringEntity entity;
-        if (request.isFrom()){
-            List<NameValuePair> pairList = new ArrayList<>(body.size());
-            body.forEach((key, value) -> pairList.add(new BasicNameValuePair(key, String.valueOf(value))));
-            entity = new UrlEncodedFormEntity(pairList, Charset.forName(UTF8));
+        if (request.restful()){
+            entity = new StringEntity(request.body().toJSONString(), Charset.forName(UTF8));
         }else {
-            entity = new StringEntity(body.toJSONString(), Charset.forName(UTF8));
+            if (HttpDelete.METHOD_NAME.equals(request.method())){
+                return;
+            }
+            List<NameValuePair> pairList = new ArrayList<>(request.query().size());
+            request.query().forEach((key, value) -> pairList.add(new BasicNameValuePair(key, String.valueOf(value))));
+            entity = new UrlEncodedFormEntity(pairList, Charset.forName(UTF8));
         }
         entity.setContentEncoding(UTF8);
         if (request.contentType() != null) {
@@ -201,7 +206,7 @@ public class Client {
         if (request.headers() == null || request.headers().size() == 0) {
             return;
         }
-        request.headers().forEach( header -> httpMethods.addHeader(header));
+        request.headers().forEach(header -> httpMethods.addHeader(header));
     }
 
     /**
@@ -228,13 +233,6 @@ public class Client {
             response.headers(null);
             response.body(null);
             response.statusCode(0);
-        } finally {
-            try {
-                if (httpClient != null) {
-                    httpClient.close();
-                }
-            } catch (IOException e) {
-            }
         }
         return response;
     }
