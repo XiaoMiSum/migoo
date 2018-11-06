@@ -21,6 +21,8 @@ public class Dict {
 
     public static final String CASE_BODY = "body";
 
+    public static final String CASE_QUERY = "query";
+
     public static final String CASE_TITLE = "title";
 
     public static final String CASE_SETUP = "setUp";

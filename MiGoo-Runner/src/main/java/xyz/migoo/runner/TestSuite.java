@@ -43,8 +43,11 @@ public class TestSuite extends junit.framework.TestSuite{
             if (caseHeaders != null && !caseHeaders.isEmpty()){
                 headers.putAll(caseHeaders);
             }
+            StringBuilder url = new StringBuilder(configRequest.getString("url"));
+            url.append(testCase.getString("api"));
             Request request = builder.headers(headers)
-                    .url(configRequest.getString("url"))
+                    .url(url.toString())
+                    .query(testCase.getJSONObject(Dict.CASE_QUERY))
                     .body(testCase.getJSONObject(Dict.CASE_BODY))
                     .title(testCase.getString(Dict.CASE_TITLE)).build();
             Task task = new Task(request, this);

@@ -92,6 +92,7 @@ public class TestResult extends junit.framework.TestResult{
         req.put("method", response.request().method());
         req.put("headers", response.request().headers());
         req.put("body", response.request().body());
+        req.put("query", response.request().query());
 
         Map<String, Object> log = new HashMap<>(2);
         log.put("request", req);
