@@ -30,7 +30,6 @@ public class Request {
     private File certificate;
     private JSONObject body;
     private JSONObject query;
-    private JSONObject cookie;
     private List<Header> headers;
     private HttpHost httpHost;
     private String title;
@@ -43,7 +42,6 @@ public class Request {
         this.method = builder.method;
         this.body = builder.body;
         this.query = builder.query;
-        this.cookie = builder.cookie;
         this.certificate = builder.certificate;
         this.headers = builder.headers;
         this.httpHost = builder.httpHost;
@@ -92,11 +90,6 @@ public class Request {
         return restful;
     }
 
-    @Deprecated
-    public JSONObject cookie() {
-        return this.cookie;
-    }
-
     public Header contentType() {
         if (this.contentType != null) {
             return contentType;
@@ -118,7 +111,6 @@ public class Request {
         private File certificate;
         private JSONObject body;
         private JSONObject query;
-        private JSONObject cookie;
         private List<Header> headers;
         private HttpHost httpHost;
         private String title;
@@ -196,17 +188,9 @@ public class Request {
             return this;
         }
 
-        public Builder get(Object body) {
-            return this.method(HttpGet.METHOD_NAME).body(body);
-        }
-
         public Builder post() {
             this.method = HttpPost.METHOD_NAME;
             return this;
-        }
-
-        public Builder post(Object body) {
-            return this.method(HttpPost.METHOD_NAME).body(body);
         }
 
         public Builder put() {
@@ -214,17 +198,9 @@ public class Request {
             return this;
         }
 
-        public Builder put(Object body) {
-            return this.method(HttpPut.METHOD_NAME).body(body);
-        }
-
         public Builder delete() {
             this.method = HttpDelete.METHOD_NAME;
             return this;
-        }
-
-        public Builder delete(Object body) {
-            return this.method(HttpDelete.METHOD_NAME).body(body);
         }
 
         public Builder method(String method) {
@@ -278,24 +254,6 @@ public class Request {
                 return this;
             }
             this.query = (JSONObject)JSONObject.toJSON(query);
-            return this;
-        }
-
-        @Deprecated
-        public Builder cookie(Object cookie) {
-            if (cookie == null) {
-                this.cookie = new JSONObject(0);
-                return this;
-            }
-            if (cookie instanceof JSONObject) {
-                this.cookie = (JSONObject) cookie;
-                return this;
-            }
-            if (cookie instanceof String) {
-                this.cookie = JSONObject.parseObject((String) cookie);
-                return this;
-            }
-            this.cookie = (JSONObject) JSONObject.toJSON(cookie);
             return this;
         }
 

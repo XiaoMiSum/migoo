@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 
-import static xyz.migoo.utils.Variable.PATTERN;
+import static xyz.migoo.utils.Variable.FUNC_PATTERN;
 import static xyz.migoo.utils.Variable.SEPARATOR;
 
 /**
@@ -34,7 +34,7 @@ public class Hook {
         }
         for (int i = 0; i < hook.size(); i++){
             String value = hook.getString(i);
-            Matcher matcher = PATTERN.matcher(value);
+            Matcher matcher = FUNC_PATTERN.matcher(value);
             if (matcher.find()){
                 functionLoader();
                 invoke(matcher.group(1), matcher.group(2));

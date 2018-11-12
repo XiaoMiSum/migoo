@@ -39,7 +39,7 @@ public class Function {
         if (StringUtil.isEmpty(value)){
             return;
         }
-        Matcher matcher = Variable.PATTERN.matcher(value);
+        Matcher matcher = Variable.FUNC_PATTERN.matcher(value);
         if (matcher.find()) {
             if (methodMap == null) {
                 Class clazz = Class.forName(Platform.EXTENDS_VALIDATOR);

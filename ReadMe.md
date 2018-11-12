@@ -6,15 +6,11 @@
 
     @org.junit.Test
     public void testApi(){
-        TestResult result = new Runner().run("path");
+        TestResult result = Runner.getInstance().run("path");
     }
     
-    @org.junit.Test
-    public void testApi(){
-        new Runner().execute("path");
-    }
     
-说明：Runner类提供 run\execute方法
+说明：Runner类提供 run 方法作为执行入口
 
 参数 path ：指定的测试用例文件、测试用例文件所在目录、指定格式的json文本；
 
@@ -24,7 +20,7 @@
 
 **关于验证**
 
-验证支持的方式有 equals 、contains，会根据validate.types的值动态加载验证方式。
+验证支持的方式有 equals 、contains、isEmpty、isNotEmpty、regex，会根据validate.types的值动态加载验证方式。
 
 types详细值，请查看配置文件 application.properties
 
@@ -34,45 +30,6 @@ types详细值，请查看配置文件 application.properties
 
 报告中的数据来源于 TestResult.report，Map类型；
 
-转化为json格式为：
-
-    {
-        "summary":{
-            "startAt":"2018-07-26 12:00:00",
-            "duration":"7.032 seconds",
-            "total": 1,
-            "success": 1,
-            "failed": 1,
-            "error": 1,
-            "skipped": 1
-            },
-        "records":{
-            "status": "success",
-            "name": "test case name",
-            "time": "7.032 seconds",
-            "detail": {
-                "log": {
-                    "request": {
-                        "url": "http://127.0.0.0",
-                        "method": "post",
-                        "headers": [Header],
-                        "body": "json string"
-                    },
-                    "response": {
-                        "statusCode": 200,
-                        "headers": [Header],
-                        "body": "json string"
-                    }
-                },
-                "track": "failure log message",
-                "track_id": "",
-                "log_id": "",
-                "track_href": "",
-                "log_href": ""
-            }
-            
-        }
-    }
     
 **Demo**
 

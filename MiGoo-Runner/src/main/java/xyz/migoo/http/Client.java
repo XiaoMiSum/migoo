@@ -37,22 +37,37 @@ public class Client {
     private static Log log = new Log(Client.class);
     private static final String HTTPS = "https";
     private static Client client;
-    private CloseableHttpClient httpClient;
+    private static CloseableHttpClient httpClient;
 
-    public static Client getInstance(){
-        if (client == null){
+    /**
+     * 初始化 Http Client
+     * @param request
+     * @return
+     */
+    public static Client create(Request request){
+        if (client == null && httpClient == null){
             synchronized (Client.class){
                 if (client == null){
                     client = new Client();
                 }
+                if (httpClient == null) {
+                    RequestConfig config = RequestConfig.custom()
+                            .setConnectTimeout(request.timeOut() * 1000)
+                            .setConnectionRequestTimeout(request.timeOut() * 1000)
+                            .build();
+                    HttpClientBuilder builder = HttpClientBuilder.create();
+                    if (request.url().toLowerCase().startsWith(HTTPS)) {
+                        builder.setSSLContext(getSslContext(request.certificate()));
+                    }
+                    if (request.proxy() != null) {
+                        builder.setProxy(request.proxy());
+                    }
+                    builder.setConnectionManager(POOLING).setDefaultRequestConfig(config);
+                    httpClient = builder.build();
+                }
             }
         }
         return client;
-    }
-
-    static {
-        POOLING.setMaxTotal(20);
-        POOLING.setDefaultMaxPerRoute(2);
     }
 
     private Client(){}
@@ -85,7 +100,6 @@ public class Client {
      * @return 返回一个包含头部信息的响应
      */
     private Response doGet(Request request) {
-        this.init(request);
         HttpGet httpGet = new HttpGet(this.setParameters(request));
         this.setHeader(request, httpGet);
         return this.doExecute(httpGet, request);
@@ -98,7 +112,6 @@ public class Client {
      * @return 返回一个包含头部信息的响应
      */
     private Response doPost(Request request) {
-        this.init(request);
         HttpPost httpPost = new HttpPost(request.url());
         this.setHeader(request, httpPost);
         this.setEntity(request, httpPost);
@@ -112,7 +125,6 @@ public class Client {
      * @return 返回一个包含头部信息的响应
      */
     private Response doPut(Request request) {
-        this.init(request);
         HttpPut httpPut = new HttpPut(request.url());
         this.setHeader(request, httpPut);
         this.setEntity(request, httpPut);
@@ -126,39 +138,18 @@ public class Client {
      * @return 返回一个包含头部信息的响应
      */
     private Response doDelete(Request request) {
-        this.init(request);
         HttpDelete httpDelete = new HttpDelete(this.setParameters(request));
         this.setHeader(request, httpDelete);
         this.setEntity(request, httpDelete);
         return this.doExecute(httpDelete, request);
     }
 
-    /**
-     * 初始化 HTTP CLIENT
-     *
-     * @param request 用于判断是否 https
-     */
-    private void init(Request request) {
-        RequestConfig config = RequestConfig.custom()
-                .setConnectTimeout(request.timeOut())
-                .setConnectionRequestTimeout(request.timeOut())
-                .build();
-        HttpClientBuilder builder = HttpClientBuilder.create();
-        if (request.url().toLowerCase().startsWith(HTTPS)) {
-            SSLContext sslContext = this.getSslContext(request.certificate());
-            builder.setSSLContext(sslContext);
-        }
-        if (request.proxy() != null) {
-            builder.setProxy(request.proxy());
-        }
-        builder.setConnectionManager(POOLING).setDefaultRequestConfig(config);
-        httpClient = builder.build();
-    }
-
     private URI setParameters(Request request){
         try {
             URIBuilder builder = new URIBuilder(request.url());
-            request.query().forEach((k, v) -> builder.addParameter(k, String.valueOf(v)));
+            if (request.query() != null) {
+                request.query().forEach((k, v) -> builder.addParameter(k, String.valueOf(v)));
+            }
             return builder.build();
         } catch (URISyntaxException e) {
             log.error("setting query parameters exception", e);
@@ -226,6 +217,7 @@ public class Client {
             response.headers(httpResponse.getAllHeaders());
             response.body(EntityUtils.toString(httpResponse.getEntity(), UTF8).trim().toLowerCase());
             response.statusCode(httpResponse.getStatusLine().getStatusCode());
+            System.out.println(response.body());
             httpResponse.close();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -241,7 +233,7 @@ public class Client {
      * @param crt https 的证书
      * @return 返回一个 安全的 HTTP CLIENT
      */
-    private SSLContext getSslContext(File crt) {
+    private static SSLContext getSslContext(File crt) {
         try {
             SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, new TrustManager[]{new X509Trust(crt)}, new SecureRandom());

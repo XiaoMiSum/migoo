@@ -18,7 +18,8 @@ import java.util.regex.Pattern;
  */
 public class Variable {
 
-    public static final Pattern PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
+    public static final Pattern FUNC_PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
+    public static final Pattern VAR_PATTERN = Pattern.compile("^\\$\\{(\\w+)}");
     public static final String SEPARATOR = ",";
     private static Map<String, Method> methodMap = null;
 
@@ -31,7 +32,7 @@ public class Variable {
         }
         for (String variable : variables.keySet()) {
             String value = variables.getString(variable);
-            if (PATTERN.matcher(value).find()){
+            if (FUNC_PATTERN.matcher(value).find()){
                 continue;
             }
             String regex = "${" + variable + "}";
@@ -44,6 +45,7 @@ public class Variable {
         }
     }
 
+    @Deprecated
     public static void bindVariable(JSONObject variables, String key) {
         if (variables == null || StringUtil.isBlank(key) || variables.isEmpty()) {
             return;
@@ -54,7 +56,7 @@ public class Variable {
         }
         for (String variable : variables.keySet()) {
             String value = variables.getString(variable);
-            if (PATTERN.matcher(value).find()){
+            if (FUNC_PATTERN.matcher(value).find()){
                 continue;
             }
             String regex = "${" + variable + "}";
@@ -73,10 +75,10 @@ public class Variable {
             if (!(object instanceof String)){
                 continue;
             }
-            Matcher matcher = PATTERN.matcher((String)object);
+            Matcher matcher = FUNC_PATTERN.matcher((String)object);
             if (matcher.find()){
                 String params = matcher.group(2);
-                if (params.contains("$")){
+                if (VAR_PATTERN.matcher(params).find()){
                     continue;
                 }
                 functionLoader();
@@ -90,14 +92,13 @@ public class Variable {
 
     private static void functionLoader() {
         try {
-            if (methodMap != null) {
-                return;
-            }
-            Class clazz = Class.forName(Platform.EXTENDS_VARIABLE);
-            Method[] methods = clazz.getDeclaredMethods();
-            methodMap = new HashMap<>(methods.length);
-            for (Method method : methods) {
-                methodMap.put(method.getName(), method);
+            if (methodMap == null) {
+                Class clazz = Class.forName(Platform.EXTENDS_VARIABLE);
+                Method[] methods = clazz.getDeclaredMethods();
+                methodMap = new HashMap<>(methods.length);
+                for (Method method : methods) {
+                    methodMap.put(method.getName(), method);
+                }
             }
         }catch (Exception e){
             throw new VariableException(StringUtil.getStackTrace(e));
