@@ -105,9 +105,6 @@ public class GoogleAuthenticator {
         String format = "https://www.google.com/chart?chs=200x200&chld=M%%7C0&cht=qr&chl=otpauth://totp/%s%%3Fsecret%%3D%s%%26issuer%%3D%s";
         return String.format(format, user, secret, issuer);
     }
-    public static void main(String[] args) {
-        System.out.println(getQRBarcodeURL("user","host","sss"));
-    }
 
     public boolean checkCode(String secretKey, long code, long timeMsec) {
         Base32 codec = new Base32();

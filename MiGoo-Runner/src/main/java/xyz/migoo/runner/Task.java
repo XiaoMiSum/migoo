@@ -27,7 +27,7 @@ public class Task {
 
     public synchronized void run(JSONObject testCase) throws ValidatorException {
         Hook.hook(testCase.getJSONArray(Dict.CASE_BEFORE));
-        Response response = Client.create(request).execute(request);
+        Response response = new Client.Builder().build().execute(request);
         Hook.hook(testCase.getJSONArray(Dict.CASE_AFTER));
         this.testSuite.response(response);
         JSON validate = (JSON)testCase.get(Dict.VALIDATE);

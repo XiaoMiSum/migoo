@@ -27,14 +27,11 @@ public class Request {
 
     private String url;
     private String method;
-    private File certificate;
     private JSONObject body;
     private JSONObject query;
     private List<Header> headers;
-    private HttpHost httpHost;
     private String title;
     private Header contentType;
-    private int timeOut;
     private boolean restful;
 
     private Request(Builder builder) {
@@ -42,16 +39,9 @@ public class Request {
         this.method = builder.method;
         this.body = builder.body;
         this.query = builder.query;
-        this.certificate = builder.certificate;
         this.headers = builder.headers;
-        this.httpHost = builder.httpHost;
         this.title = builder.title;
-        this.timeOut = builder.timeOut;
         this.restful = builder.restful;
-    }
-
-    public HttpHost proxy() {
-        return this.httpHost;
     }
 
     public String url() {
@@ -66,10 +56,6 @@ public class Request {
         return title;
     }
 
-    public File certificate() {
-        return this.certificate;
-    }
-
     public List<Header> headers() {
         return this.headers;
     }
@@ -80,10 +66,6 @@ public class Request {
 
     public JSONObject body() {
         return this.body;
-    }
-
-    public int timeOut() {
-        return timeOut;
     }
 
     public boolean restful() {
@@ -108,13 +90,10 @@ public class Request {
 
         private String url;
         private String method;
-        private File certificate;
         private JSONObject body;
         private JSONObject query;
         private List<Header> headers;
-        private HttpHost httpHost;
         private String title;
-        private int timeOut = 20;
         private boolean restful = false;
 
         public Builder() {
@@ -122,22 +101,6 @@ public class Request {
 
         public Builder title(String title) {
             this.title = title;
-            return this;
-        }
-
-        public Builder proxy(String proxy) {
-            HttpHost httpHost = null;
-            try {
-                JSONObject json = JSONObject.parseObject(proxy);
-                httpHost = new HttpHost(json.getString("host"), json.getIntValue("port"));
-            } catch (Exception e) {
-                String regex = ":";
-                if (StringUtil.containsIgnoreCase(proxy, regex)) {
-                    String[] host = proxy.split(regex);
-                    httpHost = new HttpHost(host[0], Integer.valueOf(host[1]));
-                }
-            }
-            this.httpHost = httpHost;
             return this;
         }
 
@@ -176,13 +139,6 @@ public class Request {
             return this;
         }
 
-        public Builder certificate(String certificate) {
-            if (StringUtil.isNotBlank(certificate)) {
-                this.certificate = new File(certificate);
-            }
-            return this;
-        }
-
         public Builder get() {
             this.method = HttpGet.METHOD_NAME;
             return this;
@@ -205,13 +161,6 @@ public class Request {
 
         public Builder method(String method) {
             this.method = method.toUpperCase();
-            return this;
-        }
-
-        public Builder timeOut(int timeOut) {
-            if (timeOut > this.timeOut) {
-                this.timeOut = timeOut;
-            }
             return this;
         }
 
@@ -266,9 +215,6 @@ public class Request {
             }
             if (!this.methodCheck()) {
                 throw new RequestException("unknown method ' " + method + " '");
-            }
-            if (certificate != null && certificate.isDirectory()) {
-                throw new RequestException("certificate can not be directory . certificate path : " + certificate);
             }
             return new Request(this);
         }

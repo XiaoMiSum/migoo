@@ -1,5 +1,7 @@
 package xyz.migoo.http;
 
+import com.alibaba.fastjson.JSONObject;
+import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -11,7 +13,9 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import xyz.migoo.exception.RequestException;
 import xyz.migoo.utils.Log;
+import xyz.migoo.utils.StringUtil;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -35,40 +39,7 @@ public class Client {
 
     private static final PoolingHttpClientConnectionManager POOLING = new PoolingHttpClientConnectionManager();
     private static Log log = new Log(Client.class);
-    private static final String HTTPS = "https";
-    private static Client client;
     private static CloseableHttpClient httpClient;
-
-    /**
-     * 初始化 Http Client
-     * @param request
-     * @return
-     */
-    public static Client create(Request request){
-        if (client == null && httpClient == null){
-            synchronized (Client.class){
-                if (client == null){
-                    client = new Client();
-                }
-                if (httpClient == null) {
-                    RequestConfig config = RequestConfig.custom()
-                            .setConnectTimeout(request.timeOut() * 1000)
-                            .setConnectionRequestTimeout(request.timeOut() * 1000)
-                            .build();
-                    HttpClientBuilder builder = HttpClientBuilder.create();
-                    if (request.url().toLowerCase().startsWith(HTTPS)) {
-                        builder.setSSLContext(getSslContext(request.certificate()));
-                    }
-                    if (request.proxy() != null) {
-                        builder.setProxy(request.proxy());
-                    }
-                    builder.setConnectionManager(POOLING).setDefaultRequestConfig(config);
-                    httpClient = builder.build();
-                }
-            }
-        }
-        return client;
-    }
 
     private Client(){}
 
@@ -230,17 +201,126 @@ public class Client {
     }
 
     /**
-     * @param crt https 的证书
-     * @return 返回一个 安全的 HTTP CLIENT
+     * @param serverCer https 服务器证书
+     * @param clientCer https 客户端证书
+     * @return 证书对象
      */
-    private static SSLContext getSslContext(File crt) {
+    private static SSLContext sslContext(File serverCer, File clientCer) {
         try {
             SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, new TrustManager[]{new X509Trust(crt)}, new SecureRandom());
+            sslContext.init(null, new TrustManager[]{new X509Trust(serverCer, clientCer)}, new SecureRandom());
             return sslContext;
         } catch (Exception e) {
             log.error("set ssl exception", e);
         }
         return null;
+    }
+
+    public static class Builder{
+        private int maxTotal = 20;
+
+        private int maxPerRoute = 2;
+
+        private int timeout = 20;
+
+        private HttpHost proxy;
+
+        private File serverCer;
+
+        private File clientCer;
+
+        private boolean https = false;
+
+        private static Client client;
+
+        public Builder(){}
+
+        public Builder maxTotal(int maxTotal){
+            if (maxTotal > this.maxTotal) {
+                this.maxTotal = maxTotal;
+            }
+            return this;
+        }
+
+        public Builder maxPerRoute(int maxPerRoute){
+            if (maxPerRoute > this.maxPerRoute) {
+                this.maxPerRoute = maxPerRoute;
+            }
+            return this;
+        }
+
+        public Builder timeout(int timeout) {
+            if (timeout > this.timeout) {
+                this.timeout = timeout;
+            }
+            return this;
+        }
+
+        public Builder https(boolean value){
+            this.https =  value;
+            return this;
+        }
+
+        public Builder serverCer(String certificate) {
+            if (StringUtil.isNotBlank(certificate)) {
+                this.serverCer = new File(certificate);
+            }
+            return this;
+        }
+
+        public Builder clientCer(String certificate) {
+            if (StringUtil.isNotBlank(certificate)) {
+                this.clientCer = new File(certificate);
+            }
+            return this;
+        }
+
+        public Builder proxy(String proxy) {
+            HttpHost httpHost = null;
+            try {
+                JSONObject json = JSONObject.parseObject(proxy);
+                httpHost = new HttpHost(json.getString("host"), json.getIntValue("port"));
+            } catch (Exception e) {
+                String regex = ":";
+                if (StringUtil.containsIgnoreCase(proxy, regex)) {
+                    String[] host = proxy.split(regex);
+                    httpHost = new HttpHost(host[0], Integer.valueOf(host[1]));
+                }
+            }
+            this.proxy = httpHost;
+            return this;
+        }
+
+        public Client build(){
+            if (client == null && httpClient == null){
+                synchronized (Client.class){
+                    POOLING.setMaxTotal(maxTotal);
+                    POOLING.setDefaultMaxPerRoute(maxPerRoute);
+                    if (client == null){
+                        client = new Client();
+                    }
+                    if (httpClient == null){
+                        RequestConfig config = RequestConfig.custom().setConnectTimeout(timeout * 1000)
+                                .setConnectionRequestTimeout(timeout * 2000).build();
+                        HttpClientBuilder builder = HttpClientBuilder.create();
+                        if (https){
+                            if (serverCer != null && serverCer.isDirectory()) {
+                                throw new RequestException("certificate can not be directory. certificate path : " + serverCer.getPath());
+                            }
+                            if (clientCer != null && clientCer.isDirectory()) {
+                                throw new RequestException("certificate can not be directory. certificate path : " + clientCer.getPath());
+                            }
+                            builder.setSSLContext(sslContext(serverCer, clientCer));
+                        }
+                        if (proxy != null) {
+                            builder.setProxy(proxy);
+                        }
+                        builder.setConnectionManager(POOLING).setDefaultRequestConfig(config);
+                        httpClient = builder.build();
+                    }
+                }
+            }
+            return client;
+        }
     }
 }
