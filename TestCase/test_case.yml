@@ -3,7 +3,7 @@ config:
   variables:
     var: test
   beforeClass:
-    - ${hook(beforeClass)}
+    - __hook(beforeClass)
   request:
     url: http://migoo.xyz/api/login
     method: post
@@ -15,20 +15,20 @@ case:
   - title: 未注册的用户登录
     setUp:
       user: migoo1
-      password: ${getPwd($user$)}
+      password: __getPwd(${user})
     before:
-      - ${hook(before)}
+      - __hook(before)
     after:
-      - ${hook(after)}
+      - __hook(after)
     # query: restful风格的 get\delete 请求时，url路径中的参数可在该属性中配置，使用方式与 body一样
     # 特别注意 当delete请求 url路径含有参数，并携带body时，url路径中的参数必须使用 query来配置
     # url示例：http://127.0.0.1/user/{id}
     #query:
-    # user: $user$
-    # password: $password$
+    # user: ${user}
+    # password: ${password}
     body:
-      user: $user$
-      password: $password$
+      user: ${user}
+      password: ${password}
     validate:
       - {check: status, expect: 200, types: ==}
       - {check: $.status, expect: 411, types: eq}
@@ -39,15 +39,15 @@ case:
       user: migoo
       password: 123456
     before:
-      - ${hook(before)}
+      - __hook(before)
     after:
-      - ${hook2(after,before)}
+      - __hook2(after,before)
     body:
-      user: $user$
-      password: $password$
+      user: ${user}
+      password: ${password}
     validate:
       - {check: status, expect: 200, types: ==}
-      - {check: $.status, expect: ${setValue(411)}, types: eq}
+      - {check: $.status, expect: __setValue(411), types: eq}
       - {check: body.data, expect: null, types: null }
 
   - title: 正确的用户名密码登录
@@ -55,12 +55,12 @@ case:
       user: migoo
       password: 123456qq
     before:
-      - ${hook(before)}
+      - __hook(before)
     after:
-      - ${hook(after)}
+      - __hook(after)
     body:
-      user: $user$
-      password: $password$
+      user: ${user}
+      password: ${password}
     validate:
       - {check: status, expect: 200, types: ==}
       - {check: $.status, expect: 200, types: eq}

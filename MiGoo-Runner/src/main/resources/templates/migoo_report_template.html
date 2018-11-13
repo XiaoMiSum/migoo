@@ -236,12 +236,22 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <th>body</th>
-                                    <td>
-                                        <pre th:text="${record.detail.log.request.body}"></pre>
-                                    </td>
-                                </tr>
+                                <div th:if="${record.detail.log.request.query}">
+                                    <tr>
+                                        <th>query</th>
+                                        <td>
+                                            <pre th:text="${record.detail.log.request.query}"></pre>
+                                        </td>
+                                    </tr>
+                                </div>
+                                <div th:if="${record.detail.log.request.body}">
+                                    <tr>
+                                        <th>body</th>
+                                        <td>
+                                            <pre th:text="${record.detail.log.request.body}"></pre>
+                                        </td>
+                                    </tr>
+                                </div>
                             </table>
                         </div>
 
