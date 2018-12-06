@@ -141,8 +141,10 @@ public class Client {
             return;
         }
         StringEntity entity;
-        if (request.restful()){
+        if (request.body() != null){
             entity = new StringEntity(request.body().toJSONString(), Charset.forName(UTF8));
+        }else if (request.restful() && request.query() != null){
+            entity = new StringEntity(request.query().toJSONString(), Charset.forName(UTF8));
         }else {
             if (HttpDelete.METHOD_NAME.equals(request.method())){
                 return;
