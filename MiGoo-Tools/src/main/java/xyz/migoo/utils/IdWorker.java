@@ -33,17 +33,9 @@ public class IdWorker {
         this.datacenterId = datacenterId;
     }
 
-//    public static void main(String[] args) {
-//        IdWorker idWorker = new IdWorker(0, 0);
-//        for (int i = 0; i < 1000; i++) {
-//            long id = idWorker.nextId();
-//            System.out.println(id);
-//        }
-//    }
-//
-//    public String nextStringId() {
-//        return String.valueOf(this.nextId());
-//    }
+    public String nextStringId() {
+        return String.valueOf(this.nextId());
+    }
 
     private  synchronized long nextId() {
         long timestamp = timeGen();

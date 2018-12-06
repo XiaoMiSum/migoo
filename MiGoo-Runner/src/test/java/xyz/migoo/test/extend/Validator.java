@@ -1,8 +1,5 @@
 package xyz.migoo.test.extend;
 
-import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.config.Dict;
-
 /**
  * 验证扩展
  * @author xiaomi
@@ -10,8 +7,8 @@ import xyz.migoo.config.Dict;
  */
 public class Validator {
 
-    public static void setValue(JSONObject validate, String param){
-        validate.put(Dict.VALIDATE_EXPECT, param);
+    public static Object setValue(String param){
+        return param;
     }
 
 }

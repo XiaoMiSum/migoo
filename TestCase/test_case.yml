@@ -7,12 +7,14 @@ config:
   request:
     url: http://migoo.xyz/api/login
     method: post
-    # restful风格的 get\delete请求时，设置该参数为 true
     # restful: 1/0  t/f  T/F  y/n  Y/N  yes/no  YES/NO  true/false  TRUE/FALSE
+    # 如果在 用例中也设置该参数，以用例中的设置为准
+    restful: 0
     headers:
       Content-Type: application/json
 case:
   - title: 未注册的用户登录
+    restful: 1
     setUp:
       user: migoo1
       password: __getPwd(${user})
@@ -32,8 +34,7 @@ case:
     validate:
       - {check: status, expect: 200, types: ==}
       - {check: $.status, expect: 411, types: eq}
-      - {check: body.data, expect: null, types: null }
-
+      - {check: body.data, expect: null, types: blank }
   - title: 密码错误登录
     setUp:
       user: migoo
@@ -41,16 +42,17 @@ case:
     before:
       - __hook(before)
     after:
-      - __hook2(after,before)
+      - __hook(after)
+    restful: 1
     body:
       user: ${user}
       password: ${password}
     validate:
       - {check: status, expect: 200, types: ==}
       - {check: $.status, expect: __setValue(411), types: eq}
-      - {check: body.data, expect: null, types: null }
-
+      - {check: body.data, expect: null, types: isNull }
   - title: 正确的用户名密码登录
+    restful: 1
     setUp:
       user: migoo
       password: 123456qq

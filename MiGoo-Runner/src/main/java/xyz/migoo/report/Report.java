@@ -22,7 +22,6 @@ import static xyz.migoo.config.Platform.OS_VERSION;
 public class Report {
 
     private static Log log = new Log(Report.class);
-    private final static String TEMPLATE_CLASS = "templates";
     private final static TemplateEngine TEMPLATE_ENGINE = new TemplateEngine();
 
     private Report(){
@@ -74,7 +73,7 @@ public class Report {
         if (!file.exists()){
          file.mkdir();
         }
-       try(Writer writer = new FileWriter(file.getPath() + name + "-" +
+       try(Writer writer = new FileWriter(file.getPath() + "/" + name + "-" +
                DateUtil.format(DateUtil.YYYY_MMDD_HH_MM_SS) + ".html")){
            writer.write(template);
        }catch (Exception e){

@@ -6,6 +6,7 @@ import xyz.migoo.config.Dict;
 import xyz.migoo.http.Request;
 import xyz.migoo.http.Response;
 import xyz.migoo.utils.Hook;
+import xyz.migoo.utils.StringUtil;
 import xyz.migoo.utils.Variable;
 
 /**
@@ -34,6 +35,7 @@ public class TestSuite extends junit.framework.TestSuite{
         Hook.hook(config.getJSONArray(Dict.CONFIG_BEFORE_CLASS));
         JSONObject headers = configRequest.getJSONObject("headers");
         Request.Builder builder = new Request.Builder().method(configRequest.getString("method"));
+        Object restful = configRequest.get("restful");
         for (int i = 0; i < testCases.size(); i++) {
             JSONObject testCase = testCases.getJSONObject(i);
             JSONObject setUp = testCase.getJSONObject(Dict.CASE_SETUP);
@@ -44,9 +46,16 @@ public class TestSuite extends junit.framework.TestSuite{
                 headers.putAll(caseHeaders);
             }
             StringBuilder url = new StringBuilder(configRequest.getString("url"));
-            url.append(testCase.getString("api"));
+            String api = testCase.getString("api");
+            if (StringUtil.isNotBlank(api)) {
+                url.append(api);
+            }
+            if (testCase.get("restful") != null){
+                restful = testCase.get("restful");
+            }
             Request request = builder.headers(headers)
                     .url(url.toString())
+                    .restful(restful)
                     .query(testCase.getJSONObject(Dict.CASE_QUERY))
                     .body(testCase.getJSONObject(Dict.CASE_BODY))
                     .title(testCase.getString(Dict.CASE_TITLE)).build();
