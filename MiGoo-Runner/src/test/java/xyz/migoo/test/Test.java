@@ -28,12 +28,13 @@ public class Test extends Base{
                 "  \"name\": \"the test suite name\"," +
                 "  \"config\": {" +
                 "    \"variables\":{" +
-                "      \"user\": \"migoo\"," +
-                "      \"beforeClass\": [\"${hook(beforeClass)}\"]" +
+                "      \"user\": \"migoo\"" +
                 "    }," +
+                "    \"beforeClass\": [\"__hook1(beforeClass)\"]," +
                 "    \"request\": {" +
                 "      \"url\": \"http://migoo.xyz/api/login\"," +
                 "      \"method\": \"post\"," +
+                "      \"restful\": 1," +
                 "      \"headers\": {" +
                 "        \"Content-Type\": \"application/json\"" +
                 "      }" +
@@ -43,45 +44,45 @@ public class Test extends Base{
                 "    {" +
                 "      \"title\": \"未注册的用户\"," +
                 "      \"setUp\": {" +
-                "        \"pwd\": \"123456qq\"," +
-                "        \"before\": [\"${hook(before)}\"]," +
-                "        \"after\": [\"${hook(after)}\"]" +
+                "        \"pwd\": \"123456qq\"" +
                 "      }," +
+                "      \"before\": [\"__hook1(before)\"]," +
+                "      \"after\": [\"__hook2(after,before)\"]," +
                 "      \"body\": {" +
-                "        \"user\": \"migoo1\"," +
-                "        \"password\": \"$pwd\"" +
+                "        \"userName\": \"migoo1\"," +
+                "        \"password\": \"${pwd}\"" +
                 "      }," +
                 "      \"validate\": [" +
                 "        {\"check\": \"status\", \"expect\": 200, \"types\": \"==\"}," +
                 "        {\"check\": \"$.status\", \"expect\": \"411\", \"types\": \"eq\"}," +
-                "        {\"check\": \"body.data\", \"expect\": \"\", \"types\": \"null\"}" +
+                "        {\"check\": \"body.data\", \"expect\": \"\", \"types\": \"isEmpty\"}" +
                 "      ]" +
                 "    }," +
                 "    {" +
                 "      \"title\": \"密码错误\"," +
                 "      \"setUp\": {" +
-                "        \"pwd\": \"${getPwd($user)}\"," +
-                "        \"before\": [\"${hook(before)}\"]," +
-                "        \"after\": [\"${hook2(after,before)}\"]" +
+                "        \"pwd\": \"__getPwd(${user})\"" +
                 "      }," +
+                "      \"before\": [\"__hook1(before)\"]," +
+                "      \"after\": [\"__hook2(after,before)\"]," +
                 "      \"body\": {" +
-                "        \"user\": \"$user\"," +
+                "        \"userName\": \"${user}\"," +
                 "        \"password\": \"123456\"" +
                 "      }," +
                 "      \"validate\": [" +
                 "        {\"check\": \"status\", \"expect\": 200, \"types\": \"==\"}," +
                 "        {\"check\": \"$.status\", \"expect\": 411, \"types\": \"eq\"}," +
-                "        {\"check\": \"body.data\", \"expect\": null, \"types\": \"null\"}" +
+                "        {\"check\": \"body.data\", \"expect\": null, \"types\": \"isEmpty\"}" +
                 "      ]" +
                 "    }," +
                 "    {" +
                 "      \"title\": \"未注册的用户\"," +
                 "      \"setUp\": {" +
-                "        \"before\": [\"${hook(before)}\"]," +
-                "        \"after\": [\"${hook(after)}\"]" +
                 "      }," +
+                "      \"before\": [\"__hook1(before)\"]," +
+                "      \"after\": [\"__hook2(after)\"]," +
                 "      \"body\": {" +
-                "        \"user\": \"$user\"," +
+                "        \"userName\": \"${user}\"," +
                 "        \"password\": \"123456qq\"" +
                 "      }," +
                 "      \"validate\": [" +
