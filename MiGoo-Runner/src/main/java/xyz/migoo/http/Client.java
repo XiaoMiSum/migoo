@@ -20,8 +20,10 @@ import xyz.migoo.utils.StringUtil;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -115,6 +117,11 @@ public class Client {
         return this.doExecute(httpDelete, request);
     }
 
+    /**
+     * 设置请求参数（url中的?后面的），如：http://127.0.0.1/api/users?uid=1
+     * @param request 请求信息
+     * @return 携带参数 或 未携带参数的 URI
+     */
     private URI setParameters(Request request){
         try {
             URIBuilder builder = new URIBuilder(request.url());
@@ -130,8 +137,8 @@ public class Client {
 
     /**
      * 设置 请求 entity
-     * 如果是 restful风格的 api，则从 body中获取请求体
-     * 否则，从 query中获取请求参数
+     * 参考了 Python Requests库，body默认从 request.body()中获取，content-type为 json
+     * 普通 post请求从request.data()中获取请求数据
      *
      * @param request     请求实体 参数信息
      * @param httpMethods 请求方法
@@ -140,23 +147,30 @@ public class Client {
         if (request.body() == null && request.query() == null){
             return;
         }
-        StringEntity entity;
+        StringEntity entity = null;
         if (request.body() != null){
-            entity = new StringEntity(request.body().toJSONString(), Charset.forName(UTF8));
-        }else if (request.restful() && request.query() != null){
-            entity = new StringEntity(request.query().toJSONString(), Charset.forName(UTF8));
-        }else {
+            String body = request.body().toJSONString();
+            if (request.encode()){
+                try {
+                    body = URLEncoder.encode(body, UTF8);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+            entity = new StringEntity(body, Charset.forName(UTF8));
+            entity.setContentType("application/json");
+        }
+        if (request.data() != null){
             if (HttpDelete.METHOD_NAME.equals(request.method())){
                 return;
             }
             List<NameValuePair> pairList = new ArrayList<>(request.query().size());
             request.query().forEach((key, value) -> pairList.add(new BasicNameValuePair(key, String.valueOf(value))));
             entity = new UrlEncodedFormEntity(pairList, Charset.forName(UTF8));
+            entity.setContentType("application/x-www-form-urlencoded");
         }
+        assert entity != null;
         entity.setContentEncoding(UTF8);
-        if (request.contentType() != null) {
-            entity.setContentType(request.contentType());
-        }
         httpMethods.setEntity(entity);
     }
 

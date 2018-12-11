@@ -1,6 +1,7 @@
 package xyz.migoo.config;
 
 import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.exception.ReaderException;
 import xyz.migoo.reader.PropertiesReader;
 import xyz.migoo.utils.StringUtil;
 
@@ -22,7 +23,11 @@ public class Platform {
     static {
         String[] properties = new String[]{"migoo.properties", "application.properties"};
         for (String file : properties) {
-            PROPERTIES.putAll(new PropertiesReader("classpath://" + file).read());
+            try {
+                PROPERTIES.putAll(new PropertiesReader("classpath://" + file).read());
+            } catch (ReaderException e) {
+                e.printStackTrace();
+            }
         }
     }
 

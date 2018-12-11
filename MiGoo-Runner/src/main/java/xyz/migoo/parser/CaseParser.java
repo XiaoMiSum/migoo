@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.config.Dict;
+import xyz.migoo.exception.ReaderException;
 import xyz.migoo.reader.Reader;
 import xyz.migoo.reader.ReaderFactory;
 import xyz.migoo.utils.Variable;
@@ -23,7 +24,7 @@ public class CaseParser{
         caseSets = new ArrayList<>();
     }
 
-    public List<JSONObject> loadCaseSets(String pathOrSet){
+    public List<JSONObject> loadCaseSets(String pathOrSet) throws ReaderException {
         try {
             loadCaseSetBySet(JSON.parse(pathOrSet));
         }catch (Exception e){
@@ -32,7 +33,7 @@ public class CaseParser{
         return this.caseSets;
     }
 
-    private void loadCaseSetsByPath(String path){
+    private void loadCaseSetsByPath(String path) throws ReaderException {
         File file = new File(path);
         if (file.isDirectory()){
             String[] fList = file.list();
@@ -47,7 +48,7 @@ public class CaseParser{
         }
     }
 
-    private void loadCaseSetsByFile(File file){
+    private void loadCaseSetsByFile(File file) throws ReaderException {
         String suffix = ReaderFactory.suffix(file.getName());
         if (suffix != null){
             Reader reader = ReaderFactory.getReader(suffix, file);

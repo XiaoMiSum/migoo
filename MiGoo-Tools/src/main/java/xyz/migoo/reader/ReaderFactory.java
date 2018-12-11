@@ -17,7 +17,7 @@ public class ReaderFactory {
     public static final String XLS_SUFFIX = ".xls";
     public static final String XLSX_SUFFIX = ".xlsx";
 
-    public static Reader getReader(String suffix, File file){
+    public static Reader getReader(String suffix, File file) throws ReaderException {
         switch (suffix){
             case JSON_SUFFIX:
                 return new JSONReader(file);

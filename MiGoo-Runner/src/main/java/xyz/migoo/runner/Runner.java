@@ -2,6 +2,7 @@ package xyz.migoo.runner;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.exception.ReaderException;
 import xyz.migoo.parser.CaseParser;
 import xyz.migoo.report.Report;
 import xyz.migoo.utils.EmailUtil;
@@ -48,13 +49,18 @@ public class Runner {
     }
 
     public TestResult run(String testSet){
-        CaseSuite caseSuite = this.initTestSuite(testSet);
+        CaseSuite caseSuite = null;
+        try {
+            caseSuite = this.initTestSuite(testSet);
+        } catch (ReaderException e) {
+            e.printStackTrace();
+        }
         TestResult result = new TestRunner().run(caseSuite);
         Report.generateReport(result.report(), caseSuite.name(), true, isMain);
         return result;
     }
 
-    public void execute(String caseSetOrPath){
+    public void execute(String caseSetOrPath) throws ReaderException {
         try {
             JSON.parse(caseSetOrPath);
             this.run(caseSetOrPath);
@@ -63,7 +69,7 @@ public class Runner {
         }
     }
 
-    private void runByPath(String caseSetOrPath){
+    private void runByPath(String caseSetOrPath) throws ReaderException {
         File file = new File(caseSetOrPath);
         if (file.isDirectory()){
             for (String f: file.list()){
@@ -77,7 +83,7 @@ public class Runner {
         }
     }
 
-    private CaseSuite initTestSuite(String path){
+    private CaseSuite initTestSuite(String path) throws ReaderException {
         List<JSONObject> caseSets = new CaseParser().loadCaseSets(path);
         return new CaseSuite(caseSets);
     }
