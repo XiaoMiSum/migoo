@@ -3,6 +3,7 @@ package xyz.migoo.report;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import xyz.migoo.config.Platform;
+import xyz.migoo.exception.ReaderException;
 import xyz.migoo.exception.ReportException;
 import xyz.migoo.reader.AbstractReader;
 import xyz.migoo.utils.*;
@@ -34,12 +35,18 @@ public class Report {
         report.put("report", "Test Report:  " + reportName);
         report.put("title", reportName + " - TestReport");
         report.put("platform", platform());
-        String content = render("classpath://templates/migoo_report_template.html", report);
-        File file = report(reportName, content, isMain);
-        if (sendEmail && Platform.MAIL_SEND) {
-            EmailUtil.sendEmail(content, file);
+        String content = null;
+        try {
+            content = render("classpath://templates/migoo_report_template.html", report);
+            File file = report(reportName, content, isMain);
+            if (sendEmail && Platform.MAIL_SEND) {
+                EmailUtil.sendEmail(content, file);
+            }
+            return file.getPath();
+        } catch (ReaderException e) {
+            e.printStackTrace();
         }
-        return file.getPath();
+        return null;
     }
 
     /**
@@ -49,7 +56,7 @@ public class Report {
      * @param report   报告数据
      * @return 渲染后的HTML
      */
-    private static String render(String template, Map<String, Object> report) {
+    private static String render(String template, Map<String, Object> report) throws ReaderException {
         template = HtmlReader.read(template);
         Context context = new Context();
         context.setVariables(report);
@@ -87,7 +94,7 @@ public class Report {
     private static class HtmlReader extends AbstractReader {
         private static final HtmlReader HTML_READER = new HtmlReader();
 
-        private static String read(String path) {
+        private static String read(String path) throws ReaderException {
             HTML_READER.stream(".html", path);
             StringBuilder stringBuilder = new StringBuilder();
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(HTML_READER.inputStream))) {

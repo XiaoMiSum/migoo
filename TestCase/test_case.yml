@@ -7,14 +7,10 @@ config:
   request:
     url: http://migoo.xyz/api/login
     method: post
-    # restful: 1/0  t/f  T/F  y/n  Y/N  yes/no  YES/NO  true/false  TRUE/FALSE
-    # 如果在 用例中也设置该参数，以用例中的设置为准
-    restful: 0
     headers:
       Content-Type: application/json
 case:
   - title: 未注册的用户登录
-    restful: 1
     setUp:
       userName: migoo1
       password: __getPwd(${userName})
@@ -22,14 +18,8 @@ case:
       - __hook1(before)
     after:
       - __hook2(after)
-    # query: restful风格的 get\delete 请求时，url路径中的参数可在该属性中配置，使用方式与 body一样
-    # 特别注意 当delete请求 url路径含有参数，并携带body时，url路径中的参数必须使用 query来配置
-    # url示例：http://127.0.0.1/user/{id}
-    #query:
-    # userName: ${userName}
-    # password: ${password}
     body:
-      ®: ${userName}
+      userName: ${userName}
       password: ${password}
     validate:
       - {check: status, expect: 200, types: ==}
@@ -43,7 +33,6 @@ case:
       - __hook1(before)
     after:
       - __hook2(after)
-    restful: 1
     body:
       userName: ${userName}
       password: ${password}
@@ -52,7 +41,6 @@ case:
       - {check: $.status, expect: __setValue(411), types: eq}
       - {check: body.data, expect: null, types: isNull }
   - title: 正确的用户名密码登录
-    restful: 1
     setUp:
       userName: migoo
       password: 123456qq
@@ -66,4 +54,4 @@ case:
     validate:
       - {check: status, expect: 200, types: ==}
       - {check: $.status, expect: 200, types: eq}
-      - {check: body.token, expect: null, types: isNotNull }
+      - {check: $.data.token, expect: null, types: isNotNull }

@@ -1,6 +1,7 @@
 package xyz.migoo.runner;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ReaderException;
 import xyz.migoo.parser.CaseParser;
@@ -60,13 +61,19 @@ public class Runner {
         return result;
     }
 
-    public void execute(String caseSetOrPath) throws ReaderException {
+    public void execute(String caseSetOrPath){
         try {
-            JSON.parse(caseSetOrPath);
-            this.run(caseSetOrPath);
-        }catch (Exception e){
-            this.runByPath(caseSetOrPath);
+            try {
+                JSON.parse(caseSetOrPath);
+                this.run(caseSetOrPath);
+            }catch (JSONException e){
+                this.runByPath(caseSetOrPath);
+            }
+        }catch (ReaderException e){
+            e.printStackTrace();
+            System.exit(-1);
         }
+
     }
 
     private void runByPath(String caseSetOrPath) throws ReaderException {

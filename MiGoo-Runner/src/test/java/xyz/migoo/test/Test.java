@@ -34,7 +34,6 @@ public class Test extends Base{
                 "    \"request\": {" +
                 "      \"url\": \"http://migoo.xyz/api/login\"," +
                 "      \"method\": \"post\"," +
-                "      \"restful\": 1," +
                 "      \"headers\": {" +
                 "        \"Content-Type\": \"application/json\"" +
                 "      }" +
