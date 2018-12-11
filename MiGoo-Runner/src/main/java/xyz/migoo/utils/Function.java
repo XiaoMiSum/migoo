@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  */
 public class Function {
 
-    private static Map<String, Method> methodMap = null;
+    private static Map<String, Method> methods = null;
     private static final String BODY_ = "body";
     private static final String JSON_ = "json";
 
@@ -41,14 +41,11 @@ public class Function {
         }
         Matcher matcher = Variable.FUNC_PATTERN.matcher(value);
         if (matcher.find()) {
-            if (methodMap == null) {
-                Class clazz = Class.forName(Platform.EXTENDS_VALIDATOR);
-                Method[] methods = clazz.getDeclaredMethods();
-                for (Method method : methods) {
-                    methodMap.put(method.getName(), method);
-                }
+            if (methods == null) {
+                methods = InvokeUtil.functionLoader(Platform.EXTENDS_VALIDATOR);
             }
-            methodMap.get(matcher.group(1)).invoke(null, validate, matcher.group(2));
+            Object result = InvokeUtil.invoke(methods, matcher.group(1), matcher.group(2));
+            validate.put(Dict.VALIDATE_EXPECT, result);
         }
     }
 
@@ -96,7 +93,6 @@ public class Function {
 
     public static void status(Response response, JSONObject validate) {
         validate.put(Dict.VALIDATE_ACTUAL, response.statusCode());
-        validate.put(Dict.VALIDATE_TYPE, Dict.VALIDATE_TYPE_IS_EMPTY);
     }
 
     public static boolean equals(Object actual, Object expect) {

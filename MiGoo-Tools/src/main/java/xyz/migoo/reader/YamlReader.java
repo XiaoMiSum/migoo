@@ -3,6 +3,7 @@ package xyz.migoo.reader;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.yaml.snakeyaml.Yaml;
+import xyz.migoo.exception.ReaderException;
 
 import java.io.File;
 
@@ -25,7 +26,7 @@ public class YamlReader extends AbstractReader implements Reader{
     }
 
     @Override
-    public JSON read(){
+    public JSON read() throws ReaderException {
         if (path != null){
             super.stream(ReaderFactory.YAML_SUFFIX, path);
         }
@@ -39,7 +40,7 @@ public class YamlReader extends AbstractReader implements Reader{
     }
 
     @Override
-    public String get(String key) {
+    public String get(String key) throws ReaderException {
         if (json == null){
             read();
         }

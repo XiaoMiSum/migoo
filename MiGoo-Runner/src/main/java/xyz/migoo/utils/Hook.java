@@ -5,12 +5,10 @@ import xyz.migoo.config.Platform;
 import xyz.migoo.exception.VariableException;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 
 import static xyz.migoo.utils.Variable.FUNC_PATTERN;
-import static xyz.migoo.utils.Variable.SEPARATOR;
 
 /**
  *
@@ -19,7 +17,7 @@ import static xyz.migoo.utils.Variable.SEPARATOR;
  */
 public class Hook {
 
-    private static Map<String, Method> methodMap = null;
+    private static Map<String, Method> methods = null;
 
     private Hook() {
     }
@@ -28,7 +26,7 @@ public class Hook {
      *
      * @param hook 待执行的方法列表
      */
-    public static void hook(JSONArray hook) {
+    public static void hook(JSONArray hook) throws VariableException{
         if (hook ==null || hook.isEmpty()){
             return;
         }
@@ -42,34 +40,21 @@ public class Hook {
         }
     }
 
-    private static void functionLoader() {
+    private static void functionLoader() throws VariableException{
         try {
-            if (methodMap != null){
-                return;
-            }
-            Class clazz = Class.forName(Platform.EXTENDS_HOOK);
-            Method[] methods = clazz.getDeclaredMethods();
-            methodMap = new HashMap<>(methods.length);
-            for (Method method : methods) {
-                methodMap.put(method.getName(), method);
+            if (methods == null){
+                methods = InvokeUtil.functionLoader(Platform.EXTENDS_HOOK);
             }
         }catch (Exception e){
             throw new VariableException(StringUtil.getStackTrace(e));
         }
     }
 
-    private static void invoke(String methodName, String params) {
+    private static void invoke(String name, String params) throws VariableException {
         try {
-            if (StringUtil.isBlank(params)){
-                methodMap.get(methodName).invoke(null);
-            }else if(params.contains(SEPARATOR)){
-                methodMap.get(methodName).invoke(null, params.split(SEPARATOR));
-            }else {
-                methodMap.get(methodName).invoke(null, params);
-            }
+            InvokeUtil.invoke(methods, name, params);
         }catch (Exception e){
             throw new VariableException(StringUtil.getStackTrace(e));
         }
     }
-
 }

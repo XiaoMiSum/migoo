@@ -18,25 +18,24 @@ public class X509Trust implements X509TrustManager {
 
     public X509Trust(File serverCert, File clientCert) {
         if (null != serverCert){
-            try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(serverCert))) {
-                CertificateFactory cf = CertificateFactory.getInstance("X.509");
-                while (bis.available() > 0) {
-                    this.serverCer = cf.generateCertificate(bis);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            this.serverCer = set(serverCert);
         }
         if (null != clientCert){
-            try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(clientCert))){
-                CertificateFactory cf = CertificateFactory.getInstance("X.509");
-                while (bis.available() > 0) {
-                    this.clientCer = cf.generateCertificate(bis);
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+            this.clientCer = set(clientCert);
         }
+    }
+
+    private Certificate set(File certFile){
+        Certificate serverOrClient = null;
+        try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(certFile))){
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            while (bis.available() > 0) {
+                serverOrClient = cf.generateCertificate(bis);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return serverOrClient;
     }
 
     @Override

@@ -26,17 +26,21 @@ public class Task {
     }
 
     public synchronized void run(JSONObject testCase) throws ValidatorException {
-        Hook.hook(testCase.getJSONArray(Dict.CASE_BEFORE));
-        Response response = new Client.Builder().build().execute(request);
-        Hook.hook(testCase.getJSONArray(Dict.CASE_AFTER));
-        this.testSuite.response(response);
-        JSON validate = (JSON)testCase.get(Dict.VALIDATE);
         try {
+            Hook.hook(testCase.getJSONArray(Dict.CASE_BEFORE));
+            Response response = new Client.Builder().build().execute(request);
+            Hook.hook(testCase.getJSONArray(Dict.CASE_AFTER));
+            this.testSuite.response(response);
+            JSON validate = (JSON)testCase.get(Dict.VALIDATE);
             Validator.validation(response, validate);
         }catch (ValidatorException e){
             log.error(e.getMessage(), e);
-            this.testSuite.failures(response.request().title());
+            this.testSuite.failures(request.title());
             throw new ValidatorException(e.getMessage().replaceAll("\n","</br>"));
+        }catch (Exception e){
+            log.error(e.getMessage(), e);
+            this.testSuite.failures(request.title());
+            throw new ValidatorException(e.getMessage());
         }
     }
 }

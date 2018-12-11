@@ -27,7 +27,7 @@ public class PropertiesReader extends AbstractReader implements Reader{
     }
 
     @Override
-    public JSONObject read(){
+    public JSONObject read() throws ReaderException {
         if (path != null){
             super.stream(ReaderFactory.PROS_SUFFIX, path);
         }
@@ -46,7 +46,7 @@ public class PropertiesReader extends AbstractReader implements Reader{
     }
 
     @Override
-    public String get(String key) {
+    public String get(String key) throws ReaderException {
         if (json == null){
             read();
         }

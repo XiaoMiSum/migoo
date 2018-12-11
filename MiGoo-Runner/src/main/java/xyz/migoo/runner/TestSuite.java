@@ -6,6 +6,7 @@ import xyz.migoo.config.Dict;
 import xyz.migoo.http.Request;
 import xyz.migoo.http.Response;
 import xyz.migoo.utils.Hook;
+import xyz.migoo.utils.StringUtil;
 import xyz.migoo.utils.Variable;
 
 /**
@@ -32,8 +33,10 @@ public class TestSuite extends junit.framework.TestSuite{
         JSONArray testCases = caseSet.getJSONArray(Dict.CASE);
         JSONObject configRequest = config.getJSONObject(Dict.CONFIG_REQUEST);
         Hook.hook(config.getJSONArray(Dict.CONFIG_BEFORE_CLASS));
-        JSONObject headers = configRequest.getJSONObject("headers");
-        Request.Builder builder = new Request.Builder().method(configRequest.getString("method"));
+        JSONObject headers = configRequest.getJSONObject(Dict.CONFIG_REQUEST_HEADERS);
+        Request.Builder builder = new Request.Builder().method(configRequest.getString(Dict.CONFIG_REQUEST_METHOD));
+        StringBuilder url = new StringBuilder(configRequest.getString(Dict.CONFIG_REQUEST_URL));
+        Object encode = configRequest.get(Dict.CONFIG_REQUEST_ENCODE);
         for (int i = 0; i < testCases.size(); i++) {
             JSONObject testCase = testCases.getJSONObject(i);
             JSONObject setUp = testCase.getJSONObject(Dict.CASE_SETUP);
@@ -43,11 +46,16 @@ public class TestSuite extends junit.framework.TestSuite{
             if (caseHeaders != null && !caseHeaders.isEmpty()){
                 headers.putAll(caseHeaders);
             }
-            StringBuilder url = new StringBuilder(configRequest.getString("url"));
-            url.append(testCase.getString("api"));
-            Request request = builder.headers(headers)
-                    .url(url.toString())
+            String api = testCase.getString(Dict.CONFIG_REQUEST_API);
+            if (StringUtil.isNotBlank(api)) {
+                url.append(api);
+            }
+            if (testCase.get(Dict.CONFIG_REQUEST_ENCODE) != null){
+                encode = testCase.get(Dict.CONFIG_REQUEST_ENCODE);
+            }
+            Request request = builder.headers(headers).url(url.toString()).encode(encode)
                     .query(testCase.getJSONObject(Dict.CASE_QUERY))
+                    .data(testCase.getJSONObject(Dict.CASE_DATA))
                     .body(testCase.getJSONObject(Dict.CASE_BODY))
                     .title(testCase.getString(Dict.CASE_TITLE)).build();
             Task task = new Task(request, this);

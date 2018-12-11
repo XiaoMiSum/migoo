@@ -1,6 +1,7 @@
 package xyz.migoo.http;
 
 import com.alibaba.fastjson.JSONObject;
+import netscape.javascript.JSObject;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.client.methods.HttpDelete;
@@ -28,20 +29,22 @@ public class Request {
     private String url;
     private String method;
     private JSONObject body;
+    private JSONObject data;
     private JSONObject query;
     private List<Header> headers;
     private String title;
     private Header contentType;
-    private boolean restful;
+    private boolean encode;
 
     private Request(Builder builder) {
         this.url = builder.url;
         this.method = builder.method;
         this.body = builder.body;
+        this.data = builder.data;
         this.query = builder.query;
         this.headers = builder.headers;
         this.title = builder.title;
-        this.restful = builder.restful;
+        this.encode = builder.encode;
     }
 
     public String url() {
@@ -68,8 +71,12 @@ public class Request {
         return this.body;
     }
 
-    public boolean restful() {
-        return restful;
+    public JSONObject data() {
+        return this.data;
+    }
+
+    public boolean encode() {
+        return encode;
     }
 
     public Header contentType() {
@@ -91,10 +98,11 @@ public class Request {
         private String url;
         private String method;
         private JSONObject body;
+        private JSONObject data;
         private JSONObject query;
         private List<Header> headers;
         private String title;
-        private boolean restful = false;
+        private boolean encode = false;
 
         public Builder() {
         }
@@ -164,46 +172,40 @@ public class Request {
             return this;
         }
 
-        public Builder restful(Object value) {
+        public Builder encode(Object value) {
             Boolean b = TypeUtil.booleanOf(value);
             if (b != null) {
-                restful = b.booleanValue();
+                encode = b;
             }
             return this;
         }
 
         public Builder body(Object body) {
-            if (body == null) {
-                this.body = new JSONObject(0);
-                return this;
-            }
-            if (body instanceof JSONObject) {
-                this.body = (JSONObject) body;
-                return this;
-            }
-            if (body instanceof String) {
-                this.body = JSONObject.parseObject((String) body);
-                return this;
-            }
-            this.body = (JSONObject)JSONObject.toJSON(body);
+            this.body = this.parse(body);
+            return this;
+        }
+
+        public Builder data(Object data) {
+            this.data = this.parse(data);
             return this;
         }
 
         public Builder query(Object query) {
-            if (query == null) {
-                this.query = new JSONObject(0);
-                return this;
-            }
-            if (query instanceof JSONObject) {
-                this.query = (JSONObject) query;
-                return this;
-            }
-            if (query instanceof String) {
-                this.query = JSONObject.parseObject((String) query);
-                return this;
-            }
-            this.query = (JSONObject)JSONObject.toJSON(query);
+            this.query = this.parse(query);
             return this;
+        }
+
+        private JSONObject parse(Object object) {
+            if (object == null) {
+                return null;
+            }
+            if (object instanceof JSONObject) {
+                return (JSONObject) object;
+            }
+            if (object instanceof String) {
+                return JSONObject.parseObject((String) object);
+            }
+            return (JSONObject)JSONObject.toJSON(object);
         }
 
         public Request build() {

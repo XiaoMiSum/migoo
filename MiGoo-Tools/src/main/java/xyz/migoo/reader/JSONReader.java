@@ -27,7 +27,7 @@ public class JSONReader extends AbstractReader implements Reader {
     }
 
     @Override
-    public JSON read(){
+    public JSON read() throws ReaderException {
         if (path != null){
             super.stream(ReaderFactory.JSON_SUFFIX, path);
         }
@@ -53,7 +53,7 @@ public class JSONReader extends AbstractReader implements Reader {
     }
 
     @Override
-    public String get(String key) {
+    public String get(String key) throws ReaderException {
         if (json == null){
             read();
         }

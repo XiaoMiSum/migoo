@@ -2,7 +2,7 @@
   "name": "进阶用法 - 变量",
   "config": {
     "variables":{
-      "user": "migoo"
+      "userName": "migoo"
     },
     "request": {
       "url": "http://migoo.xyz/api/login",
@@ -19,7 +19,7 @@
         "pwd": "123456qq"
       },
       "body": {
-        "user": "migoo1",
+        "userName": "migoo1",
         "password": "${pwd}"
       },
       "validate": [
@@ -31,7 +31,7 @@
     {
       "title": "密码错误",
       "body": {
-        "user": "${user}",
+        "userName": "${userName}",
         "password": "123456"
       },
       "validate": [
@@ -43,13 +43,13 @@
     {
       "title": "参数正确",
       "body": {
-        "user": "${user}",
+        "userName": "${userName}",
         "password": "123456qq"
       },
       "validate": [
         {"check": "status", "expect": 200, "types": "=="},
         {"check": "$.status", "expect": "200", "types": "eq"},
-        {"check": "body.data", "expect": "", "types": "isNotNull"}
+        {"check": "body.data.token", "expect": "", "types": "isNotNull"}
       ]
     }
   ]

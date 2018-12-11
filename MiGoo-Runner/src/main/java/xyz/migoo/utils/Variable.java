@@ -20,8 +20,7 @@ public class Variable {
 
     public static final Pattern FUNC_PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
     public static final Pattern VAR_PATTERN = Pattern.compile("^\\$\\{(\\w+)}");
-    public static final String SEPARATOR = ",";
-    private static Map<String, Method> methodMap = null;
+    private static Map<String, Method> methods = null;
 
     private Variable() {
     }
@@ -92,29 +91,18 @@ public class Variable {
 
     private static void functionLoader() {
         try {
-            if (methodMap == null) {
-                Class clazz = Class.forName(Platform.EXTENDS_VARIABLE);
-                Method[] methods = clazz.getDeclaredMethods();
-                methodMap = new HashMap<>(methods.length);
-                for (Method method : methods) {
-                    methodMap.put(method.getName(), method);
-                }
+            if (methods == null) {
+                methods = InvokeUtil.functionLoader(Platform.EXTENDS_VARIABLE);
             }
         }catch (Exception e){
             throw new VariableException(StringUtil.getStackTrace(e));
         }
     }
 
-    private static String invoke(String methodName, String params) {
+    private static String invoke(String name, String params) {
         String value;
         try {
-            if (StringUtil.isBlank(params)){
-                value = (String) methodMap.get(methodName).invoke(null);
-            }else if(params.contains(SEPARATOR)){
-                value = (String) methodMap.get(methodName).invoke(null, params.split(SEPARATOR));
-            }else {
-                value = (String) methodMap.get(methodName).invoke(null, params);
-            }
+            value = (String) InvokeUtil.invoke(methods, name, params);
         }catch (Exception e){
             throw new VariableException(StringUtil.getStackTrace(e));
         }

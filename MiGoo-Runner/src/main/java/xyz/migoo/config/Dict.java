@@ -15,11 +15,23 @@ public class Dict {
 
     public static final String CONFIG_REQUEST = "request";
 
+    public static final String CONFIG_REQUEST_ENCODE = "encode";
+
+    public static final String CONFIG_REQUEST_URL = "url";
+
+    public static final String CONFIG_REQUEST_API = "api";
+
+    public static final String CONFIG_REQUEST_HEADERS = "headers";
+
+    public static final String CONFIG_REQUEST_METHOD = "method";
+
     public static final String CONFIG_BEFORE_CLASS = "beforeClass";
 
     public static final String CASE = "case";
 
     public static final String CASE_BODY = "body";
+
+    public static final String CASE_DATA = "data";
 
     public static final String CASE_QUERY = "query";
 

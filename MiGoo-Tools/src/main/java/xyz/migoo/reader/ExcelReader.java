@@ -46,12 +46,12 @@ public class ExcelReader extends AbstractReader implements Reader {
                 super.stream(ReaderFactory.XLSX_SUFFIX, file);
                 workbook = new XSSFWorkbook(inputStream);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("reader file error", e);
         }
     }
 
-    private void init (String path){
+    private void init (String path) {
         try {
             if (path.trim().toLowerCase().endsWith(ReaderFactory.XLS_SUFFIX)) {
                 super.stream(ReaderFactory.XLS_SUFFIX, path);
@@ -61,7 +61,7 @@ public class ExcelReader extends AbstractReader implements Reader {
                 super.stream(ReaderFactory.XLSX_SUFFIX, path);
                 workbook = new XSSFWorkbook(inputStream);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("reader file error", e);
         }
     }
@@ -87,7 +87,7 @@ public class ExcelReader extends AbstractReader implements Reader {
     }
 
     @Override
-    public JSON read() {
+    public JSON read() throws ReaderException {
         try {
             JSONArray jsonArray = new JSONArray(rowCount);
             Object[] title = null;
@@ -114,7 +114,7 @@ public class ExcelReader extends AbstractReader implements Reader {
 
     }
 
-    public <T> List<T>  toJavaList(Class<T> clazz){
+    public <T> List<T>  toJavaList(Class<T> clazz) throws ReaderException {
         return ((JSONArray)read()).toJavaList(clazz);
     }
 

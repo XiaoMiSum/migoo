@@ -40,14 +40,14 @@ public class Validator extends Assert {
         validate.forEach(json -> validation(response, (JSONObject) json));
     }
 
-    private static void validation(Response response, JSONObject validate) throws ValidatorException {
-        String types = validate.getString(Dict.VALIDATE_TYPE);
-        String check = validate.getString(Dict.VALIDATE_CHECK);
-        Object expect = validate.get(Dict.VALIDATE_EXPECT);
+    private synchronized static void  validation(Response response, JSONObject validate) throws ValidatorException {
         if (methods == null) {
             methods = Function.functionLoader();
         }
         evalValidate(response, validate);
+        String types = validate.getString(Dict.VALIDATE_TYPE);
+        String check = validate.getString(Dict.VALIDATE_CHECK);
+        Object expect = validate.get(Dict.VALIDATE_EXPECT);
         Object actual = validate.get(Dict.VALIDATE_ACTUAL);
         try {
             validation(check, types, actual, expect);

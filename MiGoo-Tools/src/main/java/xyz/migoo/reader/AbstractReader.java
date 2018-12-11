@@ -22,7 +22,7 @@ public abstract class AbstractReader {
      * @param file 文件
      * @param suffix 指定的文件后缀
      */
-    protected void validation(File file, String suffix){
+    protected void validation(File file, String suffix) throws ReaderException {
         if (!file.exists()){
             throw new ReaderException("file not found : " + file.getPath());
         }
@@ -38,7 +38,7 @@ public abstract class AbstractReader {
         return path.toLowerCase().startsWith(CLASSPATH);
     }
 
-    protected void stream(String suffix, String path){
+    protected void stream(String suffix, String path) throws ReaderException {
         try {
             if (!isClassPath(path)){
                 stream(suffix, new File(path));
@@ -53,7 +53,7 @@ public abstract class AbstractReader {
         }
     }
 
-    protected void stream(String suffix, File file){
+    protected void stream(String suffix, File file) throws ReaderException {
         try {
             validation(file, suffix);
             inputStream = new BufferedInputStream(new FileInputStream(file));
