@@ -16,6 +16,7 @@ public class ReaderFactory {
     public final static String PROS_SUFFIX = ".properties";
     public static final String XLS_SUFFIX = ".xls";
     public static final String XLSX_SUFFIX = ".xlsx";
+    private static final List<String> LIST = new ArrayList<>();
 
     public static Reader getReader(String suffix, File file) throws ReaderException {
         switch (suffix){
@@ -35,11 +36,24 @@ public class ReaderFactory {
     }
 
     public static String suffix(String file){
-        String suffix = "." + file.split("\\.")[1];
-        List<String> list = Arrays.asList(new String[]{JSON_SUFFIX, YAML_SUFFIX, PROS_SUFFIX, XLS_SUFFIX, XLSX_SUFFIX});
+        String suffix = file.substring(file.indexOf("."));
         if (list.contains(suffix)){
             return suffix;
         }
         return null;
+    }
+    
+    static{
+        Field[] fields = ReaderFactory.class.getDeclaredFields();
+        for (Field field:fields){
+            try {
+                if ("LIST".equals(field.getName())){
+                    continue;
+                }
+                LIST.add(field.get(ReaderFactory.class).toString());
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
