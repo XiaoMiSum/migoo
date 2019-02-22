@@ -229,13 +229,21 @@
                                     <td>
                                         <div th:each="headers: ${record.detail.log.request.headers}">
                                             <span th:each="header: ${headers}">
-                                                <per th:text="${header.getName()}"></per>
+                                                <per th:text="${header.getName()}"/>
                                                 <per>:  </per>
                                                 <per th:text="${header.getValue()}"></per>
                                             </span>
                                         </div>
                                     </td>
                                 </tr>
+                                <div th:if="${record.detail.log.request.body}">
+                                    <tr>
+                                        <th>body</th>
+                                        <td>
+                                            <pre th:text="${record.detail.log.request.body}"></pre>
+                                        </td>
+                                    </tr>
+                                </div>
                                 <div th:if="${record.detail.log.request.query}">
                                     <tr>
                                         <th>query</th>
@@ -244,11 +252,11 @@
                                         </td>
                                     </tr>
                                 </div>
-                                <div th:if="${record.detail.log.request.body}">
+                                <div th:if="${record.detail.log.request.data}">
                                     <tr>
-                                        <th>body</th>
+                                        <th>data</th>
                                         <td>
-                                            <pre th:text="${record.detail.log.request.body}"></pre>
+                                            <pre th:text="${record.detail.log.request.data}"></pre>
                                         </td>
                                     </tr>
                                 </div>
@@ -296,5 +304,12 @@
         </td>
     </tr>
 </table>
+<div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+</div>
 </body>
 </html>

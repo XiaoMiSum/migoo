@@ -52,4 +52,13 @@ public class PropertiesReader extends AbstractReader implements Reader{
         }
         return json.getString(key);
     }
+
+    public InputStream getInputStream(){
+        try {
+            super.stream(ReaderFactory.PROS_SUFFIX, path);
+        } catch (ReaderException e) {
+            e.printStackTrace();
+        }
+        return inputStream;
+    }
 }

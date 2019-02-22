@@ -14,30 +14,33 @@ import static xyz.migoo.config.Platform.*;
  */
 public class EmailUtil {
 
-    public static void sendEmail(String message, File file){
-        String subject = "自动化测试报告" + file.getName();
-        SendEmail.send(MAIL_SEND_FROM, MAIL_SEND_PASS, MAIL_SEND_FROM, MAIL_SEND_TO_LIST,
-                file, MAIL_IMAP_HOST, subject, message);
-    }
-
     public static void sendEmail(boolean isMain){
-        if(!Platform.MAIL_SEND){
+        if (!Platform.MAIL_SEND){
             return;
         }
-        File path = new File(System.getProperty("user.dir"));
+        File file = new File(System.getProperty("user.dir"));
         if (isMain){
-            path = new File(path.getPath() + File.separator + "Reports" + File.separator + DateUtil.TODAY);
+            file = new File(file.getPath() + File.separator + "Reports" + File.separator + DateUtil.TODAY_DATE);
         }else {
-            path = new File(path.getParent() + File.separator + "Reports" + File.separator + DateUtil.TODAY);
+            file = new File(file.getParent() + File.separator + "Reports" + File.separator + DateUtil.TODAY_DATE);
         }
-        String subject = "自动化测试报告";
+        String subject = "自动化测试报告" + DateUtil.format(DateUtil.YYYY_MM_DD_HH_MM_SS);
         try {
-            path = ZipUtil.zipFile(path.getPath(), "reports");
-            SendEmail.send(MAIL_SEND_FROM, MAIL_SEND_PASS, MAIL_SEND_FROM, MAIL_SEND_TO_LIST,
-                    path, MAIL_IMAP_HOST, subject,"附件，请查收～");
-            path.delete();
+            File zip = ZipUtil.zipFile(file.getPath(), "reports");
+            SendEmail.send(MAIL_SEND_FROM, MAIL_SEND_PASS, MAIL_SEND_FROM, MAIL_SEND_TO_LIST, zip, MAIL_IMAP_HOST, subject,"附件，请查收～");
+            file.delete();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void sendEmail(String message, String path){
+        if (!Platform.MAIL_SEND){
+            return;
+        }
+        String subject = "自动化测试报告" + DateUtil.format(DateUtil.YYYY_MM_DD_HH_MM_SS);
+        File file = new File(path);
+        SendEmail.send(MAIL_SEND_FROM, MAIL_SEND_PASS, MAIL_SEND_FROM, MAIL_SEND_TO_LIST, file, MAIL_IMAP_HOST, subject, message);
+        new File(file.getParent()).delete();
     }
 }

@@ -1,12 +1,13 @@
 package xyz.migoo.http;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.http.Header;
 import xyz.migoo.utils.StringUtil;
 
-import java.util.Locale;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * @author xiaomi
@@ -15,7 +16,6 @@ public class Response {
 
     private static final int SUCCESS = 200;
     private static final int ERROR = 0;
-    private static final int NOT_FOUND = 404;
 
     private int statusCode;
     private Header[] headers;
@@ -34,7 +34,7 @@ public class Response {
         this.headers = headers;
     }
 
-    protected void body(String body) {
+    public void body(String body) {
         this.body = body;
     }
 
@@ -66,10 +66,6 @@ public class Response {
         return this.statusCode == ERROR;
     }
 
-    public boolean isNotFound() {
-        return this.statusCode == NOT_FOUND;
-    }
-
     public int statusCode() {
         return statusCode;
     }
@@ -78,37 +74,16 @@ public class Response {
         return headers;
     }
 
-    public JSONObject cookie(){
-        if (headers == null || headers.length == 0){
-            return null;
-        }
-        String[] tmp = null;
-        for (Header header : headers){
-            if (StringUtil.containsIgnoreCase(header.getName(), "cookie")){
-                tmp = header.getValue().split(";");
-            }
-        }
-        JSONObject cookie = null;
-        if (tmp != null && tmp.length != 0){
-            cookie = new JSONObject(tmp.length);
-            for (String s : tmp){
-                String[] ss = s.split("=");
-                cookie.put(ss[0], ss[1]);
-            }
-        }
-        return cookie;
-    }
-
     public String body() {
         return body;
     }
 
     public JSON json() {
         try {
-            return JSONObject.parseObject(body);
-        }catch (Exception e){
+            return JSON.parseObject(body);
+        }catch (JSONException e){
             try {
-                return JSONArray.parseArray(body);
+                return JSON.parseArray(body);
             }catch (Exception ex){
                 return null;
             }

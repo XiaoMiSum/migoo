@@ -15,7 +15,15 @@ public class RSASignature {
 	/**
 	 * 签名算法
 	 */
-	public static final String RSA_SIGNATURE = "NONEwithRSA";
+	public static final String NONE_WITH_RSA = "NONEwithRSA";
+	public static final String MD5_WITH_RSA = "MD5withRSA";
+	public static final String MD2_WITH_RSA = "MD2withRSA";
+	public static final String SHA1_WITH_RSA = "SHA1withRSA";
+	public static final String SHA256_WITH_RSA = "SHA256withRSA";
+	public static final String SHA384_WITH_RSA = "SHA384withRSA";
+	public static final String SHA512_WITH_RSA = "SHA512withRSA";
+	public static final String SHA1_WITH_DSA = "SHA1withDSA";
+
 
 	public static String sign(String content, String privateKey){
 		return encryptByPrivateKey(content, privateKey);
@@ -25,7 +33,7 @@ public class RSASignature {
 		try {
 			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 			PublicKey pubKey = keyFactory.generatePublic(new X509EncodedKeySpec(Base64.decodeBase64(publicKey)));
-			Signature signature = Signature.getInstance(RSA_SIGNATURE);
+			Signature signature = Signature.getInstance(NONE_WITH_RSA);
 			signature.initVerify(pubKey);
 			signature.update(content.getBytes("utf-8"));
 			return signature.verify(Base64.decodeBase64(sign));
@@ -42,11 +50,15 @@ public class RSASignature {
 	 * @return
 	 */
 	public static String encryptByPrivateKey(String content, String privateKey) {
+		return encryptByPrivateKey(content, privateKey, NONE_WITH_RSA);
+	}
+
+	public static String encryptByPrivateKey(String content, String privateKey, String type) {
 		try {
 			PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.decodeBase64(privateKey));
 			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 			PrivateKey priKey = keyFactory.generatePrivate(keySpec);
-			Signature signature = Signature.getInstance(RSA_SIGNATURE);
+			Signature signature = Signature.getInstance(type);
 			signature.initSign(priKey);
 			signature.update(content.getBytes("utf-8"));
 			byte[] signed = signature.sign();
@@ -56,6 +68,7 @@ public class RSASignature {
 		}
 		return null;
 	}
+
 
 	/**
 	 * 公钥加密

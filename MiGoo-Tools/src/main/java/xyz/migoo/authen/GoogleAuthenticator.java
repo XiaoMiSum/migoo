@@ -63,7 +63,7 @@ public class GoogleAuthenticator {
         return r;
     }
 
-    public static String sign(String secretKey) {
+    public static String generateAuthCode(String secretKey) {
         long t = (System.currentTimeMillis() / 1000L) / 30L;
         byte[] decodedKey = new Base32().decode(secretKey);
         try {

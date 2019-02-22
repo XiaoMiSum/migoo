@@ -1,6 +1,7 @@
 package xyz.migoo.http;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.util.TypeUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
@@ -31,7 +32,6 @@ import java.util.List;
 
 import static xyz.migoo.http.Request.UTF8;
 
-
 /**
  * 封装了HttpClient提供的api 简化测试脚本开发
  *
@@ -39,30 +39,31 @@ import static xyz.migoo.http.Request.UTF8;
  */
 public class Client {
 
-    private static final PoolingHttpClientConnectionManager POOLING = new PoolingHttpClientConnectionManager();
-    private static Log log = new Log(Client.class);
+    private static final PoolingHttpClientConnectionManager POOL = new PoolingHttpClientConnectionManager();
+    private static final Log log = new Log(Client.class);
     private static CloseableHttpClient httpClient;
 
-    private Client(){}
+    private Client(){
+    }
 
     /**
      * 执行请求，返回 Response 对象
      *
-     * @param request
+     * @param request 请求信息
      * @return Response
      */
     public Response execute(Request request) {
-        switch (request.method()) {
+        switch (request.method()){
             case HttpGet.METHOD_NAME:
-                return doGet(request);
+                return this.doGet(request);
             case HttpPost.METHOD_NAME:
-                return doPost(request);
+                return this.doPost(request);
             case HttpPut.METHOD_NAME:
-                return doPut(request);
+                return this.doPut(request);
             case HttpDelete.METHOD_NAME:
-                return doDelete(request);
+                return this.doDelete(request);
             default:
-                return doGet(request);
+                return this.doGet(request);
         }
     }
 
@@ -73,7 +74,7 @@ public class Client {
      * @return 返回一个包含头部信息的响应
      */
     private Response doGet(Request request) {
-        HttpGet httpGet = new HttpGet(this.setParameters(request));
+        HttpRequestBase httpGet = new HttpGet(this.setParameters(request));
         this.setHeader(request, httpGet);
         return this.doExecute(httpGet, request);
     }
@@ -85,7 +86,7 @@ public class Client {
      * @return 返回一个包含头部信息的响应
      */
     private Response doPost(Request request) {
-        HttpPost httpPost = new HttpPost(request.url());
+        HttpPost httpPost = new HttpPost(this.setParameters(request));
         this.setHeader(request, httpPost);
         this.setEntity(request, httpPost);
         return this.doExecute(httpPost, request);
@@ -98,7 +99,7 @@ public class Client {
      * @return 返回一个包含头部信息的响应
      */
     private Response doPut(Request request) {
-        HttpPut httpPut = new HttpPut(request.url());
+        HttpPut httpPut = new HttpPut(this.setParameters(request));
         this.setHeader(request, httpPut);
         this.setEntity(request, httpPut);
         return this.doExecute(httpPut, request);
@@ -117,55 +118,48 @@ public class Client {
         return this.doExecute(httpDelete, request);
     }
 
-    /**
-     * 设置请求参数（url中的?后面的），如：http://127.0.0.1/api/users?uid=1
-     * @param request 请求信息
-     * @return 携带参数 或 未携带参数的 URI
-     */
     private URI setParameters(Request request){
         try {
-            URIBuilder builder = new URIBuilder(request.url());
-            if (request.query() != null) {
-                request.query().forEach((k, v) -> builder.addParameter(k, String.valueOf(v)));
+            URIBuilder uri = new URIBuilder(request.url());
+            if (request.query() != null){
+                request.query().forEach((k, v) -> uri.addParameter(k, String.valueOf(v)));
             }
-            return builder.build();
+            return uri.build();
         } catch (URISyntaxException e) {
-            log.error("setting query parameters exception", e);
+            log.error("setting parameters exception", e);
         }
         return null;
     }
 
     /**
      * 设置 请求 entity
-     * 参考了 Python Requests库，body默认从 request.body()中获取，content-type为 json
-     * 普通 post请求从request.data()中获取请求数据
      *
      * @param request     请求实体 参数信息
      * @param httpMethods 请求方法
      */
     private void setEntity(Request request, HttpEntityEnclosingRequestBase httpMethods) {
-        if (request.body() == null && request.query() == null){
+        if (request.data() == null && request.body() == null){
             return;
         }
         StringEntity entity = null;
         if (request.body() != null){
-            String body = request.body().toJSONString();
+            String s = request.body().toJSONString();
             if (request.encode()){
                 try {
-                    body = URLEncoder.encode(body, UTF8);
+                    s = URLEncoder.encode(s, UTF8);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
             }
-            entity = new StringEntity(body, Charset.forName(UTF8));
-            entity.setContentType("application/json");
+            entity = new StringEntity(s, Charset.forName(UTF8));
+            entity.setContentType("application/json;charset=utf-8");
         }
         if (request.data() != null){
             if (HttpDelete.METHOD_NAME.equals(request.method())){
                 return;
             }
-            List<NameValuePair> pairList = new ArrayList<>(request.query().size());
-            request.query().forEach((key, value) -> pairList.add(new BasicNameValuePair(key, String.valueOf(value))));
+            List<NameValuePair> pairList = new ArrayList<>(request.data().size());
+            request.data().forEach((key, value) -> pairList.add(new BasicNameValuePair(key, String.valueOf(value))));
             entity = new UrlEncodedFormEntity(pairList, Charset.forName(UTF8));
             entity.setContentType("application/x-www-form-urlencoded");
         }
@@ -181,10 +175,10 @@ public class Client {
      * @param httpMethods 请求方法
      */
     private void setHeader(Request request, HttpRequestBase httpMethods) {
-        if (request.headers() == null || request.headers().size() == 0) {
+        if (request.headers() == null || request.headers().isEmpty()) {
             return;
         }
-        request.headers().forEach(header -> httpMethods.addHeader(header));
+        request.headers().forEach(httpMethods::addHeader);
     }
 
     /**
@@ -196,16 +190,13 @@ public class Client {
     private Response doExecute(HttpRequestBase httpMethods, Request request) {
         Response response = new Response();
         response.request(request);
-        try {
-            response.startTime(System.currentTimeMillis());
-            CloseableHttpResponse httpResponse = httpClient.execute(httpMethods);
+        response.startTime(System.currentTimeMillis());
+        try (CloseableHttpResponse httpResponse = httpClient.execute(httpMethods)){
             response.endTime(System.currentTimeMillis());
             response.locale(httpResponse.getLocale());
             response.headers(httpResponse.getAllHeaders());
-            response.body(EntityUtils.toString(httpResponse.getEntity(), UTF8).trim().toLowerCase());
+            response.body(EntityUtils.toString(httpResponse.getEntity(), UTF8).trim());
             response.statusCode(httpResponse.getStatusLine().getStatusCode());
-            System.out.println(response.body());
-            httpResponse.close();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             response.error(e.getMessage());
@@ -217,14 +208,13 @@ public class Client {
     }
 
     /**
-     * @param serverCer https 服务器证书
-     * @param clientCer https 客户端证书
-     * @return 证书对象
+     * @param crt https 的证书
+     * @return 返回一个 安全的 HTTP CLIENT
      */
-    private static SSLContext sslContext(File serverCer, File clientCer) {
+    private static SSLContext getSslContext(File crt) {
         try {
             SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, new TrustManager[]{new X509Trust(serverCer, clientCer)}, new SecureRandom());
+            sslContext.init(null, new TrustManager[]{new X509Trust(crt)}, new SecureRandom());
             return sslContext;
         } catch (Exception e) {
             log.error("set ssl exception", e);
@@ -232,7 +222,7 @@ public class Client {
         return null;
     }
 
-    public static class Builder{
+    public static class Config{
         private int maxTotal = 20;
 
         private int maxPerRoute = 2;
@@ -241,57 +231,52 @@ public class Client {
 
         private HttpHost proxy;
 
-        private File serverCer;
-
-        private File clientCer;
+        private File certificate;
 
         private boolean https = false;
 
         private static Client client;
 
-        public Builder(){}
+        public Config() {
+        }
 
-        public Builder maxTotal(int maxTotal){
+        public Config maxTotal(int maxTotal){
             if (maxTotal > this.maxTotal) {
                 this.maxTotal = maxTotal;
             }
             return this;
         }
 
-        public Builder maxPerRoute(int maxPerRoute){
+        public Config maxPerRoute(int maxPerRoute){
             if (maxPerRoute > this.maxPerRoute) {
                 this.maxPerRoute = maxPerRoute;
             }
             return this;
         }
 
-        public Builder timeout(int timeout) {
+        public Config timeout(int timeout) {
             if (timeout > this.timeout) {
                 this.timeout = timeout;
             }
             return this;
         }
 
-        public Builder https(boolean value){
-            this.https =  value;
-            return this;
-        }
-
-        public Builder serverCer(String certificate) {
-            if (StringUtil.isNotBlank(certificate)) {
-                this.serverCer = new File(certificate);
+        public Config https(Object value){
+            Boolean boo = TypeUtils.castToBoolean(value);
+            if (boo != null){
+                this.https =  boo;
             }
             return this;
         }
 
-        public Builder clientCer(String certificate) {
+        public Config certificate(String certificate) {
             if (StringUtil.isNotBlank(certificate)) {
-                this.clientCer = new File(certificate);
+                this.certificate = new File(certificate);
             }
             return this;
         }
 
-        public Builder proxy(String proxy) {
+        public Config proxy(String proxy) {
             HttpHost httpHost = null;
             try {
                 JSONObject json = JSONObject.parseObject(proxy);
@@ -310,8 +295,8 @@ public class Client {
         public Client build(){
             if (client == null && httpClient == null){
                 synchronized (Client.class){
-                    POOLING.setMaxTotal(maxTotal);
-                    POOLING.setDefaultMaxPerRoute(maxPerRoute);
+                    POOL.setMaxTotal(maxTotal);
+                    POOL.setDefaultMaxPerRoute(maxPerRoute);
                     if (client == null){
                         client = new Client();
                     }
@@ -319,19 +304,16 @@ public class Client {
                         RequestConfig config = RequestConfig.custom().setConnectTimeout(timeout * 1000)
                                 .setConnectionRequestTimeout(timeout * 2000).build();
                         HttpClientBuilder builder = HttpClientBuilder.create();
-                        if (https){
-                            if (serverCer != null && serverCer.isDirectory()) {
-                                throw new RequestException("certificate can not be directory. certificate path : " + serverCer.getPath());
+                        if (https) {
+                            if (certificate != null && certificate.isDirectory()) {
+                                throw new RequestException("certificate can not be directory . certificate path : " + certificate);
                             }
-                            if (clientCer != null && clientCer.isDirectory()) {
-                                throw new RequestException("certificate can not be directory. certificate path : " + clientCer.getPath());
-                            }
-                            builder.setSSLContext(sslContext(serverCer, clientCer));
+                            builder.setSSLContext(getSslContext(certificate));
                         }
                         if (proxy != null) {
                             builder.setProxy(proxy);
                         }
-                        builder.setConnectionManager(POOLING).setDefaultRequestConfig(config);
+                        builder.setConnectionManager(POOL).setDefaultRequestConfig(config);
                         httpClient = builder.build();
                     }
                 }

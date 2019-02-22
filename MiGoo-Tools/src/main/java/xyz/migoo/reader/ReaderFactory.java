@@ -3,6 +3,8 @@ package xyz.migoo.reader;
 import xyz.migoo.exception.ReaderException;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,18 +20,18 @@ public class ReaderFactory {
     public static final String XLSX_SUFFIX = ".xlsx";
     private static final List<String> LIST = new ArrayList<>();
 
-    public static Reader getReader(String suffix, File file) throws ReaderException {
+    public static Reader getReader(String suffix, String path) throws ReaderException {
         switch (suffix){
             case JSON_SUFFIX:
-                return new JSONReader(file);
+                return new JSONReader(path);
             case YAML_SUFFIX:
-                return new YamlReader(file);
+                return new YamlReader(path);
             case PROS_SUFFIX:
-                return new PropertiesReader(file);
+                return new PropertiesReader(path);
             case XLS_SUFFIX:
-                return new ExcelReader(file);
+                return new ExcelReader(path);
             case XLSX_SUFFIX:
-                return new ExcelReader(file);
+                return new ExcelReader(path);
             default:
                 throw new ReaderException("file reader error");
         }
@@ -37,12 +39,12 @@ public class ReaderFactory {
 
     public static String suffix(String file){
         String suffix = file.substring(file.indexOf("."));
-        if (list.contains(suffix)){
+        if (LIST.contains(suffix)){
             return suffix;
         }
         return null;
     }
-    
+
     static{
         Field[] fields = ReaderFactory.class.getDeclaredFields();
         for (Field field:fields){

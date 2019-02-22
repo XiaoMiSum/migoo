@@ -19,7 +19,7 @@ public class TestCase extends junit.framework.TestCase{
     }
 
     @Override
-    public void runTest() throws ValidatorException {
+    public void runTest() throws ValidatorException, Exception {
         this.task.run(this.testCase);
     }
 }

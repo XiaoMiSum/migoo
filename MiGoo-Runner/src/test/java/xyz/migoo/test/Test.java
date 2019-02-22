@@ -9,17 +9,17 @@ public class Test extends Base{
 
     @org.junit.Test
     public void testApiYaml(){
-        runner.execute("../TestCase/test_case.yml");
+        //runner.execute("../TestCase/test_case.yml");
     }
 
     @org.junit.Test
     public void testApiJson1(){
-        runner.execute("../TestCase/test_case.json");
+        //runner.execute("../TestCase/test_case.json");
     }
 
     @org.junit.Test
     public void testApiJson2(){
-        runner.execute("../TestCase/test_case2.json");
+        //runner.execute("../TestCase/test_case2.json");
     }
 
     @org.junit.Test
@@ -93,7 +93,7 @@ public class Test extends Base{
                 "  ]" +
                 "}";
 
-        runner.execute(json);
-        runner.run(json);
+        //runner.execute(json);
+        //runner.run(json);
     }
 }
