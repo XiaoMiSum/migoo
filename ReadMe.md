@@ -1,32 +1,34 @@
-### What's this?
+# MiGoo
 
-参考 <a href="https://github.com/HttpRunner/HttpRunner">HttpRunner</a>
-使用Java语言，基于Junit 4.8、HTTP Client 4.5.5、thymeleaf 3.0.9.RELEASE等开源项目实现的一个接口测试工具，
-可通过指定格式的json\yaml文件读取测试数据，执行测试并生成测试报告。
+[![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
-### 使用方式
 
-    @org.junit.Test
-    public void testApi(){
-        TestResult result = Runner.getInstance().run("path");
-    }
+## 1. 介绍
+
+MiGoo 是一个Java语言开发的测试工具，可用于接口测试和简化WebUI自动化测试脚本开发。
+
+- **MiGoo-Runner** 接口测试
     
+    **核心特性**
     
-说明：Runner类提供 run 方法作为执行入口
+    1.数据驱动，采用 YAML/JSON 描述测试场景，保障测试用例描述的统一性和可维护性；
+    
+    2.支持扩展函数和自定义变量，可实现复杂的业务逻辑；
+    
+    3.支持测试前后的环境准备和数据清理（有限支持）；
+    
+    4.丰富的校验机制，包括：一致(忽略大小写)、不一致、大于、大于等于、小于、小于等于、包含、不包含、空、非空、正则表达式等校验机制，并支持自定义扩展；
+    
+    5.简洁明了的测试报告与执行日志；
+    
+    6.支持jenkins持续集成（通过maven运行junit测试类）；
+    
+    [详细说明](http://note.youdao.com/noteshare?id=568901613e4f36cfb23af2413e36fd09 "详细说明")
+    
+- **MiGoo-Selenium** 简单封装了Selenium
 
-参数 path ：指定的测试用例文件、测试用例文件所在目录、指定格式的json文本；
+    对Selenium提供的api进行了二次封装，简化WebUI自动化测试脚本开发。
+    
+- **MiGoo-Tools** 工具模块
 
-[详细说明](http://note.youdao.com/noteshare?id=568901613e4f36cfb23af2413e36fd09 "详细说明")
-
- 
-**Demo**
-
-TestCase目录中提供了3个测试用例文件，分别提供了基础\进阶\高阶的示例。
-
-1.运行测试类 Test.class；
-
-2.查看测试报告 "./Reports/xxxxx-2018-07-26 13:29:30.html"；
-
-### 开发环境
-
-Java：1.8
+    提供了常用工具，如生成谷歌验证码、RSA加解密、MD5、读各类文件等。 
