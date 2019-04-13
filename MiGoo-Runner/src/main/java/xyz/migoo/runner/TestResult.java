@@ -15,6 +15,7 @@ public class TestResult extends junit.framework.TestResult{
     private long startAt;
     private long endAt;
     private List<String> failures;
+    private List<String> errors;
     private List<Response> responses;
     private Map<String, Object> report;
 
@@ -33,7 +34,7 @@ public class TestResult extends junit.framework.TestResult{
         List<Map<String, Object>> records = new ArrayList();
         int id = 1;
         for (Response response : responses){
-            Map<String, Object> record = new HashMap<>(4);
+            Map<String, Object> record = new HashMap<>(6);
             record.put("status", "success");
             record.put("name", response.request().title());
             record.put("time", response.duration() / 1000.000f + "  seconds");
@@ -47,26 +48,31 @@ public class TestResult extends junit.framework.TestResult{
     }
 
     private synchronized Map<String, Object> detail(Response response, Map<String, Object> record, int id){
-        Map<String, Object> detail = new HashMap<>(2);
+        Map<String, Object> detail = new HashMap<>(7);
         detail.put("log", this.log(response));
         detail.put("track", null);
-        for (String failure : failures) {
-            if (failure.equals(response.request().title())) {
-                for (TestFailure testFailure : fFailures){
-                    TestCase testCase = (TestCase)testFailure.failedTest();
-                    if (testCase.getName().equals(failure)) {
-                        Throwable throwable = testFailure.thrownException();
-                        detail.put("track", throwable.getMessage());
-                    }
-                }
-                record.put("status", "failure");
-            }
-        }
+        track(response, detail, record, failures, "failure", fFailures);
+        track(response, detail, record, errors, "error", fErrors);
         detail.put("track_id", "track_" + id);
         detail.put("log_id", "log_" + id);
         detail.put("track_href", "#track_" + id);
         detail.put("log_href", "#log_" + id);
         return detail;
+    }
+
+    private void track(Response response, Map<String, Object> detail, Map<String, Object> record, List<String> tracks, String status, List<TestFailure> testFailures){
+        for (String track : tracks) {
+            if (track.equals(response.request().title())) {
+                for (TestFailure testFailure : testFailures){
+                    TestCase testCase = (TestCase)testFailure.failedTest();
+                    if (testCase.getName().equals(track)) {
+                        Throwable throwable = testFailure.thrownException();
+                        detail.put("track", throwable.getMessage());
+                    }
+                }
+                record.put("status", status);
+            }
+        }
     }
 
     private synchronized Map<String, Object> summary(){
@@ -87,15 +93,16 @@ public class TestResult extends junit.framework.TestResult{
         res.put("headers", response.headers());
         res.put("body", response.body());
 
-        Map<String, Object> req = new HashMap<>(4);
-        req.put("url", response.request().url());
-        req.put("method", response.request().method());
-        req.put("headers", response.request().headers());
-        req.put("body", response.request().body());
-        req.put("query", response.request().query());
+        Map<String, Object> request = new HashMap<>(4);
+        request.put("url", response.request().url());
+        request.put("method", response.request().method());
+        request.put("headers", response.request().headers());
+        request.put("body", response.request().body());
+        request.put("data", response.request().data());
+        request.put("query", response.request().query());
 
         Map<String, Object> log = new HashMap<>(2);
-        log.put("request", req);
+        log.put("request", request);
         log.put("response", res);
         return log;
     }
@@ -106,6 +113,10 @@ public class TestResult extends junit.framework.TestResult{
 
     protected synchronized void failures(List<String> failures){
         this.failures = failures;
+    }
+
+    protected synchronized void errors(List<String> errors){
+        this.errors = errors;
     }
 
     protected synchronized void startAt(long startAt) {

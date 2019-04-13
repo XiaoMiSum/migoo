@@ -1,8 +1,11 @@
 package xyz.migoo.runner;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.config.Dict;
+import xyz.migoo.config.CaseKeys;
+import xyz.migoo.exception.InvokeException;
+import xyz.migoo.http.Client;
 import xyz.migoo.http.Request;
 import xyz.migoo.http.Response;
 import xyz.migoo.utils.Hook;
@@ -13,55 +16,62 @@ import xyz.migoo.utils.Variable;
  * @author xiaomi
  * @date 2018/7/24 15:37
  */
-public class TestSuite extends junit.framework.TestSuite{
+public class TestSuite extends junit.framework.TestSuite {
 
     private CaseSuite caseSuite;
 
-    public TestSuite(JSONObject caseSet, CaseSuite caseSuite){
+    protected TestSuite(JSONObject caseSet, CaseSuite caseSuite) throws InvokeException {
         super();
-        init(caseSet);
+        this.init(caseSet);
         this.caseSuite = caseSuite;
     }
 
-
-    private void init(JSONObject caseSet){
-        JSONObject variables = caseSet.getJSONObject(Dict.CONFIG).getJSONObject(Dict.CONFIG_VARIABLES);
-        Variable.evalVariable(variables);
-        Variable.bindVariable(variables, caseSet);
-        Variable.evalVariable(variables);
-        JSONObject config = caseSet.getJSONObject(Dict.CONFIG);
-        JSONArray testCases = caseSet.getJSONArray(Dict.CASE);
-        JSONObject configRequest = config.getJSONObject(Dict.CONFIG_REQUEST);
-        Hook.hook(config.getJSONArray(Dict.CONFIG_BEFORE_CLASS));
-        JSONObject headers = configRequest.getJSONObject(Dict.CONFIG_REQUEST_HEADERS);
-        Request.Builder builder = new Request.Builder().method(configRequest.getString(Dict.CONFIG_REQUEST_METHOD));
-        StringBuilder url = new StringBuilder(configRequest.getString(Dict.CONFIG_REQUEST_URL));
-        Object encode = configRequest.get(Dict.CONFIG_REQUEST_ENCODE);
-        for (int i = 0; i < testCases.size(); i++) {
-            JSONObject testCase = testCases.getJSONObject(i);
-            JSONObject setUp = testCase.getJSONObject(Dict.CASE_SETUP);
-            Variable.evalVariable(setUp);
-            Variable.bindVariable(setUp, testCase);
-            JSONObject caseHeaders = testCase.getJSONObject(Dict.CASE_HEADERS);
-            if (caseHeaders != null && !caseHeaders.isEmpty()){
-                headers.putAll(caseHeaders);
-            }
-            String api = testCase.getString(Dict.CONFIG_REQUEST_API);
-            if (StringUtil.isNotBlank(api)) {
-                url.append(api);
-            }
-            if (testCase.get(Dict.CONFIG_REQUEST_ENCODE) != null){
-                encode = testCase.get(Dict.CONFIG_REQUEST_ENCODE);
-            }
-            Request request = builder.headers(headers).url(url.toString()).encode(encode)
-                    .query(testCase.getJSONObject(Dict.CASE_QUERY))
-                    .data(testCase.getJSONObject(Dict.CASE_DATA))
-                    .body(testCase.getJSONObject(Dict.CASE_BODY))
-                    .title(testCase.getString(Dict.CASE_TITLE)).build();
-            Task task = new Task(request, this);
-            testCase.put(Dict.CASE_SETUP, setUp);
-            this.addTest(testCase.getString(Dict.CASE_TITLE), task, testCase);
+    private void init(JSONObject caseSet) throws InvokeException {
+        JSONObject variables = caseSet.getJSONObject(CaseKeys.CONFIG).getJSONObject(CaseKeys.CONFIG_VARIABLES);
+        // 防止还存在未被计算的方法变量，再次做一次绑定
+        Variable.loopBindVariables(variables, variables);
+        Variable.loopBindVariables(variables, caseSet);
+        JSONObject config = caseSet.getJSONObject(CaseKeys.CONFIG);
+        JSONObject request = config.getJSONObject(CaseKeys.CONFIG_REQUEST);
+        JSONArray testCases = caseSet.getJSONArray(CaseKeys.CASE);
+        // 测试用例执行前的数据准备 相当于 JUnit 的 before class
+        Object beforeClass = config.get(CaseKeys.CONFIG_BEFORE_CLASS);
+        if (beforeClass instanceof String){
+            beforeClass = JSON.parseArray(beforeClass.toString());
         }
+        Hook.hook((JSONArray) beforeClass);
+        JSONObject headers = request.getJSONObject(CaseKeys.CONFIG_REQUEST_HEADERS);
+        Object encode = request.get(CaseKeys.CONFIG_REQUEST_ENCODE);
+        Client client = new Client.Config().https(request.get(CaseKeys.CONFIG_REQUEST_HTTPS)).build();
+        for (int i = 0; i < testCases.size(); i++) {
+            Request.Builder builder = new Request.Builder().method(request.getString(CaseKeys.CONFIG_REQUEST_METHOD));
+            JSONObject testCase = testCases.getJSONObject(i);
+            JSONObject caseVars = testCase.getJSONObject(CaseKeys.CASE_VARIABLES);
+            // 防止还存在未被计算的方法变量，再次做一次绑定
+            Variable.bindVariable(variables, caseVars);
+            Variable.loopBindVariables(caseVars, caseVars);
+            Variable.loopBindVariables(caseVars, testCase);
+            this.request(testCase, encode, headers, builder, request);
+            Task task = new Task(client, builder, this);
+            testCase.put(CaseKeys.CASE_VARIABLES, caseVars);
+            this.addTest(testCase.getString(CaseKeys.CASE_TITLE), task, testCase);
+        }
+    }
+
+    private void request(JSONObject testCase, Object encode, JSONObject headers, Request.Builder builder, JSONObject requestConfig){
+        JSONObject caseHeaders = testCase.getJSONObject(CaseKeys.CASE_HEADERS);
+        if (caseHeaders != null && !caseHeaders.isEmpty()){
+            headers.putAll(caseHeaders);
+        }
+        StringBuilder url = new StringBuilder(requestConfig.getString(CaseKeys.CONFIG_REQUEST_URL));
+        String apiUrl = testCase.getString(CaseKeys.CASE_API);
+        if (StringUtil.isNotBlank(apiUrl)){
+            url.append(apiUrl);
+        }
+        if (testCase.get(CaseKeys.CONFIG_REQUEST_ENCODE) != null){
+            encode = testCase.get(CaseKeys.CONFIG_REQUEST_ENCODE);
+        }
+        builder.headers(headers).url(url.toString()).encode(encode);
     }
 
     private void addTest(String testName, Task task, JSONObject testCase){
@@ -71,6 +81,10 @@ public class TestSuite extends junit.framework.TestSuite{
 
     protected void failures(String failure) {
         this.caseSuite.failures(failure);
+    }
+
+    protected void errors(String errors) {
+        this.caseSuite.errors(errors);
     }
 
     protected void response(Response response){

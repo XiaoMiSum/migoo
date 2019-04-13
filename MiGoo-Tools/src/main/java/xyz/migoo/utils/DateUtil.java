@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
-* @author xiaomi
+ * @author xiaomi
  */
 public class DateUtil {
 
@@ -15,7 +15,7 @@ public class DateUtil {
     public static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
     public static final String YYYY_MMDD_HH_MM_SS = "yyyy-MM-dd HH-mm-ss";
     public static final String YYYY_MM_DD = "yyyy-MM-dd";
-    public static final String TODAY = format(YYYY_MMDD);
+    public static final String TODAY_DATE = format(YYYY_MMDD);
 
     public static String format(String pattern,long time) {
         return new SimpleDateFormat(pattern).format(time);

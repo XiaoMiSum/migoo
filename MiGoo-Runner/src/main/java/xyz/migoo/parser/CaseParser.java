@@ -3,10 +3,12 @@ package xyz.migoo.parser;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.config.Dict;
+import xyz.migoo.config.CaseKeys;
+import xyz.migoo.exception.InvokeException;
 import xyz.migoo.exception.ReaderException;
 import xyz.migoo.reader.Reader;
 import xyz.migoo.reader.ReaderFactory;
+import xyz.migoo.utils.StringUtil;
 import xyz.migoo.utils.Variable;
 
 import java.io.*;
@@ -16,80 +18,133 @@ import java.util.List;
 /**
  * @author xiaomi
  */
-public class CaseParser{
+public class CaseParser {
 
     private List<JSONObject> caseSets;
 
-    public CaseParser(){
+    public CaseParser() {
         caseSets = new ArrayList<>();
     }
 
-    public List<JSONObject> loadCaseSets(String pathOrSet) throws ReaderException {
+    /**
+     * 如果 解析 json 没有抛出异常，说明传入的参数不是文件
+     * 如果 解析 json 抛出了异常，说明传入的参数是文件
+     *
+     * @param caseOrPath 测试用例 或者 测试用例文件或所在目录
+     * @param vars       全局变量
+     * @return List<JSONObject> json对象的测试用例列表
+     */
+    public List<JSONObject> loadCaseSets(String caseOrPath, JSONObject vars) throws InvokeException, ReaderException {
+
         try {
-            loadCaseSetBySet(JSON.parse(pathOrSet));
-        }catch (Exception e){
-            loadCaseSetsByPath(pathOrSet);
+            Object caseSet = JSON.parse(caseOrPath);
+            this.loadCaseSetsByCaseSet(caseSet, vars);
+        } catch (Exception e) {
+            this.loadCaseSetsByPath(caseOrPath, vars);
         }
         return this.caseSets;
     }
 
-    private void loadCaseSetsByPath(String path) throws ReaderException {
-        File file = new File(path);
-        if (file.isDirectory()){
-            String[] fList = file.list();
-            for (String f : fList){
-                if (!path.endsWith(File.separator)){
-                    path = path + File.separator;
+    public static JSONObject loadVariables(String vars) {
+        if (StringUtil.isNotBlank(vars)) {
+            try {
+                return JSONObject.parseObject(vars);
+            } catch (Exception e) {
+                try {
+                    File file = new File(vars);
+                    if (!file.isDirectory()) {
+                        String suffix = ReaderFactory.suffix(vars);
+                        if (suffix != null) {
+                            Reader reader = ReaderFactory.getReader(suffix, vars);
+                            return (JSONObject) reader.read();
+                        }
+                    }
+                } catch (ReaderException re) {
+                    return null;
                 }
-                this.loadCaseSets(path + f);
             }
-        }else {
-            this.loadCaseSetsByFile(file);
+        }
+        return null;
+    }
+
+    private void loadCaseSetsByPath(String path, JSONObject vars) throws InvokeException, ReaderException {
+        File file = new File(path);
+        if (file.isDirectory()) {
+            String[] fList = file.list();
+            assert fList != null;
+            for (String f : fList) {
+                if (StringUtil.contains(f, "vars.")) {
+                    continue;
+                }
+                StringBuilder pathBuilder = new StringBuilder(path);
+                if (!pathBuilder.toString().endsWith(File.separator)) {
+                    pathBuilder.append(File.separator);
+                }
+                this.loadCaseSetsByPath(pathBuilder + f, vars);
+            }
+        } else {
+            this.loadCaseSetsByFile(path, vars);
         }
     }
 
-    private void loadCaseSetsByFile(File file) throws ReaderException {
-        String suffix = ReaderFactory.suffix(file.getName());
-        if (suffix != null){
-            Reader reader = ReaderFactory.getReader(suffix, file);
+    private void loadCaseSetsByFile(String path, JSONObject vars) throws InvokeException, ReaderException {
+        String suffix = ReaderFactory.suffix(path);
+        if (suffix != null) {
+            Reader reader = ReaderFactory.getReader(suffix, path);
             JSON json = reader.read();
             if (json instanceof JSONArray) {
-                this.caseSets((JSONArray) json);
-            }else{
+                this.caseSets((JSONArray) json, vars);
+            } else {
                 JSONArray jsonArray = new JSONArray(1);
                 jsonArray.add(json);
-                this.caseSets(jsonArray);
+                this.caseSets(jsonArray, vars);
             }
         }
     }
 
-    private void loadCaseSetBySet(Object set){
+    private void loadCaseSetsByCaseSet(Object caseSet, JSONObject vars) throws InvokeException {
         JSONArray caseArray;
-        if (set instanceof JSONObject){
-            caseArray = new JSONArray(1);
-            caseArray.add(set);
-        }else {
-            caseArray = (JSONArray) set;
+        if (caseSet instanceof JSONObject) {
+            caseArray = new JSONArray();
+            caseArray.add(caseSet);
+        } else {
+            caseArray = (JSONArray) caseSet;
         }
-        this.caseSets(caseArray);
+        this.caseSets(caseArray, vars);
     }
 
-    private List<JSONObject> caseSets(JSONArray jsonArray){
+    private List<JSONObject> caseSets(JSONArray jsonArray, JSONObject vars) throws InvokeException {
         for (int index = 0; index < jsonArray.size(); index++) {
             JSONObject testCases = jsonArray.getJSONObject(index);
-            JSONObject variables = testCases.getJSONObject(Dict.CONFIG).getJSONObject(Dict.CONFIG_VARIABLES);
-            Variable.evalVariable(variables);
-            Variable.bindVariable(variables, variables);
-            JSONArray caseArray = testCases.getJSONArray(Dict.CASE);
+            JSONObject config = testCases.getJSONObject(CaseKeys.CONFIG);
+            JSONObject variables = config.getJSONObject(CaseKeys.CONFIG_VARIABLES);
+            bindVariables(vars, variables,null, testCases);
+            JSONArray caseArray = testCases.getJSONArray(CaseKeys.CASE);
             for (int i = 0; i < caseArray.size(); i++) {
-                JSONObject jsonCase = caseArray.getJSONObject(i);
-                JSONObject setUp = jsonCase.getJSONObject(Dict.CASE_SETUP);
-                Variable.evalVariable(setUp);
-                Variable.bindVariable(setUp, setUp);
+                Object obj = caseArray.get(i);
+                JSONObject caseJson;
+                if (obj instanceof String){
+                    System.out.println(obj);
+                    caseJson = JSONObject.parseObject(obj.toString());
+                }else {
+                    caseJson = (JSONObject) obj;
+                }
+                JSONObject caseVars = caseJson.getJSONObject(CaseKeys.CASE_VARIABLES);
+                bindVariables(vars, variables, caseVars, caseJson);
             }
-            testCases.put(Dict.CASE, caseArray);
+            testCases.put(CaseKeys.CASE, caseArray);
             caseSets.add(testCases);
         }
         return caseSets;
+    }
+
+    private void bindVariables(JSONObject overall, JSONObject variables,JSONObject caseVars , JSONObject caseJson) throws InvokeException {
+        Variable.bindVariable(overall, caseJson);
+        // 1. 使用 variables 替换 case.setUp 中的变量
+        Variable.bindVariable(variables, caseVars);
+        // 2. 使用 setUp 替换 case.setUp 中的变量
+        Variable.loopBindVariables(caseVars, caseVars);
+        // 3. 使用 setUp 替换 case 中的变量
+        Variable.loopBindVariables(caseVars, caseJson);
     }
 }
