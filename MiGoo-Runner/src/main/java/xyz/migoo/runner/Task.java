@@ -3,9 +3,10 @@ package xyz.migoo.runner;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.assertions.Validator;
 import xyz.migoo.config.CaseKeys;
 import xyz.migoo.exception.InvokeException;
-import xyz.migoo.exception.ValidatorException;
+import xyz.migoo.exception.AssertionException;
 import xyz.migoo.http.Client;
 import xyz.migoo.http.Request;
 import xyz.migoo.http.Response;
@@ -31,7 +32,7 @@ public class Task {
         this.testSuite = testSuite;
     }
 
-    public synchronized void run(JSONObject testCase) throws ValidatorException, Exception {
+    public synchronized void run(JSONObject testCase) throws AssertionException, Exception {
         try {
             this.buildRequest(testCase);
             Object before = testCase.get(CaseKeys.CASE_BEFORE);
@@ -52,10 +53,10 @@ public class Task {
                 validate = JSON.parse(validate.toString());
             }
             Validator.validation(response, (JSON) validate);
-        } catch (ValidatorException e) {
+        } catch (AssertionException e) {
             log.error(e.getMessage(), e);
             this.testSuite.failures(request.title());
-            throw new ValidatorException(e.getMessage().replaceAll("\n", "</br>"));
+            throw new AssertionException(e.getMessage().replaceAll("\n", "</br>"));
         } catch (Exception e){
             log.error(e.getMessage(), e);
             this.testSuite.errors(request.title());

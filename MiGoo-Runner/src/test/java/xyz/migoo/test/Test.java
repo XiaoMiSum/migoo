@@ -1,11 +1,27 @@
 package xyz.migoo.test;
 
 
+import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.assertions.AbstractAssertion;
+import xyz.migoo.assertions.AssertionFactory;
+
+import javax.xml.bind.ValidationException;
+
 /**
  * @author xiaomi
  * @date 2018/7/25 15:10
  */
 public class Test extends Base{
+
+    @org.junit.Test
+    public void testFunc() throws ValidationException {
+        JSONObject data = new JSONObject(1);
+        data.put("expect", 1);
+        AbstractAssertion assertion = AssertionFactory.getAssertion("package.xyz.migoo.test.extend.Test");
+        assertion.setActual("package.xyz.migoo.test.extend.Test");
+        Object result = assertion.assertThat(data);
+        System.out.println(result);
+    }
 
     @org.junit.Test
     public void testApiYaml(){

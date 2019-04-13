@@ -1,7 +1,7 @@
 package xyz.migoo.runner;
 
 import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.exception.ValidatorException;
+import xyz.migoo.exception.AssertionException;
 
 /**
  * @author xiaomi
@@ -19,7 +19,8 @@ public class TestCase extends junit.framework.TestCase{
     }
 
     @Override
-    public void runTest() throws ValidatorException, Exception {
+    public void runTest() throws AssertionException, Exception {
+        // todo 此处记录用例执行结果 Exception = error、AssertionException = failed
         this.task.run(this.testCase);
     }
 }

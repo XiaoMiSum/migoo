@@ -25,6 +25,7 @@ public class Response {
     private int statusCode;
     private Header[] headers;
     private String body;
+    private JSON json;
     private long startTime;
     private long endTime;
     private Locale locale;
@@ -95,7 +96,7 @@ public class Response {
         }
         JSONArray cookies = new JSONArray();
         for (Cookie cookie : cookieStore.getCookies()){
-            JSONObject c = new JSONObject(3);
+            JSONObject c = new JSONObject(4);
             c.put("name", cookie.getName());
             c.put("value", cookie.getValue());
             c.put("domain", cookie.getDomain());
@@ -110,15 +111,13 @@ public class Response {
     }
 
     public JSON json() {
-        try {
-            return JSON.parseObject(body);
-        }catch (JSONException e){
+        if (json == null){
             try {
-                return JSON.parseArray(body);
-            }catch (Exception ex){
-                return null;
+                json = JSON.parseObject(body);
+            }catch (JSONException e){
             }
         }
+        return json;
     }
 
     public long duration() {

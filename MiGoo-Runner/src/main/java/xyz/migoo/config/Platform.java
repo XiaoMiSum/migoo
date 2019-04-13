@@ -52,13 +52,28 @@ public class Platform {
             StringUtil.trimAny(PROPERTIES.getString("function.equals")).split(","));
 
     public static final List<String> FUNCTION_NOT_EQUALS = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("function.not")).split(","));
+            StringUtil.trimAny(PROPERTIES.getString("function.notEquals")).split(","));
+
+    public static final List<String> FUNCTION_EQUALS_IGNORE_CASE = Arrays.asList(
+            StringUtil.trimAny(PROPERTIES.getString("function.equalsIgnoreCase")).split(","));
+
+    public static final List<String> FUNCTION_GREATER_THAN_OR_EQUALS = Arrays.asList(
+            StringUtil.trimAny(PROPERTIES.getString("function.greaterThanOrEquals")).split(","));
+
+    public static final List<String> FUNCTION_LESS_THAN_OR_EQUALS = Arrays.asList(
+            StringUtil.trimAny(PROPERTIES.getString("function.lessThanOrEquals")).split(","));
+
+    public static final List<String> FUNCTION_REATER_THAN = Arrays.asList(
+            StringUtil.trimAny(PROPERTIES.getString("function.greaterThan")).split(","));
+
+    public static final List<String> FUNCTION_LESS_THAN = Arrays.asList(
+            StringUtil.trimAny(PROPERTIES.getString("function.lessThan")).split(","));
 
     public static final List<String> FUNCTION_CONTAINS = Arrays.asList(
             StringUtil.trimAny(PROPERTIES.getString("function.contains")).split(","));
 
     public static final List<String> FUNCTION_NOT_CONTAINS = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("function.notContains")).split(","));
+            StringUtil.trimAny(PROPERTIES.getString("function.doesNotContains")).split(","));
 
     public static final List<String> FUNCTION_IS_EMPTY = Arrays.asList(
             StringUtil.trimAny(PROPERTIES.getString("function.isEmpty")).split(","));
@@ -80,11 +95,24 @@ public class Platform {
         }
         return false;
     }
+
     private static final List<String> CHECK_HTML = Arrays.asList(
             StringUtil.trimAny(PROPERTIES.getString("check.html")).split(","));
 
     public static boolean isHtml(String str) {
         for (String key : CHECK_HTML) {
+            if (Pattern.compile(key).matcher(str).find()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static final List<String> CHECK_CUSTOM = Arrays.asList(
+            StringUtil.trimAny(PROPERTIES.getString("function.custom")).split(","));
+
+    public static boolean isCustom(String str) {
+        for (String key : CHECK_CUSTOM) {
             if (Pattern.compile(key).matcher(str).find()) {
                 return true;
             }

@@ -21,7 +21,7 @@ public class Variable {
 
     private static Log log = new Log(Variable.class);
 
-    static final Pattern FUNC_PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
+    public static final Pattern FUNC_PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
 
     private static final Pattern PARAM_PATTERN = Pattern.compile("\\$\\{(\\w+)}");
 

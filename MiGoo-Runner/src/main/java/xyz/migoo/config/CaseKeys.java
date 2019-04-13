@@ -61,19 +61,33 @@ public class CaseKeys {
 
     public static final String VALIDATE_TYPE_EQUALS = "equals";
 
-    public static final String VALIDATE_TYPE_NOT_EQUALS = "not";
+    public static final String VALIDATE_TYPE_EQUALS_IGNORE_CASE = "equalsIgnoreCase";
+
+    public static final String VALIDATE_TYPE_NOT_EQUALS = "isNotEquals";
+
+    public static final String VALIDATE_TYPE_GREATER_THAN_OR_EQUALS = "greaterThanOrEquals";
+
+    public static final String VALIDATE_TYPE_LESS_THAN_OR_EQUALS = "lessThanOrEquals";
+
+    public static final String VALIDATE_TYPE_GREATER_THAN = "greaterThan";
+
+    public static final String VALIDATE_TYPE_LESS_THAN = "lessThan";
 
     public static final String VALIDATE_TYPE_CONTAINS = "contains";
 
-    public static final String VALIDATE_TYPE_NOT_CONTAINS = "notContains";
+    public static final String VALIDATE_TYPE_NOT_CONTAINS = "doesNotContains";
 
     public static final String VALIDATE_TYPE_IS_EMPTY = "isEmpty";
 
     public static final String VALIDATE_TYPE_IS_NOT_EMPTY = "isNotEmpty";
 
+    public static final String VALIDATE_TYPE_CUSTOM_FUNCTION = "custom";
+
     public static final String VALIDATE_TYPE_REGEX = "regex";
 
     public static final String EVAL_ACTUAL_BY_BODY = "body";
+
+    public static final String EVAL_ACTUAL_BY_HTML = "html";
 
     public static final String EVAL_ACTUAL_BY_STATUS = "status";
 
