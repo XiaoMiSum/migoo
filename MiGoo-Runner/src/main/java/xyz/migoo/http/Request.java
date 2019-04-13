@@ -1,5 +1,7 @@
 package xyz.migoo.http;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.util.TypeUtils;
 import org.apache.http.Header;
@@ -17,6 +19,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author xiaomi
+ * @date 2018/10/10 20:34
  */
 public class Request {
 
@@ -25,15 +28,16 @@ public class Request {
 
     private static Log log = new Log(Request.class);
 
+    private boolean encode;
     private String url;
     private String method;
-    private boolean encode;
     private JSONObject body;
     private JSONObject query;
     private JSONObject data;
     private List<Header> header;
     private String title;
     private Header contentType;
+    private JSONArray cookies;
 
     private Request(Builder builder) {
         this.url = builder.url;
@@ -43,6 +47,7 @@ public class Request {
         this.query = builder.query;
         this.data = builder.data;
         this.header = builder.headers;
+        this.cookies = builder.cookies;
         this.title = builder.title;
     }
 
@@ -60,6 +65,10 @@ public class Request {
 
     public List<Header> headers() {
         return this.header;
+    }
+
+    public JSONArray cookies() {
+        return this.cookies;
     }
 
     public JSONObject body() {
@@ -102,6 +111,7 @@ public class Request {
         private JSONObject body;
         private JSONObject query;
         private JSONObject data;
+        private JSONArray cookies;
         private List<Header> headers;
         private String title;
         private boolean encode = false;
@@ -158,6 +168,22 @@ public class Request {
             }
             if (headers instanceof List){
                 return this.headers(headers);
+            }
+            return this;
+        }
+
+        public Builder cookies(Object cookies){
+            if (cookies instanceof JSONObject){
+                this.cookies = new JSONArray(1);
+                this.cookies.add(cookies);
+            }else if (cookies instanceof JSONArray){
+                this.cookies = (JSONArray)cookies;
+            }else if (cookies instanceof String){
+                try {
+                    this.cookies = JSON.parseArray((String) cookies);
+                }catch (Exception e){
+                    log.debug("cookies parse exception, skip");
+                }
             }
             return this;
         }

@@ -42,7 +42,7 @@ public class Platform {
         }
     }
 
-    public static final String HTTPCLIENT_VERSION = PROPERTIES.getString("http.client.version");
+    public static final String HTTP_CLIENT_VERSION = PROPERTIES.getString("http.client.version");
 
     public static final String JDK_VERSION = System.getProperty("java.version");
 
@@ -67,13 +67,24 @@ public class Platform {
             StringUtil.trimAny(PROPERTIES.getString("function.isNotEmpty")).split(","));
 
     public static final List<String> FUNCTION_REGEX = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("function.regex")).split(","));
+            StringUtil.trimAny(PROPERTIES.getString("check.regex")).split(","));
 
     private static final List<String> CHECK_JSON = Arrays.asList(
             StringUtil.trimAny(PROPERTIES.getString("check.json")).split(","));
 
     public static boolean isJson(String str) {
         for (String key : CHECK_JSON) {
+            if (Pattern.compile(key).matcher(str).find()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private static final List<String> CHECK_HTML = Arrays.asList(
+            StringUtil.trimAny(PROPERTIES.getString("check.html")).split(","));
+
+    public static boolean isHtml(String str) {
+        for (String key : CHECK_HTML) {
             if (Pattern.compile(key).matcher(str).find()) {
                 return true;
             }

@@ -14,7 +14,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static xyz.migoo.config.Platform.HTTPCLIENT_VERSION;
+import static xyz.migoo.config.Platform.HTTP_CLIENT_VERSION;
 import static xyz.migoo.config.Platform.JDK_VERSION;
 import static xyz.migoo.config.Platform.OS_VERSION;
 
@@ -72,7 +72,7 @@ public class Report {
     private static Map<String, String> platform() {
         Map<String, String> platform = new HashMap<>(3);
         platform.put("jdk", "JDK " + JDK_VERSION);
-        platform.put("httpclient", "HTTP Client " + HTTPCLIENT_VERSION);
+        platform.put("httpclient", "HTTP Client " + HTTP_CLIENT_VERSION);
         platform.put("os", OS_VERSION);
         return platform;
     }

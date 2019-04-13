@@ -1,17 +1,24 @@
 package xyz.migoo.http;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.util.TypeUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import xyz.migoo.exception.RequestException;
@@ -36,6 +43,7 @@ import static xyz.migoo.http.Request.UTF8;
  * 封装了HttpClient提供的api 简化测试脚本开发
  *
  * @author xiaomi
+ * @date 2018/10/10 20:35
  */
 public class Client {
 
@@ -54,8 +62,8 @@ public class Client {
      */
     public Response execute(Request request) {
         switch (request.method()){
-            case HttpGet.METHOD_NAME:
-                return this.doGet(request);
+/*            case HttpGet.METHOD_NAME:
+                return this.doGet(request);*/
             case HttpPost.METHOD_NAME:
                 return this.doPost(request);
             case HttpPut.METHOD_NAME:
@@ -182,6 +190,28 @@ public class Client {
     }
 
     /**
+     * 设置 请求上下文（Cookie 主要用于设置 Cookie）
+     *
+     * @param request     请求参数信息
+     * @return HttpClientContext 请求上下文对象
+     */
+    private HttpClientContext setCookieStore(Request request) {
+        HttpClientContext context = HttpClientContext.create();
+        if (request.cookies() != null || !request.cookies().isEmpty()) {
+            CookieStore cookieStore = new BasicCookieStore();
+            for (int i = 0; i < request.cookies().size(); i++){
+                JSONObject json = request.cookies().getJSONObject(i);
+                BasicClientCookie cookie = new BasicClientCookie(json.getString("name"), json.getString("value"));
+                cookie.setDomain(json.getString("domain"));
+                cookie.setPath(json.getString("path"));
+                cookieStore.addCookie(cookie);
+            }
+            context.setCookieStore(cookieStore);
+        }
+        return context;
+    }
+
+    /**
      * 发起一个请求
      *
      * @param httpMethods 请求方法
@@ -191,7 +221,10 @@ public class Client {
         Response response = new Response();
         response.request(request);
         response.startTime(System.currentTimeMillis());
-        try (CloseableHttpResponse httpResponse = httpClient.execute(httpMethods)){
+        HttpClientContext context = this.setCookieStore(request);
+        try (CloseableHttpResponse httpResponse = httpClient.execute(httpMethods, context)){
+            response.setContext(context);
+            response.cookieStore(context.getCookieStore());
             response.endTime(System.currentTimeMillis());
             response.locale(httpResponse.getLocale());
             response.headers(httpResponse.getAllHeaders());
@@ -223,17 +256,20 @@ public class Client {
     }
 
     public static class Config{
+
         private int maxTotal = 20;
 
         private int maxPerRoute = 2;
 
         private int timeout = 20;
 
+        private boolean https = false;
+
         private HttpHost proxy;
 
         private File certificate;
 
-        private boolean https = false;
+        private JSONArray cookies;
 
         private static Client client;
 
@@ -292,6 +328,26 @@ public class Client {
             return this;
         }
 
+        public Config cookies(Object cookies){
+            if (cookies instanceof JSONObject){
+                this.cookies = new JSONArray(1);
+                this.cookies.add(cookies);
+                return this;
+            }
+            if (cookies instanceof JSONArray){
+                this.cookies = (JSONArray)cookies;
+                return this;
+            }
+            if (cookies instanceof String){
+                try {
+                    this.cookies = JSON.parseArray((String) cookies);
+                }catch (Exception e){
+                    log.debug("cookies parse exception, skip");
+                }
+            }
+            return this;
+        }
+
         public Client build(){
             if (client == null && httpClient == null){
                 synchronized (Client.class){
@@ -312,6 +368,17 @@ public class Client {
                         }
                         if (proxy != null) {
                             builder.setProxy(proxy);
+                        }
+                        if (cookies != null){
+                            CookieStore cookieStore = new BasicCookieStore();
+                            for (int i = 0; i < cookies.size(); i++){
+                                JSONObject json = cookies.getJSONObject(i);
+                                BasicClientCookie cookie = new BasicClientCookie(json.getString("name"), json.getString("value"));
+                                cookie.setDomain(json.getString("domain"));
+                                cookie.setPath(json.getString("path"));
+                                cookieStore.addCookie(cookie);
+                            }
+                            builder.setDefaultCookieStore(cookieStore);
                         }
                         builder.setConnectionManager(POOL).setDefaultRequestConfig(config);
                         httpClient = builder.build();
