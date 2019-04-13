@@ -1,6 +1,6 @@
 # MiGoo
 
-[![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
+[![License](http://img.shields.io/:license-apache-brightgreen.svg)](https://github.com/XiaoMiSum/MiGoo/blob/master/LICENSE)
 
 
 ## 1. 介绍
