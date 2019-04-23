@@ -29,7 +29,7 @@ public abstract class AbstractAssertion implements Assertion{
     public Boolean assertThat(JSONObject data) throws AssertionException {
         setMethod(data.getString(CaseKeys.VALIDATE_TYPE));
         try {
-            return (Boolean) method.invoke(actual, data.get(CaseKeys.VALIDATE_EXPECT));
+            return (Boolean) method.invoke(null ,actual, data.get(CaseKeys.VALIDATE_EXPECT));
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new AssertionException(StringUtil.getStackTrace(e));
         }

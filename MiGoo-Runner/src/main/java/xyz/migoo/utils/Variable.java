@@ -86,38 +86,38 @@ public class Variable {
                     continue;
                 }
                 if (object instanceof JSONObject){
-                    JSONObject jsonObj = (JSONObject)object;
-                    for (String k : jsonObj.keySet()){
-                        String s = jsonObj.getString(k);
+                    JSONObject obj = (JSONObject)object;
+                    for (String k : obj.keySet()){
+                        String s = obj.getString(k);
                         if (StringUtil.contains(s, regex)){
                             String result = s.replace(regex, value);
                             try {
-                                jsonObj.put(k, JSON.parse(result));
+                                obj.put(k, JSON.parse(result));
                             }catch (Exception e){
-                                jsonObj.put(k, result);
+                                obj.put(k, result);
                             }
                             log.info(String.format("bindVariable：[key: %s.%s] => [%s] -> [%s]", key, k, regex, result));
                         }
                     }
-                    source.put(key, jsonObj);
+                    source.put(key, obj);
                     continue;
                 }
                 if (object instanceof JSONArray) {
-                    JSONArray arrayObj = (JSONArray)object;
-                    for (int i = 0; i < arrayObj.size(); i++) {
-                        String s = arrayObj.getString(i);
+                    JSONArray obj = (JSONArray)object;
+                    for (int i = 0; i < obj.size(); i++) {
+                        String s = obj.getString(i);
                         if (StringUtil.contains(s, regex)) {
-                            arrayObj.remove(i);
+                            obj.remove(i);
                             String result = s.replace(regex, value);
                             try {
-                                arrayObj.add(i, JSON.parse(result));
+                                obj.add(i, JSON.parse(result));
                             }catch (Exception e){
-                                arrayObj.add(i, result);
+                                obj.add(i, result);
                             }
                             log.info(String.format("bindVariable：[key: %s[%s]] => [%s] -> [%s]", key, i, regex, result));
                         }
                     }
-                    source.put(key, arrayObj);
+                    source.put(key, obj);
                 }
             }
         }
@@ -156,22 +156,49 @@ public class Variable {
         }
         for (String key : variables.keySet()) {
             Object value = variables.get(key);
-            if (!(value instanceof String)) {
+            if (value instanceof JSONObject) {
+                evalVariable((JSONObject)value);
+                variables.put(key, value);
                 continue;
             }
-            Matcher matcher = FUNC_PATTERN.matcher((String) value);
-            if (matcher.find()) {
-                if (PARAM_PATTERN.matcher(matcher.group(2)).find()) {
-                    continue;
-                }
-                functionLoader();
-                Object result = invoke(matcher.group(1), matcher.group(2));
-                if (result != null) {
-                    variables.put(key, result);
-                }
+            if (value instanceof JSONArray){
+                JSONArray array = (JSONArray) value;
+                evalVariable(array);
+                variables.put(key, array);
+                continue;
             }
+            if (!(value instanceof String)){
+                continue;
+            }
+            Object result = evalVariable((String) value);
+            variables.put(key, result);
         }
         return variables;
+    }
+
+    private static void evalVariable(JSONArray array) throws InvokeException {
+        for (int i = 0; i < array.size(); i++) {
+            Object object = array.get(i);
+            array.remove(i);
+            if (object instanceof JSONObject) {
+                evalVariable((JSONObject)object);
+            }
+            if (object instanceof String){
+                object = evalVariable((String) object);
+            }
+            array.add(i, object);
+        }
+    }
+
+    private static Object evalVariable(String value) throws InvokeException {
+        Matcher matcher = FUNC_PATTERN.matcher(value);
+        if (matcher.find()) {
+            if (!PARAM_PATTERN.matcher(matcher.group(2)).find()) {
+                functionLoader();
+                return invoke(matcher.group(1), matcher.group(2));
+            }
+        }
+        return value;
     }
 
     /**

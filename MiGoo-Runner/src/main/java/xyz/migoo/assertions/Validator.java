@@ -80,17 +80,19 @@ public class Validator extends Assert {
             result = Objects.requireNonNull(assertion.assertThat(validate));
             LOG.info("check result : " + result);
         } catch (Exception e) {
-            LOG.info("check result : " + result);
+            LOG.error("check result : " + result, e);
             throw new AssertionException(e.getMessage());
         }
         if (!result) {
+            String check = validate.getString(CaseKeys.VALIDATE_CHECK);
             String expected = validate.getString(CaseKeys.VALIDATE_EXPECT);
             String actual = String.valueOf(assertion.getActual());
             String clazz = assertion.getClass().getName();
             String method = validate.getString(CaseKeys.VALIDATE_TYPE);
-            String msg="Value expected to be '%s', but found '%s' \n" +
+            String msg="Value expected(%s) to be '%s', but found '%s' \n" +
                     "Assertion class is '%s', assert method is %s";
-            throw new AssertionException(String.format(msg, expected, actual, clazz, method));
+            throw new AssertionException(String.format(msg, check
+                    , expected, actual, clazz, method));
         }
     }
 }

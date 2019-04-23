@@ -16,6 +16,7 @@ public class TestRunner extends junit.textui.TestRunner{
         long endTime= System.currentTimeMillis();
         result.responses(suite.responses());
         result.failures(suite.failures());
+        result.errors(suite.errors());
         result.startAt(startTime);
         result.endAt(endTime);
         result.serialization();

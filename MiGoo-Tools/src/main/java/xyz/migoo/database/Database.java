@@ -2,14 +2,13 @@ package xyz.migoo.database;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.BeanListHandler;
-import org.apache.commons.dbutils.handlers.KeyedHandler;
-import org.apache.commons.dbutils.handlers.MapHandler;
+import org.apache.commons.dbutils.handlers.*;
 import xyz.migoo.utils.Log;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -41,26 +40,16 @@ public class Database {
         DbUtils.closeQuietly(conn);
     }
 
-    public List<?> query(Class clazz, String sql, Object... params) {
+    public Object[] queryList(String sql, Object... params) {
         QueryRunner run = new QueryRunner();
-        List<?> list = null;
+        Object[] list = null;
         try {
-            list = (List<?>) run.query(conn, sql, new BeanListHandler<>(clazz), params);
+            list = run.query(conn, sql, new ArrayHandler(), params);
+            log.info("execute sql: " + sql);
         } catch (SQLException e) {
             log.error("execute sql exception: " + sql, e);
         }
         return list;
-    }
-
-    public Map query(String sql, String columnName, Object... params) {
-        QueryRunner run = new QueryRunner();
-        Map object = null;
-        try {
-            object = (Map) run.query(conn, sql, new KeyedHandler(columnName), params);
-        } catch (SQLException e) {
-            log.error("execute sql exception: " + sql, e);
-        }
-        return object;
     }
 
     public Map query(String sql, Object... params) {
@@ -68,6 +57,7 @@ public class Database {
         Map object = null;
         try {
             object = run.query(conn, sql, new MapHandler(), params);
+            log.info("execute sql: " + sql);
         } catch (SQLException e) {
             log.error("execute sql exception: " + sql, e);
         }

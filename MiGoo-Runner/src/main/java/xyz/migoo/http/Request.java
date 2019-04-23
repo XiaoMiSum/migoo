@@ -284,7 +284,8 @@ public class Request {
         }
 
         private boolean urlCheck() {
-            return StringUtil.isNotBlank(this.url) && PATTERN.matcher(url).find();
+            return StringUtil.isNotBlank(this.url) && (this.url.startsWith("http://")
+                    || this.url.startsWith("https://"));
         }
 
         private boolean methodCheck(String method) {

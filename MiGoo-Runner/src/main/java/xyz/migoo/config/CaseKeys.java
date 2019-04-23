@@ -21,6 +21,8 @@ public class CaseKeys {
 
     public static final String CONFIG_REQUEST_HTTPS = "https";
 
+    public static final String CONFIG_REQUEST_COOKIE = "cookie";
+
     public static final String CONFIG_REQUEST_METHOD = "method";
 
     public static final String CONFIG_REQUEST_ENCODE = "encode";

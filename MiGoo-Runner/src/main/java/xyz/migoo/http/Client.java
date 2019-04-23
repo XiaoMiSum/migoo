@@ -197,17 +197,18 @@ public class Client {
      */
     private HttpClientContext setCookieStore(Request request) {
         HttpClientContext context = HttpClientContext.create();
-        if (request.cookies() != null || !request.cookies().isEmpty()) {
-            CookieStore cookieStore = new BasicCookieStore();
-            for (int i = 0; i < request.cookies().size(); i++){
-                JSONObject json = request.cookies().getJSONObject(i);
-                BasicClientCookie cookie = new BasicClientCookie(json.getString("name"), json.getString("value"));
-                cookie.setDomain(json.getString("domain"));
-                cookie.setPath(json.getString("path"));
-                cookieStore.addCookie(cookie);
-            }
-            context.setCookieStore(cookieStore);
+        if (request.cookies() == null || request.cookies().isEmpty()) {
+            return context;
         }
+        CookieStore cookieStore = new BasicCookieStore();
+        for (int i = 0; i < request.cookies().size(); i++){
+            JSONObject json = request.cookies().getJSONObject(i);
+            BasicClientCookie cookie = new BasicClientCookie(json.getString("name"), json.getString("value"));
+            cookie.setDomain(json.getString("domain"));
+            cookie.setPath(json.getString("path"));
+            cookieStore.addCookie(cookie);
+        }
+        context.setCookieStore(cookieStore);
         return context;
     }
 

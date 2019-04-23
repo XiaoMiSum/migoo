@@ -71,7 +71,9 @@ public class TestSuite extends junit.framework.TestSuite {
         if (testCase.get(CaseKeys.CONFIG_REQUEST_ENCODE) != null){
             encode = testCase.get(CaseKeys.CONFIG_REQUEST_ENCODE);
         }
-        builder.headers(headers).url(url.toString()).encode(encode);
+        String cookies = requestConfig.getString(CaseKeys.CONFIG_REQUEST_COOKIE);
+        cookies = cookies.replaceAll("'", "\\\"").replaceAll("=", ",").replaceAll("「","{").replaceAll("」", "}");
+        builder.cookies(cookies).headers(headers).url(url.toString()).encode(encode);
     }
 
     private void addTest(String testName, Task task, JSONObject testCase){
