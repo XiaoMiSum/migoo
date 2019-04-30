@@ -5,8 +5,10 @@ import xyz.migoo.config.CaseKeys;
 import xyz.migoo.exception.InvokeException;
 import xyz.migoo.http.Response;
 
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * @author xiaomi
@@ -14,45 +16,48 @@ import java.util.List;
  */
 public class CaseSuite extends junit.framework.TestSuite {
 
-    private List<String> failures;
-    private List<String> errors;
-    private List<Response> responses;
     private StringBuilder testName;
+    private Vector<TestSuite> testSuites;
+    private int fTests = 0;
+    private int eTests = 0;
+    private int rTests = 0;
 
     public CaseSuite(List<JSONObject> caseSets) throws InvokeException {
-        responses = new ArrayList<>();
-        failures = new ArrayList<>();
-        errors = new ArrayList<>();
         testName = new StringBuilder();
+        testSuites = new Vector<>(10);
         for (JSONObject caseSet : caseSets){
             TestSuite suite = new TestSuite(caseSet, this);
             testName.append(caseSet.getString(CaseKeys.NAME)).append("&");
-            addTest(suite);
+            testSuites.add(suite);
         }
     }
 
-    protected void responses(Response response){
-        this.responses.add(response);
+    public Vector<TestSuite> testSuites(){
+        return testSuites;
     }
 
-    protected void failures(String failure){
-        this.failures.add(failure);
+    void addFTests(){
+        fTests += 1;
     }
 
-    protected void errors(String errors){
-        this.errors.add(errors);
+    void addETests(){
+        eTests += 1;
     }
 
-    public List<String> failures(){
-        return this.failures;
+    void addRTests(){
+        rTests += 1;
     }
 
-    public List<String> errors(){
-        return this.errors;
+    int fTests(){
+        return fTests;
     }
 
-    public List<Response> responses(){
-        return this.responses;
+    int eTests(){
+        return eTests;
+    }
+
+    int rTests(){
+        return rTests;
     }
 
     public String name(){

@@ -87,8 +87,7 @@ public class Report {
         if (!file.exists()) {
             file.mkdir();
         }
-        String path = file.getPath() + "/" + name + "-" +
-                DateUtil.format(DateUtil.YYYY_MMDD_HH_MM_SS) + ".html";
+        String path = file.getPath() + "/" + name + ".html";
         try (Writer writer = new FileWriter(path)) {
             writer.write(template);
             writer.close();

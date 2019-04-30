@@ -9,12 +9,12 @@
             background-color: #f2f2f2;
             color: #333;
             margin: 0 auto;
-            width: 960px;
+            width: 90%;
             font-size: 20px;
         }
 
         #summary, #details {
-            width: 960px;
+            width: 90%;
         }
 
         #summary th {
@@ -69,7 +69,7 @@
             background-color: #06d85f;
             border-radius: 20px/50px;
             cursor: pointer;
-            transition: all 0.3s ease-out;
+            transition: all 0.1s ease-out;
         }
 
         a.button {
@@ -194,9 +194,9 @@
 <table id="details">
     <tr>
         <th>Status</th>
-        <th>Name</th>
-        <th style="min-width: 150px;">Response Time</th>
-        <th>Detail</th>
+        <th style="min-width: 60%;">Name</th>
+        <th style="min-width: 15%;">Response Time</th>
+        <th style="min-width: 15%;">Detail</th>
     </tr>
 
     <tr th:each="record : ${records}" th:id="${record.index}">
@@ -206,6 +206,22 @@
         </td>
         <td style="text-align:center;width:6em;" th:text="${record.time}"></td>
         <td class="detail">
+
+            <a class="button" th:href="${record.detail.validate_href}" th:if="${record.detail.validate}">validate</a>
+            <div th:id="${record.detail.validate_id}" class="overlay">
+                <div class="popup">
+                    <h2>Validate Message</h2>
+                    <a class="close" th:href="${record.record_href}">&times;</a>
+
+                    <div class="content" th:each="validates: ${record.detail.validate}">
+                        <span th:each="validate: ${validates}">
+                            <per th:text="${validate}"/>
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
             <a class="button" th:href="${record.detail.log_href}">log</a>
             <div th:id="${record.detail.log_id}" class="overlay">
                 <div class="popup">
@@ -229,7 +245,7 @@
                                     <td>
                                         <div th:each="headers: ${record.detail.log.request.headers}">
                                             <span th:each="header: ${headers}">
-                                                <per th:text="${header.getName()}"/>
+                                                <per th:text="${header.getName()}"></per>
                                                 <per>:  </per>
                                                 <per th:text="${header.getValue()}"></per>
                                             </span>
@@ -269,18 +285,6 @@
                                 <tr>
                                     <th>status_code</th>
                                     <td th:text="${record.detail.log.response.statusCode}"></td>
-                                </tr>
-                                <tr>
-                                    <th>headers</th>
-                                    <td>
-                                        <div th:each="headers: ${record.detail.log.response.headers}">
-                                            <span th:each="header: ${headers}">
-                                                <per th:text="${header.getName()}"></per>
-                                                <per>:  </per>
-                                                <per th:text="${header.getValue()}"></per>
-                                            </span>
-                                        </div>
-                                    </td>
                                 </tr>
                                 <tr>
                                     <th>body</th>

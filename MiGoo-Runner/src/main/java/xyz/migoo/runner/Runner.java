@@ -83,8 +83,8 @@ public class Runner {
             System.exit(-1);
         } catch (JSONException e){
             this.byPath(caseOrPath);
-            EmailUtil.sendEmail(isMain);
         }
+        EmailUtil.sendEmail(isMain);
     }
 
     private void byPath(String path){

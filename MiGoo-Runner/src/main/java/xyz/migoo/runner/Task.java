@@ -12,6 +12,7 @@ import xyz.migoo.http.Request;
 import xyz.migoo.http.Response;
 import xyz.migoo.utils.Hook;
 import xyz.migoo.utils.Log;
+import xyz.migoo.utils.StringUtil;
 import xyz.migoo.utils.Variable;
 
 /**
@@ -22,17 +23,17 @@ public class Task {
 
     private Client client;
     private Request request;
+    private Response response;
     private Request.Builder builder;
-    private TestSuite testSuite;
+    private Object validate;
     private static Log log = new Log(Task.class);
 
-    public Task(Client client, Request.Builder builder, TestSuite testSuite){
+    Task(Client client, Request.Builder builder){
         this.client = client;
         this.builder = builder;
-        this.testSuite = testSuite;
     }
 
-    public synchronized void run(JSONObject testCase) throws AssertionException, Exception {
+    synchronized void run(JSONObject testCase) throws AssertionException, Exception {
         try {
             this.buildRequest(testCase);
             Object before = testCase.get(CaseKeys.CASE_BEFORE);
@@ -40,27 +41,24 @@ public class Task {
                 before = JSON.parseArray(before.toString());
             }
             Hook.hook((JSONArray) before);
-            Response response = client.execute(request);
+            response = client.execute(request);
             this.addLog(request.title(), response);
-            this.testSuite.response(response);
             Object after = testCase.get(CaseKeys.CASE_AFTER);
             if (after instanceof String){
                 after = JSON.parseArray(after.toString());
             }
             Hook.hook((JSONArray) after);
-            Object validate = testCase.get(CaseKeys.VALIDATE);
+            validate = testCase.get(CaseKeys.VALIDATE);
             if (!(validate instanceof JSON)){
                 validate = JSON.parse(validate.toString());
             }
             Validator.validation(response, (JSON) validate);
         } catch (AssertionException e) {
             log.error(e.getMessage(), e);
-            this.testSuite.failures(request.title());
             throw new AssertionException(e.getMessage().replaceAll("\n", "</br>"));
         } catch (Exception e){
             log.error(e.getMessage(), e);
-            this.testSuite.errors(request.title());
-            throw new Exception(e.getMessage());
+            throw new Exception(StringUtil.getStackTrace(e));
         }
     }
 
@@ -92,6 +90,18 @@ public class Task {
         }
         log.info(" response.status  : " + response.statusCode());
         log.info(" response.body    : " + response.body());
+    }
+
+    Response response(){
+        return response;
+    }
+
+    Request request(){
+        return request;
+    }
+
+    Object validate(){
+        return validate;
     }
 
 }

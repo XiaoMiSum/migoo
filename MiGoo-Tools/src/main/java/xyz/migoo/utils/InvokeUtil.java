@@ -19,14 +19,17 @@ public class InvokeUtil {
     /**
      * 从指定 扩展类中 获取扩展函数
      */
-    public static Map<String, Method> functionLoader(String[] clazz) throws InvokeException {
+    public static Map<String, Method> functionLoader(String[] classes) throws InvokeException {
         try {
             Map<String, Method> map = new HashMap<>(100);
-            for (String clz : clazz) {
-                Method[] methods = Class.forName(clz).getDeclaredMethods();
-                for (Method method : methods) {
-                    String key = method.getName() + "(" + method.getParameterCount() + ")";
-                    map.put(key, method);
+            for (String clazz : classes) {
+                Class clz = Class.forName(clazz);
+                for (; clz != null && clz != Object.class; clz = clz.getSuperclass()){
+                    Method[] methods = clz.getDeclaredMethods();
+                    for (Method method : methods) {
+                        String key = method.getName() + "(" + method.getParameterCount() + ")";
+                        map.put(key, method);
+                    }
                 }
             }
             return map;

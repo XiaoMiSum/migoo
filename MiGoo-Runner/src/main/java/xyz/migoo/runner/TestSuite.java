@@ -12,6 +12,8 @@ import xyz.migoo.utils.Hook;
 import xyz.migoo.utils.StringUtil;
 import xyz.migoo.utils.Variable;
 
+import java.util.Vector;
+
 /**
  * @author xiaomi
  * @date 2018/7/24 15:37
@@ -19,11 +21,13 @@ import xyz.migoo.utils.Variable;
 public class TestSuite extends junit.framework.TestSuite {
 
     private CaseSuite caseSuite;
+    private Vector<TestCase> testCases;
 
     protected TestSuite(JSONObject caseSet, CaseSuite caseSuite) throws InvokeException {
         super();
         this.init(caseSet);
         this.caseSuite = caseSuite;
+        this.testCases = new Vector<>(10);
     }
 
     private void init(JSONObject caseSet) throws InvokeException {
@@ -52,9 +56,9 @@ public class TestSuite extends junit.framework.TestSuite {
             Variable.loopBindVariables(caseVars, caseVars);
             Variable.loopBindVariables(caseVars, testCase);
             this.request(testCase, encode, headers, builder, request);
-            Task task = new Task(client, builder, this);
+            Task task = new Task(client, builder);
             testCase.put(CaseKeys.CASE_VARIABLES, caseVars);
-            this.addTest(testCase.getString(CaseKeys.CASE_TITLE), task, testCase);
+            this.addTest(task, testCase);
         }
     }
 
@@ -76,20 +80,12 @@ public class TestSuite extends junit.framework.TestSuite {
         builder.cookies(cookies).headers(headers).url(url.toString()).encode(encode);
     }
 
-    private void addTest(String testName, Task task, JSONObject testCase){
-        TestCase cases = new TestCase(testName, task, testCase);
-        super.addTest(cases);
+    private void addTest(Task task, JSONObject testCase){
+        TestCase cases = new TestCase(task, testCase, caseSuite);
+        this.testCases.add(cases);
     }
 
-    protected void failures(String failure) {
-        this.caseSuite.failures(failure);
-    }
-
-    protected void errors(String errors) {
-        this.caseSuite.errors(errors);
-    }
-
-    protected void response(Response response){
-        this.caseSuite.responses(response);
+    public Vector<TestCase> testCases(){
+        return testCases;
     }
 }

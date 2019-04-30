@@ -40,14 +40,38 @@ public class Database {
         DbUtils.closeQuietly(conn);
     }
 
-    public Object[] queryList(String sql, Object... params) {
+    public Object[] array(String sql, Object... params) {
         QueryRunner run = new QueryRunner();
         Object[] list = null;
         try {
             list = run.query(conn, sql, new ArrayHandler(), params);
-            log.info("execute sql: " + sql);
+            log.info("execute sql: " + sql + "params: " + paramsToString(params));
         } catch (SQLException e) {
-            log.error("execute sql exception: " + sql, e);
+            log.error("execute sql exception: " + sql + "  params: " + paramsToString(params), e);
+        }
+        return list;
+    }
+
+    public List<Map<String, Object>> maps(String sql, Object... params) {
+        QueryRunner run = new QueryRunner();
+        List<Map<String, Object>> list = null;
+        try {
+            list = run.query(conn, sql, new MapListHandler(), params);
+            log.info("execute sql: " + sql + "  params: " + paramsToString(params));
+        } catch (SQLException e) {
+            log.error("execute sql exception: " + sql + "  params: " + paramsToString(params), e);
+        }
+        return list;
+    }
+
+    public List arrays(String sql, Object... params) {
+        QueryRunner run = new QueryRunner();
+        ArrayList list = null;
+        try {
+            list = (ArrayList)run.query(conn, sql, new ColumnListHandler(), params);
+            log.info("execute sql: " + sql + "  params: " + paramsToString(params));
+        } catch (SQLException e) {
+            log.error("execute sql exception: " + sql + "  params: " + paramsToString(params), e);
         }
         return list;
     }
@@ -57,10 +81,21 @@ public class Database {
         Map object = null;
         try {
             object = run.query(conn, sql, new MapHandler(), params);
-            log.info("execute sql: " + sql);
+            log.info("execute sql: " + sql + "  params: " + paramsToString(params));
         } catch (SQLException e) {
-            log.error("execute sql exception: " + sql, e);
+            log.error("execute sql exception: " + sql + "  params: " + paramsToString(params), e);
         }
         return object;
+    }
+
+    private String paramsToString(Object... params){
+        StringBuilder sb = new StringBuilder();
+        for (Object object: params){
+            if (sb.length() > 0){
+                sb.append(", ");
+            }
+            sb.append(object);
+        }
+        return sb.toString();
     }
 }

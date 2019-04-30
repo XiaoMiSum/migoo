@@ -139,6 +139,8 @@ public class CaseParser {
     }
 
     private void bindVariables(JSONObject overall, JSONObject variables,JSONObject caseVars , JSONObject caseJson) throws InvokeException {
+        // 1. 先将 variables 里面的变量执行绑定 或 计算
+        Variable.loopBindVariables(variables, variables);
         Variable.bindVariable(overall, caseJson);
         // 1. 使用 variables 替换 case.setUp 中的变量
         Variable.bindVariable(variables, caseVars);
