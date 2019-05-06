@@ -25,9 +25,9 @@ public class TestSuite extends junit.framework.TestSuite {
 
     protected TestSuite(JSONObject caseSet, CaseSuite caseSuite) throws InvokeException {
         super();
-        this.init(caseSet);
         this.caseSuite = caseSuite;
         this.testCases = new Vector<>(10);
+        this.init(caseSet);
     }
 
     private void init(JSONObject caseSet) throws InvokeException {
