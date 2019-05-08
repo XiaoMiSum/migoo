@@ -17,57 +17,62 @@ import java.util.List;
  */
 public class TestCase extends junit.framework.TestCase{
 
-    private CaseSuite caseSuite;
+    private TestSuite testSuite;
     private Task task;
     private JSONObject testCase;
-    private List<String> validate;
+    private List validate;
     private Request request;
     private Response response;
     private Exception error;
     private AssertionException failure;
 
-
-    TestCase(Task task, JSONObject testCase, CaseSuite caseSuite){
+    public TestCase(Task task, JSONObject testCase, TestSuite testSuite){
         super(testCase.getString(CaseKeys.CASE_TITLE));
         this.task = task;
         this.testCase = testCase;
-        this.caseSuite = caseSuite;
-        validate = new ArrayList<>();
+        this.testSuite = testSuite;
+        this.testCase = testCase;
+        this.validate = new ArrayList<>();
+        super.setName(testCase.getString(CaseKeys.CASE_TITLE));
     }
 
     @Override
     public void runTest(){
         try {
-            this.caseSuite.addRTests();
-            this.task.run(this.testCase);
-            this.request = task.request();
-            this.response = task.response();
-            this.validate((JSONArray)task.validate());
+            this.testSuite.addRTests();
+            this.task.run(this.testCase, this);
         }catch (AssertionException failure){
             this.failure = failure;
-            this.caseSuite.addFTests();
+            this.testSuite.addFTests();
         }catch (Exception error){
             this.error = error;
-            this.caseSuite.addETests();
+            this.testSuite.addETests();
         }
+        this.testSuite.addTest(this);
     }
 
-    private void validate(JSONArray validate){
-        for (int i = 0; i < validate.size(); i++) {
-            String s = JSONObject.toJSONString(validate.getJSONObject(i), SerializerFeature.WriteNullStringAsEmpty);
-            this.validate.add(s);
-        }
-    }
     List<String> validate(){
         return validate;
+    }
+
+    public void validate(JSONArray validate){
+        this.validate.addAll(validate);
     }
 
     Request request(){
         return request;
     }
 
+    void request(Request request){
+        this.request = request;
+    }
+
     public Response response(){
         return response;
+    }
+
+    void response(Response response){
+        this.response = response;
     }
 
     AssertionException failure(){
@@ -76,9 +81,5 @@ public class TestCase extends junit.framework.TestCase{
 
     public Exception error(){
         return error;
-    }
-
-    public String name(){
-        return getName();
     }
 }

@@ -1,6 +1,8 @@
 package xyz.migoo.utils;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.config.Platform;
 import xyz.migoo.exception.InvokeException;
 
@@ -8,7 +10,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.regex.Matcher;
 
-import static xyz.migoo.utils.Variable.FUNC_PATTERN;
+import static xyz.migoo.parser.BindVariable.FUNC_PATTERN;
 
 /**
  * 执行 数据处理
@@ -25,17 +27,25 @@ public class Hook {
 
     /**
      *
-     * @param hook 待执行的方法列表
+     * @param object 待执行的方法列表
      */
-    public static void hook(JSONArray hook) throws InvokeException {
-        if (hook == null){
+    public static void hook(Object object, JSONObject variables) throws InvokeException {
+        if (object == null){
             return;
         }
+        JSONArray hook;
+        if (object instanceof String){
+            hook = JSON.parseArray(object.toString());
+        }else {
+            hook = (JSONArray)object;
+        }
         for (int i = 0; i < hook.size(); i++){
-            Matcher matcher = FUNC_PATTERN.matcher(hook.getString(i));
-            if (matcher.find()) {
+            Matcher func = FUNC_PATTERN.matcher(hook.getString(i));
+            if (func.find()) {
                 functionLoader();
-                invoke(matcher.group(1), matcher.group(2));
+                Object[] parameter = InvokeUtil.parameter(func.group(2), variables);
+                Method method = InvokeUtil.method(methods, func.group(1), parameter);
+                InvokeUtil.invoke(method, parameter);
             }
         }
     }
@@ -48,15 +58,4 @@ public class Hook {
             methods = InvokeUtil.functionLoader(Platform.EXTENDS_HOOK);
         }
     }
-
-    /**
-     * 执行指定扩展函数
-     *
-     * @param name  方法名
-     * @param params  参数
-     */
-    private static void invoke(String name, String params) throws InvokeException {
-        InvokeUtil.invoke(methods, name, params);
-    }
-
 }

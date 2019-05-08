@@ -3,7 +3,6 @@ package xyz.migoo.http;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.util.TypeUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
@@ -16,7 +15,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
@@ -24,6 +22,7 @@ import org.apache.http.util.EntityUtils;
 import xyz.migoo.exception.RequestException;
 import xyz.migoo.utils.Log;
 import xyz.migoo.utils.StringUtil;
+import xyz.migoo.utils.TypeUtil;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -299,7 +298,7 @@ public class Client {
         }
 
         public Config https(Object value){
-            Boolean boo = TypeUtils.castToBoolean(value);
+            Boolean boo = TypeUtil.booleanOf(value);
             if (boo != null){
                 this.https =  boo;
             }

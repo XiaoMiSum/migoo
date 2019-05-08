@@ -10,10 +10,10 @@ import xyz.migoo.exception.AssertionException;
 import xyz.migoo.http.Client;
 import xyz.migoo.http.Request;
 import xyz.migoo.http.Response;
+import xyz.migoo.parser.BindVariable;
 import xyz.migoo.utils.Hook;
 import xyz.migoo.utils.Log;
 import xyz.migoo.utils.StringUtil;
-import xyz.migoo.utils.Variable;
 
 /**
  * @author xiaomi
@@ -23,36 +23,23 @@ public class Task {
 
     private Client client;
     private Request request;
-    private Response response;
     private Request.Builder builder;
-    private Object validate;
     private static Log log = new Log(Task.class);
 
-    Task(Client client, Request.Builder builder){
+    public Task(Client client, Request.Builder builder){
         this.client = client;
         this.builder = builder;
     }
 
-    synchronized void run(JSONObject testCase) throws AssertionException, Exception {
+    public synchronized void run(JSONObject jsonCase, TestCase testCase) throws AssertionException, Exception {
         try {
-            this.buildRequest(testCase);
-            Object before = testCase.get(CaseKeys.CASE_BEFORE);
-            if (before instanceof String){
-                before = JSON.parseArray(before.toString());
-            }
-            Hook.hook((JSONArray) before);
-            response = client.execute(request);
+            this.buildRequest(jsonCase);
+            testCase.request(request);
+            Response response = client.execute(request);
+            testCase.response(response);
             this.addLog(request.title(), response);
-            Object after = testCase.get(CaseKeys.CASE_AFTER);
-            if (after instanceof String){
-                after = JSON.parseArray(after.toString());
-            }
-            Hook.hook((JSONArray) after);
-            validate = testCase.get(CaseKeys.VALIDATE);
-            if (!(validate instanceof JSON)){
-                validate = JSON.parse(validate.toString());
-            }
-            Validator.validation(response, (JSON) validate);
+            Hook.hook(jsonCase.get(CaseKeys.CASE_AFTER), null);
+            this.assertThat(jsonCase.get(CaseKeys.VALIDATE), response, testCase);
         } catch (AssertionException e) {
             log.error(e.getMessage(), e);
             throw new AssertionException(e.getMessage().replaceAll("\n", "</br>"));
@@ -63,14 +50,23 @@ public class Task {
     }
 
     private void buildRequest(JSONObject testCase) throws InvokeException {
-        testCase.put(CaseKeys.CASE_QUERY, Variable.evalVariable(testCase.getJSONObject(CaseKeys.CASE_QUERY)));
-        testCase.put(CaseKeys.CASE_DATA, Variable.evalVariable(testCase.getJSONObject(CaseKeys.CASE_DATA)));
-        testCase.put(CaseKeys.CASE_BODY, Variable.evalVariable(testCase.getJSONObject(CaseKeys.CASE_BODY)));
+        JSONObject variables = testCase.getJSONObject(CaseKeys.CASE_VARIABLES);
+        BindVariable.evalVariable(variables, testCase.getJSONObject(CaseKeys.CASE_QUERY));
+        BindVariable.evalVariable(variables, testCase.getJSONObject(CaseKeys.CASE_DATA));
+        BindVariable.evalVariable(variables, testCase.getJSONObject(CaseKeys.CASE_BODY));
         this.request = builder.query(testCase.getJSONObject(CaseKeys.CASE_QUERY))
                 .body(testCase.getJSONObject(CaseKeys.CASE_BODY))
                 .data(testCase.getJSONObject(CaseKeys.CASE_DATA))
                 .title(testCase.getString(CaseKeys.CASE_TITLE))
                 .build();
+    }
+
+    private void assertThat(Object validate, Response response, TestCase testCase){
+        if (!(validate instanceof JSON)){
+            validate = JSON.parse(validate.toString());
+        }
+        testCase.validate((JSONArray) validate);
+        Validator.validation(response, (JSON) validate);
     }
 
     private void addLog(String title, Response response){
@@ -90,18 +86,6 @@ public class Task {
         }
         log.info(" response.status  : " + response.statusCode());
         log.info(" response.body    : " + response.body());
-    }
-
-    Response response(){
-        return response;
-    }
-
-    Request request(){
-        return request;
-    }
-
-    Object validate(){
-        return validate;
     }
 
 }

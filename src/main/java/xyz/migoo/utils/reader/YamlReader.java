@@ -6,33 +6,26 @@ import org.yaml.snakeyaml.Yaml;
 import xyz.migoo.exception.ReaderException;
 
 import java.io.File;
+import java.io.InputStream;
 
 /**
  * @author xiaomi
  * @date 2018/09/28 14:25:22
  */
-public class YamlReader extends AbstractReader implements Reader {
+public class YamlReader extends AbstractReader implements Reader{
 
-    private String path;
-    private File file;
     private JSON json;
 
-    public YamlReader(String path){
-        this.path = path;
+    public YamlReader(String path) throws ReaderException {
+        super.stream(ReaderFactory.YAML_SUFFIX, path);
     }
 
-    public YamlReader(File file){
-        this.file = file;
+    public YamlReader(File file) throws ReaderException {
+        super.stream(ReaderFactory.YAML_SUFFIX, file);
     }
 
     @Override
     public JSON read() throws ReaderException {
-        if (path != null){
-            super.stream(ReaderFactory.YAML_SUFFIX, path);
-        }
-        if (file != null){
-            super.stream(ReaderFactory.YAML_SUFFIX, file);
-        }
         Yaml yaml = new Yaml();
         Object object = yaml.load(inputStream);
         json = (JSON) JSON.toJSON(object);

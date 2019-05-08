@@ -3,16 +3,15 @@ package xyz.migoo.http;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.util.TypeUtils;
 import org.apache.http.Header;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.message.BasicHeader;
-import org.apache.poi.ss.formula.functions.T;
 import xyz.migoo.exception.RequestException;
 import xyz.migoo.utils.Log;
 import xyz.migoo.utils.StringUtil;
+import xyz.migoo.utils.TypeUtil;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -214,7 +213,7 @@ public class Request {
         }
 
         public Builder encode(Object encode){
-            Boolean b = TypeUtils.castToBoolean(encode);
+            Boolean b = TypeUtil.booleanOf(encode);
             if (b != null) {
                 this.encode = b;
             }

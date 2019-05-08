@@ -62,4 +62,8 @@ public abstract class AbstractReader {
             throw new ReaderException("file read exception: " + e.getMessage());
         }
     }
+
+    public boolean isNull(){
+        return inputStream == null;
+    }
 }

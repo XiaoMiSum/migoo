@@ -1,12 +1,10 @@
 package xyz.migoo.config;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ReaderException;
-import xyz.migoo.utils.StringUtil;
-import xyz.migoo.utils.reader.PropertiesReader;
+import xyz.migoo.utils.reader.YamlReader;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -23,16 +21,16 @@ public class Platform {
     private static final String STRING = "extends.variable";
 
     static {
-        String[] properties = new String[]{"application.properties", "migoo.properties"};
+        String[] properties = new String[]{"application.yml", "migoo.yml"};
         for (String file : properties) {
             try {
-                PropertiesReader reader = new PropertiesReader("classpath://" + file);
-                if (reader.getInputStream() == null) {
+                YamlReader reader = new YamlReader("classpath://" + file);
+                if (reader.isNull()) {
                     continue;
                 }
-                reader.read().forEach((key, value) -> {
+                ((JSONObject)reader.read()).forEach((key, value) -> {
                     if (PROPERTIES.containsKey(key) && STRING.equals(key)) {
-                        value = PROPERTIES.getString(key) + ", " + value;
+                        ((JSONArray)value).addAll(PROPERTIES.getJSONArray(key));
                     }
                     PROPERTIES.put(key, value);
                 });
@@ -48,83 +46,66 @@ public class Platform {
 
     public static final String OS_VERSION = System.getProperty("os.name") + "  " + System.getProperty("os.version");
 
-    public static final List<String> FUNCTION_EQUALS = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("function.equals")).split(","));
+    public static final JSONArray FUNCTION_EQUALS = PROPERTIES.getJSONArray("function.equals");
 
-    public static final List<String> FUNCTION_NOT_EQUALS = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("function.notEquals")).split(","));
+    public static final JSONArray FUNCTION_NOT_EQUALS = PROPERTIES.getJSONArray("function.notEquals");
 
-    public static final List<String> FUNCTION_EQUALS_IGNORE_CASE = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("function.equalsIgnoreCase")).split(","));
+    public static final JSONArray FUNCTION_EQUALS_IGNORE_CASE = PROPERTIES.getJSONArray("function.equalsIgnoreCase");
 
-    public static final List<String> FUNCTION_GREATER_THAN_OR_EQUALS = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("function.greaterThanOrEquals")).split(","));
+    public static final JSONArray FUNCTION_GREATER_THAN_OR_EQUALS = PROPERTIES.getJSONArray("function.greaterThanOrEquals");
 
-    public static final List<String> FUNCTION_LESS_THAN_OR_EQUALS = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("function.lessThanOrEquals")).split(","));
+    public static final JSONArray FUNCTION_LESS_THAN_OR_EQUALS = PROPERTIES.getJSONArray("function.lessThanOrEquals");
 
-    public static final List<String> FUNCTION_REATER_THAN = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("function.greaterThan")).split(","));
+    public static final JSONArray FUNCTION_REATER_THAN = PROPERTIES.getJSONArray("function.greaterThan");
 
-    public static final List<String> FUNCTION_LESS_THAN = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("function.lessThan")).split(","));
+    public static final JSONArray FUNCTION_LESS_THAN = PROPERTIES.getJSONArray("function.lessThan");
 
-    public static final List<String> FUNCTION_CONTAINS = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("function.contains")).split(","));
+    public static final JSONArray FUNCTION_CONTAINS = PROPERTIES.getJSONArray("function.contains");
 
-    public static final List<String> FUNCTION_NOT_CONTAINS = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("function.doesNotContains")).split(","));
+    public static final JSONArray FUNCTION_NOT_CONTAINS = PROPERTIES.getJSONArray("function.doesNotContains");
 
-    public static final List<String> FUNCTION_IS_EMPTY = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("function.isEmpty")).split(","));
+    public static final JSONArray FUNCTION_IS_EMPTY = PROPERTIES.getJSONArray("function.isEmpty");
 
-    public static final List<String> FUNCTION_IS_NOT_EMPTY = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("function.isNotEmpty")).split(","));
+    public static final JSONArray FUNCTION_IS_NOT_EMPTY = PROPERTIES.getJSONArray("function.isNotEmpty");
 
-    public static final List<String> FUNCTION_REGEX = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("check.regex")).split(","));
+    public static final JSONArray FUNCTION_REGEX = PROPERTIES.getJSONArray("check.regex");
 
-    private static final List<String> CHECK_JSON = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("check.json")).split(","));
+    private static final JSONArray CHECK_JSON = PROPERTIES.getJSONArray("check.json");
 
     public static boolean isJson(String str) {
-        for (String key : CHECK_JSON) {
-            if (Pattern.compile(key).matcher(str).find()) {
+        for (int i = 0; i < CHECK_JSON.size(); i++) {
+            if (Pattern.compile(CHECK_JSON.getString(i)).matcher(str).find()) {
                 return true;
             }
         }
         return false;
     }
 
-    private static final List<String> CHECK_HTML = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("check.html")).split(","));
+    private static final JSONArray CHECK_HTML = PROPERTIES.getJSONArray("check.html");
 
     public static boolean isHtml(String str) {
-        for (String key : CHECK_HTML) {
-            if (Pattern.compile(key).matcher(str).find()) {
+        for (int i = 0; i < CHECK_HTML.size(); i++) {
+            if (Pattern.compile(CHECK_HTML.getString(i)).matcher(str).find()) {
                 return true;
             }
         }
         return false;
     }
 
-    private static final List<String> CHECK_CUSTOM = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("function.custom")).split(","));
+    private static final JSONArray CHECK_CUSTOM = PROPERTIES.getJSONArray("function.custom");
 
     public static boolean isCustom(String str) {
-        for (String key : CHECK_CUSTOM) {
-            if (Pattern.compile(key).matcher(str).find()) {
+        for (int i = 0; i < CHECK_CUSTOM.size(); i++) {
+            if (Pattern.compile(CHECK_CUSTOM.getString(i)).matcher(str).find()) {
                 return true;
             }
         }
         return false;
     }
 
-    public static final List<String> CHECK_BODY = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("check.body")).split(","));
+    public static final JSONArray CHECK_BODY = PROPERTIES.getJSONArray("check.body");
 
-    public static final List<String> CHECK_CODE = Arrays.asList(
-            StringUtil.trimAny(PROPERTIES.getString("check.code")).split(","));
+    public static final JSONArray CHECK_CODE = PROPERTIES.getJSONArray("check.code");
 
     public static final boolean MAIL_SEND = Boolean.valueOf(PROPERTIES.getString("mail.send").trim());
 
@@ -134,13 +115,13 @@ public class Platform {
 
     public static final String MAIL_SEND_PASS = PROPERTIES.getString("mail.send.password").trim();
 
-    public static final String[] MAIL_SEND_TO_LIST = StringUtil.trimAny(PROPERTIES.getString("mail.send.toList")).split(",");
+    public static final Object[] MAIL_SEND_TO_LIST = PROPERTIES.getJSONArray("mail.send.toList").toArray();
 
-    public static final String[] EXTENDS_VARIABLE = StringUtil.trimAny(PROPERTIES.getString("extends.variable")).split(",");
+    public static final Object[] EXTENDS_VARIABLE = PROPERTIES.getJSONArray("extends.variable").toArray();
 
-    public static final String[] EXTENDS_HOOK = StringUtil.trimAny(PROPERTIES.getString("extends.hook")).split(",");
+    public static final Object[] EXTENDS_HOOK = PROPERTIES.getJSONArray("extends.hook").toArray();
 
-    public static final String[] EXTENDS_VALIDATOR = StringUtil.trimAny(PROPERTIES.getString("extends.validator")).split(",");
+    public static final Object[] EXTENDS_VALIDATOR = PROPERTIES.getJSONArray("extends.validator").toArray();
 
 
 

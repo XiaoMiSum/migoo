@@ -20,22 +20,16 @@ public class JSONReader extends AbstractReader implements Reader {
     private File file;
     private final static Log LOG = new Log(JSONReader.class);
 
-    public JSONReader(String path) {
-        this.path = path;
+    public JSONReader(String path) throws ReaderException {
+        super.stream(ReaderFactory.JSON_SUFFIX, path);
     }
 
-    public JSONReader(File file) {
-        this.file = file;
+    public JSONReader(File file) throws ReaderException {
+        super.stream(ReaderFactory.JSON_SUFFIX, file);
     }
 
     @Override
     public JSON read() throws ReaderException {
-        if (path != null){
-            super.stream(ReaderFactory.JSON_SUFFIX, path);
-        }
-        if (file != null){
-            super.stream(ReaderFactory.JSON_SUFFIX, file);
-        }
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             String line;
             StringBuilder stringBuilder = new StringBuilder();

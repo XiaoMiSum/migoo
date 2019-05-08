@@ -11,25 +11,42 @@ import java.util.Map;
  */
 public class Redis {
 
-    private static Jedis jedis;
+    private Redis(){
 
-    public static Jedis conn(String host, int port, String password){
-        if (jedis == null){
-            jedis = new Jedis(host, port);
-            jedis.auth(password);
-        }
-        return jedis;
     }
 
-    public static String get(String key){
+    private Jedis jedis;
+
+    public Redis(String host, int port, String password){
+        jedis = new Jedis(host, port);
+        jedis.auth(password);
+    }
+
+    public Redis(String host, int port){
+        jedis = new Jedis(host, port);
+    }
+
+    public Redis(String host){
+        jedis = new Jedis(host, 6379);
+    }
+
+    public String select(int index){
+        return jedis.select(index);
+    }
+
+    public String get(String key){
         return jedis.get(key);
     }
 
-    public static Map<String, String> hgetAll(String key){
+    public String set(String key, String value){
+        return jedis.set(key, value);
+    }
+
+    public Map<String, String> hgetAll(String key){
         return jedis.hgetAll(key);
     }
 
-    public static String hget(String key, String field){
+    public String hget(String key, String field){
         return jedis.hget(key, field);
     }
 
@@ -37,15 +54,15 @@ public class Redis {
         return jedis.hmget(key, fields);
     }
 
-    public static long del(String key){
+    public Long del(String key){
         return jedis.del(key);
     }
 
-    public static long del(String... keys){
+    public Long del(String... keys){
         return jedis.del(keys);
     }
 
-    public static long hdel(String key, String... fields){
+    public Long hdel(String key, String... fields){
         return jedis.hdel(key, fields);
     }
 

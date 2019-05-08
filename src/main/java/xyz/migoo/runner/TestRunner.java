@@ -9,7 +9,7 @@ public class TestRunner extends junit.textui.TestRunner{
         super();
     }
 
-    public TestResult run(CaseSuite suite){
+    public TestResult run(TestSuite suite){
         TestResult result= new TestResult();
         long startTime= System.currentTimeMillis();
         suite.run(result);

@@ -9,12 +9,14 @@ import xyz.migoo.exception.ReaderException;
 import xyz.migoo.utils.Log;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * 操作Excel表格的功能类
+ *
  * @author xiaomi
  */
 public class ExcelReader extends AbstractReader implements Reader {
@@ -25,35 +27,35 @@ public class ExcelReader extends AbstractReader implements Reader {
     private int rowCount;
     private int columnCount;
 
-    public ExcelReader(File file) {
+    public ExcelReader(File file) throws ReaderException {
         init(file);
     }
 
-    public ExcelReader(String path) {
+    public ExcelReader(String path) throws ReaderException {
         init(path);
     }
 
-    public ExcelReader(File file, String sheet) {
+    public ExcelReader(File file, String sheet)throws ReaderException {
         init(file);
         parse(sheet);
     }
 
-    private void init (File file){
+    private void init(File file) throws ReaderException {
         try {
             if (file.getName().endsWith(ReaderFactory.XLS_SUFFIX)) {
                 super.stream(ReaderFactory.XLS_SUFFIX, file);
                 workbook = new HSSFWorkbook(inputStream);
             }
-            if (file.getName().endsWith(ReaderFactory.XLSX_SUFFIX)){
+            if (file.getName().endsWith(ReaderFactory.XLSX_SUFFIX)) {
                 super.stream(ReaderFactory.XLSX_SUFFIX, file);
                 workbook = new XSSFWorkbook(inputStream);
             }
-        } catch (Exception e) {
-            log.error("reader file error", e);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private void init (String path) {
+    private void init(String path) throws ReaderException {
         try {
             if (path.trim().toLowerCase().endsWith(ReaderFactory.XLS_SUFFIX)) {
                 super.stream(ReaderFactory.XLS_SUFFIX, path);
@@ -63,13 +65,14 @@ public class ExcelReader extends AbstractReader implements Reader {
                 super.stream(ReaderFactory.XLSX_SUFFIX, path);
                 workbook = new XSSFWorkbook(inputStream);
             }
-        } catch (Exception e) {
-            log.error("reader file error", e);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     /**
      * 解析指定工作表
+     *
      * @param sheet
      * @return
      */
@@ -99,29 +102,30 @@ public class ExcelReader extends AbstractReader implements Reader {
                 Row row = sheet.getRow(i);
                 for (int j = 0; j < columnCount; j++) {
                     content[j] = this.getValue(row.getCell(j)).trim();
-                    if (i > 0){
+                    if (i > 0) {
                         map.put(title[j].toString(), content[j]);
                     }
                 }
-                if (i == 0){
+                if (i == 0) {
                     title = content;
                     continue;
                 }
                 jsonArray.add(JSON.toJSON(map));
             }
             return jsonArray;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ReaderException("please call method ' parse(String sheet) ' set excel sheet name");
         }
 
     }
 
-    public <T> List<T>  toJavaList(Class<T> clazz) throws ReaderException {
-        return ((JSONArray)read()).toJavaList(clazz);
+    public <T> List<T> toJavaList(Class<T> clazz) throws ReaderException {
+        return ((JSONArray) read()).toJavaList(clazz);
     }
 
     /**
      * 根据HSSFCell类型设置数据
+     *
      * @param cell
      * @return
      */

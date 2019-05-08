@@ -2,8 +2,10 @@ package xyz.migoo.utils.reader;
 
 import xyz.migoo.exception.ReaderException;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,7 +38,7 @@ public class ReaderFactory {
     }
 
     public static String suffix(String file){
-        String suffix = file.substring(file.indexOf("."));
+        String suffix = file.substring(file.lastIndexOf("."));
         if (LIST.contains(suffix)){
             return suffix;
         }

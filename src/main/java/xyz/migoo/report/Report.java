@@ -6,7 +6,6 @@ import xyz.migoo.exception.ReaderException;
 import xyz.migoo.exception.ReportException;
 import xyz.migoo.utils.reader.AbstractReader;
 import xyz.migoo.utils.DateUtil;
-import xyz.migoo.utils.EmailUtil;
 import xyz.migoo.utils.Log;
 import xyz.migoo.utils.StringUtil;
 

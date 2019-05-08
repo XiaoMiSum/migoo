@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 
-import static xyz.migoo.utils.Variable.FUNC_PATTERN;
+import static xyz.migoo.parser.BindVariable.FUNC_PATTERN;
 
 /**
  * @author xiaomi
@@ -57,12 +57,14 @@ public class Validator extends Assert {
             if (StringUtil.isEmpty(value)){
                 return;
             }
-            Matcher matcher = FUNC_PATTERN.matcher(value);
-            if (matcher.find()) {
+            Matcher func = FUNC_PATTERN.matcher(value);
+            if (func.find()) {
                 if (methods == null) {
                     methods = InvokeUtil.functionLoader(Platform.EXTENDS_VALIDATOR);
                 }
-                Object result = InvokeUtil.invoke(methods, matcher.group(1), matcher.group(2));
+                Object[] parameter = InvokeUtil.parameter(func.group(2), null);
+                Method method = InvokeUtil.method(methods, func.group(1), parameter);
+                Object result = InvokeUtil.invoke(method, parameter);
                 validate.put(CaseKeys.VALIDATE_EXPECT, result);
             }
         } catch (Exception e) {
@@ -90,7 +92,7 @@ public class Validator extends Assert {
             String clazz = assertion.getClass().getName();
             String method = validate.getString(CaseKeys.VALIDATE_TYPE);
             String msg="Value expected(%s) to be '%s', but found '%s' \n" +
-                    "Assertion class is '%s', assert method is %s";
+                    "Assertion class is '%s', assert method is '%s'";
             throw new AssertionException(String.format(msg, check
                     , expected, actual, clazz, method));
         }

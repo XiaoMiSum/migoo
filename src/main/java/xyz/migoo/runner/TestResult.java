@@ -15,7 +15,7 @@ public class TestResult extends junit.framework.TestResult{
     private long startAt;
     private long endAt;
     private Map<String, Object> report;
-    private CaseSuite caseSuite;
+    private TestSuite testSuite;
 
     public TestResult(){
         super();
@@ -27,25 +27,27 @@ public class TestResult extends junit.framework.TestResult{
         report.put("summary", this.summary());
     }
 
-    public void setTestSuite(CaseSuite caseSuite){
-        this.caseSuite = caseSuite;
+    public void setTestSuite(TestSuite testSuite){
+        this.testSuite = testSuite;
     }
 
     private List<Map<String, Object>> records(){
         List<Map<String, Object>> records = new ArrayList();
         int id = 1;
-        for (TestSuite testSuite : caseSuite.testSuites()){
-            for (TestCase testCase : testSuite.testCases()){
-                Map<String, Object> record = new HashMap<>(6);
-                record.put("status", "success");
-                record.put("name", testCase.name());
+        for (TestCase testCase : testSuite.testCases()){
+            Map<String, Object> record = new HashMap<>(6);
+            record.put("status", "success");
+            record.put("name", testCase.getName());
+            if (testCase.response() != null){
                 record.put("time", testCase.response().duration() / 1000.000f + "  s");
-                record.put("detail", this.detail(testCase, record, id));
-                record.put("record_id", "record_" + id);
-                record.put("record_href", "#record_" + id);
-                records.add(record);
-                id++;
+            }else {
+                record.put("time", "N/A");
             }
+            record.put("detail", this.detail(testCase, record, id));
+            record.put("record_id", "record_" + id);
+            record.put("record_href", "#record_" + id);
+            records.add(record);
+            id++;
         }
         return records;
     }
@@ -53,7 +55,9 @@ public class TestResult extends junit.framework.TestResult{
 
     private synchronized Map<String, Object> detail(TestCase testCase, Map<String, Object> record, int id){
         Map<String, Object> detail = new HashMap<>(7);
-        detail.put("validate", testCase.validate());
+        if (testCase.validate() != null){
+            detail.put("validate", testCase.validate());
+        }
         detail.put("log", this.log(testCase.response(), testCase.request()));
         detail.put("track", null);
         if (testCase.error() != null){
@@ -76,9 +80,10 @@ public class TestResult extends junit.framework.TestResult{
 
     private synchronized Map<String, Object> log(Response response, Request request){
         Map<String, Object> res = new HashMap<>(3);
-        res.put("statusCode", response.statusCode());
-        res.put("body", response.body());
-
+        if (response != null) {
+            res.put("statusCode", response.statusCode());
+            res.put("body", response.body());
+        }
         Map<String, Object> req = new HashMap<>(4);
         req.put("url", request.url());
         req.put("method", request.method());
@@ -97,10 +102,10 @@ public class TestResult extends junit.framework.TestResult{
         Map<String, Object> summary = new HashMap<>(7);
         summary.put("startAt", DateUtil.format(DateUtil.YYYY_MM_DD_HH_MM_SS, startAt));
         summary.put("duration", (endAt - startAt) / 1000.000f + " seconds");
-        summary.put("total", caseSuite.rTests());
-        summary.put("success", caseSuite.rTests() - caseSuite.fTests() - caseSuite.eTests());
-        summary.put("failed", caseSuite.fTests());
-        summary.put("error", caseSuite.eTests());
+        summary.put("total", testSuite.rTests());
+        summary.put("success", testSuite.rTests() - testSuite.fTests() - testSuite.eTests());
+        summary.put("failed", testSuite.fTests());
+        summary.put("error", testSuite.eTests());
         summary.put("skipped", 0);
         return summary;
     }
