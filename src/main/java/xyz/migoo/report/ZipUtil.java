@@ -1,4 +1,4 @@
-package xyz.migoo.utils;
+package xyz.migoo.report;
 
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Zip;
@@ -16,10 +16,10 @@ public class ZipUtil {
 
     }
 
-    public static File zipFile(String path, String fileName) throws IOException{
+    public static File zipFile(String path, String fileName){
         File source = new File(path);
         if (!source.exists()) {
-            throw new IOException(path + "不存在！");
+            source.mkdir();
         }
         Project project = new Project();
         FileSet fileSet = new FileSet();
@@ -37,7 +37,6 @@ public class ZipUtil {
         zip.setDestFile(new File(  path + fileName + ".zip"));
         zip.addFileset(fileSet);
         zip.execute();
-        File zipFile = new File(path + fileName + ".zip");
-        return zipFile;
+        return new File(path + fileName + ".zip");
     }
 }

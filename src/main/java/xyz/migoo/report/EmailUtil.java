@@ -2,10 +2,8 @@ package xyz.migoo.report;
 
 import xyz.migoo.config.Platform;
 import xyz.migoo.utils.DateUtil;
-import xyz.migoo.utils.ZipUtil;
 
 import java.io.File;
-import java.io.IOException;
 
 import static xyz.migoo.config.Platform.*;
 
@@ -28,13 +26,9 @@ public class EmailUtil {
             file = new File(file.getParent() + File.separator + "Reports" + File.separator + DateUtil.TODAY_DATE);
         }
         String subject = "api test reports " + DateUtil.format(DateUtil.YYYY_MM_DD_HH_MM_SS);
-        try {
-            File zip = ZipUtil.zipFile(file.getPath(), "reports-" + DateUtil.TODAY_DATE);
-            EMAIL.send(MAIL_SEND_FROM, MAIL_SEND_TO_LIST, zip, subject,"附件，请查收～");
-            deleteFile(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        File zip = ZipUtil.zipFile(file.getPath(), "reports-" + DateUtil.TODAY_DATE);
+        EMAIL.send(MAIL_SEND_FROM, MAIL_SEND_TO_LIST, zip, subject,"附件，请查收～");
+        deleteFile(file);
     }
 
     public static void sendEmail(String message, String path){
