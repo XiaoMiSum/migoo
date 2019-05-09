@@ -114,6 +114,10 @@ mail.send.password: password
 mail.send.toList:
   - your@email.com
 
+# 忽略目录
+ignore.directory:
+  - .svn
+
 # 自定义方法变量 扩展类列表
 extends.variable:
   - xyz.migoo.func.Func

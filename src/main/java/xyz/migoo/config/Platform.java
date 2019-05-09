@@ -20,6 +20,8 @@ public class Platform {
 
     private static final String STRING = "extends.variable";
 
+    private static final String IGNORE = "ignore.directory";
+
     static {
         String[] properties = new String[]{"application.yml", "migoo.yml"};
         for (String file : properties) {
@@ -29,10 +31,10 @@ public class Platform {
                     continue;
                 }
                 ((JSONObject)reader.read()).forEach((key, value) -> {
-                    if (PROPERTIES.containsKey(key) && STRING.equals(key)) {
+                    PROPERTIES.put(key, value);
+                    if (STRING.equals(key) || IGNORE.equals(key)) {
                         ((JSONArray)value).addAll(PROPERTIES.getJSONArray(key));
                     }
-                    PROPERTIES.put(key, value);
                 });
             } catch (ReaderException e) {
                 e.printStackTrace();
@@ -114,6 +116,8 @@ public class Platform {
     public static final String MAIL_SEND_FROM = PROPERTIES.getString("mail.send.from").trim();
 
     public static final String MAIL_SEND_PASS = PROPERTIES.getString("mail.send.password").trim();
+
+    public static final JSONArray IGNORE_DIRECTORY = PROPERTIES.getJSONArray("ignore.directory");
 
     public static final Object[] MAIL_SEND_TO_LIST = PROPERTIES.getJSONArray("mail.send.toList").toArray();
 

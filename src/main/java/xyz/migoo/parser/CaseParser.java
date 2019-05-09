@@ -9,6 +9,8 @@ import xyz.migoo.utils.reader.ReaderFactory;
 
 import java.io.File;
 
+import static xyz.migoo.config.Platform.IGNORE_DIRECTORY;
+
 /**
  * @author xiaomi
  */
@@ -60,7 +62,7 @@ public class CaseParser {
             assert fList != null;
             for (String f : fList) {
                 if (StringUtil.contains(f, "vars.")
-                    ||f.startsWith(".")) {
+                    ||f.startsWith(".") || IGNORE_DIRECTORY.contains(f)) {
                     continue;
                 }
                 if (!path.endsWith("/")) {
