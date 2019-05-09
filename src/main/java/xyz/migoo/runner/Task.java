@@ -11,7 +11,6 @@ import xyz.migoo.http.Client;
 import xyz.migoo.http.Request;
 import xyz.migoo.http.Response;
 import xyz.migoo.parser.BindVariable;
-import xyz.migoo.utils.Hook;
 import xyz.migoo.utils.Log;
 import xyz.migoo.utils.StringUtil;
 
@@ -38,7 +37,6 @@ public class Task {
             Response response = client.execute(request);
             testCase.response(response);
             this.addLog(request.title(), response);
-            Hook.hook(jsonCase.get(CaseKeys.CASE_AFTER), null);
             this.assertThat(jsonCase.get(CaseKeys.VALIDATE), response, testCase);
         } catch (AssertionException e) {
             log.error(e.getMessage(), e);

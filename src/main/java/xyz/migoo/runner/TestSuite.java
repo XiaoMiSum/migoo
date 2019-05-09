@@ -34,22 +34,23 @@ public class TestSuite extends junit.framework.TestSuite {
     private void init(JSONObject caseSet, JSONObject variables) throws InvokeException {
         JSONObject config = caseSet.getJSONObject(CaseKeys.CONFIG);
         JSONObject configVars = config.getJSONObject(CaseKeys.CONFIG_VARIABLES);
-        // 处理 变量
+        // 先执行数据准备工作 beforeClass 中的只能使用准确数据 或 vars 中的变量
+        Object beforeClass = config.get(CaseKeys.CONFIG_BEFORE_CLASS);
+        Hook.hook(beforeClass, configVars);
+        // 然后再处理 config.variables 中的变量
         BindVariable.merge(variables, configVars);
         JSONObject request = config.getJSONObject(CaseKeys.CONFIG_REQUEST);
         BindVariable.loopBindVariables(configVars, request);
-        // 测试用例执行前的数据准备 相当于 JUnit 的 before class
-        Object beforeClass = config.get(CaseKeys.CONFIG_BEFORE_CLASS);
-        BindVariable.loopBindVariables(configVars, beforeClass);
-        Hook.hook(beforeClass, configVars);
         JSONObject headers = request.getJSONObject(CaseKeys.CONFIG_REQUEST_HEADERS);
         Object encode = request.get(CaseKeys.CONFIG_REQUEST_ENCODE);
         Client client = new Client.Config().https(request.get(CaseKeys.CONFIG_REQUEST_HTTPS)).build();
         JSONArray testCases = caseSet.getJSONArray(CaseKeys.CASE);
         for (int i = 0; i < testCases.size(); i++) {
             JSONObject testCase = testCases.getJSONObject(i);
+            // 先执行数据准备工作 before 中的只能使用准确数据 或 vars、config.vars 中的变量
+            Hook.hook(testCase.get(CaseKeys.CASE_AFTER), configVars);
+            // 然后再处理 case.variables 中的变量
             JSONObject caseVars = testCase.getJSONObject(CaseKeys.CASE_VARIABLES);
-            // 处理变量
             BindVariable.merge(configVars, caseVars);
             // 将 case_variables 中的 绑定到 case
             BindVariable.bind(caseVars, testCase);
