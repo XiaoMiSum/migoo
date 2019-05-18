@@ -22,7 +22,7 @@ public class TestResult extends junit.framework.TestResult{
     }
 
     protected synchronized void serialization(){
-        report = new HashMap<>(1);
+        report = new HashMap<>(2);
         report.put("records", this.records());
         report.put("summary", this.summary());
     }
@@ -103,7 +103,7 @@ public class TestResult extends junit.framework.TestResult{
         summary.put("startAt", DateUtil.format(DateUtil.YYYY_MM_DD_HH_MM_SS, startAt));
         summary.put("duration", (endAt - startAt) / 1000.000f + " seconds");
         summary.put("total", testSuite.rTests());
-        summary.put("success", testSuite.rTests() - testSuite.fTests() - testSuite.eTests());
+        summary.put("success", testSuite.getSuccessCount());
         summary.put("failed", testSuite.fTests());
         summary.put("error", testSuite.eTests());
         summary.put("skipped", 0);
@@ -119,6 +119,10 @@ public class TestResult extends junit.framework.TestResult{
 
     synchronized Map<String, Object> report(){
         return report;
+    }
+
+    public TestSuite testSuite(){
+        return testSuite;
     }
 
 }

@@ -1,6 +1,5 @@
 package xyz.migoo.runner;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.config.CaseKeys;
@@ -23,6 +22,7 @@ public class TestSuite extends junit.framework.TestSuite {
     private int fTests = 0;
     private int eTests = 0;
     private int rTests = 0;
+    private int ignore = 0;
 
     protected TestSuite(JSONObject caseSet, JSONObject variables) throws InvokeException {
         super();
@@ -104,15 +104,26 @@ public class TestSuite extends junit.framework.TestSuite {
         rTests += 1;
     }
 
-    int fTests(){
+    void addIgnore(){
+        ignore += 1;
+    }
+
+    public int fTests(){
         return fTests;
     }
 
-    int eTests(){
+    public int eTests(){
         return eTests;
     }
 
-    int rTests(){
+    public int rTests(){
         return rTests;
+    }
+
+    public int getIgnoreCount(){
+        return ignore;
+    }
+    public int getSuccessCount(){
+        return rTests - ignore - fTests - eTests;
     }
 }

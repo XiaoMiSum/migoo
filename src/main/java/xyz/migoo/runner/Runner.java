@@ -13,7 +13,6 @@ import xyz.migoo.utils.Log;
 import xyz.migoo.utils.StringUtil;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * @author xiaomi
@@ -25,7 +24,7 @@ public class Runner {
     private boolean isMain = false;
     private static Runner runner;
     private JSONObject variables;
-    private List<TestResult> testResults;
+    private Report report = new Report();
 
     public static Runner getInstance(){
         if (runner == null){
@@ -64,7 +63,7 @@ public class Runner {
     private TestResult byCase(String caseOrPath){
         TestSuite caseSuite = this.initTestSuite(caseOrPath);
         TestResult result = new TestRunner().run(caseSuite);
-        Report.generateReport(result.report(), caseSuite.getName(), isMain);
+        Report.generateReport(result.report(), caseSuite.getName(), isMain, false);
         return result;
     }
 
@@ -79,18 +78,19 @@ public class Runner {
             this.variables = CaseParser.loadVariables(vars);
             BindVariable.bindVariables(variables, variables);
             JSON.parse(caseOrPath);
-            this.byCase(caseOrPath);
+            report.addResult(this.byCase(caseOrPath));
         } catch (ReaderException | InvokeException e){
             // 绑定全局变量异常 停止测试
             LOG.error("bind vars exception.", e);
             throw new RuntimeException("bind vars exception.");
         } catch (JSONException e){
-            this.byPath(caseOrPath);
+            report.addResult(this.byCase(caseOrPath));
         }
         EmailUtil.sendEmail(isMain);
     }
 
-    private void byPath(String path){
+    private TestResult byPath(String path){
+        TestResult result = null;
         File file = new File(path);
         if (file.isDirectory()) {
             String[] fList = file.list();
@@ -107,9 +107,10 @@ public class Runner {
             }
         } else {
             TestSuite testSuite = this.initTestSuite(path);
-            TestResult result = new TestRunner().run(testSuite);
+            result = new TestRunner().run(testSuite);
             Report.generateReport(result.report(), testSuite.getName(), isMain,false);
         }
+        return result;
     }
 
     private TestSuite initTestSuite(String caseOrPath){

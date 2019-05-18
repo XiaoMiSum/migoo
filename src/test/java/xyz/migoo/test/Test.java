@@ -44,7 +44,7 @@ public class Test extends Base{
                 "  \"name\": \"the test suite name\"," +
                 "  \"config\": {" +
                 "    \"variables\":{" +
-                "      \"user\": \"migoo\"" +
+                "      \"user\": \"test\"" +
                 "    }," +
                 "    \"beforeClass\": [\"__hook1(beforeClass)\"]," +
                 "    \"request\": {" +
@@ -59,7 +59,7 @@ public class Test extends Base{
                 "    {" +
                 "      \"title\": \"未注册的用户\"," +
                 "      \"setUp\": {" +
-                "        \"pwd\": \"123456qq\"" +
+                "        \"pwd\": \"123456\"" +
                 "      }," +
                 "      \"before\": [\"__hook1(before)\"]," +
                 "      \"after\": [\"__hook2(after,before)\"]," +
@@ -82,7 +82,7 @@ public class Test extends Base{
                 "      \"after\": [\"__hook2(after,before)\"]," +
                 "      \"body\": {" +
                 "        \"userName\": \"${user}\"," +
-                "        \"password\": \"123456\"" +
+                "        \"password\": \"12345\"" +
                 "      }," +
                 "      \"validate\": [" +
                 "        {\"check\": \"status\", \"expect\": 200, \"types\": \"==\"}," +
@@ -91,14 +91,14 @@ public class Test extends Base{
                 "      ]" +
                 "    }," +
                 "    {" +
-                "      \"title\": \"未注册的用户\"," +
-                "      \"setUp\": {" +
+                "      \"title\": \"正确的用户名密码\"," +
+                "      \"variables\": {" +
                 "      }," +
                 "      \"before\": [\"__hook1(before)\"]," +
                 "      \"after\": [\"__hook2(after)\"]," +
                 "      \"body\": {" +
                 "        \"userName\": \"${user}\"," +
-                "        \"password\": \"123456qq\"" +
+                "        \"password\": \"123456\"" +
                 "      }," +
                 "      \"validate\": [" +
                 "        {\"check\": \"status\", \"expect\": 200, \"types\": \"==\"}," +
@@ -108,8 +108,6 @@ public class Test extends Base{
                 "    }" +
                 "  ]" +
                 "}";
-
-        //runner.execute(json);
-        //runner.run(json);
+        runner.run(json, "");
     }
 }

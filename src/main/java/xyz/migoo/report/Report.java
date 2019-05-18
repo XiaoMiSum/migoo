@@ -4,13 +4,17 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import xyz.migoo.exception.ReaderException;
 import xyz.migoo.exception.ReportException;
+import xyz.migoo.runner.TestResult;
 import xyz.migoo.utils.reader.AbstractReader;
 import xyz.migoo.utils.DateUtil;
 import xyz.migoo.utils.Log;
 import xyz.migoo.utils.StringUtil;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static xyz.migoo.config.Platform.HTTP_CLIENT_VERSION;
@@ -25,8 +29,67 @@ public class Report {
 
     private static Log log = new Log(Report.class);
     private final static TemplateEngine TEMPLATE_ENGINE = new TemplateEngine();
+    private static Map<String, String> platform = new HashMap<>(3);
 
-    private Report() {
+    private List<TestResult> testResults = new ArrayList<>();
+    Map<String, Object> report = new HashMap<>(2);
+    private int total = 0;
+    private int success = 0;
+    private int failed = 0;
+    private int error = 0;
+    private int skipped = 0;
+
+    public Report(){
+    }
+
+    public void addResult(TestResult testResult){
+        total += testResult.testSuite().rTests();
+        failed += testResult.testSuite().fTests();
+        error += testResult.testSuite().eTests();
+        success += testResult.testSuite().getSuccessCount();
+        skipped += testResult.testSuite().getIgnoreCount();;
+        testResults.add(testResult);
+    }
+
+    public void serialization(){
+        Map<String, Object> summary = new HashMap<>(5);
+        List<Map<String, Object>> records = new ArrayList<>();
+        this.records(records);
+        this.summary(summary);
+        report.put("records", records);
+        report.put("summary", summary);
+        report.put("platform", platform);
+    }
+
+    private void records(List<Map<String, Object>> records){
+        testResults.forEach(testResult -> {
+            Map<String, Object> record = new HashMap<>(7);
+            record.put("title", testResult.testSuite().getName());
+            record.put("link", "./html/" + testResult.testSuite().getName() + ".html");
+            record.put("total", testResult.testSuite().rTests());
+            record.put("success", testResult.testSuite().getSuccessCount());
+            record.put("failed", testResult.testSuite().fTests());
+            record.put("error", testResult.testSuite().eTests());
+            record.put("skipped", testResult.testSuite().getIgnoreCount());
+            records.add(record);
+        });
+    }
+
+    private void summary(Map<String, Object> summary){
+        summary.put("total", total);
+        summary.put("success", success);
+        summary.put("failed", failed);
+        summary.put("error", error);
+        summary.put("skipped", skipped);
+    }
+
+    public void index(boolean isMain){
+        try {
+            String content = render("classpath://templates/migoo_index_template.html", report);
+            report("index", content, isMain);
+        } catch (ReaderException e) {
+            e.printStackTrace();
+        }
     }
 
     public static String generateReport(Map<String, Object> report, String reportName, boolean isMain) {
@@ -39,7 +102,7 @@ public class Report {
         }
         report.put("report", "Test Report:  " + reportName);
         report.put("title", reportName + " - TestReport");
-        report.put("platform", platform());
+        report.put("platform", platform);
         String content;
         try {
             content = render("classpath://templates/migoo_report_template.html", report);
@@ -68,20 +131,12 @@ public class Report {
         return TEMPLATE_ENGINE.process(template, context);
     }
 
-    private static Map<String, String> platform() {
-        Map<String, String> platform = new HashMap<>(3);
-        platform.put("jdk", "JDK " + JDK_VERSION);
-        platform.put("httpclient", "HTTP Client " + HTTP_CLIENT_VERSION);
-        platform.put("os", OS_VERSION);
-        return platform;
-    }
-
     private static String report(String name, String template, boolean isMain) {
         File file = new File(System.getProperty("user.dir"));
         if (isMain) {
-            file = new File(file.getPath() + "/Reports/" + DateUtil.TODAY_DATE);
+            file = new File(file.getPath() + "/Reports/" + DateUtil.TODAY_DATE + "/html");
         } else {
-            file = new File(file.getParent() + "/Reports/" + DateUtil.TODAY_DATE);
+            file = new File(file.getParent() + "/Reports/" + DateUtil.TODAY_DATE + "/html");
         }
         if (!file.exists()) {
             file.mkdir();
@@ -95,6 +150,12 @@ public class Report {
             log.error(e.getMessage(), e);
             throw new ReportException("create report error , file path " + file.getPath());
         }
+    }
+
+    {
+        platform.put("jdk", "JDK " + JDK_VERSION);
+        platform.put("httpclient", "HTTP Client " + HTTP_CLIENT_VERSION);
+        platform.put("os", OS_VERSION);
     }
 
     private static class HtmlReader extends AbstractReader {
@@ -114,5 +175,11 @@ public class Report {
             }
             return stringBuilder.toString();
         }
+    }
+
+
+    public static void main(String[] args) throws IOException {
+        File f1 = new File("/Users/kogome/test2/1.yml");
+        System.out.println(f1.getName());
     }
 }
