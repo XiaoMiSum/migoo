@@ -32,7 +32,9 @@ public class BindVariable {
         // 1. 将 1 中的 绑定到 2
         loopBindVariables(vars1, vars2);
         // 2. 合并 1 到 2
-        vars2.putAll(vars1);
+        if (vars1 != null){
+            vars2.putAll(vars1);
+        }
         // 3. 将 2 中的 绑定到 2
         BindVariable.loopBindVariables(vars2, vars2);
     }
@@ -62,6 +64,9 @@ public class BindVariable {
     }
 
     private static void bind(JSONObject vars, JSONArray useVarObject) throws InvokeException {
+        if (vars == null || vars.isEmpty()){
+            return;
+        }
         for (String varsKey : vars.keySet()){
             Object varsValue = vars.get(varsKey);
             if (varsValue instanceof String){
@@ -80,12 +85,16 @@ public class BindVariable {
     }
 
     private static void bind(JSONObject vars, JSONObject useVarObject) throws InvokeException {
+        if (vars == null || vars.isEmpty()){
+            return;
+        }
         for (String varsKey : vars.keySet()){
             Object varsValue = vars.get(varsKey);
             if (varsValue instanceof String){
                 Matcher matcher = FUNC_PATTERN.matcher((String) varsValue);
                 if (matcher.find()) {
                     varsValue = evalVariable((String) varsValue, vars);
+                    vars.put(varsKey, varsValue);
                 }
             }
             String regex = "${" + varsKey + "}";
@@ -130,7 +139,7 @@ public class BindVariable {
             return varsValue;
         }
         if (StringUtil.contains(stringObj, regex)){
-            return stringObj.replace(regex, stringObj);
+            return stringObj.replace(regex, String.valueOf(varsValue));
         }
         return object;
     }

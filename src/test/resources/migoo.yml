@@ -7,7 +7,7 @@ mail.send: false
 mail.imap.host: imap.exmail.qq.com
 
 # 发件人邮箱地址
-mail.send.from: your1@email.com
+mail.send.from: yacheng.xiao@nascent.cn
 
 # 发件人邮箱密码
 mail.send.password: password
@@ -18,11 +18,12 @@ mail.send.toList:
 
 # 自定义方法变量 扩展类列表
 extends.variable:
-  - xyz.migoo.func.Func
+  - xyz.migoo.test.extend.Variable
 
 # 自定义Hook函数 扩展类列表
 extends.hook:
-  - xyz.migoo.test.extend.Hook
+  - xyz.migoo.test.extend.Hook1
+  - xyz.migoo.test.extend.Hook2
 
 # 自定义检查方式 扩展类列表
 extends.validator:

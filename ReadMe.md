@@ -1,7 +1,8 @@
 # MiGoo
 
 [![License](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/XiaoMiSum/MiGoo/blob/master/LICENSE)
-
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/xyz.migoo/migoo/badge.svg)](https://maven-badges.herokuapp.com/maven-central/xyz.migoo/migoo)
+[![Maven Central](https://img.shields.io/badge/Author-xiaomi-yellow.svg)](https://maven-badges.herokuapp.com/maven-central/xyz.migoo/migoo)
 
 ## 1. 介绍
 

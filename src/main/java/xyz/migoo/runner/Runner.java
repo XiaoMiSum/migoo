@@ -21,7 +21,6 @@ import java.io.File;
 public class Runner {
 
     private static Log LOG = new Log(Runner.class);
-    private boolean isMain = false;
     private static Runner runner;
     private JSONObject variables;
     private Report report = new Report();
@@ -37,24 +36,8 @@ public class Runner {
         return runner;
     }
 
-    public static Runner getInstance(boolean isMain){
-        if (runner == null){
-            synchronized (Runner.class){
-                if (runner == null){
-                    runner = new Runner(isMain);
-                }
-            }
-        }
-        return runner;
-    }
-
     private Runner(){
     }
-
-    private Runner(boolean isMain){
-        this.isMain = isMain;
-    }
-
     /**
      * 如果传入的是目录，生成的测试报告在同一个文件中
      * @param caseOrPath json 格式的 case 或 测试用例文件\目录
@@ -63,7 +46,7 @@ public class Runner {
     private TestResult byCase(String caseOrPath){
         TestSuite caseSuite = this.initTestSuite(caseOrPath);
         TestResult result = new TestRunner().run(caseSuite);
-        Report.generateReport(result.report(), caseSuite.getName(), isMain, false);
+        Report.generateReport(result.report(), caseSuite.getName(), false);
         return result;
     }
 
@@ -86,7 +69,9 @@ public class Runner {
         } catch (JSONException e){
             report.addResult(this.byCase(caseOrPath));
         }
-        EmailUtil.sendEmail(isMain);
+        report.serialization();
+        report.index();
+        EmailUtil.sendEmail();
     }
 
     private TestResult byPath(String path){
@@ -108,7 +93,7 @@ public class Runner {
         } else {
             TestSuite testSuite = this.initTestSuite(path);
             result = new TestRunner().run(testSuite);
-            Report.generateReport(result.report(), testSuite.getName(), isMain,false);
+            Report.generateReport(result.report(), testSuite.getName(),false);
         }
         return result;
     }

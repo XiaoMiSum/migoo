@@ -60,8 +60,8 @@ public class InvokeUtil {
             if (variables == null || variables.isEmpty()){
                 parameter[i] = obj;
             }else {
-                Object object = variables.get(param.group(1));
-                if (param.find() && object != null) {
+                if (param.find()) {
+                    Object object = variables.get(param.group(1));
                     if (FUNC_PATTERN.matcher(String.valueOf(obj)).find()
                             || PARAM_PATTERN.matcher(String.valueOf(obj)).find()){
                         throw new RuntimeException(param.group(1) + " need eval!");

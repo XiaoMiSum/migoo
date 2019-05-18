@@ -41,7 +41,7 @@ public class Test extends Base{
     @org.junit.Test
     public void testApiCaseSet(){
         String json = "{" +
-                "  \"name\": \"the test suite name\"," +
+                "  \"name\": \"the-test-suite-name\"," +
                 "  \"config\": {" +
                 "    \"variables\":{" +
                 "      \"user\": \"test\"" +
@@ -58,7 +58,7 @@ public class Test extends Base{
                 "  \"case\": [" +
                 "    {" +
                 "      \"title\": \"未注册的用户\"," +
-                "      \"setUp\": {" +
+                "      \"variables\": {" +
                 "        \"pwd\": \"123456\"" +
                 "      }," +
                 "      \"before\": [\"__hook1(before)\"]," +
@@ -75,7 +75,7 @@ public class Test extends Base{
                 "    }," +
                 "    {" +
                 "      \"title\": \"密码错误\"," +
-                "      \"setUp\": {" +
+                "      \"variables\": {" +
                 "        \"pwd\": \"__getPwd(${user})\"" +
                 "      }," +
                 "      \"before\": [\"__hook1(before)\"]," +
@@ -95,7 +95,7 @@ public class Test extends Base{
                 "      \"variables\": {" +
                 "      }," +
                 "      \"before\": [\"__hook1(before)\"]," +
-                "      \"after\": [\"__hook2(after)\"]," +
+                "      \"after\": [\"__hook2(after,hei)\"]," +
                 "      \"body\": {" +
                 "        \"userName\": \"${user}\"," +
                 "        \"password\": \"123456\"" +

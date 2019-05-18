@@ -7,9 +7,8 @@ package xyz.migoo.test.extend;
  */
 public class Hook2 {
 
-    public static void hook2(String param){
-        System.out.println("hook2: " + param);
+    public static void hook2(String param, String pa2){
+        System.out.println( param + ": " + pa2);
     }
-
 
 }

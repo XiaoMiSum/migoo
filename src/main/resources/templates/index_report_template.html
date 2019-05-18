@@ -193,7 +193,7 @@
 
     <tr th:each="item : ${records}">
         <th th:text="${item.title}"></th>
-        <th><a th:href="${item.link}"></a></th>
+        <th><a th:href="${item.link}" th:text="${item.link}"></a></th>
         <th th:text="${item.total}"></th>
         <th th:text="${item.success}" class="success"></th>
         <th th:text="${item.failed}" class="failure"></th>

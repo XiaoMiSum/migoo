@@ -4,8 +4,8 @@
 
     <groupId>xyz.migoo</groupId>
     <artifactId>migoo</artifactId>
-    <packaging>pom</packaging>
-    <version>1.0.1-SNAPSHOT</version>
+
+    <version>1.0.2</version>
     <name>migoo</name>
     <description>a tool for rest-api test</description>
     <url>https://xiaomisum.github.io/MiGoo/</url>
@@ -163,7 +163,7 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
-                <filtering>false</filtering>
+                <filtering>true</filtering>
             </resource>
         </resources>
         <plugins>
@@ -207,23 +207,10 @@
                 <configuration>
                     <!-- 解决 java8 下发布到 maven 中心库时，生成 doc 的异常 -->
                     <additionalparam>-Xdoclint:none</additionalparam>
-                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <encoding>UTF-8</encoding>
                     <outputDirectory>${basedir}</outputDirectory>
                     <reportOutputDirectory>${basedir}</reportOutputDirectory>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -83,20 +83,20 @@ public class Report {
         summary.put("skipped", skipped);
     }
 
-    public void index(boolean isMain){
+    public void index(){
         try {
-            String content = render("classpath://templates/migoo_index_template.html", report);
-            report("index", content, isMain);
+            String content = render("classpath://templates/index_report_template.html", report);
+            report("index", content, true);
         } catch (ReaderException e) {
             e.printStackTrace();
         }
     }
 
-    public static String generateReport(Map<String, Object> report, String reportName, boolean isMain) {
-        return generateReport(report, reportName, isMain, true);
+    public static String generateReport(Map<String, Object> report, String reportName) {
+        return generateReport(report, reportName, true);
     }
 
-    public static String generateReport(Map<String, Object> report, String reportName, boolean isMain, boolean sendEmail) {
+    public static String generateReport(Map<String, Object> report, String reportName, boolean sendEmail) {
         if (StringUtil.isBlank(reportName)) {
             reportName = "Auto Test Report";
         }
@@ -106,7 +106,7 @@ public class Report {
         String content;
         try {
             content = render("classpath://templates/migoo_report_template.html", report);
-            String file = report(reportName, content, isMain);
+            String file = report(reportName, content, false);
             if (sendEmail) {
                 EmailUtil.sendEmail(content, file);
             }
@@ -131,17 +131,18 @@ public class Report {
         return TEMPLATE_ENGINE.process(template, context);
     }
 
-    private static String report(String name, String template, boolean isMain) {
+    private static String report(String name, String template, boolean isIndex) {
         File file = new File(System.getProperty("user.dir"));
-        if (isMain) {
-            file = new File(file.getPath() + "/Reports/" + DateUtil.TODAY_DATE + "/html");
-        } else {
-            file = new File(file.getParent() + "/Reports/" + DateUtil.TODAY_DATE + "/html");
+        file = new File(file.getPath() + "/Reports/" + DateUtil.TODAY_DATE);
+        String path = file.getPath() + "/html/" + name + ".html";
+        if (isIndex){
+            path = file.getPath() + "/" + name + ".html";
         }
         if (!file.exists()) {
             file.mkdir();
+            file = new File(file.getPath() + "/html");
+            file.mkdir();
         }
-        String path = file.getPath() + "/" + name + ".html";
         try (Writer writer = new FileWriter(path)) {
             writer.write(template);
             writer.close();
