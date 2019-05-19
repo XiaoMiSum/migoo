@@ -5,7 +5,7 @@
     <groupId>xyz.migoo</groupId>
     <artifactId>migoo</artifactId>
 
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.2</version>
     <name>migoo</name>
     <description>a tool for rest-api test</description>
     <url>https://xiaomisum.github.io/MiGoo/</url>
@@ -176,7 +176,7 @@
                 </configuration>
                 <version>${compile.version}</version>
             </plugin>
-            <plugin>
+<!--            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.0.1</version>
@@ -191,7 +191,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -208,8 +208,8 @@
                     <!-- 解决 java8 下发布到 maven 中心库时，生成 doc 的异常 -->
                     <additionalparam>-Xdoclint:none</additionalparam>
                     <encoding>UTF-8</encoding>
-                    <outputDirectory>${basedir}</outputDirectory>
-                    <reportOutputDirectory>${basedir}</reportOutputDirectory>
+                    <outputDirectory>${basedir}/doc</outputDirectory>
+                    <reportOutputDirectory>${basedir}/report</reportOutputDirectory>
                 </configuration>
             </plugin>
             <plugin>
