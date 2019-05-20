@@ -1,4 +1,4 @@
-package xyz.migoo.utils.authen;
+package xyz.migoo.utils.digest;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -11,7 +11,7 @@ import java.security.spec.X509EncodedKeySpec;
  * RSA签名验签类
  * @author xiaomi
  */
-public class RSASignature {
+public class RsaCrypt {
 	/**
 	 * 签名算法
 	 */
@@ -68,7 +68,6 @@ public class RSASignature {
 		}
 		return null;
 	}
-
 
 	/**
 	 * 公钥加密

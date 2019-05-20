@@ -1,4 +1,4 @@
-package xyz.migoo.utils.authen;
+package xyz.migoo.utils.digest;
 
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;

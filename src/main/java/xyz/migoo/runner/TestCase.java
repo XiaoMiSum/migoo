@@ -7,6 +7,7 @@ import xyz.migoo.config.CaseKeys;
 import xyz.migoo.exception.AssertionException;
 import xyz.migoo.http.Request;
 import xyz.migoo.http.Response;
+import xyz.migoo.utils.TypeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ public class TestCase extends junit.framework.TestCase{
     private Response response;
     private Exception error;
     private AssertionException failure;
+    private Object ignore;
 
     public TestCase(Task task, JSONObject testCase, TestSuite testSuite){
         super(testCase.getString(CaseKeys.CASE_TITLE));
@@ -40,6 +42,12 @@ public class TestCase extends junit.framework.TestCase{
     public void runTest(){
         try {
             this.testSuite.addRTests();
+            Boolean ignore = TypeUtil.booleanOf(testCase.get(CaseKeys.CASE_IGNORE));
+            if (ignore != null && ignore){
+                testSuite.addIgnore();
+                this.ignore = new Object();
+                return;
+            }
             this.task.run(this.testCase, this);
         }catch (AssertionException failure){
             this.failure = failure;
@@ -81,5 +89,9 @@ public class TestCase extends junit.framework.TestCase{
 
     public Exception error(){
         return error;
+    }
+
+    public Object ignore() {
+        return ignore;
     }
 }

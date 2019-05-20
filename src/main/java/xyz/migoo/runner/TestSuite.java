@@ -6,7 +6,6 @@ import xyz.migoo.config.CaseKeys;
 import xyz.migoo.exception.InvokeException;
 import xyz.migoo.http.Client;
 import xyz.migoo.http.Request;
-import xyz.migoo.utils.Hook;
 import xyz.migoo.utils.StringUtil;
 import xyz.migoo.parser.BindVariable;
 
@@ -123,6 +122,7 @@ public class TestSuite extends junit.framework.TestSuite {
     public int getIgnoreCount(){
         return ignore;
     }
+
     public int getSuccessCount(){
         return rTests - ignore - fTests - eTests;
     }
