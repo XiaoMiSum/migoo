@@ -204,8 +204,7 @@ public class BindVariable {
             if (func.find()) {
                 functionLoader();
                 Object[] parameter = InvokeUtil.parameter(func.group(2), variables);
-                Method method = InvokeUtil.method(methods, func.group(1), parameter);
-                return InvokeUtil.invoke(method, parameter);
+                return InvokeUtil.invoke(methods, func.group(1), parameter);
             }
         } catch (RuntimeException ignored) {
 

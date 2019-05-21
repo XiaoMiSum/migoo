@@ -13,6 +13,7 @@ import xyz.migoo.http.Response;
 import xyz.migoo.parser.BindVariable;
 import xyz.migoo.utils.Log;
 import xyz.migoo.utils.StringUtil;
+import xyz.migoo.utils.TypeUtil;
 
 /**
  * @author xiaomi
@@ -49,9 +50,9 @@ public class Task {
 
     private void buildRequest(JSONObject testCase) throws InvokeException {
         JSONObject variables = testCase.getJSONObject(CaseKeys.CASE_VARIABLES);
-        BindVariable.evalVariable(variables, testCase.getJSONObject(CaseKeys.CASE_QUERY));
-        BindVariable.evalVariable(variables, testCase.getJSONObject(CaseKeys.CASE_DATA));
-        BindVariable.evalVariable(variables, testCase.getJSONObject(CaseKeys.CASE_BODY));
+        BindVariable.evalVariable(testCase.getJSONObject(CaseKeys.CASE_QUERY), variables);
+        BindVariable.evalVariable(testCase.getJSONObject(CaseKeys.CASE_DATA), variables);
+        BindVariable.evalVariable(testCase.getJSONObject(CaseKeys.CASE_BODY), variables);
         this.request = builder.query(testCase.getJSONObject(CaseKeys.CASE_QUERY))
                 .body(testCase.getJSONObject(CaseKeys.CASE_BODY))
                 .data(testCase.getJSONObject(CaseKeys.CASE_DATA))

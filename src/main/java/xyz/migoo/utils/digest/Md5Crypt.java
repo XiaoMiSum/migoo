@@ -1,4 +1,4 @@
-package xyz.migoo.utils.authen;
+package xyz.migoo.utils.digest;
 
 import java.security.MessageDigest;
 
@@ -6,9 +6,9 @@ import java.security.MessageDigest;
  * @author Administrator
  * @date 2017/11/25
  */
-public class Md5Signature {
+public class Md5Crypt {
 
-    private Md5Signature(){}
+    private Md5Crypt(){}
 
     public static String md5(String content) {
         return encode(content, "MD5");
@@ -17,27 +17,27 @@ public class Md5Signature {
     /**
      * sha-256编码
      *
-     * @param origin 原始字符串
+     * @param content 原始字符串
      * @return 经过sha-256加密之后的结果
      */
-    public static String sha256(String origin) {
-        return encode(origin, "SHA-256");
+    public static String sha256(String content) {
+        return encode(content, "SHA-256");
     }
 
     /**
      *
-     * @param origin 原始字符串
+     * @param content 原始字符串
      * @return 经过加密之后的结果
      */
-    public static String sha512(String origin) {
-        return encode(origin, "SHA-512");
+    public static String sha512(String content) {
+        return encode(content, "SHA-512");
     }
 
-    private static String encode(String origin, String type) {
+    public static String encode(String content, String type) {
         String resultString = null;
         try {
             MessageDigest md = MessageDigest.getInstance(type);
-            resultString = byteArrayToHexString(md.digest(origin.getBytes()));
+            resultString = byteArrayToHexString(md.digest(content.getBytes()));
         } catch (Exception e) {
             e.printStackTrace();
         }

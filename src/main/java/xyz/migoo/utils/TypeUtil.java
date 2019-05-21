@@ -27,7 +27,7 @@ public class TypeUtil {
         }else {
             if (value instanceof String) {
                 String strVal = ((String) value).toLowerCase();
-                if (StringUtil.isNotBlank(StringUtil.toEmpty(strVal))) {
+                if (StringUtil.isBlank(StringUtil.toEmpty(strVal))) {
                     return null;
                 }
                 if (TRUE.equals(strVal) || ONE.equals(strVal)) {

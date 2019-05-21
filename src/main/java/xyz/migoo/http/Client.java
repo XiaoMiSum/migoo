@@ -94,8 +94,8 @@ public class Client {
      */
     private Response doPost(Request request) {
         HttpPost httpPost = new HttpPost(this.setParameters(request));
-        this.setHeader(request, httpPost);
         this.setEntity(request, httpPost);
+        this.setHeader(request, httpPost);
         return this.doExecute(httpPost, request);
     }
 
@@ -107,8 +107,8 @@ public class Client {
      */
     private Response doPut(Request request) {
         HttpPut httpPut = new HttpPut(this.setParameters(request));
-        this.setHeader(request, httpPut);
         this.setEntity(request, httpPut);
+        this.setHeader(request, httpPut);
         return this.doExecute(httpPut, request);
     }
 
@@ -120,8 +120,8 @@ public class Client {
      */
     private Response doDelete(Request request) {
         HttpDelete httpDelete = new HttpDelete(this.setParameters(request));
-        this.setHeader(request, httpDelete);
         this.setEntity(request, httpDelete);
+        this.setHeader(request, httpDelete);
         return this.doExecute(httpDelete, request);
     }
 
@@ -129,7 +129,7 @@ public class Client {
         try {
             URIBuilder uri = new URIBuilder(request.url());
             if (request.query() != null){
-                request.query().forEach((k, v) -> uri.addParameter(k, String.valueOf(v)));
+                request.query().forEach((k, value) -> uri.addParameter(k, StringUtil.valueOf(value)));
             }
             return uri.build();
         } catch (URISyntaxException e) {
@@ -166,7 +166,7 @@ public class Client {
                 return;
             }
             List<NameValuePair> pairList = new ArrayList<>(request.data().size());
-            request.data().forEach((key, value) -> pairList.add(new BasicNameValuePair(key, String.valueOf(value))));
+            request.data().forEach((key, value) -> pairList.add(new BasicNameValuePair(key, StringUtil.valueOf(value))));
             entity = new UrlEncodedFormEntity(pairList, Charset.forName(UTF8));
             entity.setContentType("application/x-www-form-urlencoded");
         }

@@ -63,8 +63,7 @@ public class Validator extends Assert {
                     methods = InvokeUtil.functionLoader(Platform.EXTENDS_VALIDATOR);
                 }
                 Object[] parameter = InvokeUtil.parameter(func.group(2), null);
-                Method method = InvokeUtil.method(methods, func.group(1), parameter);
-                Object result = InvokeUtil.invoke(method, parameter);
+                Object result = InvokeUtil.invoke(methods, func.group(1), parameter);
                 validate.put(CaseKeys.VALIDATE_EXPECT, result);
             }
         } catch (Exception e) {

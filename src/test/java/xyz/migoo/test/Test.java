@@ -57,6 +57,24 @@ public class Test extends Base{
                 "  }," +
                 "  \"case\": [" +
                 "    {" +
+                "      \"title\": \"忽略执行\"," +
+                "      \"ignore\": \"1\"," +
+                "      \"variables\": {" +
+                "        \"pwd\": \"123456\"" +
+                "      }," +
+                "      \"before\": [\"__hook1(before)\"]," +
+                "      \"after\": [\"__hook2(after,before)\"]," +
+                "      \"body\": {" +
+                "        \"userName\": \"migoo1\"," +
+                "        \"password\": \"${pwd}\"" +
+                "      }," +
+                "      \"validate\": [" +
+                "        {\"check\": \"status\", \"expect\": 200, \"types\": \"==\"}," +
+                "        {\"check\": \"$.status\", \"expect\": \"411\", \"types\": \"eq\"}," +
+                "        {\"check\": \"body.data\", \"expect\": \"\", \"types\": \"isEmpty\"}" +
+                "      ]" +
+                "    }," +
+                "    {" +
                 "      \"title\": \"未注册的用户\"," +
                 "      \"variables\": {" +
                 "        \"pwd\": \"123456\"" +

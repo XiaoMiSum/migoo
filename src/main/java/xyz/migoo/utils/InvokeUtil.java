@@ -83,7 +83,7 @@ public class InvokeUtil {
      * @param name method 名称
      * @param params 参数字符串，处理时使用,分割
      */
-    public static Method method(Map<String, Method> methods, String name, Object[] params){
+    private static Method method(Map<String, Method> methods, String name, Object[] params){
         if (params == null){
             return methods.get(String.format("%s(0)", name));
         }else {
@@ -94,21 +94,23 @@ public class InvokeUtil {
     /**
      * 执行 Method
      *
-     * @param method 待执行的 Method 对象
+     * @param methods 保存了 Method 对象的 Map
+     * @param name method 名称
      * @param parameter 参数数组
      */
-    public static Object invoke(Method method, Object[] parameter) throws InvokeException {
+    public static Object invoke(Map<String, Method> methods, String name, Object[] parameter) throws InvokeException {
         Object result;
         String params = parameterToString(parameter);
         try {
+            Method method = method(methods, name, parameter);
             result =  method.invoke(null, parameter);
             log.info(String.format("method invoke, [%s] -> [%s] -> [%s]", method, params, result));
         }catch (InvocationTargetException e) {
             e.getTargetException().printStackTrace();
-            throw new InvokeException("invoke error, method name: " + method + "  parameter: " + params);
+            throw new InvokeException("invoke error, method name: " + name + "  parameter: " + params);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new InvokeException("invoke error, method name: " + method + "  parameter: " + params);
+            throw new InvokeException("invoke error, method name: " + name + "  parameter: " + params);
         }
         return result;
     }

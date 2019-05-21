@@ -33,6 +33,8 @@ public class CaseKeys {
 
     public static final String CASE = "case";
 
+    public static final String CASE_IGNORE = "ignore";
+
     public static final String CASE_BODY = "body";
 
     public static final String CASE_DATA = "data";

@@ -1,10 +1,11 @@
-package xyz.migoo.utils;
+package xyz.migoo.runner;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.config.Platform;
 import xyz.migoo.exception.InvokeException;
+import xyz.migoo.utils.InvokeUtil;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -44,8 +45,7 @@ public class Hook {
             if (func.find()) {
                 functionLoader();
                 Object[] parameter = InvokeUtil.parameter(func.group(2), variables);
-                Method method = InvokeUtil.method(methods, func.group(1), parameter);
-                InvokeUtil.invoke(method, parameter);
+                InvokeUtil.invoke(methods, func.group(1), parameter);
             }
         }
     }

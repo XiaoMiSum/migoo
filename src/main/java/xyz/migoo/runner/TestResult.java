@@ -43,6 +43,9 @@ public class TestResult extends junit.framework.TestResult{
             }else {
                 record.put("time", "N/A");
             }
+            if (testCase.ignore() != null){
+                record.put("status", "skipped");
+            }
             record.put("detail", this.detail(testCase, record, id));
             record.put("record_id", "record_" + id);
             record.put("record_href", "#record_" + id);
