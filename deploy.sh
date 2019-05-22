@@ -1,0 +1,1 @@
+mvn clean source:jar deploy gpg:sign
