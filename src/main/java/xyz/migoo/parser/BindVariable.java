@@ -32,7 +32,7 @@ public class BindVariable {
         // 1. 将 1 中的 绑定到 2
         loopBindVariables(vars1, vars2);
         // 2. 合并 1 到 2
-        if (vars1 != null){
+        if (vars1 != null && vars2 != null){
             vars2.putAll(vars1);
         }
         // 3. 将 2 中的 绑定到 2

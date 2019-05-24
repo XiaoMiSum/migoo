@@ -31,13 +31,19 @@ public class TestSuite extends junit.framework.TestSuite {
     }
 
     private void init(JSONObject caseSet, JSONObject variables) throws InvokeException {
+        // 执行 variables 中的 hook
+        Hook.hook(variables.getJSONObject("hook"), variables.getJSONObject("variables"));
         JSONObject config = caseSet.getJSONObject(CaseKeys.CONFIG);
         JSONObject configVars = config.getJSONObject(CaseKeys.CONFIG_VARIABLES);
         // 先执行数据准备工作 beforeClass 中的只能使用准确数据 或 vars 中的变量
         Object beforeClass = config.get(CaseKeys.CONFIG_BEFORE_CLASS);
         Hook.hook(beforeClass, configVars);
         // 然后再处理 config.variables 中的变量
-        BindVariable.merge(variables, configVars);
+        JSONObject vars = variables.getJSONObject("variables");
+        if (vars == null){
+            vars = variables;
+        }
+        BindVariable.merge(vars, configVars);
         JSONObject request = config.getJSONObject(CaseKeys.CONFIG_REQUEST);
         BindVariable.loopBindVariables(configVars, request);
         JSONObject headers = request.getJSONObject(CaseKeys.CONFIG_REQUEST_HEADERS);

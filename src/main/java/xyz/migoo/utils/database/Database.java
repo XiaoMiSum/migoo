@@ -88,6 +88,26 @@ public class Database {
         return object;
     }
 
+    public int update(String sql, Object... params){
+        QueryRunner run = new QueryRunner();
+        int total = 0;
+        try {
+            total = run.update(conn, sql, params);
+            log.info("execute sql: " + sql + "  params: " + paramsToString(params));
+        } catch (SQLException e) {
+            log.error("execute sql exception: " + sql + "  params: " + paramsToString(params), e);
+        }
+        return total;
+    }
+
+    public int insert(String sql, Object... params){
+        return update(sql, params);
+    }
+
+    public int delete(String sql, Object... params){
+        return update(sql, params);
+    }
+
     private String paramsToString(Object... params){
         StringBuilder sb = new StringBuilder();
         for (Object object: params){

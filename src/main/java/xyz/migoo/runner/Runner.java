@@ -67,7 +67,7 @@ public class Runner {
             LOG.error("bind vars exception.", e);
             throw new RuntimeException("bind vars exception.");
         } catch (JSONException e){
-            report.addResult(this.byCase(caseOrPath));
+            report.addResult(this.byPath(caseOrPath));
         }
         report.serialization();
         report.index();
