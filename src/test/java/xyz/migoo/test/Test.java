@@ -35,7 +35,9 @@ public class Test extends Base{
 
     @org.junit.Test
     public void testApiJson2(){
-        //runner.execute("../TestCase/test_case2.json");
+        Object o = null;
+        assert o!=null;
+        o.toString();
     }
 
     @org.junit.Test

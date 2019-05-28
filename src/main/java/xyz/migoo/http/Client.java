@@ -15,6 +15,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
@@ -150,16 +151,18 @@ public class Client {
         }
         StringEntity entity = null;
         if (request.body() != null){
-            String s = request.body().toJSONString();
+            JSONObject body = request.body();
             if (request.encode()){
-                try {
-                    s = URLEncoder.encode(s, UTF8);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                for (String key: request.body().keySet()){
+                    String str = StringUtil.valueOf(body.get(key));
+                    try {
+                        body.put(key, URLEncoder.encode(str, UTF8));
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-            entity = new StringEntity(s, Charset.forName(UTF8));
-            entity.setContentType("application/json;charset=utf-8");
+            entity = new StringEntity(body.toJSONString(), Charset.forName(UTF8));
         }
         if (request.data() != null){
             if (HttpDelete.METHOD_NAME.equals(request.method())){
@@ -168,11 +171,11 @@ public class Client {
             List<NameValuePair> pairList = new ArrayList<>(request.data().size());
             request.data().forEach((key, value) -> pairList.add(new BasicNameValuePair(key, StringUtil.valueOf(value))));
             entity = new UrlEncodedFormEntity(pairList, Charset.forName(UTF8));
-            entity.setContentType("application/x-www-form-urlencoded");
         }
-        assert entity != null;
-        entity.setContentEncoding(UTF8);
-        httpMethods.setEntity(entity);
+        if (entity != null){
+            entity.setContentEncoding(UTF8);
+            httpMethods.setEntity(entity);
+        }
     }
 
     /**
@@ -265,6 +268,8 @@ public class Client {
 
         private boolean https = false;
 
+        private boolean redirects = true;
+
         private HttpHost proxy;
 
         private File certificate;
@@ -301,6 +306,14 @@ public class Client {
             Boolean boo = TypeUtil.booleanOf(value);
             if (boo != null){
                 this.https =  boo;
+            }
+            return this;
+        }
+
+        public Config redirects(Object value){
+            Boolean boo = TypeUtil.booleanOf(value);
+            if (boo != null){
+                this.redirects =  boo;
             }
             return this;
         }
@@ -349,42 +362,44 @@ public class Client {
         }
 
         public Client build(){
-            if (client == null && httpClient == null){
+            if (client == null){
                 synchronized (Client.class){
-                    POOL.setMaxTotal(maxTotal);
-                    POOL.setDefaultMaxPerRoute(maxPerRoute);
                     if (client == null){
                         client = new Client();
                     }
-                    if (httpClient == null){
-                        RequestConfig config = RequestConfig.custom().setConnectTimeout(timeout * 1000)
-                                .setConnectionRequestTimeout(timeout * 2000).build();
-                        HttpClientBuilder builder = HttpClientBuilder.create();
-                        if (https) {
-                            if (certificate != null && certificate.isDirectory()) {
-                                throw new RequestException("certificate can not be directory . certificate path : " + certificate);
-                            }
-                            builder.setSSLContext(getSslContext(certificate));
-                        }
-                        if (proxy != null) {
-                            builder.setProxy(proxy);
-                        }
-                        if (cookies != null){
-                            CookieStore cookieStore = new BasicCookieStore();
-                            for (int i = 0; i < cookies.size(); i++){
-                                JSONObject json = cookies.getJSONObject(i);
-                                BasicClientCookie cookie = new BasicClientCookie(json.getString("name"), json.getString("value"));
-                                cookie.setDomain(json.getString("domain"));
-                                cookie.setPath(json.getString("path"));
-                                cookieStore.addCookie(cookie);
-                            }
-                            builder.setDefaultCookieStore(cookieStore);
-                        }
-                        builder.setConnectionManager(POOL).setDefaultRequestConfig(config);
-                        httpClient = builder.build();
-                    }
                 }
             }
+            POOL.setMaxTotal(maxTotal);
+            POOL.setDefaultMaxPerRoute(maxPerRoute);
+            RequestConfig config = RequestConfig.custom().setConnectTimeout(timeout * 1000)
+                    .setConnectionRequestTimeout(timeout * 2000)
+                    .setRedirectsEnabled(redirects).build();
+            HttpClientBuilder builder = HttpClientBuilder.create();
+            if (https) {
+                if (certificate != null && certificate.isDirectory()) {
+                    throw new RequestException("certificate can not be directory . certificate path : " + certificate);
+                }
+                builder.setSSLContext(getSslContext(certificate));
+            }
+            if (redirects){
+                builder.setRedirectStrategy(new LaxRedirectStrategy());
+            }
+            if (proxy != null) {
+                builder.setProxy(proxy);
+            }
+            if (cookies != null){
+                CookieStore cookieStore = new BasicCookieStore();
+                for (int i = 0; i < cookies.size(); i++){
+                    JSONObject json = cookies.getJSONObject(i);
+                    BasicClientCookie cookie = new BasicClientCookie(json.getString("name"), json.getString("value"));
+                    cookie.setDomain(json.getString("domain"));
+                    cookie.setPath(json.getString("path"));
+                    cookieStore.addCookie(cookie);
+                }
+                builder.setDefaultCookieStore(cookieStore);
+            }
+            builder.setConnectionManager(POOL).setDefaultRequestConfig(config);
+            httpClient = builder.build();
             return client;
         }
     }

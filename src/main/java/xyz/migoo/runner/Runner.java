@@ -65,9 +65,12 @@ public class Runner {
         } catch (ReaderException | InvokeException e){
             // 绑定全局变量异常 停止测试
             LOG.error("bind vars exception.", e);
-            throw new RuntimeException("bind vars exception.");
+            throw new RuntimeException("bind vars exception.", e);
         } catch (JSONException e){
             report.addResult(this.byPath(caseOrPath));
+        } catch (Exception e){
+            LOG.error("unknown exception.", e);
+            throw new RuntimeException("unknown exception.", e);
         }
         report.serialization();
         report.index();

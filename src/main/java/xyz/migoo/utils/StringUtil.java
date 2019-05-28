@@ -44,7 +44,7 @@ public class StringUtil extends StringUtils {
     }
 
     public static String valueOf(Object obj){
-        return obj == null ? null: String.valueOf(obj);
+        return obj == null ? null : String.valueOf(obj);
     }
 
     public static String random(int length){

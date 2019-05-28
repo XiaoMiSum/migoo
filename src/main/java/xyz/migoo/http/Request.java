@@ -166,7 +166,7 @@ public class Request {
                 return this.headers((JSONObject) headers);
             }
             if (headers instanceof List){
-                return this.headers(headers);
+                return this.headers((List<Header>) headers);
             }
             return this;
         }
