@@ -117,11 +117,13 @@ public class InvokeUtil {
 
     private static String parameterToString(Object[] parameter){
         StringBuilder sb = new StringBuilder();
-        for (Object o : parameter){
-            if (sb.length() > 0){
-                sb.append(SEPARATOR);
+        if (parameter != null){
+            for (Object o : parameter){
+                if (sb.length() > 0){
+                    sb.append(SEPARATOR);
+                }
+                sb.append(o);
             }
-            sb.append(o);
         }
         return sb.toString();
     }

@@ -34,13 +34,6 @@ public class Test extends Base{
     }
 
     @org.junit.Test
-    public void testApiJson2(){
-        Object o = null;
-        assert o!=null;
-        o.toString();
-    }
-
-    @org.junit.Test
     public void testApiCaseSet(){
         String json = "{" +
                 "  \"name\": \"the-test-suite-name\"," +

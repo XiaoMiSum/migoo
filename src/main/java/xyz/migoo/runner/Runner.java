@@ -47,6 +47,7 @@ public class Runner {
         TestSuite caseSuite = this.initTestSuite(caseOrPath);
         TestResult result = new TestRunner().run(caseSuite);
         Report.generateReport(result.report(), caseSuite.getName(), false);
+        report.addResult(result);
         return result;
     }
 
@@ -61,13 +62,13 @@ public class Runner {
             this.variables = CaseParser.loadVariables(vars);
             BindVariable.bindVariables(variables, variables);
             JSON.parse(caseOrPath);
-            report.addResult(this.byCase(caseOrPath));
+            this.byCase(caseOrPath);
         } catch (ReaderException | InvokeException e){
             // 绑定全局变量异常 停止测试
             LOG.error("bind vars exception.", e);
             throw new RuntimeException("bind vars exception.", e);
         } catch (JSONException e){
-            report.addResult(this.byPath(caseOrPath));
+            this.byPath(caseOrPath);
         } catch (Exception e){
             LOG.error("unknown exception.", e);
             throw new RuntimeException("unknown exception.", e);
@@ -96,6 +97,7 @@ public class Runner {
         } else {
             TestSuite testSuite = this.initTestSuite(path);
             result = new TestRunner().run(testSuite);
+            report.addResult(result);
             Report.generateReport(result.report(), testSuite.getName(),false);
         }
         return result;
