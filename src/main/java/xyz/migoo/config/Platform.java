@@ -31,10 +31,12 @@ public class Platform {
                     continue;
                 }
                 ((JSONObject)reader.read()).forEach((key, value) -> {
-                    PROPERTIES.put(key, value);
                     if (STRING.equals(key) || IGNORE.equals(key)) {
-                        ((JSONArray)value).addAll(PROPERTIES.getJSONArray(key));
+                        if (PROPERTIES.getJSONArray(key) != null) {
+                            ((JSONArray)value).addAll(PROPERTIES.getJSONArray(key));
+                        }
                     }
+                    PROPERTIES.put(key, value);
                 });
             } catch (ReaderException e) {
                 e.printStackTrace();

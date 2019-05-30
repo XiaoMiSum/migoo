@@ -73,15 +73,15 @@ public class Validator extends Assert {
 
     private synchronized static void validation(Response response, JSONObject validate) throws AssertionException {
         evalValidate(validate);
-        LOG.info("check point  : " + validate.toJSONString());
+        LOG.info(String.format("check point  : %s", validate.toJSONString()));
         Boolean result = false;
         AbstractAssertion assertion = AssertionFactory.getAssertion(validate.getString(CaseKeys.VALIDATE_CHECK));
         assertion.setActual(response);
         try {
             result = Objects.requireNonNull(assertion.assertThat(validate));
-            LOG.info("check result : " + result);
+            LOG.info(String.format("check result : %s", result));
         } catch (Exception e) {
-            LOG.error("check result : " + result, e);
+            LOG.error(String.format("check result : %s", result), e);
             throw new AssertionException(e.getMessage());
         }
         if (!result) {

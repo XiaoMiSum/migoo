@@ -65,10 +65,15 @@ public class CaseParser {
                     ||f.startsWith(".") || IGNORE_DIRECTORY.contains(f)) {
                     continue;
                 }
-                if (!path.endsWith("/")) {
-                    path = path + "/";
+                StringBuffer sb = new StringBuffer();
+                if (StringUtil.contains(f, "vars.")
+                        ||f.startsWith(".")) {
+                    continue;
                 }
-                this.loadCaseSetsByPath(path + f);
+                if (!path.endsWith("/")) {
+                    sb.append(path).append("/");
+                }
+                this.loadCaseSetsByPath(sb.append(f).toString());
             }
         } else {
             this.loadCaseSetsByFile(path);

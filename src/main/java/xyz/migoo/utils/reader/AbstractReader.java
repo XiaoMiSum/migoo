@@ -24,10 +24,10 @@ public abstract class AbstractReader {
      */
     protected void validation(File file, String suffix) throws ReaderException {
         if (!file.exists()){
-            throw new ReaderException("file not found : " + file.getPath());
+            throw new ReaderException(String.format("file not found : %s", file.getPath()));
         }
         if (!file.getName().endsWith(suffix)){
-            throw new ReaderException("this file not a ' " + suffix + " ' file : " + file);
+            throw new ReaderException(String.format("this file not a ' %s ' file : %s", suffix , file));
         }
         if (file.length() == 0){
             throw new ReaderException("file length == 0");
@@ -48,8 +48,7 @@ public abstract class AbstractReader {
                 inputStream = classLoader.getResourceAsStream(path);
             }
         }catch (Exception e){
-            LOG.error(e.getMessage(), e);
-            throw new ReaderException("file read exception: " + e.getMessage());
+            throw new ReaderException("file read exception", e);
         }
     }
 
@@ -58,8 +57,7 @@ public abstract class AbstractReader {
             validation(file, suffix);
             inputStream = new BufferedInputStream(new FileInputStream(file));
         }catch (Exception e){
-            LOG.error(e.getMessage(), e);
-            throw new ReaderException("file read exception: " + e.getMessage());
+            throw new ReaderException("file read exception: ", e);
         }
     }
 

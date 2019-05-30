@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import xyz.migoo.config.CaseKeys;
 import xyz.migoo.exception.AssertionException;
+import xyz.migoo.exception.IgnoreTestException;
 import xyz.migoo.http.Request;
 import xyz.migoo.http.Response;
 import xyz.migoo.utils.TypeUtil;
@@ -39,20 +40,21 @@ public class TestCase extends junit.framework.TestCase{
     }
 
     @Override
-    public void runTest(){
+    public void runTest() {
         try {
             this.testSuite.addRTests();
             Boolean ignore = TypeUtil.booleanOf(testCase.get(CaseKeys.CASE_IGNORE));
-            if (ignore != null && ignore){
-                testSuite.addIgnore();
-                this.ignore = new Object();
-                return;
+            if (ignore != null && ignore) {
+                throw new IgnoreTestException("ignore test");
             }
             this.task.run(this.testCase, this);
-        }catch (AssertionException failure){
+        } catch (AssertionException failure) {
             this.failure = failure;
             this.testSuite.addFTests();
-        }catch (Exception error){
+        } catch (IgnoreTestException ignore){
+            this.ignore = ignore;
+            this.testSuite.addIgnore();
+        } catch (Exception error){
             this.error = error;
             this.testSuite.addETests();
         }

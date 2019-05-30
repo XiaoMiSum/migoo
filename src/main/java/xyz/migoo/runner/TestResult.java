@@ -43,9 +43,6 @@ public class TestResult extends junit.framework.TestResult{
             }else {
                 record.put("time", "N/A");
             }
-            if (testCase.ignore() != null){
-                record.put("status", "skipped");
-            }
             record.put("detail", this.detail(testCase, record, id));
             record.put("record_id", "record_" + id);
             record.put("record_href", "#record_" + id);
@@ -71,6 +68,9 @@ public class TestResult extends junit.framework.TestResult{
             record.put("status", "failure");
             detail.put("track", testCase.failure().getMessage());
         }
+        if (testCase.ignore() != null){
+            record.put("status", "skipped");
+        }
         detail.put("validate_id", "validate_" + id);
         detail.put("track_id", "track_" + id);
         detail.put("log_id", "log_" + id);
@@ -88,13 +88,14 @@ public class TestResult extends junit.framework.TestResult{
             res.put("body", response.body());
         }
         Map<String, Object> req = new HashMap<>(4);
-        req.put("url", request.url());
-        req.put("method", request.method());
-        req.put("headers", request.headers());
-        req.put("body", request.body());
-        req.put("data", request.data());
-        req.put("query", request.query());
-
+        if (request != null) {
+            req.put("url", request.url());
+            req.put("method", request.method());
+            req.put("headers", request.headers());
+            req.put("body", request.body());
+            req.put("data", request.data());
+            req.put("query", request.query());
+        }
         Map<String, Object> log = new HashMap<>(2);
         log.put("request", req);
         log.put("response", res);
@@ -109,7 +110,7 @@ public class TestResult extends junit.framework.TestResult{
         summary.put("success", testSuite.getSuccessCount());
         summary.put("failed", testSuite.fTests());
         summary.put("error", testSuite.eTests());
-        summary.put("skipped", 0);
+        summary.put("skipped", testSuite.iTests());
         return summary;
     }
     synchronized void startAt(long startAt) {

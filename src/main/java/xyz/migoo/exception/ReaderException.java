@@ -5,7 +5,12 @@ package xyz.migoo.exception;
  * @date 2017/5/17 17:23.
  */
 public class ReaderException extends Exception {
+
     public ReaderException(String message) {
         super(message);
+    }
+
+    public ReaderException(String message, Throwable t) {
+        super(message, t);
     }
 }

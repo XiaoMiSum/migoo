@@ -38,7 +38,7 @@ public class TestSuite extends junit.framework.TestSuite {
             if (vars == null){
                 vars = variables;
             }
-            Hook.hook(variables.getJSONObject("hook"), variables.getJSONObject("variables"));
+            Hook.hook(variables.getJSONObject("hook"), vars);
         }
         JSONObject config = caseSet.getJSONObject(CaseKeys.CONFIG);
         JSONObject configVars = config.getJSONObject(CaseKeys.CONFIG_VARIABLES);
@@ -56,7 +56,7 @@ public class TestSuite extends junit.framework.TestSuite {
         for (int i = 0; i < testCases.size(); i++) {
             JSONObject testCase = testCases.getJSONObject(i);
             // 先执行数据准备工作 before 中的只能使用准确数据 或 vars、config.vars 中的变量
-            Hook.hook(testCase.get(CaseKeys.CASE_AFTER), configVars);
+            Hook.hook(testCase.get(CaseKeys.CASE_BEFORE), configVars);
             // 然后再处理 case.variables 中的变量
             JSONObject caseVars = testCase.getJSONObject(CaseKeys.CASE_VARIABLES);
             BindVariable.merge(configVars, caseVars);
@@ -128,7 +128,7 @@ public class TestSuite extends junit.framework.TestSuite {
         return rTests;
     }
 
-    public int getIgnoreCount(){
+    public int iTests(){
         return ignore;
     }
 

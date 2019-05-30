@@ -120,20 +120,6 @@ public class Func {
      * 生成指定长度的伪随机字符串
      *
      * @param length 指定长度
-     * @param upperCase 是否转化为大写
-     * @return 指定长度的伪随机字符串
-     * */
-    public static String random(String length, Object upperCase){
-        if (Boolean.valueOf(upperCase.toString())){
-            return StringUtil.random(Integer.valueOf(length)).toUpperCase();
-        }
-        return StringUtil.random(Integer.valueOf(length));
-    }
-
-    /**
-     * 生成指定长度的伪随机字符串
-     *
-     * @param length 指定长度
      * @param baseString 基础字符串
      * @return 指定长度的伪随机字符串
      * */
@@ -156,7 +142,7 @@ public class Func {
      * @param max 指定最大范围
      * @return 返回 0 - max 范围内的 伪随机数
      * */
-    public static Integer random(int max){
+    public static Integer randomInt(int max){
         return new Random().nextInt(max);
     }
 
@@ -164,7 +150,7 @@ public class Func {
      * 生成 int类型的 0 - MAX_VALUE 范围内的 伪随机数
      * @return 返回 0 - MAX_VALUE 范围内的 伪随机数
      * */
-    public static Integer random(){
+    public static Integer randomInt(){
         return new Random().nextInt(Integer.MAX_VALUE);
     }
 

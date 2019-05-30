@@ -14,6 +14,8 @@ import xyz.migoo.utils.StringUtil;
 
 import java.io.File;
 
+import static xyz.migoo.config.Platform.IGNORE_DIRECTORY;
+
 /**
  * @author xiaomi
  * @date 2018/7/24 14:24
@@ -66,12 +68,12 @@ public class Runner {
         } catch (ReaderException | InvokeException e){
             // 绑定全局变量异常 停止测试
             LOG.error("bind vars exception.", e);
-            throw new RuntimeException("bind vars exception.", e);
+            System.exit(-1);
         } catch (JSONException e){
             this.byPath(caseOrPath);
         } catch (Exception e){
             LOG.error("unknown exception.", e);
-            throw new RuntimeException("unknown exception.", e);
+            System.exit(-1);
         }
         report.serialization();
         report.index();
@@ -85,14 +87,15 @@ public class Runner {
             String[] fList = file.list();
             assert fList != null;
             for (String f : fList) {
+                StringBuffer sb = new StringBuffer();
                 if (StringUtil.contains(f, "vars.")
-                        ||f.startsWith(".")) {
+                        ||f.startsWith(".") || IGNORE_DIRECTORY.contains(f)) {
                     continue;
                 }
                 if (!path.endsWith("/")) {
-                    path = path + "/";
+                    sb.append(path).append("/");
                 }
-                this.byPath(path + f);
+                this.byPath(sb.append(f).toString());
             }
         } else {
             TestSuite testSuite = this.initTestSuite(path);
@@ -108,7 +111,7 @@ public class Runner {
             JSONObject caseSets = new CaseParser().loadCaseSets(caseOrPath);
             return new TestSuite(caseSets, variables);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
             System.exit(-1);
         }
         return null;

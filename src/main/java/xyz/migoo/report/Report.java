@@ -11,7 +11,6 @@ import xyz.migoo.utils.Log;
 import xyz.migoo.utils.StringUtil;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +46,7 @@ public class Report {
         failed += testResult.testSuite().fTests();
         error += testResult.testSuite().eTests();
         success += testResult.testSuite().getSuccessCount();
-        skipped += testResult.testSuite().getIgnoreCount();;
+        skipped += testResult.testSuite().iTests();;
         testResults.add(testResult);
     }
 
@@ -70,7 +69,7 @@ public class Report {
             record.put("success", testResult.testSuite().getSuccessCount());
             record.put("failed", testResult.testSuite().fTests());
             record.put("error", testResult.testSuite().eTests());
-            record.put("skipped", testResult.testSuite().getIgnoreCount());
+            record.put("skipped", testResult.testSuite().iTests());
             records.add(record);
         });
     }

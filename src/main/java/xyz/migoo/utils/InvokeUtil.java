@@ -31,7 +31,7 @@ public class InvokeUtil {
                 for (; clz != null && clz != Object.class; clz = clz.getSuperclass()){
                     Method[] methods = clz.getDeclaredMethods();
                     for (Method method : methods) {
-                        String key = method.getName() + "(" + method.getParameterCount() + ")";
+                        String key = String.format("%s(%s)", method.getName(), method.getParameterCount());
                         map.put(key, method);
                     }
                 }
@@ -57,19 +57,16 @@ public class InvokeUtil {
         int i = 0;
         for (Object obj : parameters){
             Matcher param = PARAM_PATTERN.matcher(obj.toString());
-            if (variables == null || variables.isEmpty()){
-                parameter[i] = obj;
-            }else {
+            if (variables != null && variables.isEmpty()){
                 if (param.find()) {
                     Object object = variables.get(param.group(1));
-                    if (FUNC_PATTERN.matcher(String.valueOf(obj)).find()
-                            || PARAM_PATTERN.matcher(String.valueOf(obj)).find()){
-                        throw new RuntimeException(param.group(1) + " need eval!");
+                    if (FUNC_PATTERN.matcher(String.valueOf(object)).find()
+                            || PARAM_PATTERN.matcher(String.valueOf(object)).find()){
+                        throw new RuntimeException(String.format("%s need eval!", param.group(1)));
                     }
-                    parameter[i] = object;
-                }else{
-                    parameter[i] = obj;
+                    obj = object;
                 }
+                parameter[i] = obj;
             }
             i += 1;
         }
@@ -104,13 +101,13 @@ public class InvokeUtil {
         try {
             Method method = method(methods, name, parameter);
             result =  method.invoke(null, parameter);
-            log.info(String.format("method invoke, [%s] -> [%s] -> [%s]", method, params, result));
-        }catch (InvocationTargetException e) {
-            e.getTargetException().printStackTrace();
-            throw new InvokeException("invoke error, method name: " + name + "  parameter: " + params);
+            log.info(String.format("method invoke, method [%s] -> parameter [%s] -> return [%s]", method, params, result));
+        } catch (InvocationTargetException e) {
+            throw new InvokeException(String.format("invoke error, method name '%s', parameter '%s'", name, params), e);
+        } catch (NullPointerException e){
+            throw new InvokeException(String.format("method '%s' not found !", name));
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new InvokeException("invoke error, method name: " + name + "  parameter: " + params);
+            throw new InvokeException(String.format("invoke error, method name '%s', parameter '%s'", name, params), e);
         }
         return result;
     }
