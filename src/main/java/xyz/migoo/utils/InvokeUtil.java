@@ -3,7 +3,6 @@ package xyz.migoo.utils;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.InvokeException;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,7 +56,7 @@ public class InvokeUtil {
         int i = 0;
         for (Object obj : parameters){
             Matcher param = PARAM_PATTERN.matcher(obj.toString());
-            if (variables != null && variables.isEmpty()){
+            if (variables != null && !variables.isEmpty()){
                 if (param.find()) {
                     Object object = variables.get(param.group(1));
                     if (FUNC_PATTERN.matcher(String.valueOf(object)).find()
@@ -102,8 +101,6 @@ public class InvokeUtil {
             Method method = method(methods, name, parameter);
             result =  method.invoke(null, parameter);
             log.info(String.format("method invoke, method [%s] -> parameter [%s] -> return [%s]", method, params, result));
-        } catch (InvocationTargetException e) {
-            throw new InvokeException(String.format("invoke error, method name '%s', parameter '%s'", name, params), e);
         } catch (NullPointerException e){
             throw new InvokeException(String.format("method '%s' not found !", name));
         } catch (Exception e) {

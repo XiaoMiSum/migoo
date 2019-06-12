@@ -1,8 +1,7 @@
 package xyz.migoo.runner;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.sun.istack.internal.NotNull;
 import xyz.migoo.config.CaseKeys;
 import xyz.migoo.exception.AssertionException;
 import xyz.migoo.exception.IgnoreTestException;
@@ -11,7 +10,9 @@ import xyz.migoo.http.Response;
 import xyz.migoo.utils.TypeUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author xiaomi
@@ -27,14 +28,13 @@ public class TestCase extends junit.framework.TestCase{
     private Response response;
     private Exception error;
     private AssertionException failure;
-    private Object ignore;
+    private IgnoreTestException ignore;
 
     public TestCase(Task task, JSONObject testCase, TestSuite testSuite){
         super(testCase.getString(CaseKeys.CASE_TITLE));
         this.task = task;
         this.testCase = testCase;
         this.testSuite = testSuite;
-        this.testCase = testCase;
         this.validate = new ArrayList<>();
         super.setName(testCase.getString(CaseKeys.CASE_TITLE));
     }
@@ -43,17 +43,18 @@ public class TestCase extends junit.framework.TestCase{
     public void runTest() {
         try {
             this.testSuite.addRTests();
-            Boolean ignore = TypeUtil.booleanOf(testCase.get(CaseKeys.CASE_IGNORE));
-            if (ignore != null && ignore) {
+            Boolean aBoolean = TypeUtil.booleanOf(testCase.get(CaseKeys.CASE_IGNORE));
+            if (aBoolean != null && aBoolean) {
                 throw new IgnoreTestException("ignore test");
             }
             this.task.run(this.testCase, this);
+        } catch (IgnoreTestException exception){
+            this.ignore = exception;
+            this.testSuite.addIgnore();
+            validate(testCase.getJSONArray(CaseKeys.VALIDATE));
         } catch (AssertionException failure) {
             this.failure = failure;
             this.testSuite.addFTests();
-        } catch (IgnoreTestException ignore){
-            this.ignore = ignore;
-            this.testSuite.addIgnore();
         } catch (Exception error){
             this.error = error;
             this.testSuite.addETests();
@@ -61,11 +62,11 @@ public class TestCase extends junit.framework.TestCase{
         this.testSuite.addTest(this);
     }
 
-    List<String> validate(){
+    List<HashMap<String, String>> validate(){
         return validate;
     }
 
-    public void validate(JSONArray validate){
+    void validate(List validate){
         this.validate.addAll(validate);
     }
 

@@ -42,12 +42,15 @@ public class TestSuite extends junit.framework.TestSuite {
         }
         JSONObject config = caseSet.getJSONObject(CaseKeys.CONFIG);
         JSONObject configVars = config.getJSONObject(CaseKeys.CONFIG_VARIABLES);
-        // 先执行数据准备工作 beforeClass 中的只能使用准确数据 或 vars 中的变量
+        // 1. 处理 config.variables 中的变量 (合并 + 计算)
+        BindVariable.merge(vars, configVars);
+        // 2. 执行数据准备工作 beforeClass 中的只能使用准确数据 或 步骤1 能计算出结果的变量
         Object beforeClass = config.get(CaseKeys.CONFIG_BEFORE_CLASS);
         Hook.hook(beforeClass, configVars);
-        // 然后再处理 config.variables 中的变量
-        BindVariable.merge(vars, configVars);
+        // 3. 再次 计算 + 绑定 变量
+        BindVariable.loopBindVariables(configVars, configVars);
         JSONObject request = config.getJSONObject(CaseKeys.CONFIG_REQUEST);
+        // 4. 将变量绑定到 request 中
         BindVariable.loopBindVariables(configVars, request);
         JSONObject headers = request.getJSONObject(CaseKeys.CONFIG_REQUEST_HEADERS);
         Object encode = request.get(CaseKeys.CONFIG_REQUEST_ENCODE);
@@ -55,12 +58,14 @@ public class TestSuite extends junit.framework.TestSuite {
         JSONArray testCases = caseSet.getJSONArray(CaseKeys.CASE);
         for (int i = 0; i < testCases.size(); i++) {
             JSONObject testCase = testCases.getJSONObject(i);
-            // 先执行数据准备工作 before 中的只能使用准确数据 或 vars、config.vars 中的变量
-            Hook.hook(testCase.get(CaseKeys.CASE_BEFORE), configVars);
-            // 然后再处理 case.variables 中的变量
             JSONObject caseVars = testCase.getJSONObject(CaseKeys.CASE_VARIABLES);
+            // 1. 处理 case.variables 中的变量 （合并 + 计算）
             BindVariable.merge(configVars, caseVars);
-            // 将 case_variables 中的 绑定到 case
+            // 2. 执行数据准备工作 before 中的只能使用准确数据 或 步骤1 能计算出结果的变量
+            Hook.hook(testCase.get(CaseKeys.CASE_BEFORE), configVars);
+            // 3. 再次 计算 + 绑定 变量
+            BindVariable.loopBindVariables(configVars, configVars);
+            // 4. case_variables 中的 绑定到 case
             BindVariable.bind(caseVars, testCase);
             Request.Builder builder = new Request.Builder().method(request.getString(CaseKeys.CONFIG_REQUEST_METHOD));
             this.request(testCase, encode, headers, builder, request);
@@ -86,16 +91,16 @@ public class TestSuite extends junit.framework.TestSuite {
         builder.cookies(cookies).headers(headers).url(url.toString()).encode(encode);
     }
 
-    void addTest(Task task, JSONObject testCase){
+    private void addTest(Task task, JSONObject testCase){
         TestCase cases = new TestCase(task, testCase, this);
         super.addTest(cases);
     }
 
-    public Vector<TestCase> testCases(){
+    Vector<TestCase> testCases(){
         return testCases;
     }
 
-    public void addTest(TestCase cases){
+    void addTest(TestCase cases){
         this.testCases.add(cases);
     }
 

@@ -1,5 +1,6 @@
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,27 +39,28 @@
             padding: 5px 12px;
         }
 
-        #details .detail {
-            background-color: lightgrey;
-            font-size: smaller;
-            padding: 5px 10px;
+        #details .total {
             text-align: center;
         }
 
         #details .success {
             background-color: greenyellow;
+            text-align: center;
         }
 
         #details .error {
             background-color: red;
+            text-align: center;
         }
 
         #details .failure {
             background-color: salmon;
+            text-align: center;
         }
 
         #details .skipped {
             background-color: gray;
+            text-align: center;
         }
 
         .button {
@@ -79,71 +81,6 @@
 
         .button:hover {
             background: #2cffbd;
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.7);
-            transition: opacity 500ms;
-            visibility: hidden;
-            opacity: 0;
-        }
-
-        .overlay:target {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .popup {
-            margin: 70px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 10px;
-            width: 50%;
-            position: relative;
-            transition: all 3s ease-in-out;
-        }
-
-        .popup h2 {
-            margin-top: 0;
-            color: #333;
-            font-family: Tahoma, Arial, sans-serif;
-        }
-
-        .popup .close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            transition: all 200ms;
-            font-size: 30px;
-            font-weight: bold;
-            text-decoration: none;
-            color: #333;
-        }
-
-        .popup .close:hover {
-            color: #06d85f;
-        }
-
-        .popup .content {
-            max-height: 80%;
-            overflow: auto;
-            text-align: left;
-            font-size: 16px;
-        }
-
-        @media screen and (max-width: 700px) {
-            .box {
-                width: 70%;
-            }
-
-            .popup {
-                width: 70%;
-            }
         }
 
     </style>
@@ -182,23 +119,23 @@
 <h2>Details</h2>
 <table id="details">
     <tr>
-        <th style="min-width: 35%;">Test Case Name</th>
-        <th style="min-width: 35%;">Link</th>
-        <th>Total</th>
-        <th>Success</th>
-        <th>Failed</th>
-        <th>Error</th>
-        <th>Skipped</th>
+        <th style="width: 45%;">Test Case Name</th>
+        <th style="width: 7%;">Total</th>
+        <th style="width: 7%;">Success</th>
+        <th style="width: 7%;">Failed</th>
+        <th style="width: 7%;">Error</th>
+        <th style="width: 7%;">Skipped</th>
+        <th style="width: 10%;">Operate</th>
     </tr>
 
     <tr th:each="item : ${records}">
-        <th th:text="${item.title}"></th>
-        <th><a th:href="${item.link}" th:text="${item.link}"></a></th>
-        <th th:text="${item.total}"></th>
-        <th th:text="${item.success}" class="success"></th>
-        <th th:text="${item.failed}" class="failure"></th>
-        <th th:text="${item.error}" class="error"></th>
-        <th th:text="${item.skipped}" class="skipped"></th>
+        <td th:text="${item.title}"></td>
+        <td th:text="${item.total}" class="total"></td>
+        <td th:text="${item.success}" class="success"></td>
+        <td th:text="${item.failed}" class="failure"></td>
+        <td th:text="${item.error}" class="error"></td>
+        <td th:text="${item.skipped}" class="skipped"></td>
+        <td><a class="button" th:href="${item.link}">查看详情</a></td>
     </tr>
 </table>
 <div>

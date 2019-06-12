@@ -1,5 +1,6 @@
+<!DOCTYPE html><!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -149,8 +150,12 @@
     </style>
 </head>
 <body>
-<h1 th:text="${report}"></h1>
-
+<table>
+    <tr>
+        <th><h1>Test Report：</h1></th>
+        <td th:text="${report}"></td>
+    </tr>
+</table>
 
 <h2>Summary</h2>
 <table id="summary">
@@ -194,9 +199,9 @@
 <table id="details">
     <tr>
         <th>Status</th>
-        <th style="min-width: 60%;">Title</th>
-        <th style="max-width: 15%;">Response Time</th>
-        <th style="max-width: 15%;">Detail</th>
+        <th style="width: 60%">Title</th>
+        <th style="width: 15%;">Response Time</th>
+        <th style="width: 15%;">Detail</th>
     </tr>
 
     <tr th:each="record : ${records}" th:id="${record.index}">
@@ -214,8 +219,8 @@
                     <a class="close" th:href="${record.record_href}">&times;</a>
 
                     <div class="content" th:each="validates: ${record.detail.validate}">
-                        <span th:each="validate: ${validates}">
-                            <per th:text="${validate}"/>
+                        <span th:each="validate : ${validates}">
+                            <per th:text="${validate}"></per>
                         </span>
                     </div>
                 </div>

@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.utils.StringUtil;
 
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -20,9 +19,6 @@ import java.util.regex.Pattern;
  */
 public class Function {
 
-    public static final Pattern FUNC_PATTERN = Pattern.compile("(\\w+)\\((.*)\\)");
-    private static Map<String, Method> methods;
-
     private static ThreadLocal<DecimalFormat> decimalFormatter =
             ThreadLocal.withInitial(Function::createDecimalFormat);
 
@@ -35,15 +31,21 @@ public class Function {
     }
     private static String objectToString(Object subj) {
         String str;
-        if (subj == null) {
+        if (subj == null || StringUtil.isBlank(subj.toString())) {
             str = "null";
-        } else if (subj instanceof JSON){
-            str = ((JSON) subj).toJSONString();
         } else if (subj instanceof List){
-            str = JSONArray.toJSONString(subj);
-        }else if (subj instanceof Map) {
+            if (((List) subj).isEmpty()){
+                str = "null";
+            }else {
+                str = JSONArray.toJSONString(subj);
+            }
+        } else if (subj instanceof Map) {
             //noinspection unchecked
-            str = JSONObject.toJSONString(subj);
+            if (((Map) subj).isEmpty()){
+                str = "null";
+            }else {
+                str = JSONArray.toJSONString(subj);
+            }
         } else if (subj instanceof Double || subj instanceof Float) {
             str = decimalFormatter.get().format(subj);
         } else {

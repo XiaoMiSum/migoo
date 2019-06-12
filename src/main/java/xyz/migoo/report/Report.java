@@ -99,7 +99,7 @@ public class Report {
         if (StringUtil.isBlank(reportName)) {
             reportName = "Auto Test Report";
         }
-        report.put("report", "Test Report:  " + reportName);
+        report.put("report", reportName);
         report.put("title", reportName + " - TestReport");
         report.put("platform", platform);
         String content;
