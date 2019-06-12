@@ -1,7 +1,6 @@
 package xyz.migoo.runner;
 
 import com.alibaba.fastjson.JSONObject;
-import com.sun.istack.internal.NotNull;
 import xyz.migoo.config.CaseKeys;
 import xyz.migoo.exception.AssertionException;
 import xyz.migoo.exception.IgnoreTestException;
@@ -12,7 +11,6 @@ import xyz.migoo.utils.TypeUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author xiaomi
