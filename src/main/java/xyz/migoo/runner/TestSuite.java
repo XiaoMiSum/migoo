@@ -33,12 +33,11 @@ public class TestSuite extends junit.framework.TestSuite {
     private void init(JSONObject caseSet, JSONObject variables) throws InvokeException {
         // 执行 variables 中的 hook
         JSONObject vars = null;
-        if (variables != null){
-            vars = variables.getJSONObject("variables");
-            if (vars == null){
-                vars = variables;
-            }
-            Hook.hook(variables.getJSONObject("hook"), vars);
+        if (variables != null) {
+            vars = variables.getJSONObject("variables") == null ?
+                    variables.getJSONObject("vars") : variables.getJSONObject("variables");
+            vars = vars != null ? vars : variables;
+            Hook.hook(variables.get("hook"), vars);
         }
         JSONObject config = caseSet.getJSONObject(CaseKeys.CONFIG);
         JSONObject configVars = config.getJSONObject(CaseKeys.CONFIG_VARIABLES);
@@ -74,70 +73,68 @@ public class TestSuite extends junit.framework.TestSuite {
         }
     }
 
-    private void request(JSONObject testCase, Object encode, JSONObject headers, Request.Builder builder, JSONObject requestConfig){
+    private void request(JSONObject testCase, Object encode, JSONObject headers, Request.Builder builder, JSONObject requestConfig) {
         JSONObject caseHeaders = testCase.getJSONObject(CaseKeys.CASE_HEADERS);
-        if (caseHeaders != null && !caseHeaders.isEmpty()){
+        if (caseHeaders != null && !caseHeaders.isEmpty()) {
             headers.putAll(caseHeaders);
         }
         StringBuilder url = new StringBuilder(requestConfig.getString(CaseKeys.CONFIG_REQUEST_URL));
         String apiUrl = testCase.getString(CaseKeys.CASE_API);
-        if (StringUtil.isNotBlank(apiUrl)){
+        if (StringUtil.isNotBlank(apiUrl)) {
             url.append(apiUrl);
         }
-        if (testCase.get(CaseKeys.CONFIG_REQUEST_ENCODE) != null){
-            encode = testCase.get(CaseKeys.CONFIG_REQUEST_ENCODE);
-        }
+        encode = testCase.get(CaseKeys.CONFIG_REQUEST_ENCODE) != null ? testCase.get(CaseKeys.CONFIG_REQUEST_ENCODE) : encode;
         Object cookies = requestConfig.get(CaseKeys.CONFIG_REQUEST_COOKIE);
         builder.cookies(cookies).headers(headers).url(url.toString()).encode(encode);
     }
 
-    private void addTest(Task task, JSONObject testCase){
+    private void addTest(Task task, JSONObject testCase) {
         TestCase cases = new TestCase(task, testCase, this);
         super.addTest(cases);
     }
 
-    Vector<TestCase> testCases(){
+    Vector<TestCase> testCases() {
         return testCases;
     }
 
-    void addTest(TestCase cases){
+    void addTest(TestCase cases) {
         this.testCases.add(cases);
     }
 
 
-    void addFTests(){
+    void addFTests() {
         fTests += 1;
     }
 
-    void addETests(){
+    void addETests() {
         eTests += 1;
     }
 
-    void addRTests(){
+    void addRTests() {
         rTests += 1;
     }
 
-    void addIgnore(){
+    void addIgnore() {
         ignore += 1;
     }
 
-    public int fTests(){
+    public int fTests() {
         return fTests;
     }
 
-    public int eTests(){
+    public int eTests() {
         return eTests;
     }
 
-    public int rTests(){
+    public int rTests() {
         return rTests;
     }
 
-    public int iTests(){
+    public int iTests() {
         return ignore;
     }
 
-    public int getSuccessCount(){
+    public int getSuccessCount() {
         return rTests - ignore - fTests - eTests;
     }
 }

@@ -11,6 +11,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -21,6 +22,7 @@ import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import xyz.migoo.exception.RequestException;
+import xyz.migoo.func.Func;
 import xyz.migoo.utils.Log;
 import xyz.migoo.utils.StringUtil;
 import xyz.migoo.utils.TypeUtil;
@@ -51,7 +53,7 @@ public class Client {
     private static final Log log = new Log(Client.class);
     private static CloseableHttpClient httpClient;
 
-    private Client(){
+    private Client() {
     }
 
     /**
@@ -61,7 +63,7 @@ public class Client {
      * @return Response
      */
     public Response execute(Request request) {
-        switch (request.method()){
+        switch (request.method()) {
 /*            case HttpGet.METHOD_NAME:
                 return this.doGet(request);*/
             case HttpPost.METHOD_NAME:
@@ -126,10 +128,10 @@ public class Client {
         return this.doExecute(httpDelete, request);
     }
 
-    private URI setParameters(Request request){
+    private URI setParameters(Request request) {
         try {
             URIBuilder uri = new URIBuilder(request.url());
-            if (request.query() != null){
+            if (request.query() != null) {
                 request.query().forEach((k, value) -> uri.addParameter(k, StringUtil.valueOf(value)));
             }
             return uri.build();
@@ -146,33 +148,29 @@ public class Client {
      * @param httpMethods 请求方法
      */
     private void setEntity(Request request, HttpEntityEnclosingRequestBase httpMethods) {
-        if (request.data() == null && request.body() == null){
+        if (request.data() == null && request.body() == null) {
             return;
         }
         StringEntity entity = null;
-        if (request.body() != null){
+        if (request.body() != null) {
             JSONObject body = request.body();
-            if (request.encode()){
-                for (String key: request.body().keySet()){
+            if (request.encode()) {
+                for (String key : request.body().keySet()) {
                     String str = StringUtil.valueOf(body.get(key));
-                    try {
-                        body.put(key, URLEncoder.encode(str, UTF8));
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
+                    body.put(key, Func.urlEncode(str, UTF8));
                 }
             }
-            entity = new StringEntity(body.toJSONString(), Charset.forName(UTF8));
+            entity = new StringEntity(body.toJSONString(), ContentType.APPLICATION_JSON);
         }
-        if (request.data() != null){
-            if (HttpDelete.METHOD_NAME.equals(request.method())){
+        if (request.data() != null) {
+            if (HttpDelete.METHOD_NAME.equals(request.method())) {
                 return;
             }
             List<NameValuePair> pairList = new ArrayList<>(request.data().size());
             request.data().forEach((key, value) -> pairList.add(new BasicNameValuePair(key, StringUtil.valueOf(value))));
             entity = new UrlEncodedFormEntity(pairList, Charset.forName(UTF8));
         }
-        if (entity != null){
+        if (entity != null) {
             entity.setContentEncoding(UTF8);
             httpMethods.setEntity(entity);
         }
@@ -194,7 +192,7 @@ public class Client {
     /**
      * 设置 请求上下文（Cookie 主要用于设置 Cookie）
      *
-     * @param request     请求参数信息
+     * @param request 请求参数信息
      * @return HttpClientContext 请求上下文对象
      */
     private HttpClientContext setCookieStore(Request request) {
@@ -203,7 +201,7 @@ public class Client {
             return context;
         }
         CookieStore cookieStore = new BasicCookieStore();
-        for (int i = 0; i < request.cookies().size(); i++){
+        for (int i = 0; i < request.cookies().size(); i++) {
             JSONObject json = request.cookies().getJSONObject(i);
             BasicClientCookie cookie = new BasicClientCookie(json.getString("name"), json.getString("value"));
             cookie.setDomain(json.getString("domain"));
@@ -225,7 +223,7 @@ public class Client {
         response.request(request);
         response.startTime(System.currentTimeMillis());
         HttpClientContext context = this.setCookieStore(request);
-        try (CloseableHttpResponse httpResponse = httpClient.execute(httpMethods, context)){
+        try (CloseableHttpResponse httpResponse = httpClient.execute(httpMethods, context)) {
             response.setContext(context);
             response.cookieStore(context.getCookieStore());
             response.endTime(System.currentTimeMillis());
@@ -258,13 +256,15 @@ public class Client {
         return null;
     }
 
-    public static class Config{
+    public static class Config {
 
         private int maxTotal = 20;
 
         private int maxPerRoute = 2;
 
         private int timeout = 20;
+
+        private boolean newC = false;
 
         private boolean https = false;
 
@@ -281,14 +281,14 @@ public class Client {
         public Config() {
         }
 
-        public Config maxTotal(int maxTotal){
+        public Config maxTotal(int maxTotal) {
             if (maxTotal > this.maxTotal) {
                 this.maxTotal = maxTotal;
             }
             return this;
         }
 
-        public Config maxPerRoute(int maxPerRoute){
+        public Config maxPerRoute(int maxPerRoute) {
             if (maxPerRoute > this.maxPerRoute) {
                 this.maxPerRoute = maxPerRoute;
             }
@@ -302,18 +302,26 @@ public class Client {
             return this;
         }
 
-        public Config https(Object value){
+        public Config https(Object value) {
             Boolean boo = TypeUtil.booleanOf(value);
-            if (boo != null){
-                this.https =  boo;
+            if (boo != null) {
+                this.https = boo;
             }
             return this;
         }
 
-        public Config redirects(Object value){
+        public Config redirects(Object value) {
             Boolean boo = TypeUtil.booleanOf(value);
-            if (boo != null){
-                this.redirects =  boo;
+            if (boo != null) {
+                this.redirects = boo;
+            }
+            return this;
+        }
+
+        public Config newC(Object value) {
+            Boolean boo = TypeUtil.booleanOf(value);
+            if (boo != null) {
+                this.newC = boo;
             }
             return this;
         }
@@ -341,34 +349,27 @@ public class Client {
             return this;
         }
 
-        public Config cookies(Object cookies){
-            if (cookies instanceof JSONObject){
+        public Config cookies(Object cookies) {
+            if (cookies instanceof JSONObject) {
                 this.cookies = new JSONArray(1);
                 this.cookies.add(cookies);
                 return this;
             }
-            if (cookies instanceof JSONArray){
-                this.cookies = (JSONArray)cookies;
+            if (cookies instanceof JSONArray) {
+                this.cookies = (JSONArray) cookies;
                 return this;
             }
-            if (cookies instanceof String){
+            if (cookies instanceof String) {
                 try {
                     this.cookies = JSON.parseArray((String) cookies);
-                }catch (Exception e){
+                } catch (Exception e) {
                     log.debug("cookies parse exception, skip");
                 }
             }
             return this;
         }
 
-        public Client build(){
-            if (client == null){
-                synchronized (Client.class){
-                    if (client == null){
-                        client = new Client();
-                    }
-                }
-            }
+        private void httpClientBuilder(){
             POOL.setMaxTotal(maxTotal);
             POOL.setDefaultMaxPerRoute(maxPerRoute);
             RequestConfig config = RequestConfig.custom().setConnectTimeout(timeout * 1000)
@@ -381,15 +382,15 @@ public class Client {
                 }
                 builder.setSSLContext(getSslContext(certificate));
             }
-            if (redirects){
+            if (redirects) {
                 builder.setRedirectStrategy(new LaxRedirectStrategy());
             }
             if (proxy != null) {
                 builder.setProxy(proxy);
             }
-            if (cookies != null){
+            if (cookies != null) {
                 CookieStore cookieStore = new BasicCookieStore();
-                for (int i = 0; i < cookies.size(); i++){
+                for (int i = 0; i < cookies.size(); i++) {
                     JSONObject json = cookies.getJSONObject(i);
                     BasicClientCookie cookie = new BasicClientCookie(json.getString("name"), json.getString("value"));
                     cookie.setDomain(json.getString("domain"));
@@ -400,6 +401,21 @@ public class Client {
             }
             builder.setConnectionManager(POOL).setDefaultRequestConfig(config);
             httpClient = builder.build();
+        }
+
+        public Client build() {
+            if (client == null) {
+                synchronized (Client.class) {
+                    if (client == null) {
+                        client = new Client();
+                        this.httpClientBuilder();
+                    }
+                }
+            }
+            // 重新生成一个 HttpClient 一般用于修改默认 cookie
+            if (newC){
+                this.httpClientBuilder();
+            }
             return client;
         }
     }
