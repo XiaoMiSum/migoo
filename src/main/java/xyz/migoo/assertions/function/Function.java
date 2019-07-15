@@ -29,21 +29,22 @@ public class Function {
         decimalFormatter.setMinimumFractionDigits(1);
         return decimalFormatter;
     }
+
     private static String objectToString(Object subj) {
         String str;
         if (subj == null || StringUtil.isBlank(subj.toString())) {
             str = "null";
-        } else if (subj instanceof List){
-            if (((List) subj).isEmpty()){
+        } else if (subj instanceof List) {
+            if (((List) subj).isEmpty()) {
                 str = "null";
-            }else {
+            } else {
                 str = JSONArray.toJSONString(subj);
             }
         } else if (subj instanceof Map) {
             //noinspection unchecked
-            if (((Map) subj).isEmpty()){
+            if (((Map) subj).isEmpty()) {
                 str = "null";
-            }else {
+            } else {
                 str = JSONArray.toJSONString(subj);
             }
         } else if (subj instanceof Double || subj instanceof Float) {
@@ -57,9 +58,9 @@ public class Function {
     /**
      * 验证  actual == expect
      *
-     * @param actual  实际值
-     * @param expect  期望值
-     * @return  验证结果 true / false
+     * @param actual 实际值
+     * @param expect 期望值
+     * @return 验证结果 true / false
      */
     public static boolean equals(Object actual, Object expect) {
         String str1 = objectToString(actual);
@@ -73,33 +74,34 @@ public class Function {
         return str1.equalsIgnoreCase(str2);
     }
 
-    public static boolean isNotEquals(Object actual, Object expect){
+    public static boolean isNotEquals(Object actual, Object expect) {
         return !equals(actual, expect);
     }
 
     /**
      * Compare sizes,
      * returning true if the actual value is greater than or equals expected, or false otherwise
+     *
      * @param actual actual value
      * @param expect expect value
      * @return true or false
      */
-    public static boolean greaterThanOrEquals(Object actual, Object expect){
+    public static boolean greaterThanOrEquals(Object actual, Object expect) {
         try {
             BigDecimal b1 = new BigDecimal(String.valueOf(actual));
             BigDecimal b2 = new BigDecimal(String.valueOf(expect));
             return b1.compareTo(b2) >= 0;
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
 
-    public static boolean greaterThan(Object actual, Object expect){
+    public static boolean greaterThan(Object actual, Object expect) {
         try {
             BigDecimal b1 = new BigDecimal(String.valueOf(actual));
             BigDecimal b2 = new BigDecimal(String.valueOf(expect));
             return b1.compareTo(b2) > 0;
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
@@ -107,26 +109,27 @@ public class Function {
     /**
      * Compare sizes,
      * returning true if the actual value is less than or equals expected, or false otherwise
+     *
      * @param actual actual value
      * @param expect expect value
      * @return true or false
      */
-    public static boolean lessThanOrEquals(Object actual, Object expect){
+    public static boolean lessThanOrEquals(Object actual, Object expect) {
         try {
             BigDecimal b1 = new BigDecimal(String.valueOf(actual));
             BigDecimal b2 = new BigDecimal(String.valueOf(expect));
             return b1.compareTo(b2) <= 0;
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
 
-    public static boolean lessThan(Object actual, Object expect){
+    public static boolean lessThan(Object actual, Object expect) {
         try {
             BigDecimal b1 = new BigDecimal(String.valueOf(actual));
             BigDecimal b2 = new BigDecimal(String.valueOf(expect));
             return b1.compareTo(b2) < 0;
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
@@ -135,9 +138,9 @@ public class Function {
      * 验证 actual.contains(expect)
      * 只支持 string\map\list
      *
-     * @param actual  实际值
-     * @param expect  期望值
-     * @return  验证结果 true / false
+     * @param actual 实际值
+     * @param expect 期望值
+     * @return 验证结果 true / false
      */
     public static boolean contains(Object actual, Object expect) {
         if (actual instanceof String) {
@@ -153,16 +156,16 @@ public class Function {
         return false;
     }
 
-    public static boolean doesNotContains(Object actual, Object expect){
+    public static boolean doesNotContains(Object actual, Object expect) {
         return !contains(actual, expect);
     }
 
     /**
      * 验证 actual 是 空对象 或 空字符串
      *
-     * @param actual  实际值
-     * @param expect  期望值（未使用，可为任意对象）
-     * @return  验证结果 true / false
+     * @param actual 实际值
+     * @param expect 期望值（未使用，可为任意对象）
+     * @return 验证结果 true / false
      */
     public static boolean isEmpty(Object actual, Object expect) {
         if (actual instanceof JSONObject) {
@@ -180,9 +183,9 @@ public class Function {
     /**
      * 验证 actual 不是 空对象 或 空字符串
      *
-     * @param actual  实际值
-     * @param expect  期望值（未使用，可为任意对象）
-     * @return  验证结果 true / false
+     * @param actual 实际值
+     * @param expect 期望值（未使用，可为任意对象）
+     * @return 验证结果 true / false
      */
     public static boolean isNotEmpty(Object actual, Object expect) {
         return !isEmpty(actual, expect);
@@ -190,19 +193,20 @@ public class Function {
 
     /**
      * 正则表达式 验证器
-     * @param actual   待验证的实际值
-     * @param expect   正则表达式
+     *
+     * @param actual 待验证的实际值
+     * @param expect 正则表达式
      * @return 验证结果 true / false
      */
     public static boolean regex(Object actual, Object expect) {
         String str = "";
-        if (actual instanceof JSON){
+        if (actual instanceof JSON) {
             str = ((JSON) actual).toJSONString();
         }
-        if (actual instanceof Number){
+        if (actual instanceof Number) {
             str = String.valueOf(actual);
         }
-        if (actual instanceof String){
+        if (actual instanceof String) {
             str = actual.toString();
         }
         Pattern pattern = Pattern.compile(expect.toString());
@@ -210,10 +214,10 @@ public class Function {
         return matcher.find();
     }
 
-    public static boolean custom(String clazz, Object expect){
+    public static boolean custom(String clazz, Object expect) {
         boolean result = Boolean.FALSE;
         try {
-            IFunction func = (IFunction)Class.forName(clazz).newInstance();
+            IFunction func = (IFunction) Class.forName(clazz).newInstance();
             Map<String, Object> data = new HashMap<>(2);
             data.put("expect", expect);
             result = func.assertThat(data);
@@ -221,5 +225,37 @@ public class Function {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public static boolean listMap(List actual, Object expect) {
+        try {
+            for (Object object : actual){
+                JSONObject js = (JSONObject) object;
+                if (!(expect instanceof List) && !(expect instanceof Map)){
+                    if (js.containsKey(expect) || js.containsValue(expect)){
+                        return true;
+                    }
+                }
+                if (expect instanceof Map){
+                    Map map =  (Map) expect;
+                    for (Object key : map.keySet()){
+                        if (js.containsKey(key) || js.containsValue(map.get(key))){
+                            return true;
+                        }
+                    }
+                }
+                if (expect instanceof List){
+                    List list = (List) expect;
+                    for (Object obj: list){
+                        if (js.containsKey(obj) || js.containsValue(obj)){
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        } catch (Exception e){
+            return false;
+        }
     }
 }

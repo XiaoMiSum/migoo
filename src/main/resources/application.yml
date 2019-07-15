@@ -62,6 +62,13 @@ function.isNotEmpty:
   - notNull
   - notBlank
 
+function.list:
+  - list
+  - ls
+  - listMap
+  - lsMap
+  - lsm
+
 function.custom:
   - '^class.[\w]+(.\w+)*'
   - '^package.[\w]+(.\w+)*'

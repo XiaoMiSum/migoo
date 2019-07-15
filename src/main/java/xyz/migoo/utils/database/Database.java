@@ -24,7 +24,7 @@ public class Database {
         this.conn = conn;
     }
 
-    public static Database create(String cls,String user,String password,String url) {
+    public static Database create(String cls, String user, String password, String url) {
         Connection conn = null;
         try {
             Class.forName(cls);
@@ -34,6 +34,10 @@ public class Database {
             log.error(e.getMessage(), e);
         }
         return new Database(conn);
+    }
+
+    public static Database create(String user, String password, String url){
+        return create("com.mysql.cj.jdbc.Driver", user, password, url);
     }
 
     public void close() {

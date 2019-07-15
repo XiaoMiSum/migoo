@@ -72,6 +72,8 @@ public class Platform {
 
     public static final JSONArray FUNCTION_IS_NOT_EMPTY = PROPERTIES.getJSONArray("function.isNotEmpty");
 
+    public static final JSONArray FUNCTION_LIST = PROPERTIES.getJSONArray("function.list");
+
     public static final JSONArray FUNCTION_REGEX = PROPERTIES.getJSONArray("check.regex");
 
     private static final JSONArray CHECK_JSON = PROPERTIES.getJSONArray("check.json");

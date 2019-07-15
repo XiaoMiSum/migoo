@@ -22,7 +22,7 @@ public abstract class AbstractAssertion implements Assertion{
 
     private static Map<String, Method> methods;
     private String methodName;
-    Method method;
+    private Method method;
     Object actual;
 
     @Override
@@ -107,6 +107,10 @@ public abstract class AbstractAssertion implements Assertion{
             return;
         }
         if (FUNCTION_IS_NOT_EMPTY.contains(searchChar)) {
+            methodName = CaseKeys.VALIDATE_TYPE_IS_NOT_EMPTY;
+            return;
+        }
+        if (FUNCTION_LIST.contains(searchChar)) {
             methodName = CaseKeys.VALIDATE_TYPE_IS_NOT_EMPTY;
             return;
         }

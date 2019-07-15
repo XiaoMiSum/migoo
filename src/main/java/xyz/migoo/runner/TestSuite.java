@@ -42,7 +42,7 @@ public class TestSuite extends junit.framework.TestSuite {
         JSONObject config = caseSet.getJSONObject(CaseKeys.CONFIG);
         JSONObject configVars = config.getJSONObject(CaseKeys.CONFIG_VARIABLES);
         // 1. 处理 config.variables 中的变量 (合并 + 计算)
-        BindVariable.merge(vars, configVars);
+        configVars = BindVariable.merge(vars, configVars);
         // 2. 执行数据准备工作 beforeClass 中的只能使用准确数据 或 步骤1 能计算出结果的变量
         Object beforeClass = config.get(CaseKeys.CONFIG_BEFORE_CLASS);
         Hook.hook(beforeClass, configVars);
@@ -59,7 +59,7 @@ public class TestSuite extends junit.framework.TestSuite {
             JSONObject testCase = testCases.getJSONObject(i);
             JSONObject caseVars = testCase.getJSONObject(CaseKeys.CASE_VARIABLES);
             // 1. 处理 case.variables 中的变量 （合并 + 计算）
-            BindVariable.merge(configVars, caseVars);
+            caseVars = BindVariable.merge(configVars, caseVars);
             // 2. 执行数据准备工作 before 中的只能使用准确数据 或 步骤1 能计算出结果的变量
             Hook.hook(testCase.get(CaseKeys.CASE_BEFORE), configVars);
             // 3. 再次 计算 + 绑定 变量

@@ -43,14 +43,12 @@ public class Runner {
     /**
      * 如果传入的是目录，生成的测试报告在同一个文件中
      * @param caseOrPath json 格式的 case 或 测试用例文件\目录
-     * @return
      */
-    private TestResult byCase(String caseOrPath){
+    private void byCase(String caseOrPath){
         TestSuite caseSuite = this.initTestSuite(caseOrPath);
         TestResult result = new TestRunner().run(caseSuite);
         Report.generateReport(result.report(), caseSuite.getName(), false);
         report.addResult(result);
-        return result;
     }
 
     /**
@@ -80,20 +78,20 @@ public class Runner {
         EmailUtil.sendEmail();
     }
 
-    private TestResult byPath(String path){
+    private void byPath(String path){
         TestResult result = null;
         File file = new File(path);
         if (file.isDirectory()) {
             String[] fList = file.list();
             assert fList != null;
             for (String f : fList) {
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder(path);
                 if (StringUtil.contains(f, "vars.")
                         ||f.startsWith(".") || IGNORE_DIRECTORY.contains(f)) {
                     continue;
                 }
                 if (!path.endsWith("/")) {
-                    sb.append(path).append("/");
+                    sb.append("/");
                 }
                 this.byPath(sb.append(f).toString());
             }
@@ -103,7 +101,6 @@ public class Runner {
             report.addResult(result);
             Report.generateReport(result.report(), testSuite.getName(),false);
         }
-        return result;
     }
 
     private TestSuite initTestSuite(String caseOrPath){

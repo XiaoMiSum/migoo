@@ -28,7 +28,7 @@ public class BindVariable {
 
     private static Map<String, Method> methods = null;
 
-    public static void merge(JSONObject vars1, JSONObject vars2){
+    public static JSONObject merge(JSONObject vars1, JSONObject vars2){
         // 1. 将 1 中的 绑定到 2
         loopBindVariables(vars1, vars2);
         // 2. 合并 1 到 2
@@ -40,6 +40,7 @@ public class BindVariable {
         }
         // 3. 将 2 中的 绑定到 2
         BindVariable.loopBindVariables(vars2, vars2);
+        return vars2;
     }
 
     public static void loopBindVariables(JSONObject vars, Object useVarObject) {
