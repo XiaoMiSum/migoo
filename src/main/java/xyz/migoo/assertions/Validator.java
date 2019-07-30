@@ -31,18 +31,18 @@ public class Validator extends Assert {
     private Validator() {
     }
 
-    public static void validation(Response response, JSON validate) throws AssertionException {
+    public static void validation(Response response, JSON validate, JSONObject variables) throws AssertionException {
         if (validate instanceof JSONObject) {
-            validation(response, (JSONObject) validate);
+            validation(response, (JSONObject) validate, variables);
         }
         if (validate instanceof JSONArray) {
-            validation(response, (JSONArray) validate);
+            validation(response, (JSONArray) validate, variables);
         }
     }
 
-    private static void validation(Response response, JSONArray validate) throws AssertionException {
+    private static void validation(Response response, JSONArray validate, JSONObject variables) throws AssertionException {
         for (int i = 0; i < validate.size(); i++) {
-            validation(response, validate.getJSONObject(i));
+            validation(response, validate.getJSONObject(i), variables);
         }
     }
 
@@ -51,7 +51,7 @@ public class Validator extends Assert {
      * @param validate  检查点
      * @throws AssertionException 检查异常
      */
-    private static void evalValidate(JSONObject validate) throws AssertionException {
+    private static void evalValidate(JSONObject validate, JSONObject variables) throws AssertionException {
         try {
             String value = validate.getString(CaseKeys.VALIDATE_EXPECT);
             if (StringUtil.isEmpty(value)){
@@ -62,8 +62,7 @@ public class Validator extends Assert {
                 if (methods == null) {
                     methods = InvokeUtil.functionLoader(Platform.EXTENDS_VALIDATOR);
                 }
-                Object[] parameter = InvokeUtil.parameter(func.group(2), null);
-                Object result = InvokeUtil.invoke(methods, func.group(1), parameter);
+                Object result = InvokeUtil.invoke(methods, func.group(1), func.group(2), variables);
                 validate.put(CaseKeys.VALIDATE_EXPECT, result);
             }
         } catch (Exception e) {
@@ -71,8 +70,8 @@ public class Validator extends Assert {
         }
     }
 
-    private synchronized static void validation(Response response, JSONObject validate) throws AssertionException {
-        evalValidate(validate);
+    private synchronized static void validation(Response response, JSONObject validate, JSONObject variables) throws AssertionException {
+        evalValidate(validate, variables);
         LOG.info(String.format("check point  : %s", validate.toJSONString()));
         Boolean result = false;
         AbstractAssertion assertion = AssertionFactory.getAssertion(validate.getString(CaseKeys.VALIDATE_CHECK));

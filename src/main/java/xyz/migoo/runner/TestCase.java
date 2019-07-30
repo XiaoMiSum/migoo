@@ -28,7 +28,7 @@ public class TestCase extends junit.framework.TestCase{
     private AssertionException failure;
     private IgnoreTestException ignore;
 
-    public TestCase(Task task, JSONObject testCase, TestSuite testSuite){
+    TestCase(Task task, JSONObject testCase, TestSuite testSuite){
         super(testCase.getString(CaseKeys.CASE_TITLE));
         this.task = task;
         this.testCase = testCase;
@@ -92,7 +92,7 @@ public class TestCase extends junit.framework.TestCase{
         return error;
     }
 
-    public Object ignore() {
+    Object ignore() {
         return ignore;
     }
 }

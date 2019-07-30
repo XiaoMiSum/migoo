@@ -47,7 +47,7 @@ public class InvokeUtil {
      * @param params 参数字符串，处理时使用,分割
      * @param variables 变量，参数可能使用变量，需要从此对象取出
      */
-    public static Object[] parameter(String params, JSONObject variables) throws RuntimeException {
+    private static Object[] parameter(String params, JSONObject variables) throws RuntimeException {
         if (StringUtil.isBlank(params)) {
             return null;
         }
@@ -56,8 +56,8 @@ public class InvokeUtil {
         int i = 0;
         for (Object obj : parameters){
             Matcher param = PARAM_PATTERN.matcher(obj.toString());
-            if (variables != null && !variables.isEmpty()){
-                if (param.find()) {
+            if (param.find()) {
+                if (variables != null && !variables.isEmpty()){
                     Object object = variables.get(param.group(1));
                     if (FUNC_PATTERN.matcher(String.valueOf(object)).find()
                             || PARAM_PATTERN.matcher(String.valueOf(object)).find()){
@@ -65,8 +65,8 @@ public class InvokeUtil {
                     }
                     obj = object;
                 }
-                parameter[i] = obj;
             }
+            parameter[i] = obj;
             i += 1;
         }
         return parameter;
@@ -94,31 +94,19 @@ public class InvokeUtil {
      * @param name method 名称
      * @param parameter 参数数组
      */
-    public static Object invoke(Map<String, Method> methods, String name, Object[] parameter) throws InvokeException {
+    public static Object invoke(Map<String, Method> methods, String name, String parameter, JSONObject variables)
+            throws InvokeException {
         Object result;
-        String params = parameterToString(parameter);
         try {
-            Method method = method(methods, name, parameter);
+            Object[] parameters = parameter(parameter, variables);
+            Method method = method(methods, name, parameters);
             result =  method.invoke(null, parameter);
-            log.info(String.format("method invoke, method [%s] -> parameter [%s] -> return [%s]", method, params, result));
+            log.info(String.format("method invoke, method [%s] -> parameter [%s] -> return [%s]", method, parameter, result));
         } catch (NullPointerException e){
             throw new InvokeException(String.format("method '%s' not found !", name));
         } catch (Exception e) {
-            throw new InvokeException(String.format("invoke error, method name '%s', parameter '%s'", name, params), e);
+            throw new InvokeException(String.format("invoke error, method name '%s', parameter '%s'", name, parameter), e);
         }
         return result;
-    }
-
-    private static String parameterToString(Object[] parameter){
-        StringBuilder sb = new StringBuilder();
-        if (parameter != null){
-            for (Object o : parameter){
-                if (sb.length() > 0){
-                    sb.append(SEPARATOR);
-                }
-                sb.append(o);
-            }
-        }
-        return sb.toString();
     }
 }

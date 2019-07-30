@@ -19,26 +19,26 @@ import xyz.migoo.utils.TypeUtil;
  * @author xiaomi
  * @date 2018/7/24 20:34
  */
-public class Task {
+class Task {
 
     private Client client;
     private Request request;
     private Request.Builder builder;
     private static Log log = new Log(Task.class);
 
-    public Task(Client client, Request.Builder builder){
+    Task(Client client, Request.Builder builder){
         this.client = client;
         this.builder = builder;
     }
 
-    public synchronized void run(JSONObject jsonCase, TestCase testCase) throws AssertionException, Exception {
+    synchronized void run(JSONObject jsonCase, TestCase testCase) throws AssertionException, Exception {
         try {
             this.buildRequest(jsonCase);
             testCase.request(request);
             Response response = client.execute(request);
             testCase.response(response);
             this.addLog(request.title(), response);
-            this.assertThat(jsonCase.get(CaseKeys.VALIDATE), response, testCase);
+            this.assertThat(jsonCase, response, testCase);
         } catch (AssertionException e) {
             log.error(e.getMessage(), e);
             throw new AssertionException(e.getMessage().replaceAll("\n", "</br>"));
@@ -60,12 +60,13 @@ public class Task {
                 .build();
     }
 
-    private void assertThat(Object validate, Response response, TestCase testCase){
+    private void assertThat(JSONObject jsonCase, Response response, TestCase testCase){
+        Object validate = jsonCase.get(CaseKeys.VALIDATE);
         if (!(validate instanceof JSON)){
             validate = JSON.parse(validate.toString());
         }
         testCase.validate((JSONArray) validate);
-        Validator.validation(response, (JSON) validate);
+        Validator.validation(response, (JSON) validate, jsonCase.getJSONObject(CaseKeys.CASE_VARIABLES));
     }
 
     private void addLog(String title, Response response){

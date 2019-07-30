@@ -65,6 +65,9 @@ public class Function {
     public static boolean equals(Object actual, Object expect) {
         String str1 = objectToString(actual);
         String str2 = objectToString(expect);
+        if (actual instanceof BigDecimal || expect instanceof BigDecimal){
+            return new BigDecimal(str1).compareTo(new BigDecimal(str2)) == 0;
+        }
         return str1.equals(str2);
     }
 

@@ -23,7 +23,7 @@ public class TestSuite extends junit.framework.TestSuite {
     private int rTests = 0;
     private int ignore = 0;
 
-    protected TestSuite(JSONObject caseSet, JSONObject variables) throws InvokeException {
+    TestSuite(JSONObject caseSet, JSONObject variables) throws InvokeException {
         super();
         this.testCases = new Vector<>(10);
         this.init(caseSet, variables);

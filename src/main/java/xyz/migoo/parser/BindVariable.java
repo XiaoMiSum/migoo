@@ -207,8 +207,7 @@ public class BindVariable {
             Matcher func = FUNC_PATTERN.matcher(evalFunc);
             if (func.find()) {
                 functionLoader();
-                Object[] parameter = InvokeUtil.parameter(func.group(2), variables);
-                return InvokeUtil.invoke(methods, func.group(1), parameter);
+                return InvokeUtil.invoke(methods, func.group(1), func.group(2), variables);
             }
         } catch (RuntimeException ignored) {
 
