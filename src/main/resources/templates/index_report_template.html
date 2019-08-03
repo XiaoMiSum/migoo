@@ -19,7 +19,6 @@
             margin : 1% 5%;
         }
         .zhuTu {
-            height: 200px;
             width: 60%;
             margin : 30% 20%;
         }
@@ -53,7 +52,6 @@
 
 
 <div id="main3" class="zhuTu"></div>
-<div id="container" class="zhuTu"></div>
 
 <script type="text/javascript">
     document.getElementById('data').style.display = 'none';
@@ -64,11 +62,6 @@
     var summary_error = document.getElementById("summary.error").value;
     var summary_skipped = document.getElementById("summary.skipped").value;
     var summary = document.getElementsByTagName("tr").length;
-
-    <!--  基于准备好的dom，初始化echarts实例 -->
-    var myChart1 = echarts.init(document.getElementById('main1'));
-    var myChart2 = echarts.init(document.getElementById('main2'));
-    var myChart3 = echarts.init(document.getElementById('main3'));
 
     var legend_data = [];
     var series_data = [];
@@ -275,14 +268,19 @@
         ]
     };
 
+    <!--  基于准备好的dom，初始化echarts实例 -->
+    var myChart1 = echarts.init(document.getElementById('main1'));
     <!-- 使用刚指定的配置项和数据显示图表。  -->
     myChart1.setOption(option1);
-
     myChart1.on('click', function (params) {
         window.open('./html/' + params.name + '.html');
     });
 
+    var myChart2 = echarts.init(document.getElementById('main2'));
     myChart2.setOption(option2);
+
+    document.getElementById("main3").style.height = legend_data.length * 200 + 'px';
+    var myChart3 = echarts.init(document.getElementById('main3'));
     myChart3.setOption(option3);
     myChart3.on('click', function (params) {
         if (params.componentType == "yAxis") {
