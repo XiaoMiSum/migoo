@@ -44,7 +44,7 @@ public class Hook {
             Matcher func = FUNC_PATTERN.matcher(hook.getString(i));
             if (func.find()) {
                 functionLoader();
-                InvokeUtil.invoke(methods, func.group(1), func.group(2));
+                InvokeUtil.invoke(methods, func.group(1), func.group(2), variables);
             }
         }
     }
