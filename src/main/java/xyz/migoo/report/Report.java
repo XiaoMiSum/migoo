@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static xyz.migoo.config.Platform.HTTP_CLIENT_VERSION;
 import static xyz.migoo.config.Platform.JDK_VERSION;
@@ -61,8 +62,10 @@ public class Report {
     }
 
     private void records(List<Map<String, Object>> records){
+        AtomicInteger id = new AtomicInteger();
         testResults.forEach(testResult -> {
-            Map<String, Object> record = new HashMap<>(7);
+            Map<String, Object> record = new HashMap<>(8);
+            record.put("id", id.get());
             record.put("title", testResult.testSuite().getName());
             record.put("link", "./html/" + testResult.testSuite().getName() + ".html");
             record.put("total", testResult.testSuite().rTests());
@@ -71,6 +74,7 @@ public class Report {
             record.put("error", testResult.testSuite().eTests());
             record.put("skipped", testResult.testSuite().iTests());
             records.add(record);
+            id.getAndIncrement();
         });
     }
 
@@ -167,7 +171,7 @@ public class Report {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(htmlReader.inputStream))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    stringBuilder.append(line);
+                    stringBuilder.append(line).append("\n");
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
