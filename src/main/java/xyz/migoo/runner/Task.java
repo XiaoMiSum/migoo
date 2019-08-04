@@ -5,15 +5,15 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.assertions.Validator;
 import xyz.migoo.config.CaseKeys;
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.exception.InvokeException;
-import xyz.migoo.exception.AssertionException;
+import xyz.migoo.exception.AssertionFailure;
 import xyz.migoo.http.Client;
 import xyz.migoo.http.Request;
 import xyz.migoo.http.Response;
 import xyz.migoo.parser.BindVariable;
 import xyz.migoo.utils.Log;
 import xyz.migoo.utils.StringUtil;
-import xyz.migoo.utils.TypeUtil;
 
 /**
  * @author xiaomi
@@ -31,7 +31,7 @@ class Task {
         this.builder = builder;
     }
 
-    synchronized void run(JSONObject jsonCase, TestCase testCase) throws AssertionException, Exception {
+    synchronized void run(JSONObject jsonCase, TestCase testCase) throws AssertionFailure, ExecuteError {
         try {
             this.buildRequest(jsonCase);
             testCase.request(request);
@@ -39,12 +39,12 @@ class Task {
             testCase.response(response);
             this.addLog(request.title(), response);
             this.assertThat(jsonCase, response, testCase);
-        } catch (AssertionException e) {
+        } catch (AssertionFailure e) {
             log.error(e.getMessage(), e);
-            throw new AssertionException(e.getMessage().replaceAll("\n", "</br>"));
+            throw new AssertionFailure(e.getMessage().replaceAll("\n", "</br>"));
         } catch (Exception e){
             log.error(e.getMessage(), e);
-            throw new Exception(StringUtil.getStackTrace(e));
+            throw new ExecuteError(StringUtil.getStackTrace(e));
         }
     }
 
@@ -60,7 +60,7 @@ class Task {
                 .build();
     }
 
-    private void assertThat(JSONObject jsonCase, Response response, TestCase testCase){
+    private void assertThat(JSONObject jsonCase, Response response, TestCase testCase) throws AssertionFailure, ExecuteError {
         Object validate = jsonCase.get(CaseKeys.VALIDATE);
         if (!(validate instanceof JSON)){
             validate = JSON.parse(validate.toString());

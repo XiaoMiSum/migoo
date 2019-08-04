@@ -103,7 +103,7 @@ public class InvokeUtil {
             result =  method.invoke(null, parameter);
             log.info(String.format("method invoke, method [%s] -> parameter [%s] -> return [%s]", method, parameter, result));
         } catch (NullPointerException e){
-            throw new InvokeException(String.format("method '%s' not found !", name));
+            throw new InvokeException(String.format("method '%s(%s)' not found !", name, parameter));
         } catch (Exception e) {
             throw new InvokeException(String.format("invoke error, method name '%s', parameter '%s'", name, parameter), e);
         }

@@ -2,8 +2,9 @@ package xyz.migoo.runner;
 
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.config.CaseKeys;
-import xyz.migoo.exception.AssertionException;
-import xyz.migoo.exception.IgnoreTestException;
+import xyz.migoo.exception.AssertionFailure;
+import xyz.migoo.exception.ExecuteError;
+import xyz.migoo.exception.SkippedRun;
 import xyz.migoo.http.Request;
 import xyz.migoo.http.Response;
 import xyz.migoo.utils.TypeUtil;
@@ -24,9 +25,9 @@ public class TestCase extends junit.framework.TestCase{
     private List validate;
     private Request request;
     private Response response;
-    private Exception error;
-    private AssertionException failure;
-    private IgnoreTestException ignore;
+    private ExecuteError error;
+    private AssertionFailure failure;
+    private SkippedRun ignore;
 
     TestCase(Task task, JSONObject testCase, TestSuite testSuite){
         super(testCase.getString(CaseKeys.CASE_TITLE));
@@ -43,17 +44,17 @@ public class TestCase extends junit.framework.TestCase{
             this.testSuite.addRTests();
             Boolean aBoolean = TypeUtil.booleanOf(testCase.get(CaseKeys.CASE_IGNORE));
             if (aBoolean != null && aBoolean) {
-                throw new IgnoreTestException("ignore test");
+                throw new SkippedRun("ignore test");
             }
             this.task.run(this.testCase, this);
-        } catch (IgnoreTestException exception){
+        } catch (SkippedRun exception){
             this.ignore = exception;
             this.testSuite.addIgnore();
             validate(testCase.getJSONArray(CaseKeys.VALIDATE));
-        } catch (AssertionException failure) {
+        } catch (AssertionFailure failure) {
             this.failure = failure;
             this.testSuite.addFTests();
-        } catch (Exception error){
+        } catch (ExecuteError error){
             this.error = error;
             this.testSuite.addETests();
         }
@@ -84,11 +85,11 @@ public class TestCase extends junit.framework.TestCase{
         this.response = response;
     }
 
-    AssertionException failure(){
+    AssertionFailure failure(){
         return failure;
     }
 
-    public Exception error(){
+    public ExecuteError error(){
         return error;
     }
 

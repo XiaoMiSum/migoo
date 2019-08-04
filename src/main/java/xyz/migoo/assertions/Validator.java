@@ -6,7 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import junit.framework.Assert;
 import xyz.migoo.config.CaseKeys;
 import xyz.migoo.config.Platform;
-import xyz.migoo.exception.AssertionException;
+import xyz.migoo.exception.AssertionFailure;
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.http.Response;
 import xyz.migoo.utils.InvokeUtil;
 import xyz.migoo.utils.Log;
@@ -14,7 +15,6 @@ import xyz.migoo.utils.StringUtil;
 
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Matcher;
 
 import static xyz.migoo.parser.BindVariable.FUNC_PATTERN;
@@ -31,7 +31,7 @@ public class Validator extends Assert {
     private Validator() {
     }
 
-    public static void validation(Response response, JSON validate, JSONObject variables) throws AssertionException {
+    public static void validation(Response response, JSON validate, JSONObject variables) throws AssertionFailure, ExecuteError {
         if (validate instanceof JSONObject) {
             validation(response, (JSONObject) validate, variables);
         }
@@ -40,7 +40,7 @@ public class Validator extends Assert {
         }
     }
 
-    private static void validation(Response response, JSONArray validate, JSONObject variables) throws AssertionException {
+    private static void validation(Response response, JSONArray validate, JSONObject variables) throws AssertionFailure, ExecuteError {
         for (int i = 0; i < validate.size(); i++) {
             validation(response, validate.getJSONObject(i), variables);
         }
@@ -48,13 +48,14 @@ public class Validator extends Assert {
 
     /**
      * 执行 validate.expect 指定的方法，将值put到 validate 对象中
-     * @param validate  检查点
-     * @throws AssertionException 检查异常
+     *
+     * @param validate 检查点
+     * @throws AssertionFailure 检查异常
      */
-    private static void evalValidate(JSONObject validate, JSONObject variables) throws AssertionException {
+    private static void evalValidate(JSONObject validate, JSONObject variables) throws ExecuteError {
         try {
             String value = validate.getString(CaseKeys.VALIDATE_EXPECT);
-            if (StringUtil.isEmpty(value)){
+            if (StringUtil.isEmpty(value)) {
                 return;
             }
             Matcher func = FUNC_PATTERN.matcher(value);
@@ -66,33 +67,26 @@ public class Validator extends Assert {
                 validate.put(CaseKeys.VALIDATE_EXPECT, result);
             }
         } catch (Exception e) {
-            throw new AssertionException(e.getMessage());
+            throw new ExecuteError(e.getMessage(), e);
         }
     }
 
-    private synchronized static void validation(Response response, JSONObject validate, JSONObject variables) throws AssertionException {
+    private synchronized static void validation(Response response, JSONObject validate, JSONObject variables) throws AssertionFailure, ExecuteError {
         evalValidate(validate, variables);
         LOG.info(String.format("check point  : %s", validate.toJSONString()));
-        Boolean result = false;
         AbstractAssertion assertion = AssertionFactory.getAssertion(validate.getString(CaseKeys.VALIDATE_CHECK));
         assertion.setActual(response);
-        try {
-            result = Objects.requireNonNull(assertion.assertThat(validate));
-            LOG.info(String.format("check result : %s", result));
-        } catch (Exception e) {
-            LOG.error(String.format("check result : %s", result), e);
-            throw new AssertionException(e.getMessage());
-        }
+        boolean result = assertion.assertThat(validate);
+        LOG.info(String.format("check result : %s", result));
         if (!result) {
             String check = validate.getString(CaseKeys.VALIDATE_CHECK);
             String expected = validate.getString(CaseKeys.VALIDATE_EXPECT);
             String actual = String.valueOf(assertion.getActual());
             String clazz = assertion.getClass().getName();
             String method = validate.getString(CaseKeys.VALIDATE_TYPE);
-            String msg="Value expected(%s) to be '%s', but found '%s' \n" +
+            String msg = "Value expected(%s) to be '%s', but found '%s' \n" +
                     "Assertion class is '%s', assert method is '%s'";
-            throw new AssertionException(String.format(msg, check
-                    , expected, actual, clazz, method));
+            throw new AssertionFailure(String.format(msg, check, expected, actual, clazz, method));
         }
     }
 }
