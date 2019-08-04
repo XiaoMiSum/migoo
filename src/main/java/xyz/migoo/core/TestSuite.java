@@ -1,15 +1,21 @@
-package xyz.migoo.runner;
+package xyz.migoo.core;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import junit.framework.Test;
 import xyz.migoo.config.CaseKeys;
+import xyz.migoo.exception.AssertionFailure;
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.exception.InvokeException;
+import xyz.migoo.exception.SkippedRun;
 import xyz.migoo.http.Client;
 import xyz.migoo.http.Request;
 import xyz.migoo.utils.Log;
 import xyz.migoo.utils.StringUtil;
 import xyz.migoo.parser.BindVariable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -19,15 +25,11 @@ import java.util.Vector;
 public class TestSuite extends junit.framework.TestSuite {
 
     private static Log log = new Log(TestSuite.class);
-    private Vector<TestCase> testCases;
-    private int fTests = 0;
-    private int eTests = 0;
-    private int rTests = 0;
-    private int ignore = 0;
+    private Vector<CaseResult> caseResults;
 
-    TestSuite(JSONObject caseSet, JSONObject variables){
+    public TestSuite(JSONObject caseSet, JSONObject variables){
         super();
-        this.testCases = new Vector<>(10);
+        this.caseResults = new Vector<>();
         this.init(caseSet, variables);
         super.setName(caseSet.getString(CaseKeys.NAME));
     }
@@ -38,8 +40,7 @@ public class TestSuite extends junit.framework.TestSuite {
             JSONObject vars = null;
             if (variables != null) {
                 vars = variables.getJSONObject("variables") == null ?
-                        variables.getJSONObject("vars") : variables.getJSONObject("variables");
-                vars = vars != null ? vars : variables;
+                        variables.getJSONObject("vars") == null ? variables : variables.getJSONObject("vars") : variables.getJSONObject("variables");
                 Hook.hook(variables.get("hook"), vars);
             }
             JSONObject config = caseSet.getJSONObject(CaseKeys.CONFIG);
@@ -56,8 +57,8 @@ public class TestSuite extends junit.framework.TestSuite {
             Client client = new Client.Config().https(request.get(CaseKeys.CONFIG_REQUEST_HTTPS)).build();
             JSONArray testCases = caseSet.getJSONArray(CaseKeys.CASE);
             for (int i = 0; i < testCases.size(); i++) {
+                JSONObject testCase = testCases.getJSONObject(i);
                 try {
-                    JSONObject testCase = testCases.getJSONObject(i);
                     // 1. 处理 case.variables 中的变量 （合并 + 计算）
                     JSONObject caseVars = BindVariable.merge(configVars, testCase.getJSONObject(CaseKeys.CASE_VARIABLES));
                     // 2. 执行数据准备工作 before 中的只能使用准确数据 或 步骤1 能计算出结果的变量
@@ -68,11 +69,11 @@ public class TestSuite extends junit.framework.TestSuite {
                     BindVariable.bind(caseVars, testCase);
                     Request.Builder builder = new Request.Builder().method(request.getString(CaseKeys.CONFIG_REQUEST_METHOD));
                     this.request(testCase, builder, request);
-                    Task task = new Task(client, builder);
-                    this.addTest(task, testCase);
+                    super.addTest(new TestCase(new Task(client, builder), testCase, this));
                 }catch (InvokeException e){
                     log.error("run case exception", e);
-                    this.addETests();
+                    this.addCaseResult(new CaseResult().name(testCase.getString(CaseKeys.CASE_TITLE))
+                            .error().throwable(e).validates(testCase.getJSONArray(CaseKeys.VALIDATE)));
                 }
             }
         } catch (Exception e){
@@ -94,56 +95,14 @@ public class TestSuite extends junit.framework.TestSuite {
         Object encode = testCase.get(CaseKeys.CONFIG_REQUEST_ENCODE) != null ?
                 testCase.get(CaseKeys.CONFIG_REQUEST_ENCODE) : request.get(CaseKeys.CONFIG_REQUEST_ENCODE);
         Object cookies = request.get(CaseKeys.CONFIG_REQUEST_COOKIE);
-        builder.cookies(cookies).headers(headers).url(url.toString()).encode(encode);
+        builder.cookies(cookies).headers(headers).url(url.toString()).encode(encode).title(testCase.getString(CaseKeys.CASE_TITLE));
     }
 
-    private void addTest(Task task, JSONObject testCase) {
-        TestCase cases = new TestCase(task, testCase, this);
-        super.addTest(cases);
+    public Vector<CaseResult> caseResults() {
+        return caseResults;
     }
 
-    Vector<TestCase> testCases() {
-        return testCases;
-    }
-
-    void addTest(TestCase cases) {
-        this.testCases.add(cases);
-    }
-
-
-    void addFTests() {
-        fTests += 1;
-    }
-
-    void addETests() {
-        eTests += 1;
-    }
-
-    void addRTests() {
-        rTests += 1;
-    }
-
-    void addIgnore() {
-        ignore += 1;
-    }
-
-    public int fTests() {
-        return fTests;
-    }
-
-    public int eTests() {
-        return eTests;
-    }
-
-    public int rTests() {
-        return rTests;
-    }
-
-    public int iTests() {
-        return ignore;
-    }
-
-    public int getSuccessCount() {
-        return rTests - ignore - fTests - eTests;
+    void addCaseResult(CaseResult result) {
+        this.caseResults.add(result);
     }
 }

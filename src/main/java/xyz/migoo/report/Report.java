@@ -4,7 +4,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import xyz.migoo.exception.ReaderException;
 import xyz.migoo.exception.ReportException;
-import xyz.migoo.runner.TestResult;
+import xyz.migoo.core.TestResult;
 import xyz.migoo.utils.reader.AbstractReader;
 import xyz.migoo.utils.DateUtil;
 import xyz.migoo.utils.Log;
@@ -43,11 +43,11 @@ public class Report {
     }
 
     public void addResult(TestResult testResult){
-        total += testResult.testSuite().rTests();
-        failed += testResult.testSuite().fTests();
-        error += testResult.testSuite().eTests();
-        success += testResult.testSuite().getSuccessCount();
-        skipped += testResult.testSuite().iTests();;
+        total += testResult.testSuite().caseResults().size();
+        failed += testResult.failure();
+        error += testResult.error();
+        success += testResult.success();
+        skipped += testResult.skipped();;
         testResults.add(testResult);
     }
 
@@ -58,7 +58,6 @@ public class Report {
         this.summary(summary);
         report.put("records", records);
         report.put("summary", summary);
-        report.put("platform", platform);
     }
 
     private void records(List<Map<String, Object>> records){
@@ -68,11 +67,11 @@ public class Report {
             record.put("id", id.get());
             record.put("title", testResult.testSuite().getName());
             record.put("link", "./html/" + testResult.testSuite().getName() + ".html");
-            record.put("total", testResult.testSuite().rTests());
-            record.put("success", testResult.testSuite().getSuccessCount());
-            record.put("failed", testResult.testSuite().fTests());
-            record.put("error", testResult.testSuite().eTests());
-            record.put("skipped", testResult.testSuite().iTests());
+            record.put("total", testResult.testSuite().caseResults().size());
+            record.put("success", testResult.success());
+            record.put("failed", testResult.failure());
+            record.put("error", testResult.error());
+            record.put("skipped", testResult.skipped());
             records.add(record);
             id.getAndIncrement();
         });

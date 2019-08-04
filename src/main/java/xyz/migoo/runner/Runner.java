@@ -3,6 +3,9 @@ package xyz.migoo.runner;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.core.TestResult;
+import xyz.migoo.core.TestRunner;
+import xyz.migoo.core.TestSuite;
 import xyz.migoo.exception.InvokeException;
 import xyz.migoo.exception.ReaderException;
 import xyz.migoo.parser.BindVariable;
@@ -10,7 +13,6 @@ import xyz.migoo.parser.CaseParser;
 import xyz.migoo.report.Report;
 import xyz.migoo.report.EmailUtil;
 import xyz.migoo.utils.Log;
-import xyz.migoo.utils.StringUtil;
 
 import java.io.File;
 

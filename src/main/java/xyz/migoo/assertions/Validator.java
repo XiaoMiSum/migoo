@@ -26,7 +26,7 @@ import static xyz.migoo.parser.BindVariable.FUNC_PATTERN;
 public class Validator extends Assert {
 
     private static final Log LOG = new Log(Validator.class);
-    static Map<String, Method> methods = null;
+    private static Map<String, Method> methods = null;
 
     private Validator() {
     }
@@ -50,7 +50,7 @@ public class Validator extends Assert {
      * 执行 validate.expect 指定的方法，将值put到 validate 对象中
      *
      * @param validate 检查点
-     * @throws AssertionFailure 检查异常
+     * @throws ExecuteError 检查异常
      */
     private static void evalValidate(JSONObject validate, JSONObject variables) throws ExecuteError {
         try {

@@ -1,4 +1,4 @@
-package xyz.migoo.runner;
+package xyz.migoo.core;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -21,6 +21,7 @@ import xyz.migoo.utils.StringUtil;
  */
 class Task {
 
+    private CaseResult caseResult = new CaseResult();
     private Client client;
     private Request request;
     private Request.Builder builder;
@@ -31,21 +32,24 @@ class Task {
         this.builder = builder;
     }
 
-    synchronized void run(JSONObject jsonCase, TestCase testCase) throws AssertionFailure, ExecuteError {
+    synchronized void run(JSONObject jsonCase, TestCase testCase){
         try {
+            caseResult.name(jsonCase.getString(CaseKeys.CASE_TITLE));
             this.buildRequest(jsonCase);
-            testCase.request(request);
+            caseResult.request(request);
             Response response = client.execute(request);
-            testCase.response(response);
+            caseResult.response(response);
             this.addLog(request.title(), response);
             this.assertThat(jsonCase, response, testCase);
+            caseResult.success();
         } catch (AssertionFailure e) {
             log.error(e.getMessage(), e);
-            throw new AssertionFailure(e.getMessage().replaceAll("\n", "</br>"));
-        } catch (Exception e){
+            caseResult.failure().throwable(e);
+        } catch (ExecuteError | Exception e){
             log.error(e.getMessage(), e);
-            throw new ExecuteError(StringUtil.getStackTrace(e));
+            caseResult.error().throwable(e);
         }
+        testCase.addCaseResult(caseResult);
     }
 
     private void buildRequest(JSONObject testCase) throws InvokeException {
@@ -56,7 +60,6 @@ class Task {
         this.request = builder.query(testCase.getJSONObject(CaseKeys.CASE_QUERY))
                 .body(testCase.getJSONObject(CaseKeys.CASE_BODY))
                 .data(testCase.getJSONObject(CaseKeys.CASE_DATA))
-                .title(testCase.getString(CaseKeys.CASE_TITLE))
                 .build();
     }
 
@@ -65,7 +68,7 @@ class Task {
         if (!(validate instanceof JSON)){
             validate = JSON.parse(validate.toString());
         }
-        testCase.validate((JSONArray) validate);
+        caseResult.validates((JSONArray) validate);
         Validator.validation(response, (JSON) validate, jsonCase.getJSONObject(CaseKeys.CASE_VARIABLES));
     }
 

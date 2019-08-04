@@ -1,10 +1,13 @@
-package xyz.migoo.runner;
+package xyz.migoo.core;
 
 import xyz.migoo.http.Request;
 import xyz.migoo.http.Response;
 import xyz.migoo.utils.DateUtil;
+import xyz.migoo.utils.StringUtil;
 
 import java.util.*;
+
+import static xyz.migoo.core.CaseResult.*;
 
 /**
  * @author xiaomi
@@ -16,60 +19,54 @@ public class TestResult extends junit.framework.TestResult{
     private long endAt;
     private Map<String, Object> report;
     private TestSuite testSuite;
+    private int success = 0;
+    private int error = 0;
+    private int failure = 0;
+    private int skipped = 0;
 
-    public TestResult(){
+    TestResult(){
         super();
     }
 
-    protected synchronized void serialization(){
+    synchronized void serialization(){
         report = new HashMap<>(2);
         report.put("records", this.records());
         report.put("summary", this.summary());
     }
 
-    public void setTestSuite(TestSuite testSuite){
+    void setTestSuite(TestSuite testSuite){
         this.testSuite = testSuite;
     }
 
     private List<Map<String, Object>> records(){
-        List<Map<String, Object>> records = new ArrayList();
+        List<Map<String, Object>> records = new ArrayList<>();
         int id = 1;
-        for (TestCase testCase : testSuite.testCases()){
+        for (CaseResult result : testSuite.caseResults()){
             Map<String, Object> record = new HashMap<>(6);
-            record.put("status", "success");
-            record.put("name", testCase.getName());
-            if (testCase.response() != null){
-                record.put("time", testCase.response().duration() / 1000.000f + "  s");
-            }else {
-                record.put("time", "N/A");
-            }
-            record.put("detail", this.detail(testCase, record, id));
+            calculator(result.status());
+            record.put("status", result.status());
+            record.put("name", result.name());
+            String time = result.response() != null ? result.response().duration() / 1000.000f + "  s" : "N/A";
+            record.put("time", time);
+            record.put("detail", this.detail(result, id));
             record.put("record_id", "record_" + id);
             record.put("record_href", "#record_" + id);
             records.add(record);
-            id++;
+            id ++;
         }
+
         return records;
     }
 
 
-    private synchronized Map<String, Object> detail(TestCase testCase, Map<String, Object> record, int id){
+    private synchronized Map<String, Object> detail(CaseResult result, int id){
         Map<String, Object> detail = new HashMap<>(7);
-        if (testCase.validate() != null){
-            detail.put("validate", testCase.validate());
+        if (result.validates() != null){
+            detail.put("validate", result.validates());
         }
-        detail.put("log", this.log(testCase.response(), testCase.request()));
-        detail.put("track", null);
-        if (testCase.error() != null){
-            record.put("status", "error");
-            detail.put("track", testCase.error().getMessage());
-        }
-        if (testCase.failure() != null){
-            record.put("status", "failure");
-            detail.put("track", testCase.failure().getMessage());
-        }
-        if (testCase.ignore() != null){
-            record.put("status", "skipped");
+        detail.put("log", this.log(result.response(), result.request()));
+        if (result.throwable() != null){
+            detail.put("track", StringUtil.getStackTrace(result.throwable()));
         }
         detail.put("validate_id", "validate_" + id);
         detail.put("track_id", "track_" + id);
@@ -106,11 +103,11 @@ public class TestResult extends junit.framework.TestResult{
         Map<String, Object> summary = new HashMap<>(7);
         summary.put("startAt", DateUtil.format(DateUtil.YYYY_MM_DD_HH_MM_SS, startAt));
         summary.put("duration", (endAt - startAt) / 1000.000f + " seconds");
-        summary.put("total", testSuite.rTests());
-        summary.put("success", testSuite.getSuccessCount());
-        summary.put("failed", testSuite.fTests());
-        summary.put("error", testSuite.eTests());
-        summary.put("skipped", testSuite.iTests());
+        summary.put("total", testSuite.caseResults().size());
+        summary.put("success", success);
+        summary.put("failed", failure);
+        summary.put("error", error);
+        summary.put("skipped", skipped);
         return summary;
     }
     synchronized void startAt(long startAt) {
@@ -121,7 +118,7 @@ public class TestResult extends junit.framework.TestResult{
         this.endAt = endAt;
     }
 
-    synchronized Map<String, Object> report(){
+    public synchronized Map<String, Object> report(){
         return report;
     }
 
@@ -129,4 +126,37 @@ public class TestResult extends junit.framework.TestResult{
         return testSuite;
     }
 
+    private void calculator(String status){
+        switch (status){
+            case SUCCESS:
+                success += 1;
+                return;
+            case ERROR:
+                error += 1;
+                return;
+            case FAILURE:
+                failure += 1;
+                return;
+            case SKIPPED:
+                skipped += 1;
+                return;
+            default:
+        }
+    }
+
+    public int success() {
+        return success;
+    }
+
+    public int error() {
+        return error;
+    }
+
+    public int failure() {
+        return failure;
+    }
+
+    public int skipped() {
+        return skipped;
+    }
 }
