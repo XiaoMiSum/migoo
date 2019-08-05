@@ -19,8 +19,9 @@
             margin : 1% 5%;
         }
         .zhuTu {
-            width: 60%;
-            margin : 30% 20%;
+            height: 200px;
+            width: 80%;
+            margin : 10% 10%;
         }
     </style>
 </head>
@@ -118,9 +119,9 @@
             formatter: "{a} <br/> {b} : {c} ({d}%)"
         },
         legend: {
-            orient: 'horizontal',
+            orient: 'vertical',
             top: '30',
-            left: 'center',
+            left: 'left',
             data: ['SUCCESS', 'FAILED', 'ERROR', 'SKIPPED']
         },
         itemStyle: {
@@ -187,24 +188,26 @@
             }
         ],
         series: [
-            {
+{
                 name: 'SUCCESS',
                 type: 'bar',
                 stack: '总量',
                 data: success_data,
                 barWidth: 30,
-                label: {
-                    normal: {
-                        show: true,
-                        position: 'insideRight',
-                        formatter: function (params) {
-                            if (params.data.value === 0) {
-                                params.data.label.normal.show = false;
+                itemStyle: {
+                    color: '#00CC00',
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'insideRight',
+                            formatter: function (params) {
+                                if (params.data.value === 0) {
+                                    params.data.label.normal.show = false;
+                                }
                             }
                         }
                     }
-                },
-                itemStyle: {color: '#00CC00'}
+                }
             },
             {
                 name: 'FAILED',
@@ -212,18 +215,20 @@
                 stack: '总量',
                 data: failed_data,
                 barWidth: 30,
-                label: {
-                    normal: {
-                        show: true,
-                        position: 'insideRight',
-                        formatter: function (params) {
-                            if (params.data.value === 0) {
-                                params.data.label.normal.show = false;
+                itemStyle: {
+                    color: 'salmon',
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'insideRight',
+                            formatter: function (params) {
+                                if (params.data.value === 0) {
+                                    params.data.label.normal.show = false;
+                                }
                             }
                         }
                     }
-                },
-                itemStyle: {color: 'salmon'}
+                }
             },
             {
                 name: 'ERROR',
@@ -252,18 +257,20 @@
                 stack: '总量',
                 data: skipped_data,
                 barWidth: 30,
-                label: {
-                    normal: {
-                        show: true,
-                        position: 'insideRight',
-                        formatter: function (params) {
-                            if (params.data.value === 0) {
-                                params.data.label.normal.show = false;
+                itemStyle: {
+                    color: 'gray',
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'insideRight',
+                            formatter: function (params) {
+                                if (params.data.value === 0) {
+                                    params.data.label.normal.show = false;
+                                }
                             }
                         }
                     }
-                },
-                itemStyle: {color: 'gray'}
+                }
             }
         ]
     };
@@ -279,7 +286,10 @@
     var myChart2 = echarts.init(document.getElementById('main2'));
     myChart2.setOption(option2);
 
-    document.getElementById("main3").style.height = legend_data.length * 200 + 'px';
+   if(legend_data.length > 1){
+        document.getElementById("main3").style.height = legend_data.length * 50 + 'px';
+    }
+
     var myChart3 = echarts.init(document.getElementById('main3'));
     myChart3.setOption(option3);
     myChart3.on('click', function (params) {
