@@ -57,7 +57,7 @@ public class Function {
     public static boolean equals(Object actual, Object expect) {
         String str1 = objectToString(actual);
         String str2 = objectToString(expect);
-        if (actual instanceof BigDecimal || expect instanceof BigDecimal){
+        if (actual instanceof Number || expect instanceof Number){
             str1 = "null".equals(str1) ? "0" : str1;
             str2 = "null".equals(str2) ? "0" : str2;
             return new BigDecimal(str1).compareTo(new BigDecimal(str2)) == 0;
