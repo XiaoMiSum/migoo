@@ -1,6 +1,6 @@
 package xyz.migoo.test.extend;
 
-import xyz.migoo.assertions.function.IFunction;
+import xyz.migoo.framework.assertions.function.IFunction;
 
 import java.util.Map;
 

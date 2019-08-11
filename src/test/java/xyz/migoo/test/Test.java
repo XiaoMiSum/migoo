@@ -2,8 +2,8 @@ package xyz.migoo.test;
 
 
 import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.assertions.AbstractAssertion;
-import xyz.migoo.assertions.AssertionFactory;
+import xyz.migoo.framework.assertions.AbstractAssertion;
+import xyz.migoo.framework.assertions.AssertionFactory;
 
 import javax.xml.bind.ValidationException;
 
@@ -42,6 +42,7 @@ public class Test extends Base{
                 "      \"user\": \"test\"" +
                 "    }," +
                 "    \"beforeClass\": [\"__hook1(beforeClass)\"]," +
+                "    \"afterClass\": [\"__hook1(afterClass)\"]," +
                 "    \"request\": {" +
                 "      \"url\": \"http://migoo.xyz/api/login\"," +
                 "      \"method\": \"post\"," +

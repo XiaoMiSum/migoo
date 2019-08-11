@@ -3,6 +3,7 @@ package xyz.migoo.utils.digest;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.Cipher;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -35,7 +36,7 @@ public class RsaCrypt {
 			PublicKey pubKey = keyFactory.generatePublic(new X509EncodedKeySpec(Base64.decodeBase64(publicKey)));
 			Signature signature = Signature.getInstance(NONE_WITH_RSA);
 			signature.initVerify(pubKey);
-			signature.update(content.getBytes("utf-8"));
+			signature.update(content.getBytes(StandardCharsets.UTF_8));
 			return signature.verify(Base64.decodeBase64(sign));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -60,7 +61,7 @@ public class RsaCrypt {
 			PrivateKey priKey = keyFactory.generatePrivate(keySpec);
 			Signature signature = Signature.getInstance(type);
 			signature.initSign(priKey);
-			signature.update(content.getBytes("utf-8"));
+			signature.update(content.getBytes(StandardCharsets.UTF_8));
 			byte[] signed = signature.sign();
 			return Base64.encodeBase64String(signed);
 		} catch (Exception e) {
@@ -82,7 +83,7 @@ public class RsaCrypt {
 			PublicKey pubKey = keyFactory.generatePublic(keySpec);
 			Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
 			cipher.init(Cipher.ENCRYPT_MODE, pubKey);
-			byte[] signed = cipher.doFinal(content.getBytes("utf-8"));
+			byte[] signed = cipher.doFinal(content.getBytes(StandardCharsets.UTF_8));
 			return Base64.encodeBase64String(signed);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -106,7 +107,7 @@ public class RsaCrypt {
 			Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
 			cipher.init(Cipher.DECRYPT_MODE, priKey);
 			byte[] signed = cipher.doFinal(Base64.decodeBase64(content));
-			return new String(signed, "utf-8");
+			return new String(signed, StandardCharsets.UTF_8);
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -129,7 +130,7 @@ public class RsaCrypt {
 			Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
 			cipher.init(Cipher.DECRYPT_MODE, pubKey);
 			byte[] signed = cipher.doFinal(Base64.decodeBase64(content));
-			return new String(signed, "utf-8");
+			return new String(signed, StandardCharsets.UTF_8);
 		}catch (Exception e){
 			e.printStackTrace();
 		}

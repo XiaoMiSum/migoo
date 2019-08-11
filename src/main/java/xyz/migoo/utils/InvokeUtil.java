@@ -16,7 +16,6 @@ import static xyz.migoo.parser.BindVariable.PARAM_PATTERN;
  */
 public class InvokeUtil {
 
-    private static Log log = new Log(InvokeUtil.class);
     private static final String SEPARATOR = ",";
 
     /**
@@ -99,9 +98,8 @@ public class InvokeUtil {
         Object result;
         try {
             Object[] parameters = parameter(parameter, variables);
-            Method method = method(methods, name, parameters);
-            result =  method.invoke(null, parameters);
-            log.info(String.format("method invoke, method [%s] -> parameter [%s] -> return [%s]", method, parameter, result));
+            result = method(methods, name, parameters).invoke(null, parameters);
+            MiGooLog.log(String.format("invoke success, method [%s] -> parameter [%s] -> return [%s]", name, parameter, result));
         } catch (NullPointerException e){
             throw new InvokeException(String.format("method '%s(%s)' not found !", name, parameter));
         } catch (Exception e) {

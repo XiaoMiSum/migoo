@@ -3,13 +3,14 @@ package xyz.migoo.parser;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ReaderException;
+import xyz.migoo.utils.MiGooLog;
 import xyz.migoo.utils.StringUtil;
-import xyz.migoo.utils.reader.Reader;
-import xyz.migoo.utils.reader.ReaderFactory;
+import xyz.migoo.parser.reader.Reader;
+import xyz.migoo.parser.reader.ReaderFactory;
 
 import java.io.File;
 
-import static xyz.migoo.config.Platform.IGNORE_DIRECTORY;
+import static xyz.migoo.framework.config.Platform.IGNORE_DIRECTORY;
 
 /**
  * @author xiaomi
@@ -29,11 +30,13 @@ public class CaseParser {
      * @return List<JSONObject> json对象的测试用例列表
      */
     public JSONObject loadCaseSets(String caseOrPath) throws ReaderException {
+        MiGooLog.log("load case sets begin: {}", caseOrPath);
         try {
             this.caseSets = JSONObject.parseObject(caseOrPath);
         } catch (Exception e) {
             this.loadCaseSetsByPath(caseOrPath);
         }
+        MiGooLog.log("load case sets end", caseOrPath);
         return this.caseSets;
     }
 
