@@ -74,7 +74,7 @@ public class Test extends Base{
                 "      \"variables\": {" +
                 "        \"pwd\": \"123456\"" +
                 "      }," +
-                "      \"before\": [\"__hook1(before)\"]," +
+                "      \"before\": [\"__hook(before)\"]," +
                 "      \"after\": [\"__hook2(after,before)\"]," +
                 "      \"body\": {" +
                 "        \"userName\": \"migoo1\"," +

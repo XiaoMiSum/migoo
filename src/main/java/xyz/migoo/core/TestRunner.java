@@ -1,4 +1,4 @@
-package xyz.migoo.runner;
+package xyz.migoo.core;
 
 /**
  * @author xiaomi

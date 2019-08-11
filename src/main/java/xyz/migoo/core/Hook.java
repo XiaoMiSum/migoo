@@ -1,4 +1,4 @@
-package xyz.migoo.runner;
+package xyz.migoo.core;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -44,8 +44,7 @@ public class Hook {
             Matcher func = FUNC_PATTERN.matcher(hook.getString(i));
             if (func.find()) {
                 functionLoader();
-                Object[] parameter = InvokeUtil.parameter(func.group(2), variables);
-                InvokeUtil.invoke(methods, func.group(1), parameter);
+                InvokeUtil.invoke(methods, func.group(1), func.group(2), variables);
             }
         }
     }

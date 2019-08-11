@@ -2,7 +2,7 @@ package xyz.migoo.assertions;
 
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.assertions.function.Function;
-import xyz.migoo.exception.AssertionException;
+import xyz.migoo.exception.ExecuteError;
 
 /**
  * @author xiaomi
@@ -27,7 +27,7 @@ public interface Assertion {
      *
      * @param data Objects that hold expected values
      * @return assert result
-     * @throws AssertionException
+     * @throws ExecuteError
      */
-    Boolean assertThat(JSONObject data);
+    boolean assertThat(JSONObject data) throws ExecuteError;
 }

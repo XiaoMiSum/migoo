@@ -1,51 +1,55 @@
-package xyz.migoo.runner;
+package xyz.migoo.core;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.assertions.Validator;
 import xyz.migoo.config.CaseKeys;
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.exception.InvokeException;
-import xyz.migoo.exception.AssertionException;
+import xyz.migoo.exception.AssertionFailure;
 import xyz.migoo.http.Client;
 import xyz.migoo.http.Request;
 import xyz.migoo.http.Response;
 import xyz.migoo.parser.BindVariable;
 import xyz.migoo.utils.Log;
 import xyz.migoo.utils.StringUtil;
-import xyz.migoo.utils.TypeUtil;
 
 /**
  * @author xiaomi
  * @date 2018/7/24 20:34
  */
-public class Task {
+class Task {
 
+    private CaseResult caseResult = new CaseResult();
     private Client client;
     private Request request;
     private Request.Builder builder;
     private static Log log = new Log(Task.class);
 
-    public Task(Client client, Request.Builder builder){
+    Task(Client client, Request.Builder builder){
         this.client = client;
         this.builder = builder;
     }
 
-    public synchronized void run(JSONObject jsonCase, TestCase testCase) throws AssertionException, Exception {
+    synchronized void run(JSONObject jsonCase, TestCase testCase){
         try {
+            caseResult.name(jsonCase.getString(CaseKeys.CASE_TITLE));
             this.buildRequest(jsonCase);
-            testCase.request(request);
+            caseResult.request(request);
             Response response = client.execute(request);
-            testCase.response(response);
+            caseResult.response(response);
             this.addLog(request.title(), response);
-            this.assertThat(jsonCase.get(CaseKeys.VALIDATE), response, testCase);
-        } catch (AssertionException e) {
+            this.assertThat(jsonCase, response, testCase);
+            caseResult.success();
+        } catch (AssertionFailure e) {
             log.error(e.getMessage(), e);
-            throw new AssertionException(e.getMessage().replaceAll("\n", "</br>"));
-        } catch (Exception e){
+            caseResult.failure().throwable(e);
+        } catch (ExecuteError | Exception e){
             log.error(e.getMessage(), e);
-            throw new Exception(StringUtil.getStackTrace(e));
+            caseResult.error().throwable(e);
         }
+        testCase.addCaseResult(caseResult);
     }
 
     private void buildRequest(JSONObject testCase) throws InvokeException {
@@ -56,16 +60,16 @@ public class Task {
         this.request = builder.query(testCase.getJSONObject(CaseKeys.CASE_QUERY))
                 .body(testCase.getJSONObject(CaseKeys.CASE_BODY))
                 .data(testCase.getJSONObject(CaseKeys.CASE_DATA))
-                .title(testCase.getString(CaseKeys.CASE_TITLE))
                 .build();
     }
 
-    private void assertThat(Object validate, Response response, TestCase testCase){
+    private void assertThat(JSONObject jsonCase, Response response, TestCase testCase) throws AssertionFailure, ExecuteError {
+        Object validate = jsonCase.get(CaseKeys.VALIDATE);
         if (!(validate instanceof JSON)){
             validate = JSON.parse(validate.toString());
         }
-        testCase.validate((JSONArray) validate);
-        Validator.validation(response, (JSON) validate);
+        caseResult.validates((JSONArray) validate);
+        Validator.validation(response, (JSON) validate, jsonCase.getJSONObject(CaseKeys.CASE_VARIABLES));
     }
 
     private void addLog(String title, Response response){

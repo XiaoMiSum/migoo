@@ -35,18 +35,10 @@ public class Function {
         if (subj == null || StringUtil.isBlank(subj.toString())) {
             str = "null";
         } else if (subj instanceof List) {
-            if (((List) subj).isEmpty()) {
-                str = "null";
-            } else {
-                str = JSONArray.toJSONString(subj);
-            }
+            str = ((List) subj).isEmpty()?"null":JSONArray.toJSONString(subj);
         } else if (subj instanceof Map) {
             //noinspection unchecked
-            if (((Map) subj).isEmpty()) {
-                str = "null";
-            } else {
-                str = JSONArray.toJSONString(subj);
-            }
+            str = ((Map) subj).isEmpty()?"null":JSONObject.toJSONString(subj);
         } else if (subj instanceof Double || subj instanceof Float) {
             str = decimalFormatter.get().format(subj);
         } else {
@@ -65,6 +57,11 @@ public class Function {
     public static boolean equals(Object actual, Object expect) {
         String str1 = objectToString(actual);
         String str2 = objectToString(expect);
+        if (actual instanceof Number || expect instanceof Number){
+            str1 = "null".equals(str1) ? "0" : str1;
+            str2 = "null".equals(str2) ? "0" : str2;
+            return new BigDecimal(str1).compareTo(new BigDecimal(str2)) == 0;
+        }
         return str1.equals(str2);
     }
 

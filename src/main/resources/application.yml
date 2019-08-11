@@ -124,6 +124,10 @@ mail.send.toList:
 # 忽略目录
 ignore.directory:
   - .svn
+  - .git
+  - vars.yml
+  - vars.yaml
+  - vars.properties
 
 # 自定义方法变量 扩展类列表
 extends.variable:

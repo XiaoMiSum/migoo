@@ -3,6 +3,9 @@ package xyz.migoo.runner;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.core.TestResult;
+import xyz.migoo.core.TestRunner;
+import xyz.migoo.core.TestSuite;
 import xyz.migoo.exception.InvokeException;
 import xyz.migoo.exception.ReaderException;
 import xyz.migoo.parser.BindVariable;
@@ -10,7 +13,6 @@ import xyz.migoo.parser.CaseParser;
 import xyz.migoo.report.Report;
 import xyz.migoo.report.EmailUtil;
 import xyz.migoo.utils.Log;
-import xyz.migoo.utils.StringUtil;
 
 import java.io.File;
 
@@ -79,25 +81,24 @@ public class Runner {
     }
 
     private void byPath(String path){
-        TestResult result = null;
         File file = new File(path);
         if (file.isDirectory()) {
             String[] fList = file.list();
-            assert fList != null;
-            for (String f : fList) {
-                StringBuilder sb = new StringBuilder(path);
-                if (StringUtil.contains(f, "vars.")
-                        ||f.startsWith(".") || IGNORE_DIRECTORY.contains(f)) {
-                    continue;
+            if (fList != null) {
+                for (String f : fList) {
+                    StringBuilder sb = new StringBuilder(path);
+                    if (f.startsWith(".") || IGNORE_DIRECTORY.contains(f)) {
+                        continue;
+                    }
+                    if (!path.endsWith("/")) {
+                        sb.append("/");
+                    }
+                    this.byPath(sb.append(f).toString());
                 }
-                if (!path.endsWith("/")) {
-                    sb.append("/");
-                }
-                this.byPath(sb.append(f).toString());
             }
         } else {
             TestSuite testSuite = this.initTestSuite(path);
-            result = new TestRunner().run(testSuite);
+            TestResult result = new TestRunner().run(testSuite);
             report.addResult(result);
             Report.generateReport(result.report(), testSuite.getName(),false);
         }

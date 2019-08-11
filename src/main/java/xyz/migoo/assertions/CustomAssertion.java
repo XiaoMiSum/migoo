@@ -2,7 +2,7 @@ package xyz.migoo.assertions;
 
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.assertions.function.Function;
-import xyz.migoo.exception.AssertionException;
+import xyz.migoo.exception.AssertionFailure;
 
 /**
  * @author xiaomi
@@ -16,7 +16,7 @@ public class CustomAssertion extends AbstractAssertion{
     }
 
     @Override
-    public Boolean assertThat(JSONObject data) throws AssertionException {
+    public boolean assertThat(JSONObject data) throws AssertionFailure {
         return Function.custom((String) actual, data.get("expect"));
     }
 }

@@ -3,10 +3,10 @@ package xyz.migoo.assertions;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.assertions.function.Function;
 import xyz.migoo.config.CaseKeys;
-import xyz.migoo.exception.AssertionException;
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.utils.StringUtil;
+import xyz.migoo.utils.TypeUtil;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,12 +26,13 @@ public abstract class AbstractAssertion implements Assertion{
     Object actual;
 
     @Override
-    public Boolean assertThat(JSONObject data) throws AssertionException {
+    public boolean assertThat(JSONObject data) throws ExecuteError {
         setMethod(data.getString(CaseKeys.VALIDATE_TYPE));
         try {
-            return (Boolean) method.invoke(null ,actual, data.get(CaseKeys.VALIDATE_EXPECT));
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new AssertionException(StringUtil.getStackTrace(e));
+            Boolean result = TypeUtil.booleanOf(method.invoke(null ,actual, data.get(CaseKeys.VALIDATE_EXPECT)));
+            return result == null ? false : result;
+        } catch (Exception e) {
+            throw new ExecuteError(StringUtil.getStackTrace(e));
         }
     }
 
@@ -118,9 +119,7 @@ public abstract class AbstractAssertion implements Assertion{
             methodName = CaseKeys.VALIDATE_TYPE_REGEX;
             return;
         }
-        if (methodName == null){
-            throw new AssertionException(String.format("method '%s' not found", searchChar));
-        }
+        throw new ExecuteError(String.format("assert method '%s' not found", searchChar));
     }
 
     void setMethod(String type){
