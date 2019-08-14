@@ -38,6 +38,7 @@ public class Report {
     private int total = 0, success= 0, failed = 0, error = 0, skipped = 0;
 
     public Report(){
+        mkDirs();
     }
 
     public void addResult(TestResult testResult){
@@ -50,15 +51,12 @@ public class Report {
     }
 
     public void serialization(){
-        Map<String, Object> summary = new HashMap<>(5);
-        List<Map<String, Object>> records = new ArrayList<>();
-        this.records(records);
-        this.summary(summary);
-        report.put("records", records);
-        report.put("summary", summary);
+        report.put("records", this.records());
+        report.put("summary", this.summary());
     }
 
-    private void records(List<Map<String, Object>> records){
+    private List<Map<String, Object>> records(){
+        List<Map<String, Object>> records = new ArrayList<>();
         AtomicInteger id = new AtomicInteger();
         testResults.forEach(testResult -> {
             Map<String, Object> record = new HashMap<>(8);
@@ -73,14 +71,17 @@ public class Report {
             records.add(record);
             id.getAndIncrement();
         });
+        return records;
     }
 
-    private void summary(Map<String, Object> summary){
+    private Map<String, Object> summary(){
+        Map<String, Object> summary = new HashMap<>(5);
         summary.put("total", total);
         summary.put("success", success);
         summary.put("failed", failed);
         summary.put("error", error);
         summary.put("skipped", skipped);
+        return summary;
     }
 
     public void index(){
@@ -88,7 +89,7 @@ public class Report {
             String content = render("classpath://templates/index_report_template.html", report);
             report("index", content, true);
         } catch (ReaderException e) {
-            e.printStackTrace();
+            MiGooLog.log(e.getMessage(), e);
         }
     }
 
@@ -103,9 +104,8 @@ public class Report {
             try {
                 String content = render("classpath://templates/migoo_report_template.html", report);
                 report(testResult.getName(), content, false);
-
             } catch (ReaderException e) {
-                e.printStackTrace();
+                MiGooLog.log(e.getMessage(), e);
             }
         });
     }
@@ -208,29 +208,24 @@ public class Report {
         return TEMPLATE_ENGINE.process(template, context);
     }
 
-    private static String report(String name, String template, boolean isIndex) {
-        File file = new File(System.getProperty("user.dir"));
-        file = new File(file.getPath() + "/Reports/" + DateUtil.TODAY_DATE);
-        String path = file.getPath() + "/html/" + name + ".html";
-        if (isIndex){
-            path = file.getPath() + "/" + name + ".html";
-        }
-        if (!file.exists()) {
-            file.mkdir();
-            file = new File(file.getPath() + "/html");
-            file.mkdir();
-        }
-        try (Writer writer = new FileWriter(path)) {
-            writer.write(template);
-            writer.close();
-            return path;
-        } catch (Exception e) {
-            MiGooLog.log(e.getMessage(), e);
-            throw new ReportException("create report error , file path " + file.getPath());
+    private static void mkDirs(){
+        File file = new File(String.format("%s/reports/%s/html", System.getProperty("user.dir"), DateUtil.TODAY_DATE));
+        if (!file.exists()){
+            file.mkdirs();
         }
     }
 
-    {
+    private static void report(String name, String template, boolean isIndex) {
+        String path = isIndex ? String.format("%s/reports/index.html", System.getProperty("user.dir"))
+                : String.format("%s/reports/html/%s.html", System.getProperty("user.dir"), name);
+        try (Writer writer = new FileWriter(path)) {
+            writer.write(template);
+        } catch (Exception e) {
+            throw new ReportException("create report error , file path " + path, e);
+        }
+    }
+
+    static {
         platform.put("jdk", "JDK " + JDK_VERSION);
         platform.put("httpclient", "HTTP Client " + HTTP_CLIENT_VERSION);
         platform.put("os", OS_VERSION);

@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class Test implements IFunction{
     @Override
-    public Boolean assertThat(Map<String, Object> data) {
+    public Boolean assertTrue(Map<String, Object> data) {
         String s1 = String.valueOf(data.get("expect"));
         return s1.equalsIgnoreCase("1");
     }

@@ -60,7 +60,7 @@ public class Platform {
 
     public static final JSONArray FUNCTION_LESS_THAN_OR_EQUALS = PROPERTIES.getJSONArray("function.lessThanOrEquals");
 
-    public static final JSONArray FUNCTION_REATER_THAN = PROPERTIES.getJSONArray("function.greaterThan");
+    public static final JSONArray FUNCTION_GREATER_THAN = PROPERTIES.getJSONArray("function.greaterThan");
 
     public static final JSONArray FUNCTION_LESS_THAN = PROPERTIES.getJSONArray("function.lessThan");
 

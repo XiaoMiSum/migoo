@@ -1,7 +1,6 @@
 package xyz.migoo.framework.assertions;
 
 import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.framework.assertions.function.Function;
 import xyz.migoo.exception.ExecuteError;
 
 /**
@@ -21,9 +20,6 @@ public interface Assertion {
      * {@linkplain ResponseAssertion ResponseAssertion}
      * {@linkplain ResponseCodeAssertion ResponseCodeAssertion}
      * {@linkplain CustomAssertion CustomAssertion}
-     *
-     * support assert method list:
-     * {@linkplain Function assert method }
      *
      * @param data Objects that hold expected values
      * @return assert result

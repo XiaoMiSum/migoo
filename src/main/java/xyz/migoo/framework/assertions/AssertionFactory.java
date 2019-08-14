@@ -1,5 +1,6 @@
 package xyz.migoo.framework.assertions;
 
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.framework.config.CaseKeys;
 
 import static xyz.migoo.framework.config.Platform.*;
@@ -13,21 +14,26 @@ public class AssertionFactory {
     private AssertionFactory(){}
 
     public static AbstractAssertion getAssertion(String check){
-        switch (new AssertionFactory().assertionType(check)){
+        switch (assertionType(check)){
             case CaseKeys.EVAL_ACTUAL_BY_JSON:
                 return new JSONAssertion(check);
             case CaseKeys.EVAL_ACTUAL_BY_HTML:
                 return new HTMLAssertion(check);
             case CaseKeys.EVAL_ACTUAL_BY_STATUS:
                 return new ResponseCodeAssertion();
-            case CaseKeys.VALIDATE_TYPE_CUSTOM_FUNCTION:
-                return new CustomAssertion();
-            default:
+            case CaseKeys.EVAL_ACTUAL_BY_BODY:
                 return new ResponseAssertion();
+            default:
+                try {
+                    return (AbstractAssertion)Class.forName(check).newInstance();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new ExecuteError("assert class not found: " + check);
+                }
         }
     }
 
-    private String assertionType(String searchChar){
+    private static String assertionType(String searchChar){
         if (CHECK_BODY.contains(searchChar)) {
             return CaseKeys.EVAL_ACTUAL_BY_BODY;
         }
@@ -40,10 +46,7 @@ public class AssertionFactory {
         if (isHtml(searchChar)){
             return CaseKeys.EVAL_ACTUAL_BY_HTML;
         }
-        if (isCustom(searchChar)){
-            return CaseKeys.VALIDATE_TYPE_CUSTOM_FUNCTION;
-        }
-        return "";
+        return searchChar;
     }
 
 }

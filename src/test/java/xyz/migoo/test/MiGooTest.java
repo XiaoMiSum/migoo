@@ -1,39 +1,14 @@
 package xyz.migoo.test;
 
-
-import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.framework.assertions.AbstractAssertion;
-import xyz.migoo.framework.assertions.AssertionFactory;
-
-import javax.xml.bind.ValidationException;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author xiaomi
  * @date 2018/7/25 15:10
  */
-public class Test extends Base{
+public class MiGooTest extends Base{
 
-    @org.junit.Test
-    public void testFunc() throws ValidationException {
-        JSONObject data = new JSONObject(1);
-        data.put("expect", 1);
-        AbstractAssertion assertion = AssertionFactory.getAssertion("package.xyz.migoo.test.extend.Test");
-        assertion.setActual("package.xyz.migoo.test.extend.Test");
-        Object result = assertion.assertThat(data);
-        System.out.println(result);
-    }
-
-    @org.junit.Test
-    public void testApiYaml(){
-        //runner.execute("../TestCase/test_case.yml");
-    }
-
-    @org.junit.Test
-    public void testApiJson1(){
-        //runner.execute("../TestCase/test_case.json");
-    }
-
-    @org.junit.Test
+    @Test
     public void testApiCaseSet(){
         String json = "{" +
                 "  \"name\": \"the-test-suite-name\"," +
