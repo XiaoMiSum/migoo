@@ -12,8 +12,8 @@ import java.io.StringWriter;
  */
 public class TestFailure {
 
-    protected AbstractTest fFailedTest;
-    protected Throwable fThrownException;
+    private AbstractTest fFailedTest;
+    private Throwable fThrownException;
 
 
     /**

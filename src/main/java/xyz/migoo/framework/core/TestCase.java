@@ -26,8 +26,7 @@ public class TestCase extends AbstractTest {
     private Client client;
 
     TestCase(JSONObject testCase, Client client, Request.Builder builder) {
-        super();
-        super.setName(testCase.getString(CaseKeys.CASE_TITLE));
+        super(testCase.getString(CaseKeys.CASE_TITLE));
         super.addSetUp(testCase.getJSONArray(CaseKeys.CASE_BEFORE));
         super.addTeardown(testCase.getJSONArray(CaseKeys.CASE_AFTER));
         super.addVariables(testCase.getJSONObject(CaseKeys.CASE_VARIABLES));

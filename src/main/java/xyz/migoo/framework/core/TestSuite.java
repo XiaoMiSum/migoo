@@ -20,8 +20,7 @@ public class TestSuite extends AbstractTest {
     private Vector<AbstractTest> fTests= new Vector<>(10);
 
     public TestSuite(JSONObject testSuite){
-        super();
-        super.setName(testSuite.getString(CaseKeys.NAME));
+        super(testSuite.getString(CaseKeys.NAME));
         JSONObject config = testSuite.getJSONObject(CaseKeys.CONFIG);
         // 1. add config.variables to variables;
         super.addVariables(config.getJSONObject(CaseKeys.CONFIG_VARIABLES));
@@ -38,11 +37,12 @@ public class TestSuite extends AbstractTest {
         JSONArray testCases = testSuite.getJSONArray(CaseKeys.CASE);
         for (int i = 0; i < testCases.size(); i++) {
             JSONObject testCase = testCases.getJSONObject(i);
-            Request.Builder builder = new Request.Builder().method(request.getString(CaseKeys.CONFIG_REQUEST_METHOD));
-            builder.url(request.getString(CaseKeys.CONFIG_REQUEST_URL))
-                .cookies(request.get(CaseKeys.CONFIG_REQUEST_COOKIE))
-                .headers(request.getJSONObject(CaseKeys.CONFIG_REQUEST_HEADERS))
-                .encode(request.get(CaseKeys.CONFIG_REQUEST_ENCODE));
+            Request.Builder builder = new Request.Builder()
+                    .method(request.getString(CaseKeys.CONFIG_REQUEST_METHOD))
+                    .url(request.getString(CaseKeys.CONFIG_REQUEST_URL))
+                    .cookies(request.get(CaseKeys.CONFIG_REQUEST_COOKIE))
+                    .headers(request.getJSONObject(CaseKeys.CONFIG_REQUEST_HEADERS))
+                    .encode(request.get(CaseKeys.CONFIG_REQUEST_ENCODE));
             this.addTest(new TestCase(testCase, client, builder));
         }
     }
@@ -66,10 +66,11 @@ public class TestSuite extends AbstractTest {
             super.setUp("before class");
             this.fTests.forEach(test -> test.run(result, super.variables));
             super.teardown("after class");
+        } catch (InvokeException e) {
+            MiGooLog.log("test suite run error;");
+        } finally {
             MiGooLog.log("test suite end: {}", this.getName());
             MiGooLog.log("===================================================================");
-        } catch (InvokeException e) {
-            e.printStackTrace();
         }
 
     }

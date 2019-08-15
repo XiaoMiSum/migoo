@@ -27,6 +27,9 @@ public abstract class AbstractTest implements ITest {
     Response response;
     JSONObject variables = new JSONObject();
 
+    AbstractTest(String name){
+        this.fName = name;
+    }
     /**
      * Returns the name of the test. Not all
      * test suites have a name and this method
@@ -36,15 +39,6 @@ public abstract class AbstractTest implements ITest {
      */
     public String getName() {
         return fName;
-    }
-
-    /**
-     * Sets the name of the test.
-     *
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.fName = name;
     }
 
     /**
