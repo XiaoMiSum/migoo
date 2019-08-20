@@ -34,14 +34,13 @@ public class GoogleAuthenticator {
 
     private static final int BYTES_PER_SCRATCH_CODE = 4;
 
-    private final int maxWindowSize = 17;
-
     /**
      * default 3 - max 17 (from google docs)最多可偏移的时间
      */
-    int windowSize = 3;
+    private int windowSize = 3;
 
     public void setWindowSize(int s) {
+        int maxWindowSize = 17;
         if (s >= 1 && s <= maxWindowSize) {
             windowSize = s;
         }
@@ -59,8 +58,7 @@ public class GoogleAuthenticator {
         long t = System.currentTimeMillis();
         GoogleAuthenticator ga = new GoogleAuthenticator();
         ga.setWindowSize(15);
-        boolean r = ga.checkCode(secretKey, code, t);
-        return r;
+        return ga.checkCode(secretKey, code, t);
     }
 
     public static String generateAuthCode(String secretKey) {
@@ -78,32 +76,23 @@ public class GoogleAuthenticator {
         return null;
     }
 
-    public static String genSecretKey(String user, String host) {
-        String secret = GoogleAuthenticator.generateSecretKey();
-        GoogleAuthenticator.getQRBarcodeURL(user, host, secret);
-        return secret;
+    public static String genSecretKey() {
+        return GoogleAuthenticator.generateSecretKey();
     }
 
     public static String generateSecretKey() {
-        SecureRandom sr = null;
+        SecureRandom sr;
         try {
             sr = SecureRandom.getInstance(RANDOM_NUMBER_ALGORITHM);
             sr.setSeed(Base64.decodeBase64(SEED));
             byte[] buffer = sr.generateSeed(SECRET_SIZE);
             Base32 codec = new Base32();
             byte[] bEncodedKey = codec.encode(buffer);
-            String encodedKey = new String(bEncodedKey);
-            return encodedKey;
+            return new String(bEncodedKey);
         }catch (NoSuchAlgorithmException e) {
             // should never occur... configuration error
         }
         return null;
-    }
-
-
-    public static String getQRBarcodeURL(String user, String issuer, String secret) {
-        String format = "https://www.google.com/chart?chs=200x200&chld=M%%7C0&cht=qr&chl=otpauth://totp/%s%%3Fsecret%%3D%s%%26issuer%%3D%s";
-        return String.format(format, user, secret, issuer);
     }
 
     public boolean checkCode(String secretKey, long code, long timeMsec) {

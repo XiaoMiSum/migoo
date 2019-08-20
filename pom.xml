@@ -5,7 +5,7 @@
     <groupId>xyz.migoo</groupId>
     <artifactId>migoo</artifactId>
 
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <name>migoo</name>
     <description>a tool for rest-api test</description>
     <url>https://xiaomisum.github.io/MiGoo/</url>
@@ -42,7 +42,7 @@
         <jdk.version>1.8</jdk.version>
         <poi.version>3.17</poi.version>
         <yaml.version>1.23</yaml.version>
-        <junit.version>4.8</junit.version>
+        <junit.version>5.3</junit.version>
         <email.version>1.5</email.version>
         <dbutil.version>1.7</dbutil.version>
         <jedis.version>2.9.0</jedis.version>
@@ -139,17 +139,18 @@
             <version>${http.client.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-        </dependency>
-
         <!-- https://mvnrepository.com/artifact/org.thymeleaf/thymeleaf -->
         <dependency>
             <groupId>org.thymeleaf</groupId>
             <artifactId>thymeleaf</artifactId>
             <version>${thymeleaf.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

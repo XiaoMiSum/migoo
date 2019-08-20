@@ -1,14 +1,11 @@
 package xyz.migoo.utils;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 /**
  * @author xiaomi
  */
 public class DateUtil {
-
-    private static Log log = new Log(DateUtil.class);
 
     public static final String YYYY_MMDD_HHMMSS = "yyyyMMddHHmmss";
     public static final String YYYY_MMDD = "yyyyMMdd";
@@ -17,7 +14,7 @@ public class DateUtil {
     public static final String YYYY_MM_DD = "yyyy-MM-dd";
     public static final String TODAY_DATE = format(YYYY_MMDD);
 
-    public static String format(String pattern,long time) {
+    public static String format(String pattern, long time) {
         return new SimpleDateFormat(pattern).format(time);
     }
 
@@ -33,9 +30,9 @@ public class DateUtil {
     public static void sleep(int time) {
         try {
             Thread.sleep(time * 1000L);
-            log.debug(String.format("wait %s seconds", time));
+            MiGooLog.debug(String.format("wait %s seconds", time));
         } catch (InterruptedException e) {
-            log.error("wait exception", e);
+            MiGooLog.debug("wait exception", e);
         }
     }
 }

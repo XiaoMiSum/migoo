@@ -1,12 +1,11 @@
 package xyz.migoo.report;
 
-import org.apache.tools.ant.taskdefs.Zip;
-import xyz.migoo.config.Platform;
+import xyz.migoo.framework.config.Platform;
 import xyz.migoo.utils.DateUtil;
 
 import java.io.File;
 
-import static xyz.migoo.config.Platform.*;
+import static xyz.migoo.framework.config.Platform.*;
 
 /**
  * @author xiaomi

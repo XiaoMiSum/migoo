@@ -14,7 +14,7 @@ MiGoo 是一个Java语言开发的测试工具，可用于接口测试脚本开�
 
 2.支持扩展函数和自定义变量，可实现复杂的业务逻辑；
 
-3.支持测试前后的环境准备和数据清理（有限支持）；
+3.支持测试前后的环境准备和数据清理；
 
 4.丰富的校验机制，包括：一致(忽略大小写)、不一致、大于、大于等于、小于、小于等于、包含、不包含、空、非空、正则表达式等校验机制，并支持自定义扩展；
 
@@ -33,6 +33,6 @@ MiGoo 是一个Java语言开发的测试工具，可用于接口测试脚本开�
 <dependency>
     <groupId>xyz.migoo</groupId>
     <artifactId>migoo</artifactId>
-    <version>1.0.9</version>
+    <version>1.2.0</version>
 </dependency>
 ```

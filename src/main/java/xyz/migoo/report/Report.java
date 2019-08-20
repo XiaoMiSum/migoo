@@ -2,13 +2,15 @@ package xyz.migoo.report;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import xyz.migoo.framework.core.AbstractTest;
+import xyz.migoo.framework.core.TestFailure;
+import xyz.migoo.framework.core.TestResult;
 import xyz.migoo.exception.ReaderException;
 import xyz.migoo.exception.ReportException;
-import xyz.migoo.core.TestResult;
-import xyz.migoo.utils.reader.AbstractReader;
+import xyz.migoo.framework.http.Response;
+import xyz.migoo.utils.MiGooLog;
+import xyz.migoo.parser.reader.AbstractReader;
 import xyz.migoo.utils.DateUtil;
-import xyz.migoo.utils.Log;
-import xyz.migoo.utils.StringUtil;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -17,9 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static xyz.migoo.config.Platform.HTTP_CLIENT_VERSION;
-import static xyz.migoo.config.Platform.JDK_VERSION;
-import static xyz.migoo.config.Platform.OS_VERSION;
+import static xyz.migoo.framework.config.Platform.HTTP_CLIENT_VERSION;
+import static xyz.migoo.framework.config.Platform.JDK_VERSION;
+import static xyz.migoo.framework.config.Platform.OS_VERSION;
 
 /**
  * @author xiaomi
@@ -27,62 +29,59 @@ import static xyz.migoo.config.Platform.OS_VERSION;
  */
 public class Report {
 
-    private static Log log = new Log(Report.class);
     private final static TemplateEngine TEMPLATE_ENGINE = new TemplateEngine();
     private static Map<String, String> platform = new HashMap<>(3);
 
     private List<TestResult> testResults = new ArrayList<>();
-    Map<String, Object> report = new HashMap<>(2);
-    private int total = 0;
-    private int success = 0;
-    private int failed = 0;
-    private int error = 0;
-    private int skipped = 0;
+    private Map<String, Object> report = new HashMap<>(2);
+
+    private int total = 0, success= 0, failed = 0, error = 0, skipped = 0;
 
     public Report(){
+        mkDirs();
     }
 
     public void addResult(TestResult testResult){
-        total += testResult.testSuite().caseResults().size();
-        failed += testResult.failure();
-        error += testResult.error();
-        success += testResult.success();
-        skipped += testResult.skipped();;
         testResults.add(testResult);
+        total += testResult.caseCount();
+        success += testResult.successCount();
+        failed += testResult.failureCount();
+        error += testResult.errorCount();
+        skipped += testResult.skipCount();
     }
 
     public void serialization(){
-        Map<String, Object> summary = new HashMap<>(5);
-        List<Map<String, Object>> records = new ArrayList<>();
-        this.records(records);
-        this.summary(summary);
-        report.put("records", records);
-        report.put("summary", summary);
+        report.put("records", this.records());
+        report.put("summary", this.summary());
     }
 
-    private void records(List<Map<String, Object>> records){
+    private List<Map<String, Object>> records(){
+        List<Map<String, Object>> records = new ArrayList<>();
         AtomicInteger id = new AtomicInteger();
         testResults.forEach(testResult -> {
             Map<String, Object> record = new HashMap<>(8);
             record.put("id", id.get());
-            record.put("title", testResult.testSuite().getName());
-            record.put("link", "./html/" + testResult.testSuite().getName() + ".html");
-            record.put("total", testResult.testSuite().caseResults().size());
-            record.put("success", testResult.success());
-            record.put("failed", testResult.failure());
-            record.put("error", testResult.error());
-            record.put("skipped", testResult.skipped());
+            record.put("title", testResult.getName());
+            record.put("link", "./html/" + testResult.getName() + ".html");
+            record.put("total", testResult.caseCount());
+            record.put("success", testResult.successCount());
+            record.put("failed", testResult.failureCount());
+            record.put("error", testResult.errorCount());
+            record.put("skipped", testResult.skipCount());
             records.add(record);
             id.getAndIncrement();
         });
+        return records;
     }
 
-    private void summary(Map<String, Object> summary){
+    private Map<String, Object> summary(){
+        Map<String, Object> summary = new HashMap<>(5);
         summary.put("total", total);
         summary.put("success", success);
         summary.put("failed", failed);
         summary.put("error", error);
         summary.put("skipped", skipped);
+        return summary;
     }
 
     public void index(){
@@ -90,33 +89,109 @@ public class Report {
             String content = render("classpath://templates/index_report_template.html", report);
             report("index", content, true);
         } catch (ReaderException e) {
-            e.printStackTrace();
+            MiGooLog.log(e.getMessage(), e);
         }
     }
 
-    public static String generateReport(Map<String, Object> report, String reportName) {
-        return generateReport(report, reportName, true);
-    }
-
-    public static String generateReport(Map<String, Object> report, String reportName, boolean sendEmail) {
-        if (StringUtil.isBlank(reportName)) {
-            reportName = "Auto Test Report";
-        }
-        report.put("report", reportName);
-        report.put("title", reportName + " - TestReport");
-        report.put("platform", platform);
-        String content;
-        try {
-            content = render("classpath://templates/migoo_report_template.html", report);
-            String file = report(reportName, content, false);
-            if (sendEmail) {
-                EmailUtil.sendEmail(content, file);
+    public void generateReport() {
+        Map<String, Object> report = new HashMap<>(5);
+        testResults.forEach(testResult -> {
+            report.put("summary", this.summary(testResult));
+            report.put("records", this.records(testResult));
+            report.put("report", testResult.getName());
+            report.put("title", testResult.getName() + " - TestReport");
+            report.put("platform", platform);
+            try {
+                String content = render("classpath://templates/migoo_report_template.html", report);
+                report(testResult.getName(), content, false);
+            } catch (ReaderException e) {
+                MiGooLog.log(e.getMessage(), e);
             }
-            return file;
-        } catch (ReaderException e) {
-            e.printStackTrace();
+        });
+    }
+
+    private Map<String, Object> summary(TestResult result){
+        Map<String, Object> summary = new HashMap<>(7);
+        summary.put("startAt", DateUtil.format(DateUtil.YYYY_MM_DD_HH_MM_SS, result.getStartTime()));
+        summary.put("duration", (result.getEndTime() - result.getStartTime()) / 1000.000f + " seconds");
+        summary.put("total", result.caseCount());
+        summary.put("success", result.successCount());
+        summary.put("failed", result.failureCount());
+        summary.put("error", result.errorCount());
+        summary.put("skipped", result.skipCount());
+        return summary;
+    }
+
+    private List<Map<String, Object>> records(TestResult result){
+        List<Map<String, Object>> records = new ArrayList<>();
+        int id = 1;
+        for (TestFailure testFailure : result.errors()){
+            records.add(item(testFailure, null, id, "error"));
+            id ++;
         }
-        return null;
+        for (TestFailure testFailure : result.failures()){
+            records.add(item(testFailure, null, id, "failure"));
+            id ++;
+        }
+        for (TestFailure testFailure : result.skips()){
+            records.add(item(testFailure, null,id, "skipped"));
+            id ++;
+        }
+        for (AbstractTest test : result.success()){
+            records.add(item(null, test, id, "success"));
+            id ++;
+        }
+        return records;
+    }
+
+    private Map<String, Object> item(TestFailure testFailure, AbstractTest test, int id, String status){
+        AbstractTest t = test != null ? test : testFailure.failedTest();
+        Map<String, Object> item = new HashMap<>(6);
+        item.put("status", status);
+        item.put("name", t.getName());
+        String time = t.response() != null ? t.response().duration() / 1000.000f + "  s" : "N/A";
+        item.put("time", time);
+        item.put("detail", this.detail(t, testFailure, id));
+        item.put("record_id", "record_" + id);
+        item.put("record_href", "#record_" + id);
+        return item;
+    }
+
+    private synchronized Map<String, Object> detail(AbstractTest test, TestFailure testFailure, int id){
+        Map<String, Object> detail = new HashMap<>(7);
+        detail.put("validate", test.validate());
+        detail.put("log", this.log(test.response()));
+        if (testFailure != null){
+            detail.put("track", testFailure.trace());
+        }
+        detail.put("validate_id", "validate_" + id);
+        detail.put("track_id", "track_" + id);
+        detail.put("log_id", "log_" + id);
+        detail.put("validate_href", "#validate_" + id);
+        detail.put("track_href", "#track_" + id);
+        detail.put("log_href", "#log_" + id);
+        return detail;
+    }
+
+    private synchronized Map<String, Object> log(Response response){
+        Map<String, Object> res = new HashMap<>(3);
+        Map<String, Object> req = new HashMap<>(4);
+        if (response != null) {
+            res.put("statusCode", response.statusCode());
+            res.put("body", response.body());
+            if (response.request() != null) {
+                req.put("url", response.request().url());
+                req.put("method", response.request().method());
+                req.put("headers", response.request().headers());
+                req.put("body", response.request().body());
+                req.put("data", response.request().data());
+                req.put("query", response.request().query());
+            }
+        }
+        Map<String, Object> log = new HashMap<>(2);
+        log.put("request", req);
+        log.put("response", res);
+        return log;
     }
 
     /**
@@ -133,29 +208,24 @@ public class Report {
         return TEMPLATE_ENGINE.process(template, context);
     }
 
-    private static String report(String name, String template, boolean isIndex) {
-        File file = new File(System.getProperty("user.dir"));
-        file = new File(file.getPath() + "/Reports/" + DateUtil.TODAY_DATE);
-        String path = file.getPath() + "/html/" + name + ".html";
-        if (isIndex){
-            path = file.getPath() + "/" + name + ".html";
-        }
-        if (!file.exists()) {
-            file.mkdir();
-            file = new File(file.getPath() + "/html");
-            file.mkdir();
-        }
-        try (Writer writer = new FileWriter(path)) {
-            writer.write(template);
-            writer.close();
-            return path;
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new ReportException("create report error , file path " + file.getPath());
+    private static void mkDirs(){
+        File file = new File(String.format("%s/reports/%s/html", System.getProperty("user.dir"), DateUtil.TODAY_DATE));
+        if (!file.exists()){
+            file.mkdirs();
         }
     }
 
-    {
+    private static void report(String name, String template, boolean isIndex) {
+        String path = isIndex ? String.format("%s/reports/index.html", System.getProperty("user.dir"))
+                : String.format("%s/reports/html/%s.html", System.getProperty("user.dir"), name);
+        try (Writer writer = new FileWriter(path)) {
+            writer.write(template);
+        } catch (Exception e) {
+            throw new ReportException("create report error , file path " + path, e);
+        }
+    }
+
+    static {
         platform.put("jdk", "JDK " + JDK_VERSION);
         platform.put("httpclient", "HTTP Client " + HTTP_CLIENT_VERSION);
         platform.put("os", OS_VERSION);
@@ -173,16 +243,10 @@ public class Report {
                     stringBuilder.append(line).append("\n");
                 }
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+                MiGooLog.log(e.getMessage(), e);
                 throw new ReportException("load template file error. " + e.getMessage());
             }
             return stringBuilder.toString();
         }
-    }
-
-
-    public static void main(String[] args) throws IOException {
-        File f1 = new File("/Users/kogome/test2/1.yml");
-        System.out.println(f1.getName());
     }
 }

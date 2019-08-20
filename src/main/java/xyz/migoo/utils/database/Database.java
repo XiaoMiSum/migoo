@@ -3,7 +3,7 @@ package xyz.migoo.utils.database;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.*;
-import xyz.migoo.utils.Log;
+import xyz.migoo.utils.MiGooLog;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -17,7 +17,6 @@ import java.util.Map;
  */
 public class Database {
 
-    private static Log log = new Log(Database.class);
     private Connection conn;
 
     private Database(Connection conn) {
@@ -31,7 +30,7 @@ public class Database {
             conn = DriverManager.getConnection(url, user, password);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error(e.getMessage(), e);
+            MiGooLog.log(e.getMessage(), e);
         }
         return new Database(conn);
     }
@@ -49,9 +48,9 @@ public class Database {
         Object[] list = null;
         try {
             list = run.query(conn, sql, new ArrayHandler(), params);
-            log.info("execute sql: " + sql + "params: " + paramsToString(params));
+            MiGooLog.log("execute sql: " + sql + "params: " + paramsToString(params));
         } catch (SQLException e) {
-            log.error("execute sql exception: " + sql + "  params: " + paramsToString(params), e);
+            MiGooLog.log("execute sql exception", e);
         }
         return list;
     }
@@ -61,33 +60,33 @@ public class Database {
         List<Map<String, Object>> list = null;
         try {
             list = run.query(conn, sql, new MapListHandler(), params);
-            log.info("execute sql: " + sql + "  params: " + paramsToString(params));
+            MiGooLog.log("execute sql: " + sql + "  params: " + paramsToString(params));
         } catch (SQLException e) {
-            log.error("execute sql exception: " + sql + "  params: " + paramsToString(params), e);
+            MiGooLog.log("execute sql exception", e);
         }
         return list;
     }
 
-    public List arrays(String sql, Object... params) {
+    public List<Object> arrays(String sql, Object... params) {
         QueryRunner run = new QueryRunner();
-        ArrayList list = null;
+        ArrayList<Object> list = null;
         try {
-            list = (ArrayList)run.query(conn, sql, new ColumnListHandler(), params);
-            log.info("execute sql: " + sql + "  params: " + paramsToString(params));
+            list = (ArrayList<Object>)run.query(conn, sql, new ColumnListHandler<>(), params);
+            MiGooLog.log("execute sql: " + sql + "  params: " + paramsToString(params));
         } catch (SQLException e) {
-            log.error("execute sql exception: " + sql + "  params: " + paramsToString(params), e);
+            MiGooLog.log("execute sql exception", e);
         }
         return list;
     }
 
-    public Map query(String sql, Object... params) {
+    public Map<String, Object> query(String sql, Object... params) {
         QueryRunner run = new QueryRunner();
-        Map object = null;
+        Map<String, Object> object = null;
         try {
             object = run.query(conn, sql, new MapHandler(), params);
-            log.info("execute sql: " + sql + "  params: " + paramsToString(params));
+            MiGooLog.log("execute sql: " + sql + "  params: " + paramsToString(params));
         } catch (SQLException e) {
-            log.error("execute sql exception: " + sql + "  params: " + paramsToString(params), e);
+            MiGooLog.log("execute sql exception", e);
         }
         return object;
     }
@@ -97,9 +96,9 @@ public class Database {
         int total = 0;
         try {
             total = run.update(conn, sql, params);
-            log.info("execute sql: " + sql + "  params: " + paramsToString(params));
+            MiGooLog.log("execute sql: " + sql + "  params: " + paramsToString(params));
         } catch (SQLException e) {
-            log.error("execute sql exception: " + sql + "  params: " + paramsToString(params), e);
+            MiGooLog.log("execute sql exception", e);
         }
         return total;
     }
