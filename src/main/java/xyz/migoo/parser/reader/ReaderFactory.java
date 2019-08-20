@@ -2,6 +2,7 @@ package xyz.migoo.parser.reader;
 
 import xyz.migoo.exception.ReaderException;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,15 +12,15 @@ import java.util.List;
  */
 public class ReaderFactory {
 
-    public final static String JSON_SUFFIX = ".json";
-    public final static String YAML_SUFFIX = ".yml";
-    public final static String PROS_SUFFIX = ".properties";
-    public static final String XLS_SUFFIX = ".xls";
-    public static final String XLSX_SUFFIX = ".xlsx";
+    final static String JSON_SUFFIX = ".json";
+    final static String YAML_SUFFIX = ".yml";
+    final static String PROS_SUFFIX = ".properties";
+    static final String XLS_SUFFIX = ".xls";
+    static final String XLSX_SUFFIX = ".xlsx";
     private static final List<String> LIST = new ArrayList<>();
 
-    public static Reader getReader(String suffix, String path) throws ReaderException {
-        switch (suffix){
+    public static Reader getReader(File path) throws ReaderException {
+        switch (suffix(path.getName())){
             case JSON_SUFFIX:
                 return new JSONReader(path);
             case YAML_SUFFIX:
@@ -27,7 +28,6 @@ public class ReaderFactory {
             case PROS_SUFFIX:
                 return new PropertiesReader(path);
             case XLS_SUFFIX:
-                return new ExcelReader(path);
             case XLSX_SUFFIX:
                 return new ExcelReader(path);
             default:
@@ -35,12 +35,12 @@ public class ReaderFactory {
         }
     }
 
-    public static String suffix(String file){
+    private static String suffix(String file) throws ReaderException {
         String suffix = file.substring(file.lastIndexOf("."));
         if (LIST.contains(suffix)){
             return suffix;
         }
-        return null;
+        throw new ReaderException("file reader error");
     }
 
     static{

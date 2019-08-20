@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static xyz.migoo.parser.BindVariable.FUNC_PATTERN;
 import static xyz.migoo.parser.BindVariable.PARAM_PATTERN;
@@ -17,6 +18,9 @@ import static xyz.migoo.parser.BindVariable.PARAM_PATTERN;
 public class InvokeUtil {
 
     private static final String SEPARATOR = ",";
+    private static final Pattern REGEX_LONG = Pattern.compile("^[-\\+]?[0-9]+$");
+    private static final Pattern REGEX_FLOAT = Pattern.compile("^[-\\+]?[0-9]+\\.[0-9]+$");
+    private static final Pattern REGEX_BOOLEAN = Pattern.compile("^[true\\false]$");
 
     /**
      * 从指定 扩展类中 获取扩展函数
@@ -50,11 +54,20 @@ public class InvokeUtil {
         if (StringUtil.isBlank(params)) {
             return null;
         }
-        Object[] parameters = params.split(SEPARATOR);
-        Object[] parameter = new Object[parameters.length];
-        int i = 0;
-        for (Object obj : parameters){
-            Matcher param = PARAM_PATTERN.matcher(obj.toString());
+        String[] strParams = params.split(SEPARATOR);
+        Object[] parameters = new Object[strParams.length];
+        for (int i = 0; i < strParams.length; i++) {
+            String str= strParams[i];
+            if (REGEX_LONG.matcher(str).find()){
+                parameters[i] = Long.valueOf(str);
+            }
+            if (REGEX_FLOAT.matcher(str).find()){
+                parameters[i] = Double.valueOf(str);
+            }
+            if (REGEX_BOOLEAN.matcher(str).find()){
+                parameters[i] = Boolean.valueOf(str);
+            }
+            Matcher param = PARAM_PATTERN.matcher(str);
             if (param.find()) {
                 if (variables != null && !variables.isEmpty()){
                     Object object = variables.get(param.group(1));
@@ -62,13 +75,12 @@ public class InvokeUtil {
                             || PARAM_PATTERN.matcher(String.valueOf(object)).find()){
                         throw new RuntimeException(String.format("%s need eval!", param.group(1)));
                     }
-                    obj = object;
+                    parameters[i] = object;
                 }
             }
-            parameter[i] = obj;
-            i += 1;
+            parameters[i] = str;
         }
-        return parameter;
+        return parameters;
     }
 
     /**

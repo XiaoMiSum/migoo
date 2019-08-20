@@ -27,12 +27,11 @@ public class TestRunner {
     private static TestRunner runner;
     private JSONObject variables;
     private Report report = new Report();
-    private boolean flag = false;
 
-    public static TestRunner getInstance(){
-        if (runner == null){
-            synchronized (TestRunner.class){
-                if (runner == null){
+    public static TestRunner getInstance() {
+        if (runner == null) {
+            synchronized (TestRunner.class) {
+                if (runner == null) {
                     runner = new TestRunner();
                 }
             }
@@ -40,14 +39,17 @@ public class TestRunner {
         return runner;
     }
 
-    private TestRunner(){
+    private TestRunner() {
     }
+
     /**
      * 如果传入的是目录，生成的测试报告在同一个文件中
+     *
      * @param caseOrPath json 格式的 case 或 测试用例文件\目录
      */
-    private void byCase(String caseOrPath){
+    private void byCase(String caseOrPath) {
         TestSuite caseSuite = this.initTestSuite(caseOrPath);
+        this.initEnv();
         TestResult result = this.run(caseSuite);
         report.addResult(result);
         report.generateReport();
@@ -55,21 +57,22 @@ public class TestRunner {
 
     /**
      * 如果传入的是目录，每个测试用例文件生成一个对应的测试报告，最后压缩成 zip 文件
+     *
      * @param caseOrPath json 格式的 case 或 测试用例文件\目录
-     * @param vars 全局变量
+     * @param vars       全局变量
      */
     public void run(String caseOrPath, String vars) {
         try {
             this.variables = CaseParser.loadVariables(vars);
             JSON.parse(caseOrPath);
             this.byCase(caseOrPath);
-        } catch (ReaderException e){
+        } catch (ReaderException e) {
             // 绑定全局变量异常 停止测试
             MiGooLog.log("read vars exception.", e);
             System.exit(-1);
-        } catch (JSONException e){
-            this.byPath(caseOrPath);
-        } catch (Exception e){
+        } catch (JSONException e) {
+            this.byPath(new File(caseOrPath));
+        } catch (Exception e) {
             MiGooLog.log("unknown exception.", e);
             System.exit(-1);
         }
@@ -78,31 +81,27 @@ public class TestRunner {
         //EmailUtil.sendEmail();
     }
 
-    private void byPath(String path){
-        File file = new File(path);
-        if (file.isDirectory()) {
-            String[] fList = file.list();
+    private void byPath(File path) {
+        if (path.isDirectory()) {
+            File[] fList = path.listFiles();
             if (fList != null) {
-                for (String f : fList) {
-                    StringBuilder sb = new StringBuilder(path);
-                    if (f.startsWith(".") || IGNORE_DIRECTORY.contains(f)) {
+                for (File file : fList) {
+                    if (file.getName().startsWith(".") || IGNORE_DIRECTORY.contains(file.getName())) {
                         continue;
                     }
-                    if (!path.endsWith("/")) {
-                        sb.append("/");
-                    }
-                    this.byPath(sb.append(f).toString());
+                    this.byPath(file);
                 }
             }
         } else {
-            TestSuite testSuite = this.initTestSuite(path);
+            TestSuite testSuite = this.initTestSuite(path.getPath());
+            this.initEnv();
             TestResult result = this.run(testSuite);
             report.addResult(result);
             report.generateReport();
         }
     }
 
-    private TestSuite initTestSuite(String caseOrPath){
+    private TestSuite initTestSuite(String caseOrPath) {
         try {
             JSONObject caseSets = new CaseParser().loadCaseSets(caseOrPath);
             return new TestSuite(caseSets);
@@ -113,20 +112,23 @@ public class TestRunner {
         return null;
     }
 
-    private TestResult run(TestSuite suite){
-        TestResult result = new TestResult(suite.countTestCases(), suite.getName());
-        result.setStartTime(System.currentTimeMillis());
-        if (variables != null && flag){
+    private void initEnv() {
+        if (variables != null) {
             try {
                 JSONObject globals = variables.getJSONObject("vars") != null ? variables.getJSONObject("vars") :
                         variables.getJSONObject("variables") != null ? variables.getJSONObject("variables") : variables;
                 BindVariable.bind(globals, variables, true);
                 Hook.hook(variables.get(CaseKeys.VARS_HOOK), globals);
             } catch (InvokeException e) {
-                MiGooLog.log("bind vars or invoke hook exception.", e);
+                MiGooLog.log("env exception.", e);
                 System.exit(-1);
             }
         }
+    }
+
+    private TestResult run(TestSuite suite) {
+        TestResult result = new TestResult(suite.countTestCases(), suite.getName());
+        result.setStartTime(System.currentTimeMillis());
         suite.run(result, variables);
         result.setEndTime(System.currentTimeMillis());
         return result;

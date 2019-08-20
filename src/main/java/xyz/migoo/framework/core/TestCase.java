@@ -75,7 +75,7 @@ public class TestCase extends AbstractTest {
         } catch (Exception e) {
             MiGooLog.log("case run error", e);
             result.addError(this, e);
-        }finally {
+        } finally {
             MiGooLog.log("test case end: {}", this.getName());
         }
     }

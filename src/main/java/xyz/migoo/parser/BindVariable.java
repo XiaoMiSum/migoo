@@ -133,14 +133,10 @@ public class BindVariable {
     }
 
     private static Object evalVariable(String evalFunc, JSONObject variables) throws InvokeException {
-        try {
-            Matcher func = FUNC_PATTERN.matcher(evalFunc);
-            if (func.find()) {
-                functionLoader();
-                return InvokeUtil.invoke(methods, func.group(1), func.group(2), variables);
-            }
-        } catch (RuntimeException ignored) {
-
+        Matcher func = FUNC_PATTERN.matcher(evalFunc);
+        if (func.find()) {
+            functionLoader();
+            return InvokeUtil.invoke(methods, func.group(1), func.group(2), variables);
         }
         return evalFunc;
     }
