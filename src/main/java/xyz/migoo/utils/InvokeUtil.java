@@ -20,7 +20,7 @@ public class InvokeUtil {
     private static final String SEPARATOR = ",";
     private static final Pattern REGEX_LONG = Pattern.compile("^[-\\+]?[0-9]+$");
     private static final Pattern REGEX_FLOAT = Pattern.compile("^[-\\+]?[0-9]+\\.[0-9]+$");
-    private static final Pattern REGEX_BOOLEAN = Pattern.compile("^[true\\false]$");
+    private static final Pattern REGEX_BOOLEAN = Pattern.compile("^[true\\\\false]");
 
     /**
      * 从指定 扩展类中 获取扩展函数
@@ -60,12 +60,15 @@ public class InvokeUtil {
             String str= strParams[i];
             if (REGEX_LONG.matcher(str).find()){
                 parameters[i] = Long.valueOf(str);
+                continue;
             }
             if (REGEX_FLOAT.matcher(str).find()){
                 parameters[i] = Double.valueOf(str);
+                continue;
             }
             if (REGEX_BOOLEAN.matcher(str).find()){
                 parameters[i] = Boolean.valueOf(str);
+                continue;
             }
             Matcher param = PARAM_PATTERN.matcher(str);
             if (param.find()) {
@@ -76,6 +79,7 @@ public class InvokeUtil {
                         throw new RuntimeException(String.format("%s need eval!", param.group(1)));
                     }
                     parameters[i] = object;
+                    continue;
                 }
             }
             parameters[i] = str;
