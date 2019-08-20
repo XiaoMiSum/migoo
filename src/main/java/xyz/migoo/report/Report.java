@@ -216,8 +216,8 @@ public class Report {
     }
 
     private static void report(String name, String template, boolean isIndex) {
-        String path = isIndex ? String.format("%s/reports/index.html", System.getProperty("user.dir"))
-                : String.format("%s/reports/html/%s.html", System.getProperty("user.dir"), name);
+        String path = isIndex ? String.format("%s/reports/%s/index.html", System.getProperty("user.dir"), DateUtil.TODAY_DATE)
+                : String.format("%s/reports/%s/html/%s.html", System.getProperty("user.dir"), DateUtil.TODAY_DATE, name);
         try (Writer writer = new FileWriter(path)) {
             writer.write(template);
         } catch (Exception e) {
