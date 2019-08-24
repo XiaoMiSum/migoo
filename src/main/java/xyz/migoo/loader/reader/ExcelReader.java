@@ -1,4 +1,4 @@
-package xyz.migoo.parser.reader;
+package xyz.migoo.loader.reader;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;

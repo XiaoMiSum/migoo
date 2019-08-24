@@ -1,4 +1,4 @@
-package xyz.migoo.parser.reader;
+package xyz.migoo.loader.reader;
 
 import xyz.migoo.exception.ReaderException;
 

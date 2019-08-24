@@ -8,6 +8,6 @@ package xyz.migoo.test.extend;
 public class Variable {
 
     public static String getPwd(String param){
-        return "a" + param;
+        return param;
     }
 }

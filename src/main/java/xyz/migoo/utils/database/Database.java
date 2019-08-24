@@ -3,7 +3,7 @@ package xyz.migoo.utils.database;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.*;
-import xyz.migoo.utils.MiGooLog;
+import xyz.migoo.report.MiGooLog;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

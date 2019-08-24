@@ -17,8 +17,6 @@ public class AssertionFactory {
         switch (assertionType(check)){
             case CaseKeys.EVAL_ACTUAL_BY_JSON:
                 return new JSONAssertion(check);
-            case CaseKeys.EVAL_ACTUAL_BY_HTML:
-                return new HTMLAssertion(check);
             case CaseKeys.EVAL_ACTUAL_BY_STATUS:
                 return new ResponseCodeAssertion();
             case CaseKeys.EVAL_ACTUAL_BY_BODY:
@@ -42,9 +40,6 @@ public class AssertionFactory {
         }
         if (isJson(searchChar)) {
             return CaseKeys.EVAL_ACTUAL_BY_JSON;
-        }
-        if (isHtml(searchChar)){
-            return CaseKeys.EVAL_ACTUAL_BY_HTML;
         }
         return searchChar;
     }

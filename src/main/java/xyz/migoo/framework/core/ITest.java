@@ -20,7 +20,6 @@ public interface ITest {
      * running the test
      *
      * @param result the test result
-     * @param vars   runtime variables
      */
-    void run(TestResult result, JSONObject vars);
+    void run(TestResult result);
 }

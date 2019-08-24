@@ -1,18 +1,17 @@
 package xyz.migoo.runner;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.framework.config.CaseKeys;
-import xyz.migoo.utils.Hook;
 import xyz.migoo.framework.core.TestResult;
 import xyz.migoo.framework.core.TestSuite;
 import xyz.migoo.exception.InvokeException;
 import xyz.migoo.exception.ReaderException;
-import xyz.migoo.parser.BindVariable;
-import xyz.migoo.parser.CaseParser;
+import xyz.migoo.extender.Extender;
 import xyz.migoo.report.Report;
-import xyz.migoo.utils.MiGooLog;
+import xyz.migoo.loader.CaseLoader;
+import xyz.migoo.report.MiGooLog;
 
 import java.io.File;
 
@@ -26,6 +25,7 @@ public class TestRunner {
 
     private static TestRunner runner;
     private JSONObject variables;
+    private JSONObject globals;
     private Report report = new Report();
 
     public static TestRunner getInstance() {
@@ -43,19 +43,6 @@ public class TestRunner {
     }
 
     /**
-     * 如果传入的是目录，生成的测试报告在同一个文件中
-     *
-     * @param caseOrPath json 格式的 case 或 测试用例文件\目录
-     */
-    private void byCase(String caseOrPath) {
-        TestSuite caseSuite = this.initTestSuite(caseOrPath);
-        this.initEnv();
-        TestResult result = this.run(caseSuite);
-        report.addResult(result);
-        report.generateReport();
-    }
-
-    /**
      * 如果传入的是目录，每个测试用例文件生成一个对应的测试报告，最后压缩成 zip 文件
      *
      * @param caseOrPath json 格式的 case 或 测试用例文件\目录
@@ -63,21 +50,18 @@ public class TestRunner {
      */
     public void run(String caseOrPath, String vars) {
         try {
-            this.variables = CaseParser.loadVariables(vars);
-            JSON.parse(caseOrPath);
-            this.byCase(caseOrPath);
+            this.variables = CaseLoader.loadEnv(vars);
+            this.initEnv();
+            this.byPath(new File(caseOrPath));
         } catch (ReaderException e) {
             // 绑定全局变量异常 停止测试
             MiGooLog.log("read vars exception.", e);
             System.exit(-1);
-        } catch (JSONException e) {
-            this.byPath(new File(caseOrPath));
-        } catch (Exception e) {
+        }catch (Exception e) {
             MiGooLog.log("unknown exception.", e);
             System.exit(-1);
         }
-        report.serialization();
-        report.index();
+        report.generateIndex();
         //EmailUtil.sendEmail();
     }
 
@@ -94,7 +78,6 @@ public class TestRunner {
             }
         } else {
             TestSuite testSuite = this.initTestSuite(path.getPath());
-            this.initEnv();
             TestResult result = this.run(testSuite);
             report.addResult(result);
             report.generateReport();
@@ -103,8 +86,8 @@ public class TestRunner {
 
     private TestSuite initTestSuite(String caseOrPath) {
         try {
-            JSONObject caseSets = new CaseParser().loadCaseSets(caseOrPath);
-            return new TestSuite(caseSets);
+            JSONObject caseSets = CaseLoader.loadCaseSet(caseOrPath);
+            return new TestSuite(caseSets, globals);
         } catch (Exception e) {
             MiGooLog.log(e.getMessage(), e);
             System.exit(-1);
@@ -115,10 +98,13 @@ public class TestRunner {
     private void initEnv() {
         if (variables != null) {
             try {
-                JSONObject globals = variables.getJSONObject("vars") != null ? variables.getJSONObject("vars") :
+                globals = variables.getJSONObject("vars") != null ? variables.getJSONObject("vars") :
                         variables.getJSONObject("variables") != null ? variables.getJSONObject("variables") : variables;
-                BindVariable.bind(globals, variables, true);
-                Hook.hook(variables.get(CaseKeys.VARS_HOOK), globals);
+                Extender.bindAndEval(globals, globals);
+                JSONArray hook = variables.getJSONArray(CaseKeys.VARS_HOOK);
+                for (int i = 0; i < hook.size(); i++) {
+                    Extender.hook(hook.getString(i), globals);
+                }
             } catch (InvokeException e) {
                 MiGooLog.log("env exception.", e);
                 System.exit(-1);
@@ -129,7 +115,7 @@ public class TestRunner {
     private TestResult run(TestSuite suite) {
         TestResult result = new TestResult(suite.countTestCases(), suite.getName());
         result.setStartTime(System.currentTimeMillis());
-        suite.run(result, variables);
+        suite.run(result);
         result.setEndTime(System.currentTimeMillis());
         return result;
     }

@@ -293,7 +293,7 @@
     var myChart3 = echarts.init(document.getElementById('main3'));
     myChart3.setOption(option3);
     myChart3.on('click', function (params) {
-        if (params.componentType == "yAxis") {
+        if (params.componentType === "yAxis") {
             window.open('./html/' + params.value + '.html');
         }
     });

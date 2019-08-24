@@ -2,13 +2,12 @@ package xyz.migoo.framework.core;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.extender.Extender;
 import xyz.migoo.framework.assertions.Validate;
 import xyz.migoo.framework.config.CaseKeys;
 import xyz.migoo.exception.InvokeException;
 import xyz.migoo.framework.http.Response;
-import xyz.migoo.parser.BindVariable;
-import xyz.migoo.utils.Hook;
-import xyz.migoo.utils.MiGooLog;
+import xyz.migoo.report.MiGooLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,11 +67,12 @@ public abstract class AbstractTest implements ITest {
      *
      * @throws InvokeException e
      */
-    public void setUp(String type) throws InvokeException {
+    public void setup(String type) throws InvokeException {
         // bind variable to setUp (this.variables -> this.setUp)
         MiGooLog.log("{} begin", type);
-        BindVariable.bind(variables, setUp);
-        Hook.hook(setUp, variables);
+        for (int i = 0; i < setUp.size(); i++) {
+            Extender.hook(setUp.getString(i), variables);
+        }
         MiGooLog.log("{} end", type);
     }
 
@@ -92,11 +92,16 @@ public abstract class AbstractTest implements ITest {
      *
      * @throws InvokeException e
      */
-    void teardown(String type) throws InvokeException {
+    void teardown(String type) {
         // bind variable to setUp (this.variables -> this.teardown)
         MiGooLog.log("{} begin", type);
-        BindVariable.bind(variables, teardown);
-        Hook.hook(teardown, variables);
+        for (int i = 0; i < teardown.size(); i++) {
+            try {
+                Extender.hook(teardown.getString(i), variables);
+            } catch (InvokeException e) {
+                MiGooLog.log(teardown.getString(i) + " error", e);
+            }
+        }
         MiGooLog.log("{} end", type);
     }
 

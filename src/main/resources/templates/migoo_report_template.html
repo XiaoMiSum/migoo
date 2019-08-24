@@ -157,7 +157,6 @@
     </tr>
 </table>
 
-<h2>Summary</h2>
 <table id="summary">
 
     <tr>
@@ -169,19 +168,11 @@
         <td colspan="4" th:text="${summary.duration}"></td>
     </tr>
     <tr>
-        <th>PLATFORM</th>
-        <td th:text="${platform.httpclient}"></td>
-        <td th:text="${platform.jdk }"></td>
-        <td colspan="2" th:text="${platform.os }"></td>
-    </tr>
-    <tr>
         <th>TOTAL</th>
         <th>SUCCESS</th>
         <th>FAILED</th>
         <th>ERROR</th>
         <th>SKIPPED</th>
-        <!-- <th>ExpectedFailure</th>
-        <th>UnexpectedSuccess</th> -->
     </tr>
     <tr>
         <td th:text="${summary.total}"></td>
@@ -189,13 +180,9 @@
         <td th:text="${summary.failed}"></td>
         <td th:text="${summary.error}"></td>
         <td th:text="${summary.skipped}"></td>
-        <!-- <td>{{stat.expectedFailures}}</td>
-        <td>{{stat.unexpectedSuccesses}}</td> -->
     </tr>
 </table>
 
-
-<h2>Details</h2>
 <table id="details">
     <tr>
         <th>Status</th>

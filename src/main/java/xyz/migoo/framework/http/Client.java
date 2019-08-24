@@ -22,8 +22,8 @@ import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import xyz.migoo.exception.RequestException;
-import xyz.migoo.func.Func;
-import xyz.migoo.utils.MiGooLog;
+import xyz.migoo.extender.func.Func;
+import xyz.migoo.report.MiGooLog;
 import xyz.migoo.utils.StringUtil;
 import xyz.migoo.utils.TypeUtil;
 

@@ -1,0 +1,106 @@
+name: the-test-suite-name
+config:
+  variables:
+    user2: test
+  beforeClass:
+    - __hook1(beforeClass)
+  afterClass:
+    - __hook1(afterClass)
+  request:
+    url: http://migoo.xyz/api/login
+    method: post
+case:
+  - title: 执行成功
+    variables:
+      pwd1: __getPwd(${pwd})
+      pwd2: __getPwd(${pwd1})
+    before:
+      - __hook1(before)
+    after:
+      - __hook2(after,before)
+    body:
+      userName: ${user}
+      password: ${pwd2}
+      sign: __md5Digest(${user}${pwd})
+    validate:
+      - {check: status, expect: 200, types: ==}
+      - {check: $.status, expect: 200, types: eq}
+      - {check: body.data, expect: null, types: isNotEmpty}
+  - title: 忽略执行
+    ignore: true
+    variables:
+      pwd: __getPwd($user)
+    before:
+      - __hook1(before)
+    after:
+      - __hook2(after,before)
+    body:
+      userName: ${user2}
+      password: 12345
+    validate:
+      - {check: status, expect: 200, types: ==}
+      - {check: $.status, expect: 411, types: eq}
+      - {check: body.data, expect: null, types: isEmpty}
+  - title: 密码错误
+    variables:
+      pwd1: __getPwd(${user})
+    before:
+      - __hook1(before)
+    after:
+      - __hook2(after,before)
+    body:
+      userName: ${user}
+      password: ${pwd1}
+      sign: __md5Digest(${user}${pwd1})
+    validate:
+      - {check: status, expect: 200, types: ==}
+      - {check: $.status, expect: 411, types: eq}
+      - {check: body.data, expect: username or password error, types: ==}
+  - title: 验证失败
+    variables:
+      pwd1: __getPwd(${pwd})
+      pwd2: __getPwd(${pwd1})
+    before:
+      - __hook1(before)
+    after:
+      - __hook2(after,before)
+    body:
+      userName: ${user}
+      password: 12345
+      sign: __md5Digest(${user})
+    validate:
+      - {check: status, expect: 200, types: ==}
+      - {check: $.status, expect: 411, types: eq}
+      - {check: body.data, expect: null, types: isEmpty}
+  - title: case中的after执行失败不影响用例结果
+    variables:
+      pwd1: __getPwd(${pwd})
+      pwd2: __getPwd(${pwd1})
+    before:
+      - __hook1(before)
+    after:
+      - __hook2(after,before)
+    body:
+      userName: ${user}
+      password: ${pwd2}
+      sign: __md5Digest(${user}${pwd})
+    validate:
+      - {check: status, expect: 200, types: ==}
+      - {check: $.status, expect: 200, types: eq}
+      - {check: body.data, expect: null, types: isNotEmpty}
+  - title: case中的before执行失败影响用例结果
+    variables:
+      pwd1: __getPwd(${pwd})
+      pwd2: __getPwd(${pwd1})
+    before:
+      - __hook1(before,hshs)
+    after:
+      - __hook2(after,before)
+    body:
+      userName: ${user}
+      password: ${pwd2}
+      sign: __md5Digest(${user}${pwd})
+    validate:
+      - {check: status, expect: 200, types: ==}
+      - {check: $.status, expect: 200, types: eq}
+      - {check: body.data, expect: null, types: isNotEmpty}
