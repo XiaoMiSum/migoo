@@ -1,7 +1,9 @@
-package xyz.migoo.utils;
+package xyz.migoo.extender;
 
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.InvokeException;
+import xyz.migoo.report.MiGooLog;
+import xyz.migoo.utils.StringUtil;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -9,8 +11,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static xyz.migoo.parser.BindVariable.FUNC_PATTERN;
-import static xyz.migoo.parser.BindVariable.PARAM_PATTERN;
+import static xyz.migoo.extender.Extender.FUNC_PATTERN;
+import static xyz.migoo.extender.Extender.PARAM_PATTERN;
 
 /**
  * @author xiaomi
@@ -20,12 +22,11 @@ public class InvokeUtil {
     private static final String SEPARATOR = ",";
     private static final Pattern REGEX_LONG = Pattern.compile("^[-\\+]?[0-9]+$");
     private static final Pattern REGEX_FLOAT = Pattern.compile("^[-\\+]?[0-9]+\\.[0-9]+$");
-    private static final Pattern REGEX_BOOLEAN = Pattern.compile("^[true\\\\false]");
 
     /**
      * 从指定 扩展类中 获取扩展函数
      */
-    public static Map<String, Method> functionLoader(Object[] classes) throws InvokeException {
+    public static Map<String, Method> loadFunction(Object[] classes) throws InvokeException {
         try {
             Map<String, Method> map = new HashMap<>(100);
             for (Object clazz : classes) {
@@ -50,7 +51,7 @@ public class InvokeUtil {
      * @param params 参数字符串，处理时使用,分割
      * @param variables 变量，参数可能使用变量，需要从此对象取出
      */
-    private static Object[] parameter(String params, JSONObject variables) throws RuntimeException {
+    private static Object[] loadParameter(String params, JSONObject variables) throws RuntimeException {
         if (StringUtil.isBlank(params)) {
             return null;
         }
@@ -66,14 +67,14 @@ public class InvokeUtil {
                 parameters[i] = Double.valueOf(str);
                 continue;
             }
-            if (REGEX_BOOLEAN.matcher(str).find()){
+            if ("true".equalsIgnoreCase(str) || "false".equalsIgnoreCase(str)){
                 parameters[i] = Boolean.valueOf(str);
                 continue;
             }
             Matcher param = PARAM_PATTERN.matcher(str);
             if (param.find()) {
                 if (variables != null && !variables.isEmpty()){
-                    Object object = variables.get(param.group(1));
+                    Object object = variables.get(str.substring(2, str.length() -1));
                     if (FUNC_PATTERN.matcher(String.valueOf(object)).find()
                             || PARAM_PATTERN.matcher(String.valueOf(object)).find()){
                         throw new RuntimeException(String.format("%s need eval!", param.group(1)));
@@ -113,7 +114,7 @@ public class InvokeUtil {
             throws InvokeException {
         Object result;
         try {
-            Object[] parameters = parameter(parameter, variables);
+            Object[] parameters = loadParameter(parameter, variables);
             result = method(methods, name, parameters).invoke(null, parameters);
             MiGooLog.log(String.format("invoke success, method [%s] -> parameter [%s] -> return [%s]", name, parameter, result));
         } catch (NullPointerException e){
@@ -123,4 +124,6 @@ public class InvokeUtil {
         }
         return result;
     }
+
+
 }

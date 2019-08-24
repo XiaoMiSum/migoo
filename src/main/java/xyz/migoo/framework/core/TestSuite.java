@@ -6,8 +6,8 @@ import xyz.migoo.framework.config.CaseKeys;
 import xyz.migoo.exception.InvokeException;
 import xyz.migoo.framework.http.Client;
 import xyz.migoo.framework.http.Request;
-import xyz.migoo.parser.BindVariable;
-import xyz.migoo.utils.MiGooLog;
+import xyz.migoo.extender.Extender;
+import xyz.migoo.report.MiGooLog;
 
 import java.util.Vector;
 
@@ -19,20 +19,19 @@ public class TestSuite extends AbstractTest {
 
     private Vector<AbstractTest> fTests= new Vector<>(10);
 
-    public TestSuite(JSONObject testSuite){
+    public TestSuite(JSONObject testSuite, JSONObject globals){
         super(testSuite.getString(CaseKeys.NAME));
         JSONObject config = testSuite.getJSONObject(CaseKeys.CONFIG);
         // 1. add config.variables to variables;
         super.addVariables(config.getJSONObject(CaseKeys.CONFIG_VARIABLES));
-        // 2. // bind variable to variables (variables -> variables)
-        BindVariable.bind(super.variables, super.variables);
-        // 3. add config.beforeClass to setUp
+        super.addVariables(globals);
+        // 2. add config.beforeClass to setUp
         super.addSetUp(config.getJSONArray(CaseKeys.CONFIG_BEFORE_CLASS));
-        // 4. add config.beforeClass to teardown
+        // 3. add config.beforeClass to teardown
         super.addTeardown(config.getJSONArray(CaseKeys.CONFIG_AFTER_CLASS));
-        // 5. bind variable tp request
+        // 4. bind variable tp request
         JSONObject request = config.getJSONObject(CaseKeys.CONFIG_REQUEST);
-        BindVariable.bind(super.variables, request);
+        Extender.bind(request, super.variables);
         Client client = new Client.Config().https(request.get(CaseKeys.CONFIG_REQUEST_HTTPS)).build();
         JSONArray testCases = testSuite.getJSONArray(CaseKeys.CASE);
         for (int i = 0; i < testCases.size(); i++) {
@@ -43,7 +42,7 @@ public class TestSuite extends AbstractTest {
                     .cookies(request.get(CaseKeys.CONFIG_REQUEST_COOKIE))
                     .headers(request.getJSONObject(CaseKeys.CONFIG_REQUEST_HEADERS))
                     .encode(request.get(CaseKeys.CONFIG_REQUEST_ENCODE));
-            this.addTest(new TestCase(testCase, client, builder));
+            this.addTest(new TestCase(testCase, client, builder, super.variables));
         }
     }
 
@@ -57,17 +56,17 @@ public class TestSuite extends AbstractTest {
     }
 
     @Override
-    public void run(TestResult result, JSONObject globals) {
+    public void run(TestResult result) {
         try {
             MiGooLog.log("===================================================================");
             MiGooLog.log("test suite begin: {}", this.getName());
             // bind variable to variables (globals -> variables)
-            BindVariable.bind(globals, super.variables, true);
-            super.setUp("before class");
-            this.fTests.forEach(test -> test.run(result, super.variables));
-            super.teardown("after class");
+            Extender.bindAndEval(super.variables, super.variables);
+            super.setup("suite setup");
+            this.fTests.forEach(test -> test.run(result));
+            super.teardown("suite teardown");
         } catch (InvokeException e) {
-            MiGooLog.log("test suite run error;");
+            MiGooLog.log("test suite run error. ", e);
         } finally {
             MiGooLog.log("test suite end: {}", this.getName());
             MiGooLog.log("===================================================================");

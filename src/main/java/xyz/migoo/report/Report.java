@@ -2,14 +2,13 @@ package xyz.migoo.report;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import xyz.migoo.framework.config.Platform;
 import xyz.migoo.framework.core.AbstractTest;
 import xyz.migoo.framework.core.TestFailure;
 import xyz.migoo.framework.core.TestResult;
-import xyz.migoo.exception.ReaderException;
 import xyz.migoo.exception.ReportException;
 import xyz.migoo.framework.http.Response;
-import xyz.migoo.utils.MiGooLog;
-import xyz.migoo.parser.reader.AbstractReader;
+import xyz.migoo.loader.reader.AbstractReader;
 import xyz.migoo.utils.DateUtil;
 
 import java.io.*;
@@ -19,10 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static xyz.migoo.framework.config.Platform.HTTP_CLIENT_VERSION;
-import static xyz.migoo.framework.config.Platform.JDK_VERSION;
-import static xyz.migoo.framework.config.Platform.OS_VERSION;
-
 /**
  * @author xiaomi
  * @date 2018/7/25 11:13
@@ -30,18 +25,17 @@ import static xyz.migoo.framework.config.Platform.OS_VERSION;
 public class Report {
 
     private final static TemplateEngine TEMPLATE_ENGINE = new TemplateEngine();
-    private static Map<String, String> platform = new HashMap<>(3);
 
     private List<TestResult> testResults = new ArrayList<>();
     private Map<String, Object> report = new HashMap<>(2);
 
-    private int total = 0, success= 0, failed = 0, error = 0, skipped = 0;
+    private int total = 0, success = 0, failed = 0, error = 0, skipped = 0;
 
-    public Report(){
+    public Report() {
         mkDirs();
     }
 
-    public void addResult(TestResult testResult){
+    public void addResult(TestResult testResult) {
         testResults.add(testResult);
         total += testResult.caseCount();
         success += testResult.successCount();
@@ -50,12 +44,18 @@ public class Report {
         skipped += testResult.skipCount();
     }
 
-    public void serialization(){
+    public void generateIndex() {
         report.put("records", this.records());
         report.put("summary", this.summary());
+        String template = HtmlReader.read("classpath://templates/index_report_template.html");
+        String content = render(template, report);
+        report("index", content, true);
+        if (Platform.MAIL_SEND) {
+            Email.sendEmail(content);
+        }
     }
 
-    private List<Map<String, Object>> records(){
+    private List<Map<String, Object>> records() {
         List<Map<String, Object>> records = new ArrayList<>();
         AtomicInteger id = new AtomicInteger();
         testResults.forEach(testResult -> {
@@ -74,7 +74,7 @@ public class Report {
         return records;
     }
 
-    private Map<String, Object> summary(){
+    private Map<String, Object> summary() {
         Map<String, Object> summary = new HashMap<>(5);
         summary.put("total", total);
         summary.put("success", success);
@@ -84,33 +84,20 @@ public class Report {
         return summary;
     }
 
-    public void index(){
-        try {
-            String content = render("classpath://templates/index_report_template.html", report);
-            report("index", content, true);
-        } catch (ReaderException e) {
-            MiGooLog.log(e.getMessage(), e);
-        }
-    }
-
     public void generateReport() {
         Map<String, Object> report = new HashMap<>(5);
+        String template = HtmlReader.read("classpath://templates/migoo_report_template.html");
         testResults.forEach(testResult -> {
             report.put("summary", this.summary(testResult));
             report.put("records", this.records(testResult));
             report.put("report", testResult.getName());
             report.put("title", testResult.getName() + " - TestReport");
-            report.put("platform", platform);
-            try {
-                String content = render("classpath://templates/migoo_report_template.html", report);
-                report(testResult.getName(), content, false);
-            } catch (ReaderException e) {
-                MiGooLog.log(e.getMessage(), e);
-            }
+            String content = render(template, report);
+            report(testResult.getName(), content, false);
         });
     }
 
-    private Map<String, Object> summary(TestResult result){
+    private Map<String, Object> summary(TestResult result) {
         Map<String, Object> summary = new HashMap<>(7);
         summary.put("startAt", DateUtil.format(DateUtil.YYYY_MM_DD_HH_MM_SS, result.getStartTime()));
         summary.put("duration", (result.getEndTime() - result.getStartTime()) / 1000.000f + " seconds");
@@ -122,29 +109,29 @@ public class Report {
         return summary;
     }
 
-    private List<Map<String, Object>> records(TestResult result){
+    private List<Map<String, Object>> records(TestResult result) {
         List<Map<String, Object>> records = new ArrayList<>();
         int id = 1;
-        for (TestFailure testFailure : result.errors()){
+        for (TestFailure testFailure : result.errors()) {
             records.add(item(testFailure, null, id, "error"));
-            id ++;
+            id++;
         }
-        for (TestFailure testFailure : result.failures()){
+        for (TestFailure testFailure : result.failures()) {
             records.add(item(testFailure, null, id, "failure"));
-            id ++;
+            id++;
         }
-        for (TestFailure testFailure : result.skips()){
-            records.add(item(testFailure, null,id, "skipped"));
-            id ++;
+        for (TestFailure testFailure : result.skips()) {
+            records.add(item(testFailure, null, id, "skipped"));
+            id++;
         }
-        for (AbstractTest test : result.success()){
+        for (AbstractTest test : result.success()) {
             records.add(item(null, test, id, "success"));
-            id ++;
+            id++;
         }
         return records;
     }
 
-    private Map<String, Object> item(TestFailure testFailure, AbstractTest test, int id, String status){
+    private Map<String, Object> item(TestFailure testFailure, AbstractTest test, int id, String status) {
         AbstractTest t = test != null ? test : testFailure.failedTest();
         Map<String, Object> item = new HashMap<>(6);
         item.put("status", status);
@@ -157,11 +144,11 @@ public class Report {
         return item;
     }
 
-    private synchronized Map<String, Object> detail(AbstractTest test, TestFailure testFailure, int id){
+    private synchronized Map<String, Object> detail(AbstractTest test, TestFailure testFailure, int id) {
         Map<String, Object> detail = new HashMap<>(7);
         detail.put("validate", test.validate());
         detail.put("log", this.log(test.response()));
-        if (testFailure != null){
+        if (testFailure != null) {
             detail.put("track", testFailure.trace());
         }
         detail.put("validate_id", "validate_" + id);
@@ -173,7 +160,7 @@ public class Report {
         return detail;
     }
 
-    private synchronized Map<String, Object> log(Response response){
+    private synchronized Map<String, Object> log(Response response) {
         Map<String, Object> res = new HashMap<>(3);
         Map<String, Object> req = new HashMap<>(4);
         if (response != null) {
@@ -201,50 +188,43 @@ public class Report {
      * @param report   报告数据
      * @return 渲染后的HTML
      */
-    private static String render(String template, Map<String, Object> report) throws ReaderException {
-        template = HtmlReader.read(template);
+    private String render(String template, Map<String, Object> report) {
         Context context = new Context();
         context.setVariables(report);
         return TEMPLATE_ENGINE.process(template, context);
     }
 
-    private static void mkDirs(){
+    private void mkDirs() {
         File file = new File(String.format("%s/reports/%s/html", System.getProperty("user.dir"), DateUtil.TODAY_DATE));
-        if (!file.exists()){
+        if (!file.exists()) {
             file.mkdirs();
         }
     }
 
-    private static void report(String name, String template, boolean isIndex) {
-        String path = isIndex ? String.format("%s/reports/index.html", System.getProperty("user.dir"))
-                : String.format("%s/reports/html/%s.html", System.getProperty("user.dir"), name);
+    private void report(String name, String content, boolean isIndex) {
+        String path = isIndex ? String.format("%s/reports/%s/index.html", System.getProperty("user.dir"), DateUtil.TODAY_DATE)
+                : String.format("%s/reports/%s/html/%s.html", System.getProperty("user.dir"), DateUtil.TODAY_DATE, name);
         try (Writer writer = new FileWriter(path)) {
-            writer.write(template);
+            writer.write(content);
         } catch (Exception e) {
             throw new ReportException("create report error , file path " + path, e);
         }
     }
 
-    static {
-        platform.put("jdk", "JDK " + JDK_VERSION);
-        platform.put("httpclient", "HTTP Client " + HTTP_CLIENT_VERSION);
-        platform.put("os", OS_VERSION);
-    }
-
     private static class HtmlReader extends AbstractReader {
         private static HtmlReader htmlReader = new HtmlReader();
 
-        private static String read(String path) throws ReaderException {
-            htmlReader.stream("html", path);
+        private static String read(String path) {
             StringBuilder stringBuilder = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(htmlReader.inputStream))) {
+            try {
+                htmlReader.stream("html", path);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(htmlReader.inputStream));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     stringBuilder.append(line).append("\n");
                 }
             } catch (Exception e) {
                 MiGooLog.log(e.getMessage(), e);
-                throw new ReportException("load template file error. " + e.getMessage());
             }
             return stringBuilder.toString();
         }

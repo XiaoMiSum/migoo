@@ -1,8 +1,8 @@
-package xyz.migoo.parser.reader;
+package xyz.migoo.loader.reader;
 
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ReaderException;
-import xyz.migoo.utils.MiGooLog;
+import xyz.migoo.report.MiGooLog;
 
 import java.io.File;
 import java.io.IOException;

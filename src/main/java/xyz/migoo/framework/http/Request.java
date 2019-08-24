@@ -9,7 +9,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.message.BasicHeader;
 import xyz.migoo.exception.RequestException;
-import xyz.migoo.utils.MiGooLog;
+import xyz.migoo.report.MiGooLog;
 import xyz.migoo.utils.StringUtil;
 import xyz.migoo.utils.TypeUtil;
 

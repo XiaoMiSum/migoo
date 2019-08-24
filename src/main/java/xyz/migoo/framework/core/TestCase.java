@@ -1,6 +1,6 @@
 package xyz.migoo.framework.core;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.framework.assertions.Validator;
 import xyz.migoo.framework.config.CaseKeys;
@@ -11,8 +11,8 @@ import xyz.migoo.exception.SkippedRun;
 import xyz.migoo.framework.http.Client;
 import xyz.migoo.framework.http.Request;
 import xyz.migoo.framework.http.Response;
-import xyz.migoo.parser.BindVariable;
-import xyz.migoo.utils.MiGooLog;
+import xyz.migoo.extender.Extender;
+import xyz.migoo.report.MiGooLog;
 import xyz.migoo.utils.TypeUtil;
 
 /**
@@ -25,11 +25,12 @@ public class TestCase extends AbstractTest {
     private JSONObject testCase;
     private Client client;
 
-    TestCase(JSONObject testCase, Client client, Request.Builder builder) {
+    TestCase(JSONObject testCase, Client client, Request.Builder builder, JSONObject vars) {
         super(testCase.getString(CaseKeys.CASE_TITLE));
         super.addSetUp(testCase.getJSONArray(CaseKeys.CASE_BEFORE));
         super.addTeardown(testCase.getJSONArray(CaseKeys.CASE_AFTER));
         super.addVariables(testCase.getJSONObject(CaseKeys.CASE_VARIABLES));
+        super.addVariables(vars);
         this.testCase = testCase;
         this.builder = builder;
         this.client = client;
@@ -41,17 +42,17 @@ public class TestCase extends AbstractTest {
     }
 
     @Override
-    public void run(TestResult result, JSONObject vars) {
+    public void run(TestResult result) {
         try {
             MiGooLog.log("--------------------------------------------------------------------");
             MiGooLog.log("test case begin: {}", this.getName());
             if (TypeUtil.booleanOf(testCase.get(CaseKeys.CASE_IGNORE)) == null? false :
                     TypeUtil.booleanOf(testCase.get(CaseKeys.CASE_IGNORE))){
-                throw new SkippedRun("");
+                throw new SkippedRun(this.getName());
             }
             // bind variable to variables (testSuite.variables -> this.variables)
-            BindVariable.bindVariables(vars, super.variables);
-            super.setUp("before");
+            Extender.bindAndEval(super.variables, super.variables);
+            super.setup("case setup");
             // bind variable to case (this.variables -> this.testCase.headers)
             this.evalRequest();
             Request request = builder.build();
@@ -63,7 +64,6 @@ public class TestCase extends AbstractTest {
             super.response = client.execute(request);
             MiGooLog.log("response body: {}", response.body());
             this.assertThat(testCase, response);
-            super.teardown("after");
             result.addSuccess(this);
             MiGooLog.log("test case success");
         } catch (SkippedRun e) {
@@ -76,15 +76,16 @@ public class TestCase extends AbstractTest {
             MiGooLog.log("case run error", e);
             result.addError(this, e);
         } finally {
+            super.teardown("case teardown");
             MiGooLog.log("test case end: {}", this.getName());
         }
     }
 
     private void evalRequest() throws InvokeException {
-        BindVariable.bind(super.variables, this.testCase.getJSONObject(CaseKeys.CASE_HEADERS), true);
-        BindVariable.bind(super.variables, this.testCase.getJSONObject(CaseKeys.CASE_BODY), true);
-        BindVariable.bind(super.variables, this.testCase.getJSONObject(CaseKeys.CASE_DATA), true);
-        BindVariable.bind(super.variables, this.testCase.getJSONObject(CaseKeys.CASE_QUERY), true);
+        Extender.bind(this.testCase.getJSONObject(CaseKeys.CASE_HEADERS), super.variables);
+        Extender.bindAndEval(this.testCase.getJSONObject(CaseKeys.CASE_BODY), super.variables);
+        Extender.bindAndEval(this.testCase.getJSONObject(CaseKeys.CASE_DATA), super.variables);
+        Extender.bindAndEval(this.testCase.getJSONObject(CaseKeys.CASE_QUERY), super.variables);
         builder.title(testCase.getString(CaseKeys.CASE_TITLE))
                 .api(testCase.getString(CaseKeys.CONFIG_REQUEST_URL))
                 .headers(this.testCase.getJSONObject(CaseKeys.CASE_HEADERS))
@@ -95,10 +96,10 @@ public class TestCase extends AbstractTest {
 
     private void assertThat(JSONObject jsonCase, Response response) throws AssertionFailure, ExecuteError {
         Object validate = jsonCase.get(CaseKeys.VALIDATE);
-        if (!(validate instanceof JSON)){
-            validate = JSON.parse(validate.toString());
+        if (!(validate instanceof JSONArray)){
+            validate = JSONArray.parseArray(validate.toString());
         }
         this.validate(validate);
-        Validator.validation(response, (JSON) validate, jsonCase.getJSONObject(CaseKeys.CASE_VARIABLES));
+        Validator.validation(response, (JSONArray) validate, jsonCase.getJSONObject(CaseKeys.CASE_VARIABLES));
     }
 }

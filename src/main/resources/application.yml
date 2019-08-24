@@ -1,7 +1,4 @@
 ####################################################    框架配置，禁止修改    ####################################################
-# pom 文件设置的 httpclient 版本
-http.client.version: ${http.client.version}
-
 function.equals:
   - '=='
   - '==='
@@ -69,19 +66,13 @@ function.list:
   - lsMap
   - lsm
 
-function.custom:
-  - '^class.[\w]+(.\w+)*'
-  - '^package.[\w]+(.\w+)*'
+function.regex:
+  - regex
 
 check.json:
   - '^json.[\w]+(.\w+)*'
   - '^body.[\w]+(.\w+)*'
   - '^\$.[\w]+(.\w+)*'
-
-check.html:
-  - '^html.(\[[\w]+[\^]?[\*]?[$]?[~]?=["]?[\w]+["]?\])+[\.]?[\w]*'
-  - '^html.(\[[\^]?[\w]*\])+[\.]?[\w]*'
-  - '^html.([#]?[\.]?[\^]?[\w]*)+[\.]?[\w]*'
 
 check.body:
   - body
@@ -89,9 +80,6 @@ check.body:
   - json
   - text
   - html
-
-check.regex:
-  - regex
 
 check.code:
   - line
@@ -130,13 +118,5 @@ ignore.directory:
   - vars.properties
 
 # 自定义方法变量 扩展类列表
-extends.variable:
-  - xyz.migoo.func.Func
-
-# 自定义Hook函数 扩展类列表
-extends.hook:
-  - xyz.migoo.test.extend.Hook
-
-# 自定义检查方式 扩展类列表
-extends.validator:
-  - xyz.migoo.test.extend.Validator
+extends.class:
+  - xyz.migoo.extender.func.Func

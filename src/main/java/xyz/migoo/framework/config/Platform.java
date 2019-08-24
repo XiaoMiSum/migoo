@@ -3,7 +3,7 @@ package xyz.migoo.framework.config;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ReaderException;
-import xyz.migoo.parser.reader.YamlReader;
+import xyz.migoo.loader.reader.YamlReader;
 
 import java.util.regex.Pattern;
 
@@ -18,7 +18,7 @@ public class Platform {
 
     private static final JSONObject PROPERTIES = new JSONObject();
 
-    private static final String STRING = "extends.variable";
+    private static final String STRING = "extends.class";
 
     private static final String IGNORE = "ignore.directory";
 
@@ -44,12 +44,6 @@ public class Platform {
         }
     }
 
-    public static final String HTTP_CLIENT_VERSION = PROPERTIES.getString("http.client.version");
-
-    public static final String JDK_VERSION = System.getProperty("java.version");
-
-    public static final String OS_VERSION = System.getProperty("os.name") + "  " + System.getProperty("os.version");
-
     public static final JSONArray FUNCTION_EQUALS = PROPERTIES.getJSONArray("function.equals");
 
     public static final JSONArray FUNCTION_NOT_EQUALS = PROPERTIES.getJSONArray("function.notEquals");
@@ -74,7 +68,7 @@ public class Platform {
 
     public static final JSONArray FUNCTION_LIST = PROPERTIES.getJSONArray("function.list");
 
-    public static final JSONArray FUNCTION_REGEX = PROPERTIES.getJSONArray("check.regex");
+    public static final JSONArray FUNCTION_REGEX = PROPERTIES.getJSONArray("function.regex");
 
     private static final JSONArray CHECK_JSON = PROPERTIES.getJSONArray("check.json");
 
@@ -87,33 +81,11 @@ public class Platform {
         return false;
     }
 
-    private static final JSONArray CHECK_HTML = PROPERTIES.getJSONArray("check.html");
-
-    public static boolean isHtml(String str) {
-        for (int i = 0; i < CHECK_HTML.size(); i++) {
-            if (Pattern.compile(CHECK_HTML.getString(i)).matcher(str).find()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static final JSONArray CHECK_CUSTOM = PROPERTIES.getJSONArray("function.custom");
-
-    public static boolean isCustom(String str) {
-        for (int i = 0; i < CHECK_CUSTOM.size(); i++) {
-            if (Pattern.compile(CHECK_CUSTOM.getString(i)).matcher(str).find()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static final JSONArray CHECK_BODY = PROPERTIES.getJSONArray("check.body");
 
     public static final JSONArray CHECK_CODE = PROPERTIES.getJSONArray("check.code");
 
-    public static final boolean MAIL_SEND = Boolean.valueOf(PROPERTIES.getString("mail.send").trim());
+    public static final boolean MAIL_SEND = Boolean.parseBoolean(PROPERTIES.getString("mail.send").trim());
 
     public static final String MAIL_IMAP_HOST = PROPERTIES.getString("mail.imap.host").trim();
 
@@ -125,11 +97,7 @@ public class Platform {
 
     public static final Object[] MAIL_SEND_TO_LIST = PROPERTIES.getJSONArray("mail.send.toList").toArray();
 
-    public static final Object[] EXTENDS_VARIABLE = PROPERTIES.getJSONArray("extends.variable").toArray();
-
-    public static final Object[] EXTENDS_HOOK = PROPERTIES.getJSONArray("extends.hook").toArray();
-
-    public static final Object[] EXTENDS_VALIDATOR = PROPERTIES.getJSONArray("extends.validator").toArray();
+    public static final Object[] EXTENDS_CLASS = PROPERTIES.getJSONArray("extends.class").toArray();
 
 
 

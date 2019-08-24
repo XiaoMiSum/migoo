@@ -1,4 +1,4 @@
-package xyz.migoo.parser.reader;
+package xyz.migoo.loader.reader;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -16,11 +16,11 @@ public class YamlReader extends AbstractReader implements Reader{
     private JSON json;
 
     public YamlReader(String path) throws ReaderException {
-        super.stream(ReaderFactory.YAML_SUFFIX, path);
+        stream(ReaderFactory.YAML_SUFFIX, path);
     }
 
     public YamlReader(File file) throws ReaderException {
-        super.stream(ReaderFactory.YAML_SUFFIX, file);
+        stream(ReaderFactory.YAML_SUFFIX, file);
     }
 
     @Override

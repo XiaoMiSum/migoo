@@ -26,13 +26,4 @@ public class DateUtil {
     public static String format(String pattern) {
         return new SimpleDateFormat(pattern).format(System.currentTimeMillis());
     }
-
-    public static void sleep(int time) {
-        try {
-            Thread.sleep(time * 1000L);
-            MiGooLog.debug(String.format("wait %s seconds", time));
-        } catch (InterruptedException e) {
-            MiGooLog.debug("wait exception", e);
-        }
-    }
 }

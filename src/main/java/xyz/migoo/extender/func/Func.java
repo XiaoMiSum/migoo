@@ -1,4 +1,4 @@
-package xyz.migoo.func;
+package xyz.migoo.extender.func;
 
 import xyz.migoo.utils.digest.GoogleAuthenticator;
 import xyz.migoo.utils.digest.Md5Crypt;
@@ -23,7 +23,7 @@ public class Func {
      * @param secretKey 安全码
      * @return google code
      */
-    public static String generateGoogleAuthCode(String secretKey){
+    public static String googleCode(String secretKey){
         return GoogleAuthenticator.generateAuthCode(secretKey);
     }
 
@@ -110,10 +110,10 @@ public class Func {
      * @return 指定长度的伪随机字符串
      * */
     public static String random(String length, String baseString, Object upperCase){
-        if (Boolean.valueOf(upperCase.toString())){
-            return StringUtil.random(Integer.valueOf(length), baseString).toUpperCase();
+        if (Boolean.parseBoolean(upperCase.toString())){
+            return StringUtil.random(Integer.parseInt(length), baseString).toUpperCase();
         }
-        return StringUtil.random(Integer.valueOf(length), baseString);
+        return StringUtil.random(Integer.parseInt(length), baseString);
     }
 
     /**
@@ -124,7 +124,7 @@ public class Func {
      * @return 指定长度的伪随机字符串
      * */
     public static String random(String length, String baseString){
-        return StringUtil.random(Integer.valueOf(length), baseString);
+        return StringUtil.random(Integer.parseInt(length), baseString);
     }
 
     /**
@@ -134,7 +134,7 @@ public class Func {
      * @return 指定长度的伪随机字符串
      * */
     public static String random(String length){
-        return StringUtil.random(Integer.valueOf(length));
+        return StringUtil.random(Integer.parseInt(length));
     }
 
     /**
