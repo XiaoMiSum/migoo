@@ -1,12 +1,10 @@
 package xyz.migoo.extender;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ExecuteError;
-import xyz.migoo.exception.InvokeException;
+import xyz.migoo.exception.ExtenderException;
 import xyz.migoo.framework.config.CaseKeys;
-import xyz.migoo.framework.config.Platform;
 import xyz.migoo.report.MiGooLog;
 import xyz.migoo.utils.StringUtil;
 
@@ -20,24 +18,24 @@ import static ognl.Ognl.getValue;
 /**
  * @author xiaomi
  */
-public class Extender {
+public class ExtenderHelper {
 
 
-    public static final Pattern FUNC_PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
+    static final Pattern FUNC_PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
 
-    public static final Pattern PARAM_PATTERN = Pattern.compile("(\\$\\{(\\w+)})+");
+    static final Pattern PARAM_PATTERN = Pattern.compile("(\\$\\{(\\w+)})+");
 
     private static Map<String, Method> methods = null;
 
     static {
         try {
-            methods = InvokeUtil.loadFunction(Platform.EXTENDS_CLASS);
-        } catch (InvokeException e) {
+            methods = MethodHelper.loadFunction();
+        } catch (ExtenderException e) {
             MiGooLog.log("load extends function exception. ", e);
         }
     }
 
-    private Extender() {
+    private ExtenderHelper() {
     }
 
     public static void bind(Object use, JSONObject vars) {
@@ -70,22 +68,20 @@ public class Extender {
         }
     }
 
-    private static void bind(String key, JSONObject vars, JSONObject use) {
-        String regex = "${" + key + "}";
+    private static void bind(String varsKey, JSONObject vars, JSONObject use) {
+        String regex = "${" + varsKey + "}";
         for (String uKey : use.keySet()) {
             Object object = use.get(uKey);
             if (object instanceof String) {
                 String v = (String) object;
                 if (v.equals(regex)) {
-                    use.put(uKey, vars.getString(key));
-                    MiGooLog.log("bind variable: {} -> {}", v, vars.getString(key));
-                    continue;
+                    use.put(uKey, vars.getString(varsKey));
+                    MiGooLog.log("bind variable: {} = {} -> {}", uKey, regex, use.get(uKey));
+                }else if (v.contains(regex)) {
+                    use.put(uKey, v.replace(regex, vars.getString(varsKey)));
+                    MiGooLog.log("bind variable: {} = {} -> {}", uKey, regex, use.get(uKey));
                 }
-                if (v.contains(regex)) {
-                    use.put(uKey, v.replace(regex, vars.getString(key)));
-                    MiGooLog.log("bind variable: {} -> {}", object, vars.getString(key));
-                    continue;
-                }
+                continue;
             }
             if (object instanceof JSONObject) {
                 bind((JSONObject) object, vars);
@@ -96,24 +92,22 @@ public class Extender {
         }
     }
 
-    private static void bind(String key, JSONObject vars, JSONArray use) {
-        String regex = "${" + key + "}";
+    private static void bind(String varsKey, JSONObject vars, JSONArray use) {
+        String regex = "${" + varsKey + "}";
         for (int i = 0; i < use.size(); i++) {
             Object object = use.get(i);
             if (object instanceof String) {
                 String v = (String) object;
                 if (v.equals(regex)) {
-                    MiGooLog.log("bind variable: {} -> {}", v, vars.getString(key));
                     use.remove(i);
-                    use.add(i, vars.getString(key));
-                    continue;
-                }
-                if (v.contains(regex)) {
-                    MiGooLog.log("bind variable: {} -> {}", object, v.replace(regex, vars.getString(key)));
+                    use.add(i, vars.getString(varsKey));
+                    MiGooLog.log("bind variable: {} -> {}", regex, use.get(i));
+                } else if (v.contains(regex)) {
                     use.remove(i);
-                    use.add(i, v.replace(regex, vars.getString(key)));
-                    continue;
+                    use.add(i, v.replace(regex, vars.getString(varsKey)));
+                    MiGooLog.log("bind variable: {} -> {}", regex, use.get(i));
                 }
+                continue;
             }
             if (object instanceof JSONObject) {
                 bind((JSONObject) object, vars);
@@ -129,7 +123,7 @@ public class Extender {
      *
      * @param use 使用方法变量的对象
      */
-    private static void evalVariables(JSONObject use, JSONObject variables) throws InvokeException {
+    private static void evalVariables(JSONObject use, JSONObject variables) throws ExtenderException {
         if (use == null) {
             return;
         }
@@ -140,13 +134,13 @@ public class Extender {
             }
             Matcher func = FUNC_PATTERN.matcher(value);
             if (func.find()) {
-                Object result = InvokeUtil.invoke(methods, func.group(1), func.group(2), variables);
+                Object result = MethodHelper.invoke(methods, func.group(1), func.group(2), variables);
                 use.put(key, result);
             }
         }
     }
 
-    public static void bindAndEval(JSONObject use, JSONObject variables) throws InvokeException {
+    public static void bindAndEval(JSONObject use, JSONObject variables) throws ExtenderException {
         if (use == null) {
             return;
         }
@@ -169,7 +163,7 @@ public class Extender {
             }
             Matcher func = FUNC_PATTERN.matcher(value);
             if (func.find()) {
-                Object result = InvokeUtil.invoke(methods, func.group(1), func.group(2), variables);
+                Object result = MethodHelper.invoke(methods, func.group(1), func.group(2), variables);
                 validate.put(CaseKeys.VALIDATE_EXPECT, result);
             }
         } catch (Exception e) {
@@ -177,13 +171,13 @@ public class Extender {
         }
     }
 
-    public static void hook(String object, JSONObject variables) throws InvokeException {
+    public static void hook(String object, JSONObject variables) throws ExtenderException {
         if (object == null) {
             return;
         }
         Matcher func = FUNC_PATTERN.matcher(object);
         if (func.find()) {
-            InvokeUtil.invoke(methods, func.group(1), func.group(2), variables);
+            MethodHelper.invoke(methods, func.group(1), func.group(2), variables);
         }
     }
 }

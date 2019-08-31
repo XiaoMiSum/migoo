@@ -2,10 +2,10 @@ package xyz.migoo.framework.core;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.extender.Extender;
+import xyz.migoo.extender.ExtenderHelper;
 import xyz.migoo.framework.assertions.Validate;
 import xyz.migoo.framework.config.CaseKeys;
-import xyz.migoo.exception.InvokeException;
+import xyz.migoo.exception.ExtenderException;
 import xyz.migoo.framework.http.Response;
 import xyz.migoo.report.MiGooLog;
 
@@ -65,13 +65,13 @@ public abstract class AbstractTest implements ITest {
     /**
      * invoke the setUp of the test.
      *
-     * @throws InvokeException e
+     * @throws ExtenderException e
      */
-    public void setup(String type) throws InvokeException {
+    public void setup(String type) throws ExtenderException {
         // bind variable to setUp (this.variables -> this.setUp)
         MiGooLog.log("{} begin", type);
         for (int i = 0; i < setUp.size(); i++) {
-            Extender.hook(setUp.getString(i), variables);
+            ExtenderHelper.hook(setUp.getString(i), variables);
         }
         MiGooLog.log("{} end", type);
     }
@@ -89,16 +89,14 @@ public abstract class AbstractTest implements ITest {
 
     /**
      * invoke the teardown of the test.
-     *
-     * @throws InvokeException e
      */
     void teardown(String type) {
         // bind variable to setUp (this.variables -> this.teardown)
         MiGooLog.log("{} begin", type);
         for (int i = 0; i < teardown.size(); i++) {
             try {
-                Extender.hook(teardown.getString(i), variables);
-            } catch (InvokeException e) {
+                ExtenderHelper.hook(teardown.getString(i), variables);
+            } catch (ExtenderException e) {
                 MiGooLog.log(teardown.getString(i) + " error", e);
             }
         }

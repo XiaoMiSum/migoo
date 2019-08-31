@@ -27,7 +27,7 @@ public class Report {
     private final static TemplateEngine TEMPLATE_ENGINE = new TemplateEngine();
 
     private List<TestResult> testResults = new ArrayList<>();
-    private Map<String, Object> report = new HashMap<>(2);
+    private Map<String, Object> report = new HashMap<>(3);
 
     private int total = 0, success = 0, failed = 0, error = 0, skipped = 0;
 
@@ -42,6 +42,10 @@ public class Report {
         failed += testResult.failureCount();
         error += testResult.errorCount();
         skipped += testResult.skipCount();
+    }
+
+    public void setProjectName(String projectName){
+        report.put("projectName", projectName);
     }
 
     public void generateIndex() {
@@ -91,7 +95,7 @@ public class Report {
             report.put("summary", this.summary(testResult));
             report.put("records", this.records(testResult));
             report.put("report", testResult.getName());
-            report.put("title", testResult.getName() + " - TestReport");
+            report.put("title", testResult.getName());
             String content = render(template, report);
             report(testResult.getName(), content, false);
         });

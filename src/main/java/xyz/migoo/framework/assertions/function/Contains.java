@@ -16,7 +16,7 @@ public class Contains extends AbstractFunction {
         Object actual = data.get("actual");
         Object expect = data.get("expect");
         if (actual instanceof String) {
-            return StringUtil.contains((String) actual, (String) expect);
+            return ((String) actual).contains((String) expect);
         }
         if (actual instanceof Map) {
             Map json = (Map) actual;

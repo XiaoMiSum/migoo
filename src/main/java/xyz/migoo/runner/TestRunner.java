@@ -1,14 +1,13 @@
 package xyz.migoo.runner;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.framework.config.CaseKeys;
 import xyz.migoo.framework.core.TestResult;
 import xyz.migoo.framework.core.TestSuite;
-import xyz.migoo.exception.InvokeException;
+import xyz.migoo.exception.ExtenderException;
 import xyz.migoo.exception.ReaderException;
-import xyz.migoo.extender.Extender;
+import xyz.migoo.extender.ExtenderHelper;
 import xyz.migoo.report.Report;
 import xyz.migoo.loader.CaseLoader;
 import xyz.migoo.report.MiGooLog;
@@ -28,7 +27,7 @@ public class TestRunner {
     private JSONObject globals;
     private Report report = new Report();
 
-    public static TestRunner getInstance() {
+    public static TestRunner getInstance(String projectName) {
         if (runner == null) {
             synchronized (TestRunner.class) {
                 if (runner == null) {
@@ -36,6 +35,7 @@ public class TestRunner {
                 }
             }
         }
+        runner.report.setProjectName(projectName);
         return runner;
     }
 
@@ -100,12 +100,12 @@ public class TestRunner {
             try {
                 globals = variables.getJSONObject("vars") != null ? variables.getJSONObject("vars") :
                         variables.getJSONObject("variables") != null ? variables.getJSONObject("variables") : variables;
-                Extender.bindAndEval(globals, globals);
+                ExtenderHelper.bindAndEval(globals, globals);
                 JSONArray hook = variables.getJSONArray(CaseKeys.VARS_HOOK);
                 for (int i = 0; i < hook.size(); i++) {
-                    Extender.hook(hook.getString(i), globals);
+                    ExtenderHelper.hook(hook.getString(i), globals);
                 }
-            } catch (InvokeException e) {
+            } catch (ExtenderException e) {
                 MiGooLog.log("env exception.", e);
                 System.exit(-1);
             }

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8"/>
     <script src="https://cdn.bootcss.com/echarts/4.2.1-rc1/echarts-en.common.js"></script>
-    <title>Migoo - 接口测试报告</title>
+    <title th:text="${projectName} + ' - 接口测试报告'"></title>
     <style>
         body {
             background-color: #d8d8d8 ;
@@ -26,7 +26,7 @@
     </style>
 </head>
 <body>
-<h1 align="center">接口测试报告</h1>
+<h1 align="center" th:text=" ${projectName} + ' 接口测试报告'"></h1>
 <input id="summary.total" th:value="${summary.total}" hidden>
 <input id="summary.success" th:value="${summary.success}" hidden>
 <input id="summary.failed" th:value="${summary.failed}" hidden>

@@ -6,31 +6,25 @@ package xyz.migoo.utils;
  * @date 2014/12/26
  */
 public class IdWorker {
-    private final long twepoch = 1288834974657L;
     private final long workerIdBits = 5L;
-    private final long datacenterIdBits = 5L;
-    private final long maxWorkerId = -1L ^ (-1L << workerIdBits);
-    private final long maxDatacenterId = -1L ^ (-1L << datacenterIdBits);
-    private final long sequenceBits = 12L;
-    private final long workerIdShift = sequenceBits;
-    private final long datacenterIdShift = sequenceBits + workerIdBits;
-    private final long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
-    private final long sequenceMask = -1L ^ (-1L << sequenceBits);
+    private final long dataCenterIdBits = 5L;
 
     private long workerId;
-    private long datacenterId;
+    private long dataCenterId;
     private long sequence = 0L;
     private long lastTimestamp = -1L;
 
-    private IdWorker(long workerId, long datacenterId) {
+    private IdWorker(long workerId, long dataCenterId) {
+        long maxWorkerId = ~(-1L << workerIdBits);
         if (workerId > maxWorkerId || workerId < 0) {
             throw new IllegalArgumentException(String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
         }
-        if (datacenterId > maxDatacenterId || datacenterId < 0) {
-            throw new IllegalArgumentException(String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
+        long maxDataCenterId = ~(-1L << dataCenterIdBits);
+        if (dataCenterId > maxDataCenterId || dataCenterId < 0) {
+            throw new IllegalArgumentException(String.format("dataCenterId can't be greater than %d or less than 0", maxDataCenterId));
         }
         this.workerId = workerId;
-        this.datacenterId = datacenterId;
+        this.dataCenterId = dataCenterId;
     }
 
     public String nextStringId() {
@@ -42,7 +36,9 @@ public class IdWorker {
         if (timestamp < lastTimestamp) {
             throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
         }
+        long sequenceBits = 12L;
         if (lastTimestamp == timestamp) {
+            long sequenceMask = ~(-1L << sequenceBits);
             sequence = (sequence + 1) & sequenceMask;
             if (sequence == 0) {
                 timestamp = tilNextMillis(lastTimestamp);
@@ -53,10 +49,12 @@ public class IdWorker {
 
         lastTimestamp = timestamp;
 
-        return ((timestamp - twepoch) << timestampLeftShift) | (datacenterId << datacenterIdShift) | (workerId << workerIdShift) | sequence;
+        long dataCenterIdShift = sequenceBits + workerIdBits;
+        long timestampLeftShift = sequenceBits + workerIdBits + dataCenterIdBits;
+        return ((timestamp - 1288834974657L) << timestampLeftShift) | (dataCenterId << dataCenterIdShift) | (workerId << sequenceBits) | sequence;
     }
 
-    protected long tilNextMillis(long lastTimestamp) {
+    private long tilNextMillis(long lastTimestamp) {
         long timestamp = timeGen();
         while (timestamp <= lastTimestamp) {
             timestamp = timeGen();
@@ -64,7 +62,7 @@ public class IdWorker {
         return timestamp;
     }
 
-    protected long timeGen() {
+    private long timeGen() {
         return System.currentTimeMillis();
     }
 

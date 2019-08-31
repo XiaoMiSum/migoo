@@ -92,7 +92,7 @@ public class Request {
             return null;
         }
         header.forEach(header -> {
-            if (StringUtil.equalsIgnoreCase(header.getName(), CONTENT_TYPE)){
+            if (CONTENT_TYPE.equalsIgnoreCase(header.getName())){
                 this.contentType = header;
             }
         });
@@ -122,7 +122,7 @@ public class Request {
         }
 
         public Builder url(String url) {
-            if (StringUtil.isBlank(url)) {
+            if (StringUtil.isEmpty(url)) {
                 throw new RequestException("url == null");
             }
             this.url = new StringBuilder(url);
@@ -130,7 +130,7 @@ public class Request {
         }
 
         public Builder api(String api) {
-            if (StringUtil.isNotBlank(api)) {
+            if (!StringUtil.isEmpty(api)) {
                 this.url.append(api);
             }
             return this;
@@ -207,10 +207,7 @@ public class Request {
         }
 
         public Builder encode(Object encode){
-            Boolean b = TypeUtil.booleanOf(encode);
-            if (b != null) {
-                this.encode = b;
-            }
+            this.encode = TypeUtil.booleanOf(encode);
             return this;
         }
 
@@ -277,7 +274,7 @@ public class Request {
         }
 
         private boolean urlCheck() {
-            return StringUtil.isNotBlank(this.url) && (this.url.toString().startsWith("http://")
+            return !StringUtil.isEmpty(this.url.toString()) && (this.url.toString().startsWith("http://")
                     || this.url.toString().startsWith("https://"));
         }
 

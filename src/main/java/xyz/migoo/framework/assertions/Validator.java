@@ -2,7 +2,7 @@ package xyz.migoo.framework.assertions;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.extender.Extender;
+import xyz.migoo.extender.ExtenderHelper;
 import xyz.migoo.framework.config.CaseKeys;
 import xyz.migoo.exception.AssertionFailure;
 import xyz.migoo.exception.ExecuteError;
@@ -25,7 +25,7 @@ public class Validator {
 
     public synchronized static void validation(Response response, JSONArray validate, JSONObject variables) throws AssertionFailure, ExecuteError {
         for (int i = 0; i < validate.size(); i++) {
-            Extender.evalValidate(validate.getJSONObject(i), variables);
+            ExtenderHelper.evalValidate(validate.getJSONObject(i), variables);
             MiGooLog.log(String.format("check point  : %s", validate.getJSONObject(i).toJSONString()));
             AbstractAssertion assertion = AssertionFactory.getAssertion(validate.getJSONObject(i).getString(CaseKeys.VALIDATE_CHECK));
             assertion.setActual(response);

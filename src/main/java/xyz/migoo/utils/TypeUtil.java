@@ -17,9 +17,9 @@ public class TypeUtil {
     private static final String N = "N";
     private static final String NO = "NO";
 
-    public static Boolean booleanOf(Object value){
+    public static boolean booleanOf(Object value){
         if (value == null) {
-            return null;
+            return Boolean.FALSE;
         }else if (value instanceof Boolean) {
             return (Boolean) value;
         }else if (value instanceof Number) {
@@ -27,8 +27,8 @@ public class TypeUtil {
         }else {
             if (value instanceof String) {
                 String strVal = ((String) value).toLowerCase();
-                if (StringUtil.isBlank(StringUtil.toEmpty(strVal))) {
-                    return null;
+                if (StringUtil.isEmpty(StringUtil.toEmpty(strVal))) {
+                    return Boolean.FALSE;
                 }
                 if (TRUE.equals(strVal) || ONE.equals(strVal)) {
                     return Boolean.TRUE;
@@ -43,7 +43,7 @@ public class TypeUtil {
                     return Boolean.FALSE;
                 }
             }
-            return null;
+            return Boolean.FALSE;
         }
     }
 }

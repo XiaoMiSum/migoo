@@ -300,31 +300,22 @@ public class Client {
         }
 
         public Config https(Object value) {
-            Boolean boo = TypeUtil.booleanOf(value);
-            if (boo != null) {
-                this.https = boo;
-            }
+            this.https = TypeUtil.booleanOf(value);
             return this;
         }
 
         public Config redirects(Object value) {
-            Boolean boo = TypeUtil.booleanOf(value);
-            if (boo != null) {
-                this.redirects = boo;
-            }
+            this.redirects = TypeUtil.booleanOf(value);
             return this;
         }
 
         public Config newC(Object value) {
-            Boolean boo = TypeUtil.booleanOf(value);
-            if (boo != null) {
-                this.newC = boo;
-            }
+            this.newC = TypeUtil.booleanOf(value);
             return this;
         }
 
         public Config certificate(String certificate) {
-            if (StringUtil.isNotBlank(certificate)) {
+            if (!StringUtil.isEmpty(certificate)) {
                 this.certificate = new File(certificate);
             }
             return this;
@@ -337,9 +328,9 @@ public class Client {
                 httpHost = new HttpHost(json.getString("host"), json.getIntValue("port"));
             } catch (Exception e) {
                 String regex = ":";
-                if (StringUtil.containsIgnoreCase(proxy, regex)) {
+                if (proxy.contains(regex)) {
                     String[] host = proxy.split(regex);
-                    httpHost = new HttpHost(host[0], Integer.valueOf(host[1]));
+                    httpHost = new HttpHost(host[0], Integer.parseInt(host[1]));
                 }
             }
             this.proxy = httpHost;
