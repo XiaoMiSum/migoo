@@ -53,7 +53,7 @@ public class ExtenderHelperTest {
         vars.put("pwd", "abb");
         vars.put("sign", "better");
         ExtenderHelper.bind(use, vars);
-        Assertions.assertEquals(use.getJSONObject("data").get("sign"), vars.getString("sign"));
+        Assertions.assertEquals(use.getJSONArray("data").get(0), vars.getString("sign"));
     }
     @Test
     public void testBind4(){
