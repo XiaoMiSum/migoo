@@ -1,4 +1,4 @@
-package xyz.migoo.framework.core;
+package xyz.migoo.framework;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -6,8 +6,9 @@ import xyz.migoo.extender.ExtenderHelper;
 import xyz.migoo.framework.assertions.Validate;
 import xyz.migoo.framework.config.CaseKeys;
 import xyz.migoo.exception.ExtenderException;
-import xyz.migoo.framework.http.Response;
+import xyz.migoo.http.MiGooRequest;
 import xyz.migoo.report.MiGooLog;
+import xyz.migoo.simplehttp.Response;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ public abstract class AbstractTest implements ITest {
     private JSONArray teardown = new JSONArray();
     private List<Validate> validate = new ArrayList<>();
 
+    MiGooRequest request;
     Response response;
     JSONObject variables = new JSONObject();
 
@@ -45,7 +47,7 @@ public abstract class AbstractTest implements ITest {
      *
      * @param variables the variables to set
      */
-    void addVariables(JSONObject variables) {
+    public void addVariables(JSONObject variables) {
         if (variables != null) {
             this.variables.putAll(variables);
         }
@@ -101,6 +103,10 @@ public abstract class AbstractTest implements ITest {
             }
         }
         MiGooLog.log("{} end", type);
+    }
+
+    public MiGooRequest request() {
+        return request;
     }
 
     public Response response() {

@@ -2,7 +2,7 @@
 
 [![License](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/XiaoMiSum/MiGoo/blob/master/LICENSE)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/xyz.migoo/migoo/badge.svg)](https://maven-badges.herokuapp.com/maven-central/xyz.migoo/migoo)
-[![MiGoo Author](https://img.shields.io/badge/Author-xiaomi-yellow.svg)](https://maven-badges.herokuapp.com/maven-central/xyz.migoo/migoo)
+[![MiGoo Author](https://img.shields.io/badge/Author-xiaomi-yellow.svg)](https://github.com/XiaoMiSum)
 [![GitHub release](https://img.shields.io/github/release/XiaoMiSum/migoo.svg)](https://github.com/XiaoMiSum/MiGoo/releases)
 ## 1. 介绍
 

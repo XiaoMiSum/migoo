@@ -1,4 +1,4 @@
-package xyz.migoo.test.extend;
+package xyz.migoo.example.extend;
 
 /**
  * HOOK 扩展

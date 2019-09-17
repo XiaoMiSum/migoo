@@ -1,7 +1,7 @@
 package xyz.migoo.framework.assertions;
 
 import com.alibaba.fastjson.JSONPath;
-import xyz.migoo.framework.http.Response;
+import xyz.migoo.simplehttp.Response;
 
 /**
  * @author xiaomi
@@ -24,6 +24,7 @@ public class JSONAssertion extends AbstractAssertion {
     @Override
     public void setActual(Object actual) {
         Response response = (Response) actual;
-        this.actual = JSONPath.read(response.body(), jsonPath);
+        System.out.println(response.text());
+        this.actual = JSONPath.read(response.text(), jsonPath);
     }
 }

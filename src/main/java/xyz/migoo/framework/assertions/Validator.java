@@ -6,7 +6,7 @@ import xyz.migoo.extender.ExtenderHelper;
 import xyz.migoo.framework.config.CaseKeys;
 import xyz.migoo.exception.AssertionFailure;
 import xyz.migoo.exception.ExecuteError;
-import xyz.migoo.framework.http.Response;
+import xyz.migoo.simplehttp.Response;
 import xyz.migoo.report.MiGooLog;
 
 import java.lang.reflect.Method;

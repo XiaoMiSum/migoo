@@ -1,4 +1,4 @@
-package xyz.migoo.test.extend;
+package xyz.migoo.example.extend;
 
 /**
  * 变量扩展 用于生成用例中的变量值
@@ -7,7 +7,7 @@ package xyz.migoo.test.extend;
  */
 public class Variable {
 
-    public static String getPwd(String param){
+    public static Object getPwd(Object param){
         return param;
     }
 }

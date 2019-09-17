@@ -1,11 +1,9 @@
-package xyz.migoo.framework.core;
+package xyz.migoo.framework;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.framework.config.CaseKeys;
 import xyz.migoo.exception.ExtenderException;
-import xyz.migoo.framework.http.Client;
-import xyz.migoo.framework.http.Request;
 import xyz.migoo.extender.ExtenderHelper;
 import xyz.migoo.report.MiGooLog;
 
@@ -19,31 +17,23 @@ public class TestSuite extends AbstractTest {
 
     private Vector<AbstractTest> fTests= new Vector<>(10);
 
-    public TestSuite(JSONObject testSuite, JSONObject globals){
+    public TestSuite(JSONObject testSuite){
         super(testSuite.getString(CaseKeys.NAME));
         JSONObject config = testSuite.getJSONObject(CaseKeys.CONFIG);
-        this.initSuite(config, globals);
+        this.initSuite(config);
         // 4. bind variable tp request
         JSONObject request = config.getJSONObject(CaseKeys.CONFIG_REQUEST);
         ExtenderHelper.bind(request, super.variables);
-        Client client = new Client.Config().https(request.get(CaseKeys.CONFIG_REQUEST_HTTPS)).build();
         JSONArray testCases = testSuite.getJSONArray(CaseKeys.CASE);
         for (int i = 0; i < testCases.size(); i++) {
             JSONObject testCase = testCases.getJSONObject(i);
-            Request.Builder builder = new Request.Builder()
-                    .method(request.getString(CaseKeys.CONFIG_REQUEST_METHOD))
-                    .url(request.getString(CaseKeys.CONFIG_REQUEST_URL))
-                    .cookies(request.get(CaseKeys.CONFIG_REQUEST_COOKIE))
-                    .headers(request.getJSONObject(CaseKeys.CONFIG_REQUEST_HEADERS))
-                    .encode(request.get(CaseKeys.CONFIG_REQUEST_ENCODE));
-            this.addTest(new TestCase(testCase, client, builder));
+            this.addTest(new TestCase(testCase, request));
         }
     }
 
-    private void initSuite(JSONObject config, JSONObject globals){
+    private void initSuite(JSONObject config){
         // 1. add config.variables to variables;
         super.addVariables(config.getJSONObject(CaseKeys.CONFIG_VARIABLES));
-        super.addVariables(globals);
         // 2. add config.beforeClass to setUp
         super.addSetUp(config.getJSONArray(CaseKeys.CONFIG_BEFORE_CLASS));
         // 3. add config.beforeClass to teardown

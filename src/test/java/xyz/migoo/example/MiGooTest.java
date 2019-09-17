@@ -1,4 +1,4 @@
-package xyz.migoo.test;
+package xyz.migoo.example;
 
 import org.junit.jupiter.api.Test;
 

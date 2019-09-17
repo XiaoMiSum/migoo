@@ -1,4 +1,4 @@
-package xyz.migoo.framework.core;
+package xyz.migoo.framework;
 
 
 import xyz.migoo.exception.AssertionFailure;

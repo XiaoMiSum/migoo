@@ -3,8 +3,8 @@ package xyz.migoo.runner;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.framework.config.CaseKeys;
-import xyz.migoo.framework.core.TestResult;
-import xyz.migoo.framework.core.TestSuite;
+import xyz.migoo.framework.TestResult;
+import xyz.migoo.framework.TestSuite;
 import xyz.migoo.exception.ExtenderException;
 import xyz.migoo.exception.ReaderException;
 import xyz.migoo.extender.ExtenderHelper;
@@ -62,7 +62,6 @@ public class TestRunner {
             System.exit(-1);
         }
         report.generateIndex();
-        //EmailUtil.sendEmail();
     }
 
     private void byPath(File path) {
@@ -87,7 +86,7 @@ public class TestRunner {
     private TestSuite initTestSuite(String caseOrPath) {
         try {
             JSONObject caseSets = CaseLoader.loadCaseSet(caseOrPath);
-            return new TestSuite(caseSets, globals);
+            return new TestSuite(caseSets);
         } catch (Exception e) {
             MiGooLog.log(e.getMessage(), e);
             System.exit(-1);
@@ -115,6 +114,7 @@ public class TestRunner {
     private TestResult run(TestSuite suite) {
         TestResult result = new TestResult(suite.countTestCases(), suite.getName());
         result.setStartTime(System.currentTimeMillis());
+        suite.addVariables(globals);
         suite.run(result);
         result.setEndTime(System.currentTimeMillis());
         return result;
