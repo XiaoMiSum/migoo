@@ -22,8 +22,7 @@ public abstract class AbstractAssertion implements Assertion{
         try {
             IFunction function = getFunction(data.getString(CaseKeys.VALIDATE_TYPE));
             data.put("actual", actual);
-            Boolean result = TypeUtil.booleanOf(function.assertTrue(data));
-            return result == null ? false : result;
+            return TypeUtil.booleanOf(function.assertTrue(data));
         } catch (Exception e) {
             throw new ExecuteError("assert error.", e);
         }
@@ -35,7 +34,6 @@ public abstract class AbstractAssertion implements Assertion{
      *
      * See the concrete implementation class for details
      * {@linkplain JSONAssertion JSONAssertion}
-     * {@linkplain HTMLAssertion HTMLAssertion}
      * {@linkplain ResponseAssertion ResponseAssertion}
      * {@linkplain ResponseCodeAssertion ResponseCodeAssertion}
      *
@@ -87,7 +85,7 @@ public abstract class AbstractAssertion implements Assertion{
         if (FUNCTION_REGEX.contains(searchChar)) {
             return new Regex();
         }
-        if (StringUtil.isNotBlank(searchChar)){
+        if (!StringUtil.isEmpty(searchChar)){
             return (IFunction) Class.forName(searchChar).newInstance();
         }
         throw new ExecuteError(String.format("assert method '%s' not found", searchChar));

@@ -28,7 +28,7 @@ public abstract class AbstractFunction implements IFunction {
 
     String objectToString(Object subj) {
         String str;
-        if (subj == null || StringUtil.isBlank(subj.toString())) {
+        if (subj == null || StringUtil.isEmpty(subj.toString())) {
             str = "null";
         } else if (subj instanceof List) {
             str = ((List) subj).isEmpty()?"null": JSONArray.toJSONString(subj);

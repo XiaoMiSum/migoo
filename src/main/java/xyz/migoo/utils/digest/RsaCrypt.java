@@ -48,7 +48,7 @@ public class RsaCrypt {
 	 * 私钥加密
 	 * @param content      加密明文
 	 * @param privateKey   私钥
-	 * @return
+	 * @return 密文
 	 */
 	public static String encryptByPrivateKey(String content, String privateKey) {
 		return encryptByPrivateKey(content, privateKey, NONE_WITH_RSA);
@@ -74,7 +74,7 @@ public class RsaCrypt {
 	 * 公钥加密
 	 * @param content      加密明文
 	 * @param publicKey    公钥
-	 * @return
+	 * @return 密文
 	 */
 	public static String encryptByPublicKey(String content, String publicKey) {
 		try {
@@ -95,7 +95,7 @@ public class RsaCrypt {
 	 * 私钥解密
 	 * @param content     加密后的字符串
 	 * @param privateKey  私钥
-	 * @return
+	 * @return 明文
 	 */
 	public static String decryptByPrivateKey(String content, String privateKey) {
 		try {
@@ -118,15 +118,13 @@ public class RsaCrypt {
 	 * 公钥解密
 	 * @param content    加密后的字符串
 	 * @param publicKey  公钥
-	 * @return
+	 * @return 明文
 	 */
 	public static String decryptByPublicKey(String content, String publicKey) {
 		try {
-			// 取得私钥
 			X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.decodeBase64(publicKey));
 			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 			PublicKey pubKey = keyFactory.generatePublic(keySpec);
-			// 对数据解密
 			Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
 			cipher.init(Cipher.DECRYPT_MODE, pubKey);
 			byte[] signed = cipher.doFinal(Base64.decodeBase64(content));

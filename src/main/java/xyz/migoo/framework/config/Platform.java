@@ -98,7 +98,4 @@ public class Platform {
     public static final Object[] MAIL_SEND_TO_LIST = PROPERTIES.getJSONArray("mail.send.toList").toArray();
 
     public static final Object[] EXTENDS_CLASS = PROPERTIES.getJSONArray("extends.class").toArray();
-
-
-
 }

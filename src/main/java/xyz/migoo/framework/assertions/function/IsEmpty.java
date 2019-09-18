@@ -22,7 +22,7 @@ public class IsEmpty extends AbstractFunction {
             return ((JSONArray) actual).isEmpty();
         }
         if (actual instanceof String) {
-            return StringUtil.isBlank((String) actual);
+            return StringUtil.isEmpty((String) actual);
         }
         return actual == null;
     }

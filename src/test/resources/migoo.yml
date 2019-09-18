@@ -18,7 +18,7 @@ mail.send.toList:
 
 # 自定义方法变量 扩展类列表
 extends.class:
-  - xyz.migoo.test.extend.Variable
-  - xyz.migoo.test.extend.Hook1
-  - xyz.migoo.test.extend.Hook2
-  - xyz.migoo.test.extend.Validator
+  - xyz.migoo.example.extend.Variable
+  - xyz.migoo.example.extend.Hook1
+  - xyz.migoo.example.extend.Hook2
+  - xyz.migoo.example.extend.Validator

@@ -1,5 +1,5 @@
 vars:
-  user: migoo
-  pwd: 123456qq
+  user: test
+  pwd: 123456
 hook:
   - __hook1(vars.hook)

@@ -1,11 +1,5 @@
 package xyz.migoo.utils;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.Random;
 
 /**
@@ -13,7 +7,7 @@ import java.util.Random;
  *
  * @author xiaomi
  */
-public class StringUtil extends StringUtils {
+public class StringUtil {
 
     public static final String BASE_STR = "abcdefghijklmnopqrstuvwxyz0123456789";
     /**
@@ -30,17 +24,8 @@ public class StringUtil extends StringUtils {
         return s.replaceAll(" ", "");
     }
 
-    public static String getStackTrace(Throwable throwable) {
-        if (null == throwable) {
-            return null;
-        }
-        try (Writer result = new StringWriter(); PrintWriter print = new PrintWriter(result)){
-            throwable.printStackTrace(print);
-            return result.toString();
-        }catch (IOException e){
-            e.printStackTrace();
-            return null;
-        }
+    public static boolean isEmpty(String cs) {
+        return cs == null || trimAny(cs).length() == 0;
     }
 
     public static String valueOf(Object obj){

@@ -38,7 +38,7 @@ public class CaseLoader {
     public static JSONObject loadEnv(String env) throws ReaderException {
         MiGooLog.log("load env begin: {}", env);
         JSONObject json = null;
-        if (StringUtil.isNotBlank(env)) {
+        if (!StringUtil.isEmpty(env)) {
             try {
                 json = JSONObject.parseObject(env);
             } catch (Exception e) {

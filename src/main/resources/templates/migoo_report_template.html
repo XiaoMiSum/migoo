@@ -4,7 +4,7 @@
 <head>
     <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${title}"></title>
+    <title th:text="${title} + ' - 测试报告'"></title>
     <style>
         body {
             background-color: #f2f2f2;
@@ -244,27 +244,11 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <div th:if="${record.detail.log.request.body}">
+                                <div>
                                     <tr>
-                                        <th>body</th>
+                                        <th>params</th>
                                         <td>
-                                            <pre th:text="${record.detail.log.request.body}"></pre>
-                                        </td>
-                                    </tr>
-                                </div>
-                                <div th:if="${record.detail.log.request.query}">
-                                    <tr>
-                                        <th>query</th>
-                                        <td>
-                                            <pre th:text="${record.detail.log.request.query}"></pre>
-                                        </td>
-                                    </tr>
-                                </div>
-                                <div th:if="${record.detail.log.request.data}">
-                                    <tr>
-                                        <th>data</th>
-                                        <td>
-                                            <pre th:text="${record.detail.log.request.data}"></pre>
+                                            <pre th:text="${record.detail.log.request.params}"></pre>
                                         </td>
                                     </tr>
                                 </div>
@@ -275,7 +259,7 @@
                         <div style="overflow: auto">
                             <table>
                                 <tr>
-                                    <th>status_code</th>
+                                    <th>code</th>
                                     <td th:text="${record.detail.log.response.statusCode}"></td>
                                 </tr>
                                 <tr>

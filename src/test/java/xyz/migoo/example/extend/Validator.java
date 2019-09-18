@@ -1,4 +1,4 @@
-package xyz.migoo.test.extend;
+package xyz.migoo.example.extend;
 
 /**
  * 验证扩展

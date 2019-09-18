@@ -1,6 +1,6 @@
 package xyz.migoo.framework.assertions;
 
-import xyz.migoo.framework.http.Response;
+import xyz.migoo.simplehttp.Response;
 
 /**
  * @author xiaomi
@@ -11,7 +11,7 @@ public class ResponseAssertion extends AbstractAssertion {
     @Override
     public void setActual(Object actual) {
         Response response = (Response)actual;
-        this.actual = response.body();
+        this.actual = response.text();
     }
 
 }

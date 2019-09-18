@@ -1,7 +1,7 @@
 package xyz.migoo.extender;
 
 import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.exception.InvokeException;
+import xyz.migoo.exception.ExtenderException;
 import xyz.migoo.report.MiGooLog;
 import xyz.migoo.utils.StringUtil;
 
@@ -11,13 +11,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static xyz.migoo.extender.Extender.FUNC_PATTERN;
-import static xyz.migoo.extender.Extender.PARAM_PATTERN;
+import static xyz.migoo.extender.ExtenderHelper.FUNC_PATTERN;
+import static xyz.migoo.extender.ExtenderHelper.PARAM_PATTERN;
+import static xyz.migoo.framework.config.Platform.EXTENDS_CLASS;
 
 /**
  * @author xiaomi
  */
-public class InvokeUtil {
+public class MethodHelper {
 
     private static final String SEPARATOR = ",";
     private static final Pattern REGEX_LONG = Pattern.compile("^[-\\+]?[0-9]+$");
@@ -26,10 +27,10 @@ public class InvokeUtil {
     /**
      * 从指定 扩展类中 获取扩展函数
      */
-    public static Map<String, Method> loadFunction(Object[] classes) throws InvokeException {
+    static Map<String, Method> loadFunction() throws ExtenderException {
         try {
             Map<String, Method> map = new HashMap<>(100);
-            for (Object clazz : classes) {
+            for (Object clazz : EXTENDS_CLASS) {
                 Class clz = Class.forName((String) clazz);
                 for (; clz != null && clz != Object.class; clz = clz.getSuperclass()){
                     Method[] methods = clz.getDeclaredMethods();
@@ -41,7 +42,7 @@ public class InvokeUtil {
             }
             return map;
         }catch (ClassNotFoundException e){
-            throw new InvokeException(e.getMessage());
+            throw new ExtenderException(e.getMessage());
         }
     }
 
@@ -52,40 +53,44 @@ public class InvokeUtil {
      * @param variables 变量，参数可能使用变量，需要从此对象取出
      */
     private static Object[] loadParameter(String params, JSONObject variables) throws RuntimeException {
-        if (StringUtil.isBlank(params)) {
+        if (StringUtil.isEmpty(params)) {
             return null;
         }
         String[] strParams = params.split(SEPARATOR);
         Object[] parameters = new Object[strParams.length];
         for (int i = 0; i < strParams.length; i++) {
-            String str= strParams[i];
-            if (REGEX_LONG.matcher(str).find()){
-                parameters[i] = Long.valueOf(str);
-                continue;
+            parseParameter(parameters, strParams[i], i);
+            if (parameters[i] == null){
+               parseParameter(parameters, strParams[i], i, variables);
             }
-            if (REGEX_FLOAT.matcher(str).find()){
-                parameters[i] = Double.valueOf(str);
-                continue;
-            }
-            if ("true".equalsIgnoreCase(str) || "false".equalsIgnoreCase(str)){
-                parameters[i] = Boolean.valueOf(str);
-                continue;
-            }
-            Matcher param = PARAM_PATTERN.matcher(str);
-            if (param.find()) {
-                if (variables != null && !variables.isEmpty()){
-                    Object object = variables.get(str.substring(2, str.length() -1));
-                    if (FUNC_PATTERN.matcher(String.valueOf(object)).find()
-                            || PARAM_PATTERN.matcher(String.valueOf(object)).find()){
-                        throw new RuntimeException(String.format("%s need eval!", param.group(1)));
-                    }
-                    parameters[i] = object;
-                    continue;
-                }
-            }
-            parameters[i] = str;
         }
         return parameters;
+    }
+
+    private static void parseParameter(Object[] parameters, String parameter, int index){
+        if (REGEX_LONG.matcher(parameter).find()){
+            parameters[index] = Long.valueOf(parameter);
+        } else if (REGEX_FLOAT.matcher(parameter).find()){
+            parameters[index] = Double.valueOf(parameter);
+        } else if ("true".equalsIgnoreCase(parameter) || "false".equalsIgnoreCase(parameter)){
+            parameters[index] = Boolean.valueOf(parameter);
+        }
+    }
+
+    private static void parseParameter(Object[] parameters, String parameter, int index, JSONObject variables){
+        Matcher param = PARAM_PATTERN.matcher(parameter);
+        if (param.find()) {
+            if (variables != null && !variables.isEmpty()){
+                Object object = variables.get(parameter.substring(2, parameter.length() -1));
+                if (FUNC_PATTERN.matcher(String.valueOf(object)).find()
+                        || PARAM_PATTERN.matcher(String.valueOf(object)).find()){
+                    throw new RuntimeException(String.format("%s need eval!", param.group(1)));
+                }
+                parameters[index] = object;
+                return;
+            }
+        }
+        parameters[index] = parameter;
     }
 
     /**
@@ -110,17 +115,17 @@ public class InvokeUtil {
      * @param name method 名称
      * @param parameter 参数数组
      */
-    public static Object invoke(Map<String, Method> methods, String name, String parameter, JSONObject variables)
-            throws InvokeException {
+    static Object invoke(Map<String, Method> methods, String name, String parameter, JSONObject variables)
+            throws ExtenderException {
         Object result;
         try {
             Object[] parameters = loadParameter(parameter, variables);
             result = method(methods, name, parameters).invoke(null, parameters);
             MiGooLog.log(String.format("invoke success, method [%s] -> parameter [%s] -> return [%s]", name, parameter, result));
         } catch (NullPointerException e){
-            throw new InvokeException(String.format("method '%s(%s)' not found !", name, parameter));
+            throw new ExtenderException(String.format("method '%s(%s)' not found !", name, parameter));
         } catch (Exception e) {
-            throw new InvokeException(String.format("invoke error, method name '%s', parameter '%s'", name, parameter), e);
+            throw new ExtenderException(String.format("invoke error, method name '%s', parameter '%s'", name, parameter), e);
         }
         return result;
     }

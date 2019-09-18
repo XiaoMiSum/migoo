@@ -3,11 +3,10 @@ package xyz.migoo.report;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import xyz.migoo.framework.config.Platform;
-import xyz.migoo.framework.core.AbstractTest;
-import xyz.migoo.framework.core.TestFailure;
-import xyz.migoo.framework.core.TestResult;
+import xyz.migoo.framework.AbstractTest;
+import xyz.migoo.framework.TestFailure;
+import xyz.migoo.framework.TestResult;
 import xyz.migoo.exception.ReportException;
-import xyz.migoo.framework.http.Response;
 import xyz.migoo.loader.reader.AbstractReader;
 import xyz.migoo.utils.DateUtil;
 
@@ -27,7 +26,7 @@ public class Report {
     private final static TemplateEngine TEMPLATE_ENGINE = new TemplateEngine();
 
     private List<TestResult> testResults = new ArrayList<>();
-    private Map<String, Object> report = new HashMap<>(2);
+    private Map<String, Object> report = new HashMap<>(3);
 
     private int total = 0, success = 0, failed = 0, error = 0, skipped = 0;
 
@@ -42,6 +41,10 @@ public class Report {
         failed += testResult.failureCount();
         error += testResult.errorCount();
         skipped += testResult.skipCount();
+    }
+
+    public void setProjectName(String projectName){
+        report.put("projectName", projectName);
     }
 
     public void generateIndex() {
@@ -91,7 +94,7 @@ public class Report {
             report.put("summary", this.summary(testResult));
             report.put("records", this.records(testResult));
             report.put("report", testResult.getName());
-            report.put("title", testResult.getName() + " - TestReport");
+            report.put("title", testResult.getName());
             String content = render(template, report);
             report(testResult.getName(), content, false);
         });
@@ -147,7 +150,7 @@ public class Report {
     private synchronized Map<String, Object> detail(AbstractTest test, TestFailure testFailure, int id) {
         Map<String, Object> detail = new HashMap<>(7);
         detail.put("validate", test.validate());
-        detail.put("log", this.log(test.response()));
+        detail.put("log", this.log(test));
         if (testFailure != null) {
             detail.put("track", testFailure.trace());
         }
@@ -160,20 +163,18 @@ public class Report {
         return detail;
     }
 
-    private synchronized Map<String, Object> log(Response response) {
+    private synchronized Map<String, Object> log(AbstractTest test) {
         Map<String, Object> res = new HashMap<>(3);
         Map<String, Object> req = new HashMap<>(4);
-        if (response != null) {
-            res.put("statusCode", response.statusCode());
-            res.put("body", response.body());
-            if (response.request() != null) {
-                req.put("url", response.request().url());
-                req.put("method", response.request().method());
-                req.put("headers", response.request().headers());
-                req.put("body", response.request().body());
-                req.put("data", response.request().data());
-                req.put("query", response.request().query());
-            }
+        if (test.response() != null) {
+            res.put("statusCode", test.response().statusCode());
+            res.put("body", test.response().text());
+        }
+        if (test.request() != null) {
+            req.put("url", test.request().uri());
+            req.put("method", test.request().method());
+            req.put("headers", test.request().headers());
+            req.put("params", test.request().body());
         }
         Map<String, Object> log = new HashMap<>(2);
         log.put("request", req);

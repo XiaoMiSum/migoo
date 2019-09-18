@@ -1,6 +1,4 @@
-package xyz.migoo.framework.core;
-
-import com.alibaba.fastjson.JSONObject;
+package xyz.migoo.framework;
 
 /**
  * @author xiaomi
