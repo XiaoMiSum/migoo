@@ -33,6 +33,6 @@ MiGoo 是一个Java语言开发的测试工具，可用于接口测试脚本开�
 <dependency>
     <groupId>xyz.migoo</groupId>
     <artifactId>migoo</artifactId>
-    <version>1.2.1</version>
+    <version>最新版本</version>
 </dependency>
 ```
