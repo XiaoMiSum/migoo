@@ -10,7 +10,7 @@ import java.util.Map;
 public class Contains extends AbstractFunction {
 
     @Override
-    public Boolean assertTrue(Map<String, Object> data) {
+    public boolean assertTrue(Map<String, Object> data) {
         Object actual = data.get("actual");
         Object expect = data.get("expect");
         if (actual instanceof String) {

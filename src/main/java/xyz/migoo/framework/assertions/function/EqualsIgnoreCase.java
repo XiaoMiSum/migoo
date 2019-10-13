@@ -9,7 +9,7 @@ import java.util.Map;
 public class EqualsIgnoreCase extends AbstractFunction {
 
     @Override
-    public Boolean assertTrue(Map<String, Object> data) {
+    public boolean assertTrue(Map<String, Object> data) {
         return objectToString(data.get("actual")).equalsIgnoreCase(objectToString(data.get("expect")));
     }
 }

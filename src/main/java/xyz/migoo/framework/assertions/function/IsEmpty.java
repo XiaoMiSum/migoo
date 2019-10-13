@@ -13,7 +13,7 @@ import java.util.Map;
 public class IsEmpty extends AbstractFunction {
 
     @Override
-    public Boolean assertTrue(Map<String, Object> data) {
+    public boolean assertTrue(Map<String, Object> data) {
         Object actual = data.get("actual");
         if (actual instanceof JSONObject) {
             return ((JSONObject) actual).isEmpty();

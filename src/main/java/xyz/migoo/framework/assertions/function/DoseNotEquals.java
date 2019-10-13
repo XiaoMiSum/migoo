@@ -9,7 +9,7 @@ import java.util.Map;
 public class DoseNotEquals extends AbstractFunction {
 
     @Override
-    public Boolean assertTrue(Map<String, Object> data) {
+    public boolean assertTrue(Map<String, Object> data) {
         return ! new Equals().assertTrue(data);
     }
 }

@@ -9,7 +9,7 @@ import java.util.Map;
 public class IsNotEmpty extends AbstractFunction {
 
     @Override
-    public Boolean assertTrue(Map<String, Object> data) {
+    public boolean assertTrue(Map<String, Object> data) {
         return !new IsEmpty().assertTrue(data);
     }
 }
