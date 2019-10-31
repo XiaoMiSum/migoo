@@ -13,6 +13,7 @@ import xyz.migoo.simplehttp.HttpException;
 import xyz.migoo.simplehttp.Response;
 import xyz.migoo.extender.ExtenderHelper;
 import xyz.migoo.report.MiGooLog;
+import xyz.migoo.utils.StringUtil;
 import xyz.migoo.utils.TypeUtil;
 
 /**
@@ -23,24 +24,27 @@ public class TestCase extends AbstractTest {
 
     private JSONObject testCase;
 
-    TestCase(JSONObject testCase, JSONObject request) {
+    TestCase(JSONObject testCase) {
         super(testCase.getString(CaseKeys.CASE_TITLE));
+        this.initCase(testCase);
+    }
+
+    private void initCase(JSONObject testCase){
+        this.testCase = testCase;
         super.addSetUp(testCase.getJSONArray(CaseKeys.CASE_BEFORE));
         super.addTeardown(testCase.getJSONArray(CaseKeys.CASE_AFTER));
         super.addVariables(testCase.getJSONObject(CaseKeys.CASE_VARIABLES));
-        this.init(testCase, request);
     }
 
-    private void init(JSONObject testCase, JSONObject request){
-        this.testCase = testCase;
-        this.request = MiGooRequest.method(request.getString(CaseKeys.CONFIG_REQUEST_METHOD))
-        .headers(request.getJSONObject(CaseKeys.CASE_HEADERS));
-        String url = request.getString(CaseKeys.CONFIG_REQUEST_URL);
-        if (testCase.get(CaseKeys.CASE_API) != null){
-            url = url + testCase.get(CaseKeys.CASE_API);
+    public void initRequest(){
+        String url = testCase.getJSONObject(CaseKeys.CONFIG_REQUEST).getString(CaseKeys.CONFIG_REQUEST_URL);
+        if (!StringUtil.isEmpty(testCase.getString(CaseKeys.CASE_API))){
+            url = url + testCase.getString(CaseKeys.CASE_API);
         }
+        testCase.getJSONObject(CaseKeys.CONFIG_REQUEST).put(CaseKeys.CASE_API, url);
+        request = MiGooRequest.method(testCase.getJSONObject(CaseKeys.CONFIG_REQUEST)
+                    .getString(CaseKeys.CONFIG_REQUEST_METHOD));
 
-        testCase.put(CaseKeys.CASE_API, url);
     }
 
     @Override
@@ -83,11 +87,14 @@ public class TestCase extends AbstractTest {
     }
 
     private void evalRequest() throws ExtenderException {
+        this.initRequest();
         ExtenderHelper.bind(this.testCase.getJSONObject(CaseKeys.CASE_HEADERS), super.variables);
+        ExtenderHelper.bind(this.testCase.getJSONObject(CaseKeys.CONFIG_REQUEST), super.variables);
         ExtenderHelper.bindAndEval(this.testCase.getJSONObject(CaseKeys.CASE_BODY), super.variables);
         ExtenderHelper.bindAndEval(this.testCase.getJSONObject(CaseKeys.CASE_DATA), super.variables);
         ExtenderHelper.bindAndEval(this.testCase.getJSONObject(CaseKeys.CASE_QUERY), super.variables);
-        request.uri(this.testCase.getString(CaseKeys.CASE_API))
+        request.uri(this.testCase.getJSONObject(CaseKeys.CONFIG_REQUEST).getString(CaseKeys.CASE_API))
+                .headers(testCase.getJSONObject(CaseKeys.CONFIG_REQUEST).getJSONObject(CaseKeys.CONFIG_REQUEST_HEADERS))
                 .headers(this.testCase.getJSONObject(CaseKeys.CASE_HEADERS))
                 .query(this.testCase.getJSONObject(CaseKeys.CASE_QUERY))
                 .data(this.testCase.getJSONObject(CaseKeys.CASE_DATA))

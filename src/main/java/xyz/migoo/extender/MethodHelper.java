@@ -6,6 +6,7 @@ import xyz.migoo.report.MiGooLog;
 import xyz.migoo.utils.StringUtil;
 
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -68,10 +69,8 @@ public class MethodHelper {
     }
 
     private static void parseParameter(Object[] parameters, String parameter, int index){
-        if (REGEX_LONG.matcher(parameter).find()){
-            parameters[index] = Long.valueOf(parameter);
-        } else if (REGEX_FLOAT.matcher(parameter).find()){
-            parameters[index] = Double.valueOf(parameter);
+        if (REGEX_LONG.matcher(parameter).find() || REGEX_FLOAT.matcher(parameter).find()){
+            parameters[index] = new BigDecimal(parameter);
         } else if ("true".equalsIgnoreCase(parameter) || "false".equalsIgnoreCase(parameter)){
             parameters[index] = Boolean.valueOf(parameter);
         }
