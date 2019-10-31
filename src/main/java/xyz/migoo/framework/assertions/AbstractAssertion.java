@@ -15,7 +15,7 @@ import static xyz.migoo.framework.config.Platform.*;
  */
 public abstract class AbstractAssertion implements Assertion{
 
-    Object actual;
+    protected Object actual;
 
     @Override
     public boolean assertThat(JSONObject data) throws ExecuteError {
@@ -45,7 +45,7 @@ public abstract class AbstractAssertion implements Assertion{
         return actual;
     }
 
-    private IFunction getFunction(String searchChar) throws Exception {
+    protected IFunction getFunction(String searchChar) throws Exception {
         if (FUNCTION_EQUALS.contains(searchChar)) {
             return new Equals();
         }

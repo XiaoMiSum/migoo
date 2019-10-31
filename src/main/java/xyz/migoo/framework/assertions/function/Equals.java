@@ -1,7 +1,5 @@
 package xyz.migoo.framework.assertions.function;
 
-import xyz.migoo.framework.config.CaseKeys;
-
 import java.math.BigDecimal;
 import java.util.Map;
 
@@ -12,7 +10,7 @@ import java.util.Map;
 public class Equals extends AbstractFunction {
 
     @Override
-    public Boolean assertTrue(Map<String, Object> data) {
+    public boolean assertTrue(Map<String, Object> data) {
         Object actual = data.get("actual");
         Object expect = data.get("expect");
         String str1 = objectToString(actual);

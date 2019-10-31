@@ -1,9 +1,7 @@
 package xyz.migoo.framework.assertions.function;
 
 import com.alibaba.fastjson.JSON;
-import xyz.migoo.utils.StringUtil;
 
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,7 +13,7 @@ import java.util.regex.Pattern;
 public class Regex extends AbstractFunction {
 
     @Override
-    public Boolean assertTrue(Map<String, Object> data) {
+    public boolean assertTrue(Map<String, Object> data) {
         Object actual = data.get("actual");
         Object expect = data.get("expect");
         String str = "";

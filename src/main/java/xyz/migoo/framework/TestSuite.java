@@ -16,18 +16,18 @@ import java.util.Vector;
 public class TestSuite extends AbstractTest {
 
     private Vector<AbstractTest> fTests= new Vector<>(10);
+    private JSONObject request;
 
     public TestSuite(JSONObject testSuite){
         super(testSuite.getString(CaseKeys.NAME));
         JSONObject config = testSuite.getJSONObject(CaseKeys.CONFIG);
         this.initSuite(config);
-        // 4. bind variable tp request
-        JSONObject request = config.getJSONObject(CaseKeys.CONFIG_REQUEST);
-        ExtenderHelper.bind(request, super.variables);
+        request = config.getJSONObject(CaseKeys.CONFIG_REQUEST);
         JSONArray testCases = testSuite.getJSONArray(CaseKeys.CASE);
         for (int i = 0; i < testCases.size(); i++) {
             JSONObject testCase = testCases.getJSONObject(i);
-            this.addTest(new TestCase(testCase, request));
+            testCase.put(CaseKeys.CONFIG_REQUEST, request);
+            this.addTest(new TestCase(testCase));
         }
     }
 
@@ -38,6 +38,7 @@ public class TestSuite extends AbstractTest {
         super.addSetUp(config.getJSONArray(CaseKeys.CONFIG_BEFORE_CLASS));
         // 3. add config.beforeClass to teardown
         super.addTeardown(config.getJSONArray(CaseKeys.CONFIG_AFTER_CLASS));
+
     }
 
     @Override
@@ -56,6 +57,7 @@ public class TestSuite extends AbstractTest {
             MiGooLog.log("test suite begin: {}", this.getName());
             // bind variable to variables (globals -> variables)
             ExtenderHelper.bindAndEval(super.variables, super.variables);
+            ExtenderHelper.bind(request, super.variables);
             super.setup("suite setup");
             this.fTests.forEach(test -> {
                 test.addVariables(variables);

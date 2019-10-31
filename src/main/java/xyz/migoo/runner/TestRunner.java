@@ -101,8 +101,10 @@ public class TestRunner {
                         variables.getJSONObject("variables") != null ? variables.getJSONObject("variables") : variables;
                 ExtenderHelper.bindAndEval(globals, globals);
                 JSONArray hook = variables.getJSONArray(CaseKeys.VARS_HOOK);
-                for (int i = 0; i < hook.size(); i++) {
-                    ExtenderHelper.hook(hook.getString(i), globals);
+                if (hook != null){
+                    for (int i = 0; i < hook.size(); i++) {
+                        ExtenderHelper.hook(hook.getString(i), globals);
+                    }
                 }
             } catch (ExtenderException e) {
                 MiGooLog.log("env exception.", e);

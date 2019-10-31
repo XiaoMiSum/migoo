@@ -1,7 +1,5 @@
 package xyz.migoo.framework.assertions.function;
 
-import xyz.migoo.framework.config.CaseKeys;
-
 import java.math.BigDecimal;
 import java.util.Map;
 
@@ -12,7 +10,7 @@ import java.util.Map;
 public class GreaterThanOrEquals extends AbstractFunction {
 
     @Override
-    public Boolean assertTrue(Map<String, Object> data) {
+    public boolean assertTrue(Map<String, Object> data) {
         try {
             BigDecimal b1 = new BigDecimal(String.valueOf(data.get("actual")));
             BigDecimal b2 = new BigDecimal(String.valueOf(data.get("expect")));

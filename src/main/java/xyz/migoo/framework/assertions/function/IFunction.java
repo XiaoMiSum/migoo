@@ -17,5 +17,5 @@ public interface IFunction {
      * @param data Objects that hold the actual and expected values
      * @return Boolean Object
      */
-    Boolean assertTrue(Map<String, Object> data);
+    boolean assertTrue(Map<String, Object> data);
 }

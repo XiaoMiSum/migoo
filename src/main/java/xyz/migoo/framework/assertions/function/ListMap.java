@@ -1,7 +1,6 @@
 package xyz.migoo.framework.assertions.function;
 
 import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.utils.StringUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,7 @@ import java.util.Map;
 public class ListMap extends AbstractFunction {
 
     @Override
-    public Boolean assertTrue(Map<String, Object> data) {
+    public boolean assertTrue(Map<String, Object> data) {
         List actual = (List)data.get("actual");
         Object expect = data.get("expect");
         try {
