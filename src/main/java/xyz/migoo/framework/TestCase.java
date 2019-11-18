@@ -11,7 +11,7 @@ import xyz.migoo.exception.SkippedRun;
 import xyz.migoo.http.MiGooRequest;
 import xyz.migoo.simplehttp.HttpException;
 import xyz.migoo.simplehttp.Response;
-import xyz.migoo.extender.ExtenderHelper;
+import xyz.migoo.framework.functions.VariableHelper;
 import xyz.migoo.report.MiGooLog;
 import xyz.migoo.utils.StringUtil;
 import xyz.migoo.utils.TypeUtil;
@@ -61,7 +61,7 @@ public class TestCase extends AbstractTest {
                 throw new SkippedRun(this.getName());
             }
             // bind variable to variables (testSuite.variables -> this.variables)
-            ExtenderHelper.bindAndEval(super.variables, super.variables);
+            VariableHelper.bindAndEval(super.variables, super.variables);
             super.setup("case setup");
             // bind variable to case (this.variables -> this.testCase.headers)
             this.evalRequest();
@@ -88,11 +88,11 @@ public class TestCase extends AbstractTest {
 
     private void evalRequest() throws ExtenderException {
         this.initRequest();
-        ExtenderHelper.bind(this.testCase.getJSONObject(CaseKeys.CASE_HEADERS), super.variables);
-        ExtenderHelper.bind(this.testCase.getJSONObject(CaseKeys.CONFIG_REQUEST), super.variables);
-        ExtenderHelper.bindAndEval(this.testCase.getJSONObject(CaseKeys.CASE_BODY), super.variables);
-        ExtenderHelper.bindAndEval(this.testCase.getJSONObject(CaseKeys.CASE_DATA), super.variables);
-        ExtenderHelper.bindAndEval(this.testCase.getJSONObject(CaseKeys.CASE_QUERY), super.variables);
+        VariableHelper.bind(this.testCase.getJSONObject(CaseKeys.CASE_HEADERS), super.variables);
+        VariableHelper.bind(this.testCase.getJSONObject(CaseKeys.CONFIG_REQUEST), super.variables);
+        VariableHelper.bindAndEval(this.testCase.getJSONObject(CaseKeys.CASE_BODY), super.variables);
+        VariableHelper.bindAndEval(this.testCase.getJSONObject(CaseKeys.CASE_DATA), super.variables);
+        VariableHelper.bindAndEval(this.testCase.getJSONObject(CaseKeys.CASE_QUERY), super.variables);
         request.uri(this.testCase.getJSONObject(CaseKeys.CONFIG_REQUEST).getString(CaseKeys.CASE_API))
                 .headers(testCase.getJSONObject(CaseKeys.CONFIG_REQUEST).getJSONObject(CaseKeys.CONFIG_REQUEST_HEADERS))
                 .headers(this.testCase.getJSONObject(CaseKeys.CASE_HEADERS))

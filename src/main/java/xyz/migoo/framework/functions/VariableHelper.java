@@ -1,10 +1,11 @@
-package xyz.migoo.extender;
+package xyz.migoo.framework.functions;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.exception.ExtenderException;
 import xyz.migoo.framework.config.CaseKeys;
+import xyz.migoo.framework.functions.FunctionFactory;
 import xyz.migoo.report.MiGooLog;
 import xyz.migoo.utils.StringUtil;
 
@@ -18,24 +19,14 @@ import static ognl.Ognl.getValue;
 /**
  * @author xiaomi
  */
-public class ExtenderHelper {
+public class VariableHelper {
 
 
     static final Pattern FUNC_PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
 
     static final Pattern PARAM_PATTERN = Pattern.compile("(\\$\\{(\\w+)})+");
 
-    private static Map<String, Method> methods = null;
-
-    static {
-        try {
-            methods = MethodHelper.loadFunction();
-        } catch (ExtenderException e) {
-            MiGooLog.log("load extends function exception. ", e);
-        }
-    }
-
-    private ExtenderHelper() {
+    private VariableHelper() {
     }
 
     public static void bind(Object use, JSONObject vars) {
@@ -134,7 +125,7 @@ public class ExtenderHelper {
             }
             Matcher func = FUNC_PATTERN.matcher(value);
             if (func.find()) {
-                Object result = MethodHelper.invoke(methods, func.group(1), func.group(2), variables);
+                Object result = FunctionFactory.execute(func.group(1), func.group(2), variables);
                 use.put(key, result);
             }
         }
@@ -163,7 +154,7 @@ public class ExtenderHelper {
             }
             Matcher func = FUNC_PATTERN.matcher(value);
             if (func.find()) {
-                Object result = MethodHelper.invoke(methods, func.group(1), func.group(2), variables);
+                Object result = FunctionFactory.execute(func.group(1), func.group(2), variables);
                 validate.put(CaseKeys.VALIDATE_EXPECT, result);
             }
         } catch (Exception e) {
@@ -177,7 +168,7 @@ public class ExtenderHelper {
         }
         Matcher func = FUNC_PATTERN.matcher(object);
         if (func.find()) {
-            MethodHelper.invoke(methods, func.group(1), func.group(2), variables);
+            FunctionFactory.execute(func.group(1), func.group(2), variables);
         }
     }
 }

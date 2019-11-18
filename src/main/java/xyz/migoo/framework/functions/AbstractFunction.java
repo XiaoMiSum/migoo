@@ -25,9 +25,11 @@ public abstract class AbstractFunction implements Function{
 
     @Override
     public void addParameter(String params, JSONObject variables){
-        String[] array = params.split(",");
-        for (String str : array) {
-            parameters.put(str, variables);
+        if (!params.isEmpty()) {
+            String[] array = params.split(",");
+            for (String str : array) {
+                parameters.put(str, variables);
+            }
         }
     }
 

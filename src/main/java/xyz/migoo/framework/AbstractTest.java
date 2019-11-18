@@ -2,7 +2,7 @@ package xyz.migoo.framework;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.extender.ExtenderHelper;
+import xyz.migoo.framework.functions.VariableHelper;
 import xyz.migoo.framework.assertions.Validate;
 import xyz.migoo.framework.config.CaseKeys;
 import xyz.migoo.exception.ExtenderException;
@@ -73,7 +73,7 @@ public abstract class AbstractTest implements ITest {
         // bind variable to setUp (this.variables -> this.setUp)
         MiGooLog.log("{} begin", type);
         for (int i = 0; i < setUp.size(); i++) {
-            ExtenderHelper.hook(setUp.getString(i), variables);
+            VariableHelper.hook(setUp.getString(i), variables);
         }
         MiGooLog.log("{} end", type);
     }
@@ -97,7 +97,7 @@ public abstract class AbstractTest implements ITest {
         MiGooLog.log("{} begin", type);
         for (int i = 0; i < teardown.size(); i++) {
             try {
-                ExtenderHelper.hook(teardown.getString(i), variables);
+                VariableHelper.hook(teardown.getString(i), variables);
             } catch (ExtenderException e) {
                 MiGooLog.log(teardown.getString(i) + " error", e);
             }

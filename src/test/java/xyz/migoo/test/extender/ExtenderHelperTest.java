@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import xyz.migoo.extender.ExtenderHelper;
+import xyz.migoo.framework.functions.VariableHelper;
 
 /**
  * @author xiaomi
@@ -20,7 +20,7 @@ public class ExtenderHelperTest {
         JSONObject vars = new JSONObject();
         vars.put("user", "MiGoo");
         vars.put("pwd", "abb");
-        ExtenderHelper.bind(use, vars);
+        VariableHelper.bind(use, vars);
         Assertions.assertEquals(use, vars);
     }
     @Test
@@ -36,7 +36,7 @@ public class ExtenderHelperTest {
         vars.put("user", "MiGoo");
         vars.put("pwd", "abb");
         vars.put("sign", "better");
-        ExtenderHelper.bind(use, vars);
+        VariableHelper.bind(use, vars);
         Assertions.assertEquals(use.getJSONObject("data").get("sign"), vars.getString("sign"));
     }
     @Test
@@ -52,7 +52,7 @@ public class ExtenderHelperTest {
         vars.put("user", "MiGoo");
         vars.put("pwd", "abb");
         vars.put("sign", "better");
-        ExtenderHelper.bind(use, vars);
+        VariableHelper.bind(use, vars);
         Assertions.assertEquals(use.getJSONArray("data").get(0), vars.getString("sign"));
     }
     @Test
@@ -69,7 +69,7 @@ public class ExtenderHelperTest {
         vars.put("pwd", "abb");
         vars.put("sign", "better");
         vars.put("func", "__func()");
-        ExtenderHelper.bind(use, vars);
+        VariableHelper.bind(use, vars);
         Assertions.assertEquals(use.getJSONArray("data").get(0), vars.getString("sign"));
         Assertions.assertEquals(use.getJSONArray("data").get(1), "${func}");
     }

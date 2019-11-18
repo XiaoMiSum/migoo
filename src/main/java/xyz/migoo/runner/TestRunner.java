@@ -7,7 +7,7 @@ import xyz.migoo.framework.TestResult;
 import xyz.migoo.framework.TestSuite;
 import xyz.migoo.exception.ExtenderException;
 import xyz.migoo.exception.ReaderException;
-import xyz.migoo.extender.ExtenderHelper;
+import xyz.migoo.framework.functions.VariableHelper;
 import xyz.migoo.report.Report;
 import xyz.migoo.loader.CaseLoader;
 import xyz.migoo.report.MiGooLog;
@@ -99,11 +99,11 @@ public class TestRunner {
             try {
                 globals = variables.getJSONObject("vars") != null ? variables.getJSONObject("vars") :
                         variables.getJSONObject("variables") != null ? variables.getJSONObject("variables") : variables;
-                ExtenderHelper.bindAndEval(globals, globals);
+                VariableHelper.bindAndEval(globals, globals);
                 JSONArray hook = variables.getJSONArray(CaseKeys.VARS_HOOK);
                 if (hook != null){
                     for (int i = 0; i < hook.size(); i++) {
-                        ExtenderHelper.hook(hook.getString(i), globals);
+                        VariableHelper.hook(hook.getString(i), globals);
                     }
                 }
             } catch (ExtenderException e) {

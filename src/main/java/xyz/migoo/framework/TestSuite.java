@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.framework.config.CaseKeys;
 import xyz.migoo.exception.ExtenderException;
-import xyz.migoo.extender.ExtenderHelper;
+import xyz.migoo.framework.functions.VariableHelper;
 import xyz.migoo.report.MiGooLog;
 
 import java.util.Vector;
@@ -56,8 +56,8 @@ public class TestSuite extends AbstractTest {
             MiGooLog.log("===================================================================");
             MiGooLog.log("test suite begin: {}", this.getName());
             // bind variable to variables (globals -> variables)
-            ExtenderHelper.bindAndEval(super.variables, super.variables);
-            ExtenderHelper.bind(request, super.variables);
+            VariableHelper.bindAndEval(super.variables, super.variables);
+            VariableHelper.bind(request, super.variables);
             super.setup("suite setup");
             this.fTests.forEach(test -> {
                 test.addVariables(variables);
