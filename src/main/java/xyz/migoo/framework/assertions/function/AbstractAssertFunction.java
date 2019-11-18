@@ -12,11 +12,11 @@ import java.util.Map;
  * @author xiaomi
  * @date 2019-08-13 22:21
  */
-public abstract class AbstractFunction implements IFunction {
+public abstract class AbstractAssertFunction implements IFunction {
 
 
     private static ThreadLocal<DecimalFormat> decimalFormatter =
-            ThreadLocal.withInitial(AbstractFunction::createDecimalFormat);
+            ThreadLocal.withInitial(AbstractAssertFunction::createDecimalFormat);
 
     private static DecimalFormat createDecimalFormat() {
         DecimalFormat decimalFormatter = new DecimalFormat("#.#");

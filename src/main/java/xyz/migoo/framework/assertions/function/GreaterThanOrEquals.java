@@ -7,7 +7,7 @@ import java.util.Map;
  * @author xiaomi
  * @date 2019-08-13 22:17
  */
-public class GreaterThanOrEquals extends AbstractFunction {
+public class GreaterThanOrEquals extends AbstractAssertFunction {
 
     @Override
     public boolean assertTrue(Map<String, Object> data) {

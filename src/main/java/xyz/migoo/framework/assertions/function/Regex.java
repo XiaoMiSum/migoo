@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  * @author xiaomi
  * @date 2019-08-13 22:17
  */
-public class Regex extends AbstractFunction {
+public class Regex extends AbstractAssertFunction {
 
     @Override
     public boolean assertTrue(Map<String, Object> data) {
