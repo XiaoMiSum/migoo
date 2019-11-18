@@ -18,10 +18,6 @@ public class Platform {
 
     private static final JSONObject PROPERTIES = new JSONObject();
 
-    private static final String STRING = "extends.class";
-
-    private static final String IGNORE = "ignore.directory";
-
     static {
         String[] properties = new String[]{"application.yml", "migoo.yml"};
         for (String file : properties) {
@@ -30,14 +26,7 @@ public class Platform {
                 if (reader.isNull()) {
                     continue;
                 }
-                ((JSONObject)reader.read()).forEach((key, value) -> {
-                    if (STRING.equals(key) || IGNORE.equals(key)) {
-                        if (PROPERTIES.getJSONArray(key) != null) {
-                            ((JSONArray)value).addAll(PROPERTIES.getJSONArray(key));
-                        }
-                    }
-                    PROPERTIES.put(key, value);
-                });
+                ((JSONObject)reader.read()).forEach(PROPERTIES::put);
             } catch (ReaderException e) {
                 e.printStackTrace();
             }
@@ -97,5 +86,4 @@ public class Platform {
 
     public static final Object[] MAIL_SEND_TO_LIST = PROPERTIES.getJSONArray("mail.send.toList").toArray();
 
-    public static final Object[] EXTENDS_CLASS = PROPERTIES.getJSONArray("extends.class").toArray();
 }
