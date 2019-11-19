@@ -15,11 +15,11 @@ public class AssertionFactory {
 
     public static AbstractAssertion getAssertion(String check){
         switch (assertionType(check)){
-            case CaseKeys.EVAL_ACTUAL_BY_JSON:
+            case CaseKeys.JSON:
                 return new JSONAssertion(check);
-            case CaseKeys.EVAL_ACTUAL_BY_STATUS:
+            case CaseKeys.STATUS:
                 return new ResponseCodeAssertion();
-            case CaseKeys.EVAL_ACTUAL_BY_BODY:
+            case CaseKeys.BODY:
                 return new ResponseAssertion();
             default:
                 try {
@@ -33,13 +33,13 @@ public class AssertionFactory {
 
     private static String assertionType(String searchChar){
         if (CHECK_BODY.contains(searchChar)) {
-            return CaseKeys.EVAL_ACTUAL_BY_BODY;
+            return CaseKeys.BODY;
         }
         if (CHECK_CODE.contains(searchChar)) {
-            return CaseKeys.EVAL_ACTUAL_BY_STATUS;
+            return CaseKeys.STATUS;
         }
         if (isJson(searchChar)) {
-            return CaseKeys.EVAL_ACTUAL_BY_JSON;
+            return CaseKeys.JSON;
         }
         return searchChar;
     }

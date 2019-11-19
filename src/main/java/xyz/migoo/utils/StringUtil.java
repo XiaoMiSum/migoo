@@ -52,7 +52,7 @@ public class StringUtil {
         return sb.toString();
     }
 
-    public static String indexToUpperCase(String str){
+    public static String initialToUpperCase(String str){
         char[] chars = str.toCharArray();
         chars[0] -= chars[0] >= 97 ? 32 : 0;
         return String.valueOf(chars);

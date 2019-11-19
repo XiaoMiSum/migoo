@@ -20,7 +20,7 @@ public abstract class AbstractAssertion implements Assertion{
     @Override
     public boolean assertThat(JSONObject data) throws ExecuteError {
         try {
-            IFunction function = getFunction(data.getString(CaseKeys.VALIDATE_TYPE));
+            IFunction function = getFunction(data.getString(CaseKeys.FUNC));
             data.put("actual", actual);
             return TypeUtil.booleanOf(function.assertTrue(data));
         } catch (Exception e) {

@@ -4,17 +4,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.exception.ExtenderException;
-import xyz.migoo.framework.config.CaseKeys;
-import xyz.migoo.framework.functions.FunctionFactory;
+import xyz.migoo.framework.entity.Validate;
 import xyz.migoo.report.MiGooLog;
 import xyz.migoo.utils.StringUtil;
 
-import java.lang.reflect.Method;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static ognl.Ognl.getValue;
 
 /**
  * @author xiaomi
@@ -146,16 +141,16 @@ public class VariableHelper {
      * @param validate 检查点
      * @throws ExecuteError 检查异常
      */
-    public static void evalValidate(JSONObject validate, JSONObject variables) throws ExecuteError {
+    public static void evalValidate(Validate validate, JSONObject variables) throws ExecuteError {
         try {
-            String value = validate.getString(CaseKeys.VALIDATE_EXPECT);
+            String value = String.valueOf(validate.getExpect());
             if (StringUtil.isEmpty(value)) {
                 return;
             }
             Matcher func = FUNC_PATTERN.matcher(value);
             if (func.find()) {
                 Object result = FunctionFactory.execute(func.group(1), func.group(2), variables);
-                validate.put(CaseKeys.VALIDATE_EXPECT, result);
+                validate.setExpect(result);
             }
         } catch (Exception e) {
             throw new ExecuteError(e.getMessage(), e);

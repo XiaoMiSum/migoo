@@ -1,16 +1,14 @@
 package xyz.migoo.framework.assertions;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.framework.entity.Validate;
 import xyz.migoo.framework.functions.VariableHelper;
-import xyz.migoo.framework.config.CaseKeys;
 import xyz.migoo.exception.AssertionFailure;
 import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.simplehttp.Response;
 import xyz.migoo.report.MiGooLog;
 
-import java.lang.reflect.Method;
-import java.util.Map;
+import java.util.List;
 
 /**
  * @author xiaomi
@@ -18,29 +16,28 @@ import java.util.Map;
  */
 public class Validator {
 
-    private static Map<String, Method> methods = null;
-
     private Validator() {
     }
 
-    public synchronized static void validation(Response response, JSONArray validate, JSONObject variables) throws AssertionFailure, ExecuteError {
-        for (int i = 0; i < validate.size(); i++) {
-            VariableHelper.evalValidate(validate.getJSONObject(i), variables);
-            MiGooLog.log(String.format("check point  : %s", validate.getJSONObject(i).toJSONString()));
-            AbstractAssertion assertion = AssertionFactory.getAssertion(validate.getJSONObject(i).getString(CaseKeys.VALIDATE_CHECK));
+    public synchronized static void validation(Response response, List<Validate> validates, JSONObject variables) throws AssertionFailure, ExecuteError {
+        validates.forEach(validate -> {
+            VariableHelper.evalValidate(validate, variables);
+            MiGooLog.log(String.format("check point  : %s", validate.toString()));
+            AbstractAssertion assertion = AssertionFactory.getAssertion(validate.getCheck());
             assertion.setActual(response);
-            boolean result = assertion.assertThat(validate.getJSONObject(i));
+            boolean result = assertion.assertThat(JSONObject.parseObject(validate.toString()));
+            validate.setActual(assertion.getActual());
             MiGooLog.log(String.format("check result : %s", result));
             if (!result) {
-                String check = validate.getJSONObject(i).getString(CaseKeys.VALIDATE_CHECK);
-                String expected = validate.getJSONObject(i).getString(CaseKeys.VALIDATE_EXPECT);
-                String actual = String.valueOf(assertion.getActual());
+                String check = validate.getCheck();
+                Object expected = validate.getExpect();
+                Object actual = validate.getActual();
                 String clazz = assertion.getClass().getSimpleName();
-                String method = validate.getJSONObject(i).getString(CaseKeys.VALIDATE_TYPE);
+                String func = validate.getFunc();
                 String msg = "Value expected(%s) to be '%s', but found '%s' \n" +
-                        "Assertion class is '%s', assert method is '%s'";
-                throw new AssertionFailure(String.format(msg, check, expected, actual, clazz, method));
+                        "Assertion class is '%s', assert func is '%s'";
+                throw new AssertionFailure(String.format(msg, check, expected, actual, clazz, func));
             }
-        }
+        });
     }
 }

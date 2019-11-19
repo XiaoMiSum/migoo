@@ -1,4 +1,4 @@
-package xyz.migoo.example.extend;
+package xyz.migoo.test.example.extend;
 
 import xyz.migoo.framework.assertions.function.IFunction;
 

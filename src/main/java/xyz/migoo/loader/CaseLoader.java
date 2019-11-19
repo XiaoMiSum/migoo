@@ -2,6 +2,8 @@ package xyz.migoo.loader;
 
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ReaderException;
+import xyz.migoo.framework.entity.MiGooCase;
+import xyz.migoo.loader.reader.AbstractReader;
 import xyz.migoo.loader.reader.ReaderFactory;
 import xyz.migoo.report.MiGooLog;
 import xyz.migoo.utils.StringUtil;
@@ -35,6 +37,14 @@ public class CaseLoader {
         return caseSet;
     }
 
+    public static MiGooCase loadMiGooCase(String path) throws ReaderException {
+        MiGooLog.log("load case sets begin: {}", path);
+        AbstractReader reader = (AbstractReader)ReaderFactory.getReader(new File(path));
+        MiGooCase cases = JSONObject.parseObject(reader.toString(), MiGooCase.class);
+        MiGooLog.log("load case sets end");
+        return cases;
+    }
+
     public static JSONObject loadEnv(String env) throws ReaderException {
         MiGooLog.log("load env begin: {}", env);
         JSONObject json = null;
@@ -50,5 +60,11 @@ public class CaseLoader {
         }
         MiGooLog.log("load env end");
         return json;
+    }
+
+    public static void main(String[] args) throws ReaderException {
+        AbstractReader reader = (AbstractReader)ReaderFactory.getReader(new File("./case/case.yml"));
+        MiGooCase cases = JSONObject.parseObject(reader.toString(), MiGooCase.class);
+        System.out.println(cases.getName());
     }
 }

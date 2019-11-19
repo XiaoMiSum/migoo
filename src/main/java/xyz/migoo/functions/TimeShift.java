@@ -52,11 +52,4 @@ public class TimeShift extends AbstractFunction {
                 .toFormatter(locale);
 
     }
-
-    public static void main(String[] args) {
-        TimeShift timeShift = new TimeShift();
-        timeShift.addParameter("format=yyyy-MM-dd HH:mm:ss,amount=P1DT1H10M30S", null);
-        System.out.println(timeShift.execute());
-        System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-    }
 }

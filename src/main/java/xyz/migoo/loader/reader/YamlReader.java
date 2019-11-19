@@ -24,7 +24,7 @@ public class YamlReader extends AbstractReader implements Reader{
     }
 
     @Override
-    public JSON read() throws ReaderException {
+    public JSON read(){
         Yaml yaml = new Yaml();
         Object object = yaml.load(inputStream);
         json = (JSON) JSON.toJSON(object);
@@ -32,7 +32,7 @@ public class YamlReader extends AbstractReader implements Reader{
     }
 
     @Override
-    public String get(String key) throws ReaderException {
+    public String get(String key) {
         if (json == null){
             read();
         }
@@ -40,5 +40,13 @@ public class YamlReader extends AbstractReader implements Reader{
             return ((JSONObject) json).getString(key);
         }
         return null;
+    }
+
+    @Override
+    public String toString(){
+        if (json == null){
+            read();
+        }
+        return json.toString();
     }
 }

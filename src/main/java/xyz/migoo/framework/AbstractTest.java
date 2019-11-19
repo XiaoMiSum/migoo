@@ -3,8 +3,7 @@ package xyz.migoo.framework;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.framework.functions.VariableHelper;
-import xyz.migoo.framework.assertions.Validate;
-import xyz.migoo.framework.config.CaseKeys;
+import xyz.migoo.framework.entity.Validate;
 import xyz.migoo.exception.ExtenderException;
 import xyz.migoo.http.MiGooRequest;
 import xyz.migoo.report.MiGooLog;
@@ -22,7 +21,7 @@ public abstract class AbstractTest implements ITest {
     private String fName;
     private JSONArray setUp = new JSONArray();
     private JSONArray teardown = new JSONArray();
-    private List<Validate> validate = new ArrayList<>();
+    private List<Validate> validates = new ArrayList<>();
 
     MiGooRequest request;
     Response response;
@@ -113,19 +112,11 @@ public abstract class AbstractTest implements ITest {
         return response;
     }
 
-    public List<Validate> validate() {
-        return validate;
+    public List<Validate> validates() {
+        return validates;
     }
 
-    void validate(Object object) {
-        JSONArray array = (JSONArray) object;
-        for (int i = 0; i < array.size(); i++) {
-            JSONObject json = array.getJSONObject(i);
-            Validate validate = new Validate();
-            validate.setCheckPoint(json.getString(CaseKeys.VALIDATE_CHECK));
-            validate.setExcept(json.getString(CaseKeys.VALIDATE_EXPECT));
-            validate.setFunc(json.getString(CaseKeys.VALIDATE_TYPE));
-            this.validate.add(validate);
-        }
+    void validates(List<Validate> validates) {
+        this.validates = validates;
     }
 }

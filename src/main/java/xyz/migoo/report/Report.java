@@ -149,7 +149,7 @@ public class Report {
 
     private synchronized Map<String, Object> detail(AbstractTest test, TestFailure testFailure, int id) {
         Map<String, Object> detail = new HashMap<>(7);
-        detail.put("validate", test.validate());
+        detail.put("validate", test.validates());
         detail.put("log", this.log(test));
         if (testFailure != null) {
             detail.put("track", testFailure.trace());

@@ -1,7 +1,7 @@
 package xyz.migoo.framework.functions;
 
 import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.exception.MiGooException;
+import xyz.migoo.exception.ExtenderException;
 import xyz.migoo.utils.StringUtil;
 
 /**
@@ -12,7 +12,7 @@ public class FunctionFactory extends AbstractFunction{
 
     private final static FunctionFactory FACTORY = new FunctionFactory();
 
-    public static Object execute(String name, String parameter, JSONObject variables) throws MiGooException {
+    public static Object execute(String name, String parameter, JSONObject variables) throws ExtenderException {
         FACTORY.getFunction(name);
         FACTORY.addParameter(parameter, variables);
         return FACTORY.execute(null);
@@ -22,7 +22,7 @@ public class FunctionFactory extends AbstractFunction{
 
     private void getFunction(String name){
         try {
-            function = (AbstractFunction) Class.forName("xyz.migoo.functions." + StringUtil.indexToUpperCase(name))
+            function = (AbstractFunction) Class.forName("xyz.migoo.functions." + StringUtil.initialToUpperCase(name))
                     .newInstance();
         } catch (Exception e) {
             e.printStackTrace();
@@ -30,7 +30,7 @@ public class FunctionFactory extends AbstractFunction{
     }
 
     @Override
-    public Object execute(CompoundVariable parameters) {
+    public Object execute(CompoundVariable parameters) throws ExtenderException {
         return function.execute();
     }
 

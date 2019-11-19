@@ -1,4 +1,4 @@
-package xyz.migoo.runner;
+package xyz.migoo;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -7,6 +7,7 @@ import xyz.migoo.framework.TestResult;
 import xyz.migoo.framework.TestSuite;
 import xyz.migoo.exception.ExtenderException;
 import xyz.migoo.exception.ReaderException;
+import xyz.migoo.framework.entity.MiGooCase;
 import xyz.migoo.framework.functions.VariableHelper;
 import xyz.migoo.report.Report;
 import xyz.migoo.loader.CaseLoader;
@@ -22,37 +23,25 @@ import static xyz.migoo.framework.config.Platform.IGNORE_DIRECTORY;
  */
 public class TestRunner {
 
-    private static TestRunner runner;
     private JSONObject variables;
     private JSONObject globals;
     private Report report = new Report();
 
-    public static TestRunner getInstance(String projectName) {
-        if (runner == null) {
-            synchronized (TestRunner.class) {
-                if (runner == null) {
-                    runner = new TestRunner();
-                }
-            }
-        }
-        runner.report.setProjectName(projectName);
-        return runner;
-    }
-
-    private TestRunner() {
+    public TestRunner(String projectName) {
+        report.setProjectName(projectName);
     }
 
     /**
      * 如果传入的是目录，每个测试用例文件生成一个对应的测试报告，最后压缩成 zip 文件
      *
-     * @param caseOrPath json 格式的 case 或 测试用例文件\目录
+     * @param path 测试用例文件\目录
      * @param vars       全局变量
      */
-    public void run(String caseOrPath, String vars) {
+    public void run(String path, String vars) {
         try {
             this.variables = CaseLoader.loadEnv(vars);
             this.initEnv();
-            this.byPath(new File(caseOrPath));
+            this.byPath(new File(path));
         } catch (ReaderException e) {
             // 绑定全局变量异常 停止测试
             MiGooLog.log("read vars exception.", e);
@@ -83,9 +72,9 @@ public class TestRunner {
         }
     }
 
-    private TestSuite initTestSuite(String caseOrPath) {
+    private TestSuite initTestSuite(String path) {
         try {
-            JSONObject caseSets = CaseLoader.loadCaseSet(caseOrPath);
+            MiGooCase caseSets = CaseLoader.loadMiGooCase(path);
             return new TestSuite(caseSets);
         } catch (Exception e) {
             MiGooLog.log(e.getMessage(), e);
@@ -100,7 +89,7 @@ public class TestRunner {
                 globals = variables.getJSONObject("vars") != null ? variables.getJSONObject("vars") :
                         variables.getJSONObject("variables") != null ? variables.getJSONObject("variables") : variables;
                 VariableHelper.bindAndEval(globals, globals);
-                JSONArray hook = variables.getJSONArray(CaseKeys.VARS_HOOK);
+                JSONArray hook = variables.getJSONArray(CaseKeys.HOOK);
                 if (hook != null){
                     for (int i = 0; i < hook.size(); i++) {
                         VariableHelper.hook(hook.getString(i), globals);
