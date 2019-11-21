@@ -19,7 +19,7 @@ public class RandomString extends AbstractFunction {
         }
         String charsToUse = parameters.getAsString("string").trim();
         if (charsToUse.isEmpty()){
-            return RandomStringUtils.random(length);
+            return RandomStringUtils.randomAlphabetic(length);
         }
         return RandomStringUtils.random(length, charsToUse);
     }
