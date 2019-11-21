@@ -1,4 +1,4 @@
-name: the-test-suite-name
+name: 测试用例样本
 config:
   variables:
     user2: test
@@ -9,12 +9,13 @@ config:
   request:
     url: http://migoo.xyz/api/login
     method: post
+    headers:
+      x-host: http://127.0.0.1/
 cases:
-  - title: 执行成功
+  - title: 验证成功
     request:
       headers:
-        a: a
-        b: b
+        token: abc1234567890
     config:
       variables:
         pwd1: __generatePassword(password=${pwd})
@@ -47,22 +48,6 @@ cases:
       - {check: status, expect: 200, func: ==}
       - {check: $.status, expect: 411, func: eq}
       - {check: body.data, expect: null, func: isEmpty}
-  - title: 密码错误
-    config:
-      variables:
-        pwd1: __generatePassword(password=${user})
-      before:
-        - __hook1(A=before)
-      after:
-        - __hook2(A=after,B=before)
-    body:
-      userName: ${user}
-      password: ${pwd1}
-      sign: __Digest(string=${user}${pwd1})
-    validates:
-      - {check: status, expect: 200, func: ==}
-      - {check: $.status, expect: 411, func: eq}
-      - {check: body.data, expect: username or password error, func: ==}
   - title: 验证失败
     config:
       variables:

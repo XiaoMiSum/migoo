@@ -33,32 +33,6 @@ public class Platform {
         }
     }
 
-    public static final JSONArray FUNCTION_EQUALS = PROPERTIES.getJSONArray("function.equals");
-
-    public static final JSONArray FUNCTION_NOT_EQUALS = PROPERTIES.getJSONArray("function.notEquals");
-
-    public static final JSONArray FUNCTION_EQUALS_IGNORE_CASE = PROPERTIES.getJSONArray("function.equalsIgnoreCase");
-
-    public static final JSONArray FUNCTION_GREATER_THAN_OR_EQUALS = PROPERTIES.getJSONArray("function.greaterThanOrEquals");
-
-    public static final JSONArray FUNCTION_LESS_THAN_OR_EQUALS = PROPERTIES.getJSONArray("function.lessThanOrEquals");
-
-    public static final JSONArray FUNCTION_GREATER_THAN = PROPERTIES.getJSONArray("function.greaterThan");
-
-    public static final JSONArray FUNCTION_LESS_THAN = PROPERTIES.getJSONArray("function.lessThan");
-
-    public static final JSONArray FUNCTION_CONTAINS = PROPERTIES.getJSONArray("function.contains");
-
-    public static final JSONArray FUNCTION_NOT_CONTAINS = PROPERTIES.getJSONArray("function.doesNotContains");
-
-    public static final JSONArray FUNCTION_IS_EMPTY = PROPERTIES.getJSONArray("function.isEmpty");
-
-    public static final JSONArray FUNCTION_IS_NOT_EMPTY = PROPERTIES.getJSONArray("function.isNotEmpty");
-
-    public static final JSONArray FUNCTION_LIST = PROPERTIES.getJSONArray("function.list");
-
-    public static final JSONArray FUNCTION_REGEX = PROPERTIES.getJSONArray("function.regex");
-
     private static final JSONArray CHECK_JSON = PROPERTIES.getJSONArray("check.json");
 
     public static boolean isJson(String str) {

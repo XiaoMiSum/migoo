@@ -13,6 +13,9 @@ public class Hook2 extends AbstractFunction {
 
     @Override
     public Object execute(CompoundVariable parameters) throws ExtenderException {
+        if (parameters.size() > 2){
+            throw new ExtenderException("after exception");
+        }
         System.out.println(parameters.getAsString("A") + ": " + parameters.getAsString("B"));
         return null;
     }

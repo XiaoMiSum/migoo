@@ -6,6 +6,7 @@ import java.util.Map;
  * @author xiaomi
  * @date 2019-08-13 22:17
  */
+@Alias(aliasList = {"equalsIgnoreCase", "ignoreCase"})
 public class EqualsIgnoreCase extends AbstractAssertFunction {
 
     @Override

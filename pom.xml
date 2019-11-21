@@ -51,6 +51,7 @@
         <ant-zip.version>1.10.5</ant-zip.version>
         <fastjson.version>1.2.54</fastjson.version>
         <simplehttp.version>1.0.1</simplehttp.version>
+        <reflections.version>0.9.10</reflections.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <commons-codec.version>1.11</commons-codec.version>
         <thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
@@ -146,10 +147,17 @@
             <version>${mysql.version}</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.reflections/reflections -->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>${reflections.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>RELEASE</version>
+            <version>5.6.0-M1</version>
             <scope>test</scope>
         </dependency>
 

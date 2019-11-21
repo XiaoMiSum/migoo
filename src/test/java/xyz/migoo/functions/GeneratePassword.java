@@ -11,10 +11,6 @@ import xyz.migoo.framework.functions.CompoundVariable;
  */
 public class GeneratePassword extends AbstractFunction {
 
-    public static Object getPwd(Object param){
-        return param;
-    }
-
     @Override
     public Object execute(CompoundVariable parameters) throws ExtenderException {
         return parameters.getAsString("password");

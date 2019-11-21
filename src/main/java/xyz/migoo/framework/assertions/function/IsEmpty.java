@@ -10,6 +10,7 @@ import java.util.Map;
  * @author xiaomi
  * @date 2019-08-13 22:17
  */
+@Alias(aliasList = {"isEmpty", "isNull", "empty", "blank"})
 public class IsEmpty extends AbstractAssertFunction {
 
     @Override
