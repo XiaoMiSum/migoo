@@ -61,7 +61,7 @@ class Email {
             email.attach(path);
             email.send();
         } catch (EmailException e) {
-            e.printStackTrace();
+            MiGooLog.log("email send error.", e);
         }
     }
 }
