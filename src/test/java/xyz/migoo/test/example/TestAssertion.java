@@ -2,6 +2,7 @@ package xyz.migoo.test.example;
 
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.framework.assertions.AbstractAssertion;
+import xyz.migoo.simplehttp.Response;
 
 /**
  * @author xiaomi
@@ -11,11 +12,11 @@ public class TestAssertion extends AbstractAssertion {
     @Override
     public boolean assertThat(JSONObject data) {
         String s1 = String.valueOf(data.get("expect"));
-        return s1.equalsIgnoreCase("1");
+        return s1.equals(actual);
     }
 
     @Override
     public void setActual(Object actual) {
-        this.actual = actual;
+        this.actual = ((Response)actual).text();
     }
 }

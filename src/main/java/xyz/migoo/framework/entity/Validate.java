@@ -14,6 +14,8 @@ public class Validate {
 
     private String func;
 
+    private String result = "skipped";
+
     public String getCheck() {
         return check;
     }
@@ -46,6 +48,14 @@ public class Validate {
         this.func = func;
     }
 
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
     @Override
     public String toString() {
         return new StringBuilder("{")
@@ -57,8 +67,10 @@ public class Validate {
                 .append(",")
                 .append("\"func\": \"")
                 .append(func).append("\"")
+                .append(",")
+                .append("\"result\": \"")
+                .append(result).append("\"")
                 .append("}")
                 .toString();
     }
-
 }

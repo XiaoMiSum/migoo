@@ -57,7 +57,7 @@ public class TestCase extends AbstractTest {
             // bind variable to case (this.variables -> this.testCase.headers)
             this.buildRequest();
             this.execute();
-            this.assertThat(testCase, response);
+            this.assertThat(response);
             result.addSuccess(this);
             MiGooLog.log("test case success");
         } catch (SkippedRun e) {
@@ -72,6 +72,7 @@ public class TestCase extends AbstractTest {
             MiGooLog.log("case run error", e);
             result.addError(this, e);
         } finally {
+            this.validates(testCase.getValidates());
             super.teardown("case teardown");
             MiGooLog.log("test case end: {}", this.getName());
         }
@@ -126,8 +127,7 @@ public class TestCase extends AbstractTest {
         MiGooLog.log("response body: {}", response.text());
     }
 
-    private void assertThat(Cases jsonCase, Response response) throws AssertionFailure, ExecuteError {
-        this.validates(jsonCase.getValidates());
-        Validator.validation(response, jsonCase.getValidates(), jsonCase.getConfig().getVariables());
+    private void assertThat(Response response) throws AssertionFailure, ExecuteError {
+        Validator.validation(response, testCase.getValidates(), testCase.getConfig().getVariables());
     }
 }

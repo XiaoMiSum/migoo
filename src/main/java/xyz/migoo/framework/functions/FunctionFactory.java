@@ -20,12 +20,12 @@ public class FunctionFactory extends AbstractFunction{
 
     private AbstractFunction function;
 
-    private void getFunction(String name){
+    private void getFunction(String name) throws ExtenderException {
         try {
             function = (AbstractFunction) Class.forName("xyz.migoo.functions." + StringUtil.initialToUpperCase(name))
                     .newInstance();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new ExtenderException("get functions error. ", e);
         }
     }
 

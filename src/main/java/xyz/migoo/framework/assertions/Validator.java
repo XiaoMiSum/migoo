@@ -29,6 +29,7 @@ public class Validator {
             validate.setActual(assertion.getActual());
             MiGooLog.log(String.format("check result : %s", result));
             if (!result) {
+                validate.setResult("failure");
                 String check = validate.getCheck();
                 Object expected = validate.getExpect();
                 Object actual = validate.getActual();
@@ -38,6 +39,7 @@ public class Validator {
                         "Assertion class is '%s', assert func is '%s'";
                 throw new AssertionFailure(String.format(msg, check, expected, actual, clazz, func));
             }
+            validate.setResult("success");
         });
     }
 }

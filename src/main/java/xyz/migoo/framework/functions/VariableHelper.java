@@ -9,17 +9,13 @@ import xyz.migoo.report.MiGooLog;
 import xyz.migoo.utils.StringUtil;
 
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import static xyz.migoo.framework.functions.CompoundVariable.FUNC_PATTERN;
 
 /**
  * @author xiaomi
  */
 public class VariableHelper {
-
-
-    static final Pattern FUNC_PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
-
-    static final Pattern PARAM_PATTERN = Pattern.compile("(\\$\\{(\\w+)})+");
 
     private VariableHelper() {
     }

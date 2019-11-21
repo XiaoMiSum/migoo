@@ -102,9 +102,9 @@
         .popup {
             margin: 70px auto;
             padding: 20px;
+            max-width: 50%;
             background: #fff;
             border-radius: 10px;
-            width: 50%;
             position: relative;
             transition: all 3s ease-in-out;
         }
@@ -131,10 +131,26 @@
         }
 
         .popup .content {
-            max-height: 80%;
+            max-height: 500px;
             overflow: auto;
             text-align: left;
             font-size: 16px;
+        }
+        .popup .pre {
+            font-size: 13px;
+            line-height: 5px;
+        }
+
+        pre .success{
+            background-color: greenyellow;
+        }
+
+        pre .failure {
+            background-color: salmon;
+        }
+
+        pre .skipped {
+            background-color: gray;
         }
 
         @media screen and (max-width: 700px) {
@@ -152,8 +168,8 @@
 <body>
 <table>
     <tr>
-        <th><h1>Test Report：</h1></th>
-        <td th:text="${report}"></td>
+        <th><h2>TEST CASE：</h2></th>
+        <td><h3 th:text="${report}"></h3></td>
     </tr>
 </table>
 
@@ -199,17 +215,54 @@
         <td style="text-align:center;width:6em;" th:text="${record.time}"></td>
         <td class="detail">
 
-            <a class="button" th:href="${record.detail.validate_href}" th:if="${record.detail.validate}">validate</a>
+            <a class="button" th:href="${record.detail.validate_href}" th:if="${record.detail.validates}">validate</a>
             <div th:id="${record.detail.validate_id}" class="overlay">
                 <div class="popup">
-                    <h2>Validate Message</h2>
+                    <h2>VALIDATE DATA</h2>
                     <a class="close" th:href="${record.record_href}">&times;</a>
+                    <div class="content">
+                        <table>
+                            <tr>
+                                <th>
+                                    result
+                                </th>
+                                <th>
+                                    check
+                                </th>
+                                <th>
+                                    func
+                                </th>
+                                <th>
+                                    expect
+                                </th>
+                                <th>
+                                    actual
+                                </th>
+                            </tr>
+                            <tr th:each="validates: ${record.detail.validates}">
+                                <span th:each="validate : ${validates}">
+                                    <td>
+                                        <pre th:class="'pre ' + ${validate.getResult()}" th:text="${validate.getResult()}"></pre>
+                                    </td>
+                                    <td>
+                                        <pre class="pre" th:text="${validate.getCheck()}"></pre>
+                                    </td>
+                                    <td>
+                                        <pre class="pre" th:text="${validate.getFunc()}"></pre>
+                                    </td>
+                                    <td>
+                                        <pre class="pre" th:text="${validate.getExpect()}"></pre>
+                                    </td>
+                                    <td>
+                                        <pre class="pre" th:text="${validate.getActual()}"></pre>
+                                    </td>
+                                </span>
+                            </tr>
 
-                    <div class="content" th:each="validates: ${record.detail.validate}">
-                        <span th:each="validate : ${validates}">
-                            <per th:text="${validate}"></per>
-                        </span>
+                        </table>
+
                     </div>
+
                 </div>
 
             </div>
@@ -217,29 +270,31 @@
             <a class="button" th:href="${record.detail.log_href}">log</a>
             <div th:id="${record.detail.log_id}" class="overlay">
                 <div class="popup">
-                    <h2>Request and Response data</h2>
+                    <h2>REQUEST AND RESPONSE DATA</h2>
                     <a class="close" th:href="${record.record_href}">&times;</a>
 
                     <div class="content">
-                        <h3>Request:</h3>
+                        <h3>REQUEST:</h3>
                         <div style="overflow: auto">
                             <table>
                                 <tr>
                                     <th>url</th>
-                                    <td th:text="${record.detail.log.request.url}"></td>
+                                    <td>
+                                        <pre class="pre" th:text="${record.detail.log.request.url}"></pre>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>method</th>
-                                    <td th:text="${record.detail.log.request.method}"></td>
+                                    <td>
+                                        <pre class="pre" th:text="${record.detail.log.request.method}"></pre>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>headers</th>
                                     <td>
                                         <div th:each="headers: ${record.detail.log.request.headers}">
                                             <span th:each="header: ${headers}">
-                                                <per th:text="${header.getName()}"></per>
-                                                <per>:  </per>
-                                                <per th:text="${header.getValue()}"></per>
+                                                <pre class="pre" th:text="${header.getName()} + ': ' + ${header.getValue()} "></pre>
                                             </span>
                                         </div>
                                     </td>
@@ -248,24 +303,26 @@
                                     <tr>
                                         <th>params</th>
                                         <td>
-                                            <pre th:text="${record.detail.log.request.params}"></pre>
+                                            <pre class="pre" th:text="${record.detail.log.request.params}"></pre>
                                         </td>
                                     </tr>
                                 </div>
                             </table>
                         </div>
 
-                        <h3>Response:</h3>
+                        <h3>RESPONSE:</h3>
                         <div style="overflow: auto">
                             <table>
                                 <tr>
                                     <th>code</th>
-                                    <td th:text="${record.detail.log.response.statusCode}"></td>
+                                    <td>
+                                        <pre class="pre" th:text="${record.detail.log.response.statusCode}"></pre>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>body</th>
                                     <td>
-                                        <pre th:text="${record.detail.log.response.body}"></pre>
+                                        <pre class="pre" th:text="${record.detail.log.response.body}"></pre>
                                     </td>
                                 </tr>
                             </table>
@@ -276,20 +333,22 @@
             <a class="button" th:href="${record.detail.track_href}" th:if="${record.detail.track}">track</a>
             <div th:id="${record.detail.track_id}" class="overlay">
                 <div class="popup">
-                    <h2>Trace Back Message</h2>
+                    <h2>TRACK BACK MESSAGE</h2>
                     <a class="close" th:href="${record.record_href}">&times;</a>
-                    <div class="content"><pre th:utext="${record.detail.track}"></pre></div>
+                    <div class="content">
+                        <pre th:text="${record.detail.track}" ></pre>
+                    </div>
                 </div>
             </div>
         </td>
     </tr>
 </table>
 <div>
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
 </div>
 </body>
 </html>
