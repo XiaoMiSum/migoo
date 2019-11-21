@@ -26,12 +26,12 @@ class Email {
         email.setCharset("UTF-8");
     }
 
-    static void sendEmail(String message){
+    static void sendEmail(String project, String message){
         if (!Platform.MAIL_SEND){
             return;
         }
         String path = String.format("%s/reports/%s/", System.getProperty("user.dir"), DateUtil.TODAY_DATE);
-        String subject = "api test reports " + DateUtil.format(DateUtil.YYYY_MM_DD_HH_MM_SS);
+        String subject = project + " api test reports " + DateUtil.format(DateUtil.YYYY_MM_DD_HH_MM_SS);
         File zip = zipFile(path, "reports-" + DateUtil.TODAY_DATE);
         send(zip, subject, message);
         zip.delete();

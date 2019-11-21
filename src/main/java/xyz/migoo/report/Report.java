@@ -27,6 +27,7 @@ public class Report {
 
     private List<TestResult> testResults = new ArrayList<>();
     private Map<String, Object> report = new HashMap<>(3);
+    private String projectName;
 
     private int total = 0, success = 0, failed = 0, error = 0, skipped = 0;
 
@@ -45,6 +46,7 @@ public class Report {
 
     public void setProjectName(String projectName){
         report.put("projectName", projectName);
+        this.projectName = projectName;
     }
 
     public void generateIndex() {
@@ -54,7 +56,7 @@ public class Report {
         String content = render(template, report);
         report("index", content, true);
         if (Platform.MAIL_SEND) {
-            Email.sendEmail(content);
+            Email.sendEmail(projectName, content);
         }
     }
 

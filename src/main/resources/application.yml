@@ -46,7 +46,3 @@ ignore.directory:
   - vars.yml
   - vars.yaml
   - vars.properties
-
-# 自定义方法变量 扩展类列表
-extends.class:
-  - xyz.migoo.extender.func.Func
