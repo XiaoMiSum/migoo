@@ -7,7 +7,7 @@ mail.send: false
 mail.imap.host: imap.exmail.qq.com
 
 # 发件人邮箱地址
-mail.send.from: yacheng.xiao@nascent.cn
+mail.send.from: your@qq.com
 
 # 发件人邮箱密码
 mail.send.password: password

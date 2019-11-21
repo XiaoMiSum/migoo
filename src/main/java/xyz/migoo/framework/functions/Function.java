@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ExtenderException;
 
 /**
- * @author yacheng.xiao
+ * @author xiaomi
  * @date 2019/11/18 15:36
  */
 public interface Function {

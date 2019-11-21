@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 /**
- * @author yacheng.xiao
+ * @author xiaomi
  * @date 2019/11/19 15:37
  */
 public class Config {

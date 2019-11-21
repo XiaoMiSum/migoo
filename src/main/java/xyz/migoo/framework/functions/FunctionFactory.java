@@ -5,7 +5,7 @@ import xyz.migoo.exception.ExtenderException;
 import xyz.migoo.utils.StringUtil;
 
 /**
- * @author yacheng.xiao
+ * @author xiaomi
  * @date 2019/11/18 17:10
  */
 public class FunctionFactory extends AbstractFunction{

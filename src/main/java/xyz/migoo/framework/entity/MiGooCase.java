@@ -3,7 +3,7 @@ package xyz.migoo.framework.entity;
 import java.util.List;
 
 /**
- * @author yacheng.xiao
+ * @author xiaomi
  * @date 2019/11/19 15:33
  */
 public class MiGooCase {

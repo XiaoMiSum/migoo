@@ -5,7 +5,7 @@ import xyz.migoo.framework.functions.CompoundVariable;
 import xyz.migoo.utils.digest.GoogleAuthenticator;
 
 /**
- * @author yacheng.xiao
+ * @author xiaomi
  * @date 2019/11/18 17:22
  */
 public class GoogleAuthCode extends AbstractFunction {

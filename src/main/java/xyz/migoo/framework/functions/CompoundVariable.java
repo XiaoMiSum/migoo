@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 
 /**
- * @author yacheng.xiao
+ * @author xiaomi
  * @date 2019/11/18 15:47
  */
 public class CompoundVariable extends HashMap<String, Object> {

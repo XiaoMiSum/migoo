@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ExtenderException;
 
 /**
- * @author yacheng.xiao
+ * @author xiaomi
  * @date 2019/11/18 16:54
  */
 public abstract class AbstractFunction implements Function{

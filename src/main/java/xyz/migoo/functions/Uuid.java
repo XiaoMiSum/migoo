@@ -6,7 +6,7 @@ import xyz.migoo.framework.functions.CompoundVariable;
 import java.util.UUID;
 
 /**
- * @author yacheng.xiao
+ * @author xiaomi
  * @date 2019/11/18 17:22
  */
 public class Uuid extends AbstractFunction {

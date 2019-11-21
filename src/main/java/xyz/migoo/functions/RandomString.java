@@ -6,7 +6,7 @@ import xyz.migoo.framework.functions.AbstractFunction;
 import xyz.migoo.framework.functions.CompoundVariable;
 
 /**
- * @author yacheng.xiao
+ * @author xiaomi
  * @date 2019/11/18 17:22
  */
 public class RandomString extends AbstractFunction {
