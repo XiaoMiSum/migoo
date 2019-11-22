@@ -114,3 +114,18 @@ cases:
       sign: __Digest(algorithm=md5,string=${user}${pwd})
     validates:
       - {check: xyz.migoo.test.example.TestAssertion, expect: 1}
+  - title: 在自定义函数中使用 case 中定义的 变量
+    config:
+      variables:
+        pwd1: __generatePassword(password=${pwd})
+        pwd2: __generatePassword(password=${pwd1})
+      before:
+        - __hook1(A=before)
+      after:
+        - __hook2(A=after,B=before)
+    body:
+      userName: ${user}
+      password: ${pwd2}
+      sign: __Digest(algorithm=md5,string=${user}${pwd})
+    validates:
+      - {check: xyz.migoo.test.example.TestAssertion, expect: '__TestUseVars(title=${title})'}

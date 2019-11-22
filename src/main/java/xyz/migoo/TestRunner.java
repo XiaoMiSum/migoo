@@ -32,10 +32,10 @@ public class TestRunner {
     }
 
     /**
-     * 如果传入的是目录，每个测试用例文件生成一个对应的测试报告，最后压缩成 zip 文件
+     * run test and generate report
      *
-     * @param path 测试用例文件\目录
-     * @param vars       全局变量
+     * @param path test case file or dir
+     * @param vars test env file
      */
     public void run(String path, String vars) {
         try {

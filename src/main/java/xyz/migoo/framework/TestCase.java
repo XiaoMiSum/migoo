@@ -1,12 +1,9 @@
 package xyz.migoo.framework;
 
 import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.exception.*;
 import xyz.migoo.framework.assertions.Validator;
 import xyz.migoo.framework.config.CaseKeys;
-import xyz.migoo.exception.AssertionFailure;
-import xyz.migoo.exception.ExecuteError;
-import xyz.migoo.exception.ExtenderException;
-import xyz.migoo.exception.SkippedRun;
 import xyz.migoo.framework.entity.Cases;
 import xyz.migoo.http.MiGooRequest;
 import xyz.migoo.simplehttp.HttpException;
@@ -33,9 +30,9 @@ public class TestCase extends AbstractTest {
 
     private void initCase(Cases testCase){
         this.testCase = testCase;
+        super.variables.put("title", testCase.getTitle());
         super.addSetUp(testCase.getConfig().getBefore());
         super.addTeardown(testCase.getConfig().getAfter());
-        super.addVariables(testCase.getConfig().getVariables());
     }
 
     @Override
@@ -51,8 +48,7 @@ public class TestCase extends AbstractTest {
             if (TypeUtil.booleanOf(testCase.getConfig().getIgnore())) {
                 throw new SkippedRun(this.getName());
             }
-            // bind variable to variables (testSuite.variables -> this.variables)
-            VariableHelper.bindAndEval(super.variables, super.variables);
+            this.processVariable();
             super.setup("case setup");
             // bind variable to case (this.variables -> this.testCase.headers)
             this.buildRequest();
@@ -60,13 +56,8 @@ public class TestCase extends AbstractTest {
             this.assertThat(response);
             result.addSuccess(this);
             MiGooLog.log("test case success");
-        } catch (SkippedRun e) {
-            this.request = null;
-            MiGooLog.log("case run skipped");
-            result.addSkip(this, e);
-        } catch (AssertionFailure e) {
-            MiGooLog.log("case assert failure");
-            result.addFailure(this, e);
+        } catch (MiGooException e) {
+            this.processException(e, result);
         } catch (Exception e) {
             this.request = null;
             MiGooLog.log("case run error", e);
@@ -75,6 +66,26 @@ public class TestCase extends AbstractTest {
             this.validates(testCase.getValidates());
             super.teardown("case teardown");
             MiGooLog.log("test case end: {}", this.getName());
+        }
+    }
+
+    private void processVariable() throws ExtenderException {
+        super.addVariables(testCase.getConfig().getVariables());
+        // add variables to VARS, key = case title
+        Vars.add(this.getName(), variables);
+        // bind variable to variables (testSuite.variables -> this.variables)
+        VariableHelper.bindAndEval(super.variables, super.variables);
+    }
+
+    private void processException(MiGooException ex, TestResult result){
+        if (ex instanceof SkippedRun){
+            this.request = null;
+            MiGooLog.log("case run skipped");
+            result.addSkip(this, (SkippedRun) ex);
+        }
+        if (ex instanceof AssertionFailure){
+            MiGooLog.log("case assert failure");
+            result.addFailure(this, (AssertionFailure) ex);
         }
     }
 

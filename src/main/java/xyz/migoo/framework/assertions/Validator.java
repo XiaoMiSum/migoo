@@ -22,7 +22,8 @@ public class Validator {
     public synchronized static void validation(Response response, List<Validate> validates, JSONObject variables) throws AssertionFailure, ExecuteError {
         validates.forEach(validate -> {
             VariableHelper.evalValidate(validate, variables);
-            MiGooLog.log(String.format("check point  : %s", validate.toString()));
+            MiGooLog.log(String.format("check point  : %s, func: %s, expect: %s", validate.getCheck(),
+                    validate.getFunc(), validate.getExpect()));
             AbstractAssertion assertion = AssertionFactory.getAssertion(validate.getCheck());
             assertion.setActual(response);
             boolean result = assertion.assertThat(JSONObject.parseObject(validate.toString()));

@@ -1,8 +1,10 @@
 package xyz.migoo.functions;
 
 import org.apache.commons.codec.binary.Hex;
+import xyz.migoo.exception.ExtenderException;
 import xyz.migoo.framework.functions.AbstractFunction;
 import xyz.migoo.framework.functions.CompoundVariable;
+import xyz.migoo.utils.StringUtil;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -15,11 +17,13 @@ import java.security.NoSuchAlgorithmException;
 public class Digest extends AbstractFunction {
 
     @Override
-    public Object execute(CompoundVariable parameters) {
+    public Object execute(CompoundVariable parameters) throws ExtenderException {
         String algorithm = parameters.getAsString("algorithm").trim().isEmpty() ? "md5"
                 : parameters.getAsString("algorithm").trim();
         String stringToEncode = parameters.getAsString("string");
-        String encodedString = "";
+        if (StringUtil.isEmpty(stringToEncode)) {
+            throw new ExtenderException("string is null or empty");
+        }
         try {
             MessageDigest md = MessageDigest.getInstance(algorithm);
             md.update(stringToEncode.getBytes(StandardCharsets.UTF_8));
@@ -28,11 +32,10 @@ public class Digest extends AbstractFunction {
                 md.update(salt.getBytes(StandardCharsets.UTF_8));
             }
             byte[] bytes = md.digest();
-            encodedString = uppercase(new String(Hex.encodeHex(bytes)), parameters.getAsString("upper"));
+            return uppercase(new String(Hex.encodeHex(bytes)), parameters.getAsString("upper"));
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            throw new ExtenderException(e.getMessage(), e);
         }
-        return encodedString;
     }
 
     private String uppercase(String encodedString, String shouldUpperCase) {
