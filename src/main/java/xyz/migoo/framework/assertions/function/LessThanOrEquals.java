@@ -7,7 +7,8 @@ import java.util.Map;
  * @author xiaomi
  * @date 2019-08-13 22:17
  */
-public class LessThanOrEquals extends AbstractFunction {
+@Alias(aliasList = {"<="})
+public class LessThanOrEquals extends AbstractAssertFunction {
 
     @Override
     public boolean assertTrue(Map<String, Object> data) {

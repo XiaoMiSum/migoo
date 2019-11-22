@@ -1,17 +1,14 @@
 package xyz.migoo.framework;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.exception.*;
 import xyz.migoo.framework.assertions.Validator;
 import xyz.migoo.framework.config.CaseKeys;
-import xyz.migoo.exception.AssertionFailure;
-import xyz.migoo.exception.ExecuteError;
-import xyz.migoo.exception.ExtenderException;
-import xyz.migoo.exception.SkippedRun;
+import xyz.migoo.framework.entity.Cases;
 import xyz.migoo.http.MiGooRequest;
 import xyz.migoo.simplehttp.HttpException;
 import xyz.migoo.simplehttp.Response;
-import xyz.migoo.extender.ExtenderHelper;
+import xyz.migoo.framework.functions.VariableHelper;
 import xyz.migoo.report.MiGooLog;
 import xyz.migoo.utils.StringUtil;
 import xyz.migoo.utils.TypeUtil;
@@ -22,29 +19,20 @@ import xyz.migoo.utils.TypeUtil;
  */
 public class TestCase extends AbstractTest {
 
-    private JSONObject testCase;
+    private Cases testCase;
+    private JSONObject requestConfig;
 
-    TestCase(JSONObject testCase) {
-        super(testCase.getString(CaseKeys.CASE_TITLE));
+    TestCase(JSONObject request, Cases testCase) {
+        super(testCase.getTitle());
         this.initCase(testCase);
+        this.requestConfig = request;
     }
 
-    private void initCase(JSONObject testCase){
+    private void initCase(Cases testCase){
         this.testCase = testCase;
-        super.addSetUp(testCase.getJSONArray(CaseKeys.CASE_BEFORE));
-        super.addTeardown(testCase.getJSONArray(CaseKeys.CASE_AFTER));
-        super.addVariables(testCase.getJSONObject(CaseKeys.CASE_VARIABLES));
-    }
-
-    public void initRequest(){
-        String url = testCase.getJSONObject(CaseKeys.CONFIG_REQUEST).getString(CaseKeys.CONFIG_REQUEST_URL);
-        if (!StringUtil.isEmpty(testCase.getString(CaseKeys.CASE_API))){
-            url = url + testCase.getString(CaseKeys.CASE_API);
-        }
-        testCase.getJSONObject(CaseKeys.CONFIG_REQUEST).put(CaseKeys.CASE_API, url);
-        request = MiGooRequest.method(testCase.getJSONObject(CaseKeys.CONFIG_REQUEST)
-                    .getString(CaseKeys.CONFIG_REQUEST_METHOD));
-
+        super.variables.put("title", testCase.getTitle());
+        super.addSetUp(testCase.getConfig().getBefore());
+        super.addTeardown(testCase.getConfig().getAfter());
     }
 
     @Override
@@ -57,51 +45,91 @@ public class TestCase extends AbstractTest {
         try {
             MiGooLog.log("--------------------------------------------------------------------");
             MiGooLog.log("test case begin: {}", this.getName());
-            if (TypeUtil.booleanOf(testCase.get(CaseKeys.CASE_IGNORE))){
+            if (TypeUtil.booleanOf(testCase.getConfig().getIgnore())) {
                 throw new SkippedRun(this.getName());
             }
-            // bind variable to variables (testSuite.variables -> this.variables)
-            ExtenderHelper.bindAndEval(super.variables, super.variables);
+            this.processVariable();
             super.setup("case setup");
             // bind variable to case (this.variables -> this.testCase.headers)
-            this.evalRequest();
-            this.executeRequest();
-            this.assertThat(testCase, response);
+            this.buildRequest();
+            this.execute();
+            this.assertThat(response);
             result.addSuccess(this);
             MiGooLog.log("test case success");
-        } catch (SkippedRun e) {
-            this.request = null;
-            MiGooLog.log("case run skipped");
-            result.addSkip(this, e);
-        } catch (AssertionFailure e) {
-            MiGooLog.log("case assert failure");
-            result.addFailure(this, e);
+        } catch (MiGooException e) {
+            this.processException(e, result);
         } catch (Exception e) {
             this.request = null;
             MiGooLog.log("case run error", e);
             result.addError(this, e);
         } finally {
+            this.validates(testCase.getValidates());
             super.teardown("case teardown");
             MiGooLog.log("test case end: {}", this.getName());
         }
     }
 
-    private void evalRequest() throws ExtenderException {
-        this.initRequest();
-        ExtenderHelper.bind(this.testCase.getJSONObject(CaseKeys.CASE_HEADERS), super.variables);
-        ExtenderHelper.bind(this.testCase.getJSONObject(CaseKeys.CONFIG_REQUEST), super.variables);
-        ExtenderHelper.bindAndEval(this.testCase.getJSONObject(CaseKeys.CASE_BODY), super.variables);
-        ExtenderHelper.bindAndEval(this.testCase.getJSONObject(CaseKeys.CASE_DATA), super.variables);
-        ExtenderHelper.bindAndEval(this.testCase.getJSONObject(CaseKeys.CASE_QUERY), super.variables);
-        request.uri(this.testCase.getJSONObject(CaseKeys.CONFIG_REQUEST).getString(CaseKeys.CASE_API))
-                .headers(testCase.getJSONObject(CaseKeys.CONFIG_REQUEST).getJSONObject(CaseKeys.CONFIG_REQUEST_HEADERS))
-                .headers(this.testCase.getJSONObject(CaseKeys.CASE_HEADERS))
-                .query(this.testCase.getJSONObject(CaseKeys.CASE_QUERY))
-                .data(this.testCase.getJSONObject(CaseKeys.CASE_DATA))
-                .body(this.testCase.getJSONObject(CaseKeys.CASE_BODY));
+    private void processVariable() throws ExtenderException {
+        super.addVariables(testCase.getConfig().getVariables());
+        // add variables to VARS, key = case title
+        Vars.add(this.getName(), variables);
+        // bind variable to variables (testSuite.variables -> this.variables)
+        VariableHelper.bindAndEval(super.variables, super.variables);
     }
 
-    private void executeRequest() throws HttpException {
+    private void processException(MiGooException ex, TestResult result){
+        if (ex instanceof SkippedRun){
+            this.request = null;
+            MiGooLog.log("case run skipped");
+            result.addSkip(this, (SkippedRun) ex);
+        }
+        if (ex instanceof AssertionFailure){
+            MiGooLog.log("case assert failure");
+            result.addFailure(this, (AssertionFailure) ex);
+        }
+    }
+
+    private void buildRequest() throws ExtenderException {
+        this.bindRequestVariable();
+        this.reorganizeRequest();
+        request.uri(testCase.getRequest().getString(CaseKeys.API))
+                .headers(testCase.getRequest().getJSONObject(CaseKeys.HEADER))
+                .query(testCase.getQuery())
+                .data(testCase.getData())
+                .body(testCase.getBody());
+    }
+
+    private void reorganizeRequest(){
+        String url = requestConfig.getString(CaseKeys.URL);
+        JSONObject caseRequest = testCase.getRequest();
+        JSONObject headers = new JSONObject(10);
+        if ( caseRequest != null){
+            url = url + StringUtil.toEmpty(testCase.getRequest().getString(CaseKeys.API));
+            caseRequest.put(CaseKeys.API, url);
+        } else {
+            caseRequest = new JSONObject(2);
+        }
+        if (requestConfig.getJSONObject(CaseKeys.HEADER) != null){
+            headers.putAll(requestConfig.getJSONObject(CaseKeys.HEADER));
+        }
+        if (caseRequest.getJSONObject(CaseKeys.HEADER) != null){
+            headers.putAll(caseRequest.getJSONObject(CaseKeys.HEADER));
+        }
+        caseRequest.put(CaseKeys.API, url);
+        caseRequest.put(CaseKeys.HEADER, headers);
+        testCase.setRequest(caseRequest);
+        request = MiGooRequest.method(requestConfig.getString(CaseKeys.METHOD));
+    }
+
+    private void bindRequestVariable() throws ExtenderException {
+        VariableHelper.bind(requestConfig,  super.variables);
+        VariableHelper.bind(testCase.getRequest(), super.variables);
+        VariableHelper.bindAndEval(testCase.getBody(), super.variables);
+        VariableHelper.bindAndEval(testCase.getData(), super.variables);
+        VariableHelper.bindAndEval(testCase.getQuery(), super.variables);
+    }
+
+    private void execute() throws HttpException {
         MiGooLog.log("request api: {}", request.uri());
         MiGooLog.log("request header: {}", request.jsonHeaders());
         MiGooLog.log("request cookies: {}", request.cookies());
@@ -110,12 +138,7 @@ public class TestCase extends AbstractTest {
         MiGooLog.log("response body: {}", response.text());
     }
 
-    private void assertThat(JSONObject jsonCase, Response response) throws AssertionFailure, ExecuteError {
-        Object validate = jsonCase.get(CaseKeys.VALIDATE);
-        if (!(validate instanceof JSONArray)){
-            validate = JSONArray.parseArray(validate.toString());
-        }
-        this.validate(validate);
-        Validator.validation(response, (JSONArray) validate, jsonCase.getJSONObject(CaseKeys.CASE_VARIABLES));
+    private void assertThat(Response response) throws AssertionFailure, ExecuteError {
+        Validator.validation(response, testCase.getValidates(), testCase.getConfig().getVariables());
     }
 }

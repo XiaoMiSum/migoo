@@ -2,4 +2,4 @@ vars:
   user: test
   pwd: 123456
 hook:
-  - __hook1(vars.hook)
+  - __hook1(A=vars.hook)

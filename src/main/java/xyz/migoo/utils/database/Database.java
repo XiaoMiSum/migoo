@@ -35,7 +35,7 @@ public class Database {
         return new Database(conn);
     }
 
-    public static Database create(String user, String password, String url){
+    public static Database mysql(String user, String password, String url){
         return create("com.mysql.cj.jdbc.Driver", user, password, url);
     }
 

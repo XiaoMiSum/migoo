@@ -7,7 +7,8 @@ import java.util.Map;
  * @author xiaomi
  * @date 2019-08-13 22:17
  */
-public class Equals extends AbstractFunction {
+@Alias(aliasList = {"==", "===", "eq", "equal", "equals", "is"})
+public class Equals extends AbstractAssertFunction {
 
     @Override
     public boolean assertTrue(Map<String, Object> data) {

@@ -24,7 +24,6 @@ public class JSONAssertion extends AbstractAssertion {
     @Override
     public void setActual(Object actual) {
         Response response = (Response) actual;
-        System.out.println(response.text());
         this.actual = JSONPath.read(response.text(), jsonPath);
     }
 }

@@ -35,7 +35,6 @@ public class MiGooRequest extends Request {
         super(request);
     }
 
-
     public MiGooRequest uri(String uri){
         switch (method){
             case HttpPost.METHOD_NAME:
@@ -65,13 +64,9 @@ public class MiGooRequest extends Request {
     public MiGooRequest data(JSONObject data) {
         if (data != null && !data.isEmpty()){
             Form form = Form.form();
-            data.forEach((k, v) -> {
-                if (v == null){
-                    form.add(k, null);
-                }else {
-                    form.add(k, String.valueOf(v));
-                }
-            });
+            data.forEach((k, v) ->
+                form.add(k, v == null ? null : String.valueOf(v))
+            );
             data(form);
         }
         return this;
@@ -80,13 +75,9 @@ public class MiGooRequest extends Request {
     public MiGooRequest query(JSONObject query) {
         if (query != null && !query.isEmpty()){
             Form form = Form.form();
-            query.forEach((k, v) -> {
-                if (v == null){
-                    form.add(k, null);
-                }else {
-                    form.add(k, String.valueOf(v));
-                }
-            });
+            query.forEach((k, v) ->
+                form.add(k, v == null ? null : String.valueOf(v))
+            );
             query(form);
         }
         return this;

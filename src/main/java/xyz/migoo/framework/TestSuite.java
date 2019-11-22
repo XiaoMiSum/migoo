@@ -1,12 +1,14 @@
 package xyz.migoo.framework;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.framework.config.CaseKeys;
 import xyz.migoo.exception.ExtenderException;
-import xyz.migoo.extender.ExtenderHelper;
+import xyz.migoo.framework.entity.Cases;
+import xyz.migoo.framework.entity.Config;
+import xyz.migoo.framework.entity.MiGooCase;
+import xyz.migoo.framework.functions.VariableHelper;
 import xyz.migoo.report.MiGooLog;
 
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -18,26 +20,22 @@ public class TestSuite extends AbstractTest {
     private Vector<AbstractTest> fTests= new Vector<>(10);
     private JSONObject request;
 
-    public TestSuite(JSONObject testSuite){
-        super(testSuite.getString(CaseKeys.NAME));
-        JSONObject config = testSuite.getJSONObject(CaseKeys.CONFIG);
+    public TestSuite(MiGooCase testSuite){
+        super(testSuite.getName());
+        Config config = testSuite.getConfig();
         this.initSuite(config);
-        request = config.getJSONObject(CaseKeys.CONFIG_REQUEST);
-        JSONArray testCases = testSuite.getJSONArray(CaseKeys.CASE);
-        for (int i = 0; i < testCases.size(); i++) {
-            JSONObject testCase = testCases.getJSONObject(i);
-            testCase.put(CaseKeys.CONFIG_REQUEST, request);
-            this.addTest(new TestCase(testCase));
-        }
+        request = config.getRequest();
+        List<Cases> testCases = testSuite.getCases();
+        testCases.forEach(testCase -> this.addTest(new TestCase(request, testCase)));
     }
 
-    private void initSuite(JSONObject config){
+    private void initSuite(Config config){
         // 1. add config.variables to variables;
-        super.addVariables(config.getJSONObject(CaseKeys.CONFIG_VARIABLES));
+        super.addVariables(config.getVariables());
         // 2. add config.beforeClass to setUp
-        super.addSetUp(config.getJSONArray(CaseKeys.CONFIG_BEFORE_CLASS));
+        super.addSetUp(config.getBeforeClass());
         // 3. add config.beforeClass to teardown
-        super.addTeardown(config.getJSONArray(CaseKeys.CONFIG_AFTER_CLASS));
+        super.addTeardown(config.getAfterClass());
 
     }
 
@@ -56,8 +54,8 @@ public class TestSuite extends AbstractTest {
             MiGooLog.log("===================================================================");
             MiGooLog.log("test suite begin: {}", this.getName());
             // bind variable to variables (globals -> variables)
-            ExtenderHelper.bindAndEval(super.variables, super.variables);
-            ExtenderHelper.bind(request, super.variables);
+            VariableHelper.bindAndEval(super.variables, super.variables);
+            VariableHelper.bind(request, super.variables);
             super.setup("suite setup");
             this.fTests.forEach(test -> {
                 test.addVariables(variables);

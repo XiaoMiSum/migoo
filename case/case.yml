@@ -1,106 +1,131 @@
-name: the-test-suite-name
+name: 测试用例样本
 config:
   variables:
     user2: test
   beforeClass:
-    - __hook1(beforeClass)
+    - __hook1(A=beforeClass)
   afterClass:
-    - __hook1(afterClass)
+    - __hook1(A=afterClass)
   request:
     url: http://migoo.xyz/api/login
     method: post
-case:
-  - title: 执行成功
-    variables:
-      pwd1: __getPwd(${pwd})
-      pwd2: __getPwd(${pwd1})
-    before:
-      - __hook1(before)
-    after:
-      - __hook2(after,before)
+    headers:
+      x-host: http://127.0.0.1/
+cases:
+  - title: 验证成功
+    request:
+      headers:
+        token: abc1234567890
+    config:
+      variables:
+        pwd1: __generatePassword(password=${pwd})
+        pwd2: __generatePassword(password=${pwd1})
+      before:
+        - __hook1(A=before)
+      after:
+        - __hook2(A=after,B=before)
     body:
       userName: ${user}
       password: ${pwd2}
-      sign: __md5Digest(${user}${pwd})
-    validate:
-      - {check: status, expect: 200, types: ==}
-      - {check: $.status, expect: 200, types: eq}
-      - {check: body.data, expect: null, types: isNotEmpty}
+      sign: __Digest(string=${user}${pwd})
+    validates:
+      - {check: status, expect: 200, func: ==}
+      - {check: $.status, expect: 200, func: eq}
+      - {check: body.data, expect: null, func: isNotEmpty}
   - title: 忽略执行
-    ignore: true
-    variables:
-      pwd: __getPwd($user)
-    before:
-      - __hook1(before)
-    after:
-      - __hook2(after,before)
+    config:
+      ignore: true
+      variables:
+        pwd: __generatePassword($user)
+      before:
+        - __hook1(A=before)
+      after:
+        - __hook2(A=after,B=before)
     body:
       userName: ${user2}
       password: 12345
-    validate:
-      - {check: status, expect: 200, types: ==}
-      - {check: $.status, expect: 411, types: eq}
-      - {check: body.data, expect: null, types: isEmpty}
-  - title: 密码错误
-    variables:
-      pwd1: __getPwd(${user})
-    before:
-      - __hook1(before)
-    after:
-      - __hook2(after,before)
-    body:
-      userName: ${user}
-      password: ${pwd1}
-      sign: __md5Digest(${user}${pwd1})
-    validate:
-      - {check: status, expect: 200, types: ==}
-      - {check: $.status, expect: 411, types: eq}
-      - {check: body.data, expect: username or password error, types: ==}
+    validates:
+      - {check: status, expect: 200, func: ==}
+      - {check: $.status, expect: 411, func: eq}
+      - {check: body.data, expect: null, func: isEmpty}
   - title: 验证失败
-    variables:
-      pwd1: __getPwd(${pwd})
-      pwd2: __getPwd(${pwd1})
-    before:
-      - __hook1(before)
-    after:
-      - __hook2(after,before)
+    config:
+      variables:
+        pwd1: __generatePassword(password=${pwd})
+        pwd2: __generatePassword(password=${pwd1})
+      before:
+        - __hook1(A=before)
+      after:
+        - __hook2(A=after,B=before)
     body:
       userName: ${user}
       password: 12345
-      sign: __md5Digest(${user})
-    validate:
-      - {check: status, expect: 200, types: ==}
-      - {check: $.status, expect: 411, types: eq}
-      - {check: body.data, expect: null, types: isEmpty}
-  - title: case中的after执行失败不影响用例结果
-    variables:
-      pwd1: __getPwd(${pwd})
-      pwd2: __getPwd(${pwd1})
-    before:
-      - __hook1(before)
-    after:
-      - __hook2(after,before)
+      sign: __Digest(string=${user})
+    validates:
+      - {check: status, expect: 200, func: ==}
+      - {check: $.status, expect: 41, func: eq}
+      - {check: body.data, expect: null, func: isEmpty}
+  - title: case中的after执行exception，用例正常执行
+    config:
+      variables:
+        pwd1: __generatePassword(password=${pwd})
+        pwd2: __generatePassword(password=${pwd1})
+      before:
+        - __hook1(A=before)
+      after:
+        - __hook2(A=after,B=before)
     body:
       userName: ${user}
       password: ${pwd2}
-      sign: __md5Digest(${user}${pwd})
-    validate:
-      - {check: status, expect: 200, types: ==}
-      - {check: $.status, expect: 200, types: eq}
-      - {check: body.data, expect: null, types: isNotEmpty}
-  - title: case中的before执行失败影响用例结果
-    variables:
-      pwd1: __getPwd(${pwd})
-      pwd2: __getPwd(${pwd1})
-    before:
-      - __hook1(before,hshs)
-    after:
-      - __hook2(after,before)
+      sign: __Digest(algorithm=md5,string=${user}${pwd})
+    validates:
+      - {check: status, expect: 200, func: ==}
+      - {check: $.status, expect: 200, func: eq}
+      - {check: body.data, expect: null, func: isNotEmpty}
+  - title: case中的before执行exception，用例error
+    config:
+      variables:
+        pwd1: __generatePassword(password=${pwd})
+        pwd2: __generatePassword(password=${pwd1})
+      before:
+        - __hook1(A=before,B=hshs)
+      after:
+        - __hook2(A=after,B=before)
     body:
       userName: ${user}
       password: ${pwd2}
-      sign: __md5Digest(${user}${pwd})
-    validate:
-      - {check: status, expect: 200, types: ==}
-      - {check: $.status, expect: 200, types: eq}
-      - {check: body.data, expect: null, types: isNotEmpty}
+      sign: __Digest(string=${user}${pwd})
+    validates:
+      - {check: status, expect: 200, func: ==}
+      - {check: $.status, expect: 200, func: eq}
+      - {check: body.data, expect: null, func: isNotEmpty}
+  - title: 自定义断言
+    config:
+      variables:
+        pwd1: __generatePassword(password=${pwd})
+        pwd2: __generatePassword(password=${pwd1})
+      before:
+        - __hook1(A=before)
+      after:
+        - __hook2(A=after,B=before)
+    body:
+      userName: ${user}
+      password: ${pwd2}
+      sign: __Digest(algorithm=md5,string=${user}${pwd})
+    validates:
+      - {check: xyz.migoo.test.example.TestAssertion, expect: 1}
+  - title: 在自定义函数中使用 case 中定义的 变量
+    config:
+      variables:
+        pwd1: __generatePassword(password=${pwd})
+        pwd2: __generatePassword(password=${pwd1})
+      before:
+        - __hook1(A=before)
+      after:
+        - __hook2(A=after,B=before)
+    body:
+      userName: ${user}
+      password: ${pwd2}
+      sign: __Digest(algorithm=md5,string=${user}${pwd})
+    validates:
+      - {check: xyz.migoo.test.example.TestAssertion, expect: '__TestUseVars(title=${title})'}

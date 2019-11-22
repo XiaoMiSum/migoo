@@ -1,41 +1,23 @@
-package xyz.migoo.extender;
+package xyz.migoo.framework.functions;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.exception.ExtenderException;
-import xyz.migoo.framework.config.CaseKeys;
+import xyz.migoo.framework.entity.Validate;
 import xyz.migoo.report.MiGooLog;
 import xyz.migoo.utils.StringUtil;
 
-import java.lang.reflect.Method;
-import java.util.Map;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static ognl.Ognl.getValue;
+import static xyz.migoo.framework.functions.CompoundVariable.FUNC_PATTERN;
 
 /**
  * @author xiaomi
  */
-public class ExtenderHelper {
+public class VariableHelper {
 
-
-    static final Pattern FUNC_PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
-
-    static final Pattern PARAM_PATTERN = Pattern.compile("(\\$\\{(\\w+)})+");
-
-    private static Map<String, Method> methods = null;
-
-    static {
-        try {
-            methods = MethodHelper.loadFunction();
-        } catch (ExtenderException e) {
-            MiGooLog.log("load extends function exception. ", e);
-        }
-    }
-
-    private ExtenderHelper() {
+    private VariableHelper() {
     }
 
     public static void bind(Object use, JSONObject vars) {
@@ -134,7 +116,7 @@ public class ExtenderHelper {
             }
             Matcher func = FUNC_PATTERN.matcher(value);
             if (func.find()) {
-                Object result = MethodHelper.invoke(methods, func.group(1), func.group(2), variables);
+                Object result = FunctionFactory.execute(func.group(1), func.group(2), variables);
                 use.put(key, result);
             }
         }
@@ -155,16 +137,16 @@ public class ExtenderHelper {
      * @param validate 检查点
      * @throws ExecuteError 检查异常
      */
-    public static void evalValidate(JSONObject validate, JSONObject variables) throws ExecuteError {
+    public static void evalValidate(Validate validate, JSONObject variables) throws ExecuteError {
         try {
-            String value = validate.getString(CaseKeys.VALIDATE_EXPECT);
+            String value = String.valueOf(validate.getExpect());
             if (StringUtil.isEmpty(value)) {
                 return;
             }
             Matcher func = FUNC_PATTERN.matcher(value);
             if (func.find()) {
-                Object result = MethodHelper.invoke(methods, func.group(1), func.group(2), variables);
-                validate.put(CaseKeys.VALIDATE_EXPECT, result);
+                Object result = FunctionFactory.execute(func.group(1), func.group(2), variables);
+                validate.setExpect(result);
             }
         } catch (Exception e) {
             throw new ExecuteError(e.getMessage(), e);
@@ -177,7 +159,7 @@ public class ExtenderHelper {
         }
         Matcher func = FUNC_PATTERN.matcher(object);
         if (func.find()) {
-            MethodHelper.invoke(methods, func.group(1), func.group(2), variables);
+            FunctionFactory.execute(func.group(1), func.group(2), variables);
         }
     }
 }

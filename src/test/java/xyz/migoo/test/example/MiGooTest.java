@@ -1,12 +1,14 @@
-package xyz.migoo.example;
+package xyz.migoo.test.example;
 
 import org.junit.jupiter.api.Test;
+import xyz.migoo.TestRunner;
 
 /**
  * @author xiaomi
  * @date 2018/7/25 15:10
  */
-public class MiGooTest extends Base{
+public class MiGooTest {
+    public TestRunner runner = new TestRunner("MiGoo");
 
     @Test
     public void testApiCaseSet(){

@@ -1,13 +1,13 @@
 package xyz.migoo.framework.assertions.function;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author xiaomi
  * @date 2019-08-13 22:17
  */
-public class Contains extends AbstractFunction {
+@Alias(aliasList = {"contains", "contain", "ct", "⊆"})
+public class Contains extends AbstractAssertFunction {
 
     @Override
     public boolean assertTrue(Map<String, Object> data) {

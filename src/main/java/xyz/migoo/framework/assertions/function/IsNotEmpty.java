@@ -6,7 +6,8 @@ import java.util.Map;
  * @author xiaomi
  * @date 2019-08-13 22:17
  */
-public class IsNotEmpty extends AbstractFunction {
+@Alias(aliasList = {"isNotEmpty", "isNotNull", "isNotBlank", "notEmpty", "notNull", "notBlank"})
+public class IsNotEmpty extends AbstractAssertFunction {
 
     @Override
     public boolean assertTrue(Map<String, Object> data) {
