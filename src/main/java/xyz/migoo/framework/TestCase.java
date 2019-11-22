@@ -10,7 +10,6 @@ import xyz.migoo.exception.ExtenderException;
 import xyz.migoo.exception.SkippedRun;
 import xyz.migoo.http.MiGooRequest;
 import xyz.migoo.simplehttp.HttpException;
-import xyz.migoo.simplehttp.Response;
 import xyz.migoo.extender.ExtenderHelper;
 import xyz.migoo.report.MiGooLog;
 import xyz.migoo.utils.TypeUtil;
@@ -62,7 +61,7 @@ public class TestCase extends AbstractTest {
             // bind variable to case (this.variables -> this.testCase.headers)
             this.evalRequest();
             this.executeRequest();
-            this.assertThat(testCase, response);
+            this.assertThat();
             result.addSuccess(this);
             MiGooLog.log("test case success");
         } catch (SkippedRun e) {
@@ -103,12 +102,12 @@ public class TestCase extends AbstractTest {
         MiGooLog.log("response body: {}", response.text());
     }
 
-    private void assertThat(JSONObject jsonCase, Response response) throws AssertionFailure, ExecuteError {
-        Object validate = jsonCase.get(CaseKeys.VALIDATE);
+    private void assertThat() throws AssertionFailure, ExecuteError {
+        Object validate = testCase.get(CaseKeys.VALIDATE);
         if (!(validate instanceof JSONArray)){
             validate = JSONArray.parseArray(validate.toString());
         }
         this.validate(validate);
-        Validator.validation(response, (JSONArray) validate, jsonCase.getJSONObject(CaseKeys.CASE_VARIABLES));
+        Validator.validation(response, (JSONArray) validate, variables);
     }
 }
