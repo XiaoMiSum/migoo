@@ -1,6 +1,7 @@
 package xyz.migoo.framework.functions;
 
 import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.utils.TypeUtil;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -14,7 +15,7 @@ public class CompoundVariable extends HashMap<String, Object> {
     private static final long serialVersionUID = 362498820763181265L;
 
     static final Pattern FUNC_PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
-    private static final Pattern PARAM_PATTERN = Pattern.compile("(\\$\\{(\\w+)})+");
+    static final Pattern PARAM_PATTERN = Pattern.compile("(\\$\\{(\\w+)})+");
     private static final Pattern REGEX_INTEGER = Pattern.compile("^[-\\+]?[0-9]+$");
     private static final Pattern REGEX_FLOAT = Pattern.compile("^[-\\+]?[0-9]+\\.[0-9]+$");
 
@@ -66,5 +67,9 @@ public class CompoundVariable extends HashMap<String, Object> {
 
     public BigDecimal getAsBigDecimal(String key){
         return super.get(key) == null ? null : new BigDecimal(getAsString(key));
+    }
+
+    public Boolean getAsBoolean(String key){
+        return TypeUtil.booleanOf(get(key));
     }
 }

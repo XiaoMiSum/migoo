@@ -26,7 +26,12 @@ public class TestSuite extends AbstractTest {
         this.initSuite(config);
         request = config.getRequest();
         List<Cases> testCases = testSuite.getCases();
-        testCases.forEach(testCase -> this.addTest(new TestCase(request, testCase)));
+        testCases.forEach(testCase -> {
+            if (testCase.getConfig() == null){
+                testCase.setConfig(new Config());
+            }
+            this.addTest(new TestCase(request, testCase));
+        });
     }
 
     private void initSuite(Config config){

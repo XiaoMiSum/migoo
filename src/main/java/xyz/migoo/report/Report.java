@@ -45,7 +45,7 @@ public class Report {
     }
 
     public void setProjectName(String projectName){
-        report.put("projectName", projectName);
+        report.put("project_name", projectName);
         this.projectName = projectName;
     }
 

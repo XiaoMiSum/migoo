@@ -1,4 +1,4 @@
-package xyz.migoo.utils.database;
+package xyz.migoo.utils;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
@@ -15,27 +15,26 @@ import java.util.Map;
 /**
  * @author xiaomi
  */
-public class Database {
+public class DbUtil {
 
     private Connection conn;
 
-    private Database(Connection conn) {
+    private DbUtil(Connection conn) {
         this.conn = conn;
     }
 
-    public static Database create(String cls, String user, String password, String url) {
+    public static DbUtil create(String cls, String user, String password, String url) {
         Connection conn = null;
         try {
             Class.forName(cls);
             conn = DriverManager.getConnection(url, user, password);
         } catch (Exception e) {
-            e.printStackTrace();
             MiGooLog.log(e.getMessage(), e);
         }
-        return new Database(conn);
+        return new DbUtil(conn);
     }
 
-    public static Database mysql(String user, String password, String url){
+    public static DbUtil mysql(String user, String password, String url){
         return create("com.mysql.cj.jdbc.Driver", user, password, url);
     }
 
@@ -48,7 +47,7 @@ public class Database {
         Object[] list = null;
         try {
             list = run.query(conn, sql, new ArrayHandler(), params);
-            MiGooLog.log("execute sql: " + sql + "params: " + paramsToString(params));
+            MiGooLog.log(String.format("execute sql: %s  params: %s", sql, paramsToString(params)));
         } catch (SQLException e) {
             MiGooLog.log("execute sql exception", e);
         }
@@ -60,7 +59,7 @@ public class Database {
         List<Map<String, Object>> list = null;
         try {
             list = run.query(conn, sql, new MapListHandler(), params);
-            MiGooLog.log("execute sql: " + sql + "  params: " + paramsToString(params));
+            MiGooLog.log(String.format("execute sql: %s  params: %s", sql, paramsToString(params)));
         } catch (SQLException e) {
             MiGooLog.log("execute sql exception", e);
         }
@@ -72,7 +71,7 @@ public class Database {
         ArrayList<Object> list = null;
         try {
             list = (ArrayList<Object>)run.query(conn, sql, new ColumnListHandler<>(), params);
-            MiGooLog.log("execute sql: " + sql + "  params: " + paramsToString(params));
+            MiGooLog.log(String.format("execute sql: %s  params: %s", sql, paramsToString(params)));
         } catch (SQLException e) {
             MiGooLog.log("execute sql exception", e);
         }
@@ -84,7 +83,7 @@ public class Database {
         Map<String, Object> object = null;
         try {
             object = run.query(conn, sql, new MapHandler(), params);
-            MiGooLog.log("execute sql: " + sql + "  params: " + paramsToString(params));
+            MiGooLog.log(String.format("execute sql: %s  params: %s", sql, paramsToString(params)));
         } catch (SQLException e) {
             MiGooLog.log("execute sql exception", e);
         }
@@ -96,7 +95,7 @@ public class Database {
         int total = 0;
         try {
             total = run.update(conn, sql, params);
-            MiGooLog.log("execute sql: " + sql + "  params: " + paramsToString(params));
+            MiGooLog.log(String.format("execute sql: %s  params: %s", sql, paramsToString(params)));
         } catch (SQLException e) {
             MiGooLog.log("execute sql exception", e);
         }
