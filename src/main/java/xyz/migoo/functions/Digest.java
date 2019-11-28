@@ -1,7 +1,7 @@
 package xyz.migoo.functions;
 
 import org.apache.commons.codec.binary.Hex;
-import xyz.migoo.exception.ExtenderException;
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.framework.functions.AbstractFunction;
 import xyz.migoo.framework.functions.CompoundVariable;
 import xyz.migoo.utils.StringUtil;
@@ -17,12 +17,12 @@ import java.security.NoSuchAlgorithmException;
 public class Digest extends AbstractFunction {
 
     @Override
-    public Object execute(CompoundVariable parameters) throws ExtenderException {
+    public Object execute(CompoundVariable parameters) throws ExecuteError {
         String algorithm = parameters.getAsString("algorithm").trim().isEmpty() ? "md5"
                 : parameters.getAsString("algorithm").trim();
         String stringToEncode = parameters.getAsString("string");
         if (StringUtil.isEmpty(stringToEncode)) {
-            throw new ExtenderException("string is null or empty");
+            throw new ExecuteError("string is null or empty");
         }
         try {
             MessageDigest md = MessageDigest.getInstance(algorithm);
@@ -34,7 +34,7 @@ public class Digest extends AbstractFunction {
             byte[] bytes = md.digest();
             return uppercase(new String(Hex.encodeHex(bytes)), parameters.getAsString("upper"));
         } catch (NoSuchAlgorithmException e) {
-            throw new ExtenderException(e.getMessage(), e);
+            throw new ExecuteError(e.getMessage(), e);
         }
     }
 

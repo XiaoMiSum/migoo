@@ -1,7 +1,7 @@
 package xyz.migoo.functions;
 
 import org.apache.commons.codec.binary.Base32;
-import xyz.migoo.exception.ExtenderException;
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.framework.functions.AbstractFunction;
 import xyz.migoo.framework.functions.CompoundVariable;
 
@@ -17,7 +17,7 @@ import java.security.NoSuchAlgorithmException;
 public class GoogleAuthCode extends AbstractFunction {
 
     @Override
-    public String execute(CompoundVariable parameters) throws ExtenderException {
+    public String execute(CompoundVariable parameters) throws ExecuteError {
         return GoogleAuthenticator.generateVerifyCode(parameters.getAsString("secretKey"));
     }
 
@@ -29,14 +29,14 @@ public class GoogleAuthCode extends AbstractFunction {
 
         private static final int BYTES_PER_SCRATCH_CODE = 4;
 
-        public static String generateVerifyCode(String secretKey) throws ExtenderException {
+        public static String generateVerifyCode(String secretKey) throws ExecuteError {
             long t = (System.currentTimeMillis() / 1000L) / 30L;
             byte[] decodedKey = new Base32().decode(secretKey);
             try {
                 String code = String.valueOf(generateVerifyCode(decodedKey, t));
                 return code.length() == LENGTH ? "0" + code : code;
             } catch (Exception e) {
-                throw new ExtenderException("generateVerifyCode exception", e);
+                throw new ExecuteError("generateVerifyCode exception", e);
             }
         }
 

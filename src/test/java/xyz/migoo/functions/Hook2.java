@@ -1,6 +1,6 @@
 package xyz.migoo.functions;
 
-import xyz.migoo.exception.ExtenderException;
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.framework.functions.AbstractFunction;
 import xyz.migoo.framework.functions.CompoundVariable;
 
@@ -12,9 +12,9 @@ import xyz.migoo.framework.functions.CompoundVariable;
 public class Hook2 extends AbstractFunction {
 
     @Override
-    public Object execute(CompoundVariable parameters) throws ExtenderException {
+    public Object execute(CompoundVariable parameters) throws ExecuteError {
         if (parameters.size() > 2){
-            throw new ExtenderException("after exception");
+            throw new ExecuteError("after exception");
         }
         System.out.println(parameters.getAsString("A") + ": " + parameters.getAsString("B"));
         return null;

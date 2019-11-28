@@ -1,6 +1,6 @@
 package xyz.migoo.functions.sub;
 
-import xyz.migoo.exception.ExtenderException;
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.framework.Vars;
 import xyz.migoo.framework.functions.AbstractFunction;
 import xyz.migoo.framework.functions.CompoundVariable;
@@ -13,7 +13,7 @@ import xyz.migoo.framework.functions.CompoundVariable;
 public class TestUseVars extends AbstractFunction {
 
     @Override
-    public Object execute(CompoundVariable parameters) throws ExtenderException {
+    public Object execute(CompoundVariable parameters) throws ExecuteError {
         String key = parameters.getAsString("title");
         System.out.println(String.format("case = %s", parameters.get("title")));
         String result =Vars.get(key).getString("pwd1");

@@ -3,7 +3,7 @@ package xyz.migoo.framework.functions;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ExecuteError;
-import xyz.migoo.exception.ExtenderException;
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.framework.config.CaseKeys;
 import xyz.migoo.framework.entity.Validate;
 import xyz.migoo.report.MiGooLog;
@@ -102,7 +102,7 @@ public class VariableHelper {
      *
      * @param use 使用方法变量的对象
      */
-    private static void evalVariables(JSONObject use, JSONObject variables) throws ExtenderException {
+    private static void evalVariables(JSONObject use, JSONObject variables) throws ExecuteError {
         if (use == null) {
             return;
         }
@@ -118,7 +118,7 @@ public class VariableHelper {
         }
     }
 
-    public static void bindAndEval(JSONObject use, JSONObject variables) throws ExtenderException {
+    public static void bindAndEval(JSONObject use, JSONObject variables) throws ExecuteError {
         if (use == null) {
             return;
         }
@@ -152,7 +152,7 @@ public class VariableHelper {
         }
     }
 
-    public static void hook(String object, JSONObject variables) throws ExtenderException {
+    public static void hook(String object, JSONObject variables) throws ExecuteError {
         if (object == null) {
             return;
         }

@@ -24,7 +24,7 @@
             margin : 10% 10%;
         }
         .bottom {
-            position: absolute;
+            position: relative;
             right: 0px;
             bottom: 0px;
             width: 100%;
@@ -299,7 +299,7 @@
     myChart2.setOption(option2);
 
    if(legend_data.length > 1){
-        document.getElementById("main3").style.height = legend_data.length * 50 + 'px';
+        document.getElementById("main3").style.height = legend_data.length * 60 + 'px';
     }
 
     var myChart3 = echarts.init(document.getElementById('main3'));

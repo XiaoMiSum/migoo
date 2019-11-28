@@ -1,7 +1,7 @@
 package xyz.migoo.framework.functions;
 
 import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.exception.ExtenderException;
+import xyz.migoo.exception.ExecuteError;
 
 /**
  * @author xiaomi
@@ -11,7 +11,7 @@ public abstract class AbstractFunction implements Function{
 
     private CompoundVariable parameters = new CompoundVariable();
 
-    public Object execute() throws ExtenderException {
+    public Object execute() throws ExecuteError {
         return execute(parameters);
     }
 
@@ -20,10 +20,10 @@ public abstract class AbstractFunction implements Function{
      *
      * @param parameters function parameters
      * @return function execute result
-     * @throws ExtenderException
+     * @throws ExecuteError
      */
     @Override
-    public abstract Object execute(CompoundVariable parameters) throws ExtenderException;
+    public abstract Object execute(CompoundVariable parameters) throws ExecuteError;
 
     @Override
     public void addParameter(String params, JSONObject variables){

@@ -1,6 +1,6 @@
 package xyz.migoo.functions;
 
-import xyz.migoo.exception.ExtenderException;
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.framework.functions.AbstractFunction;
 import xyz.migoo.framework.functions.CompoundVariable;
 
@@ -14,11 +14,11 @@ import java.net.URLDecoder;
 public class UrlDecode extends AbstractFunction {
 
     @Override
-    public String execute(CompoundVariable parameters) throws ExtenderException {
+    public String execute(CompoundVariable parameters) throws ExecuteError {
         try {
             return URLDecoder.decode(parameters.getAsString("string"), "utf-8");
         } catch (UnsupportedEncodingException e) {
-            throw new ExtenderException("url decode exception", e);
+            throw new ExecuteError("url decode exception", e);
         }
     }
 }

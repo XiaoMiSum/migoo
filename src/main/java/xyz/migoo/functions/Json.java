@@ -1,11 +1,9 @@
 package xyz.migoo.functions;
 
 import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.exception.ExtenderException;
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.framework.functions.AbstractFunction;
 import xyz.migoo.framework.functions.CompoundVariable;
-
-import java.util.UUID;
 
 /**
  * @author xiaomi
@@ -14,9 +12,9 @@ import java.util.UUID;
 public class Json extends AbstractFunction {
 
     @Override
-    public JSONObject execute(CompoundVariable parameters) throws ExtenderException {
+    public JSONObject execute(CompoundVariable parameters) throws ExecuteError {
         if (parameters.isEmpty()){
-            throw new ExtenderException("parameters con not be null");
+            throw new ExecuteError("parameters con not be null");
         }
         JSONObject json = new JSONObject();
         parameters.forEach(json::put);

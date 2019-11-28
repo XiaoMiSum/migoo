@@ -1,7 +1,7 @@
 package xyz.migoo.framework;
 
 import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.exception.ExtenderException;
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.framework.entity.Cases;
 import xyz.migoo.framework.entity.Config;
 import xyz.migoo.framework.entity.MiGooCase;
@@ -67,7 +67,7 @@ public class TestSuite extends AbstractTest {
                 test.run(result);
             });
             super.teardown("suite teardown");
-        } catch (ExtenderException e) {
+        } catch (ExecuteError e) {
             MiGooLog.log("test suite run error. ", e);
         } finally {
             MiGooLog.log("test suite end: {}", this.getName());

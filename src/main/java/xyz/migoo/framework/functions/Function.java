@@ -1,7 +1,7 @@
 package xyz.migoo.framework.functions;
 
 import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.exception.ExtenderException;
+import xyz.migoo.exception.ExecuteError;
 
 /**
  * @author xiaomi
@@ -14,9 +14,9 @@ public interface Function {
      *
      * @param parameters function parameters
      * @return function execute result
-     * @throws ExtenderException
+     * @throws ExecuteError
      */
-    Object execute(CompoundVariable parameters) throws ExtenderException;
+    Object execute(CompoundVariable parameters) throws ExecuteError;
 
     /**
      * add parameter to function

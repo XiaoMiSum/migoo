@@ -2,10 +2,10 @@ package xyz.migoo;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.framework.config.CaseKeys;
 import xyz.migoo.framework.TestResult;
 import xyz.migoo.framework.TestSuite;
-import xyz.migoo.exception.ExtenderException;
 import xyz.migoo.exception.ReaderException;
 import xyz.migoo.framework.entity.MiGooCase;
 import xyz.migoo.framework.functions.VariableHelper;
@@ -93,7 +93,7 @@ public class TestRunner {
                 for (int i = 0; i < hook.size(); i++) {
                     VariableHelper.hook(hook.getString(i), globals);
                 }
-            } catch (ExtenderException e) {
+            } catch (ExecuteError e) {
                 MiGooLog.log("env exception.", e);
                 System.exit(-1);
             }

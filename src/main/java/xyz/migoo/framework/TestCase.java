@@ -65,7 +65,7 @@ public class TestCase extends AbstractTest {
         }
     }
 
-    private void processVariable() throws ExtenderException {
+    private void processVariable() throws ExecuteError {
         super.addVariables(testCase.getConfig().getVariables());
         // add variables to VARS, key = case title
         Vars.add(this.getName(), super.variables);
@@ -83,9 +83,13 @@ public class TestCase extends AbstractTest {
             MiGooLog.log("case assert failure");
             result.addFailure(this, (AssertionFailure) ex);
         }
+        if (ex instanceof ExecuteError){
+            MiGooLog.log("case assert failure");
+            result.addError(this,  ex);
+        }
     }
 
-    private void buildRequest() throws ExtenderException {
+    private void buildRequest() throws ExecuteError {
         this.bindRequestVariable();
         this.reorganizeRequest();
         request.uri(testCase.getRequest().getString(CaseKeys.API))
@@ -117,7 +121,7 @@ public class TestCase extends AbstractTest {
         request = MiGooRequest.method(requestConfig.getString(CaseKeys.METHOD));
     }
 
-    private void bindRequestVariable() throws ExtenderException {
+    private void bindRequestVariable() throws ExecuteError {
         VariableHelper.bind(requestConfig,  super.variables);
         VariableHelper.bind(testCase.getRequest(), super.variables);
         JSONObject body = testCase.getBody() == null ?
@@ -128,7 +132,7 @@ public class TestCase extends AbstractTest {
         VariableHelper.bindAndEval(testCase.getQuery(), super.variables);
     }
 
-    private void execute() throws HttpException, ExtenderException {
+    private void execute() throws HttpException, ExecuteError {
         super.setup("case setup");
         this.buildRequest();
         MiGooLog.log("request api: {}", request.uri());
