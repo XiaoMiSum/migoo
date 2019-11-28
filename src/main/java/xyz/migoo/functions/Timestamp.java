@@ -15,7 +15,8 @@ public class Timestamp extends AbstractFunction {
 
     @Override
     public String execute(CompoundVariable parameters) {
-        String pattern = parameters.getAsString("pattern");
+        String pattern = parameters.getAsString("format") == null ?
+                                    parameters.getAsString("pattern") : parameters.getAsString("format") ;
         if (!StringUtil.isEmpty(pattern)){
             SimpleDateFormat s = new SimpleDateFormat(pattern);
             return s.format(new Date());
