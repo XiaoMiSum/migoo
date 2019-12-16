@@ -17,6 +17,8 @@ public class CaseKeys {
 
     public static final String API = "api";
 
+    public static final String VALUE = "value";
+
     public static final String FUNC = "func";
 
     public static final String BODY = "body";

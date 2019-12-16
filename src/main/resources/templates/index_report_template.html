@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8"/>
     <script src="https://cdn.bootcss.com/echarts/4.2.1-rc1/echarts-en.common.js"></script>
-    <title th:text="${projectName} + ' - 接口测试报告'"></title>
+    <title th:text="${project_name} + ' - 接口测试报告'"></title>
     <style>
         body {
             background-color: #d8d8d8 ;
@@ -23,10 +23,21 @@
             width: 80%;
             margin : 10% 10%;
         }
+        .bottom {
+            right: 0px;
+            bottom: 0px;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+        .bottom .pre {
+            font-size: 16px;
+            line-height: 5px;
+        }
     </style>
 </head>
 <body>
-<h1 align="center" th:text=" ${projectName} + ' 接口测试报告'"></h1>
+<h1 align="center" th:text=" ${project_name} + ' 接口测试报告'"></h1>
 <input id="summary.total" th:value="${summary.total}" hidden>
 <input id="summary.success" th:value="${summary.success}" hidden>
 <input id="summary.failed" th:value="${summary.failed}" hidden>
@@ -287,7 +298,7 @@
     myChart2.setOption(option2);
 
    if(legend_data.length > 1){
-        document.getElementById("main3").style.height = legend_data.length * 50 + 'px';
+        document.getElementById("main3").style.height = legend_data.length * 60 + 'px';
     }
 
     var myChart3 = echarts.init(document.getElementById('main3'));
@@ -298,5 +309,10 @@
         }
     });
 </script>
+<div class="bottom">
+    <a class="pre" href="https://github.com/XiaoMiSum/MiGoo" target="_black">
+        <img src="https://www.easyicon.net/api/resizeApi.php?id=1181185&size=32" style="max-width: 15px; max-height: 15px">
+        MiGoo GitHub</a>
+</div>
 </body>
 </html>

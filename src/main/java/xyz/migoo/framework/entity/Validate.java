@@ -58,19 +58,16 @@ public class Validate {
 
     @Override
     public String toString() {
-        return new StringBuilder("{")
-                .append("\"check\": \"").append(check).append("\"")
-                .append(",")
-                .append("\"expect\": \"").append(expect).append("\"")
-                .append(",")
-                .append("\"actual\": \"").append(actual).append("\"")
-                .append(",")
-                .append("\"func\": \"")
-                .append(func).append("\"")
-                .append(",")
-                .append("\"result\": \"")
-                .append(result).append("\"")
-                .append("}")
+        StringBuilder sb = new StringBuilder("{");
+        sb.append("\"check\": \"").append(check).append("\"").append(",");
+        if (expect instanceof String) {
+            sb.append("\"expect\": \"").append(expect).append("\"").append(",");
+        } else {
+            sb.append("\"expect\": ").append(expect).append(",");
+        }
+        return sb.append("\"actual\": \"").append(actual).append("\"").append(",")
+                .append("\"func\": \"").append(func).append("\"").append(",")
+                .append("\"result\": \"").append(result).append("\"").append("}")
                 .toString();
     }
 }

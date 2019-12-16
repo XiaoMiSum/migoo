@@ -1,14 +1,13 @@
 package xyz.migoo.functions;
 
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.framework.functions.AbstractFunction;
 import xyz.migoo.framework.functions.CompoundVariable;
 
-import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
-import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -17,17 +16,20 @@ import java.util.Locale;
  */
 public class TimeShift extends AbstractFunction {
 
-    private ZoneId systemDefaultZoneID = ZoneId.systemDefault();
+    private ZoneId systemDefaultZoneId = ZoneId.systemDefault();
 
     @Override
-    public String execute(CompoundVariable parameters) {
-        String format = parameters.getAsString("format").trim();
-        LocalDateTime localDateTimeToShift = LocalDateTime.now(systemDefaultZoneID);
+    public String execute(CompoundVariable parameters) throws ExecuteError {
+        if (parameters.isEmpty()){
+            throw new ExecuteError("parameters con not be null");
+        }
+        String format = parameters.getString("format").trim();
+        LocalDateTime localDateTimeToShift = LocalDateTime.now(systemDefaultZoneId);
         DateTimeFormatter dateTimeFormatter = null;
         if (!format.isEmpty()){
             dateTimeFormatter = createFormatter(format, Locale.getDefault());
         }
-        String amount = parameters.getAsString("amount").trim();
+        String amount = parameters.getString("amount").trim();
         if (!amount.isEmpty()){
             Duration duration = Duration.parse(amount);
             localDateTimeToShift = localDateTimeToShift.plus(duration);

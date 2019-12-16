@@ -3,7 +3,8 @@ package xyz.migoo.framework.functions;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ExecuteError;
-import xyz.migoo.exception.ExtenderException;
+import xyz.migoo.exception.ExecuteError;
+import xyz.migoo.framework.config.CaseKeys;
 import xyz.migoo.framework.entity.Validate;
 import xyz.migoo.report.MiGooLog;
 import xyz.migoo.utils.StringUtil;
@@ -11,6 +12,7 @@ import xyz.migoo.utils.StringUtil;
 import java.util.regex.Matcher;
 
 import static xyz.migoo.framework.functions.CompoundVariable.FUNC_PATTERN;
+import static xyz.migoo.framework.functions.CompoundVariable.PARAM_PATTERN;
 
 /**
  * @author xiaomi
@@ -56,14 +58,12 @@ public class VariableHelper {
             Object object = use.get(uKey);
             if (object instanceof String) {
                 String v = (String) object;
-                if (v.equals(regex)) {
-                    use.put(uKey, vars.getString(varsKey));
-                    MiGooLog.log("bind variable: {} = {} -> {}", uKey, regex, use.get(uKey));
-                }else if (v.contains(regex)) {
-                    use.put(uKey, v.replace(regex, vars.getString(varsKey)));
-                    MiGooLog.log("bind variable: {} = {} -> {}", uKey, regex, use.get(uKey));
+                if (v.contains(regex)) {
+                    v = v.replace(regex, vars.getString(varsKey));
+                    use.put(uKey, v);
+                    MiGooLog.log("bind variable: {} = {} -> {}", uKey, regex, v);
+                    continue;
                 }
-                continue;
             }
             if (object instanceof JSONObject) {
                 bind((JSONObject) object, vars);
@@ -80,16 +80,13 @@ public class VariableHelper {
             Object object = use.get(i);
             if (object instanceof String) {
                 String v = (String) object;
-                if (v.equals(regex)) {
+                if (v.contains(regex)) {
+                    v = v.replace(regex, vars.getString(varsKey));
                     use.remove(i);
-                    use.add(i, vars.getString(varsKey));
-                    MiGooLog.log("bind variable: {} -> {}", regex, use.get(i));
-                } else if (v.contains(regex)) {
-                    use.remove(i);
-                    use.add(i, v.replace(regex, vars.getString(varsKey)));
-                    MiGooLog.log("bind variable: {} -> {}", regex, use.get(i));
+                    use.add(i, v);
+                    MiGooLog.log("bind variable: {} -> {}", regex, v);
+                    continue;
                 }
-                continue;
             }
             if (object instanceof JSONObject) {
                 bind((JSONObject) object, vars);
@@ -105,24 +102,23 @@ public class VariableHelper {
      *
      * @param use 使用方法变量的对象
      */
-    private static void evalVariables(JSONObject use, JSONObject variables) throws ExtenderException {
+    private static void evalVariables(JSONObject use, JSONObject variables) throws ExecuteError {
         if (use == null) {
             return;
         }
         for (String key : use.keySet()) {
             String value = use.getString(key);
-            if (StringUtil.isEmpty(value)) {
-                return;
-            }
-            Matcher func = FUNC_PATTERN.matcher(value);
-            if (func.find()) {
-                Object result = FunctionFactory.execute(func.group(1), func.group(2), variables);
-                use.put(key, result);
+            if (!StringUtil.isEmpty(value)) {
+                Matcher func = FUNC_PATTERN.matcher(value);
+                if (func.find()) {
+                    Object result = FunctionFactory.execute(func.group(1), func.group(2), variables);
+                    use.put(key, result);
+                }
             }
         }
     }
 
-    public static void bindAndEval(JSONObject use, JSONObject variables) throws ExtenderException {
+    public static void bindAndEval(JSONObject use, JSONObject variables) throws ExecuteError {
         if (use == null) {
             return;
         }
@@ -140,20 +136,23 @@ public class VariableHelper {
     public static void evalValidate(Validate validate, JSONObject variables) throws ExecuteError {
         try {
             String value = String.valueOf(validate.getExpect());
-            if (StringUtil.isEmpty(value)) {
-                return;
-            }
-            Matcher func = FUNC_PATTERN.matcher(value);
-            if (func.find()) {
-                Object result = FunctionFactory.execute(func.group(1), func.group(2), variables);
-                validate.setExpect(result);
+            if (!StringUtil.isEmpty(value)) {
+                Matcher func = FUNC_PATTERN.matcher(value);
+                if (func.find()) {
+                    Object result = FunctionFactory.execute(func.group(1), func.group(2), variables);
+                    validate.setExpect(result);
+                    return;
+                }
+                if (PARAM_PATTERN.matcher(value).find()){
+                    validate.setExpect(variables.get(value.substring(2, value.length() -1)));
+                }
             }
         } catch (Exception e) {
             throw new ExecuteError(e.getMessage(), e);
         }
     }
 
-    public static void hook(String object, JSONObject variables) throws ExtenderException {
+    public static void hook(String object, JSONObject variables) throws ExecuteError {
         if (object == null) {
             return;
         }

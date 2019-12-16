@@ -2,10 +2,10 @@ package xyz.migoo;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.framework.config.CaseKeys;
 import xyz.migoo.framework.TestResult;
 import xyz.migoo.framework.TestSuite;
-import xyz.migoo.exception.ExtenderException;
 import xyz.migoo.exception.ReaderException;
 import xyz.migoo.framework.entity.MiGooCase;
 import xyz.migoo.framework.functions.VariableHelper;
@@ -39,7 +39,7 @@ public class TestRunner {
      */
     public void run(String path, String vars) {
         try {
-            this.variables = CaseLoader.loadEnv(vars);
+            this.globals = CaseLoader.loadEnv(vars);
             this.initEnv();
             this.byPath(new File(path));
         } catch (ReaderException e) {
@@ -84,18 +84,16 @@ public class TestRunner {
     }
 
     private void initEnv() {
-        if (variables != null) {
+        if (globals != null) {
             try {
-                globals = variables.getJSONObject("vars") != null ? variables.getJSONObject("vars") :
-                        variables.getJSONObject("variables") != null ? variables.getJSONObject("variables") : variables;
-                VariableHelper.bindAndEval(globals, globals);
-                JSONArray hook = variables.getJSONArray(CaseKeys.HOOK);
-                if (hook != null){
-                    for (int i = 0; i < hook.size(); i++) {
-                        VariableHelper.hook(hook.getString(i), globals);
-                    }
+                variables = globals.getJSONObject("vars") != null ? globals.getJSONObject("vars") :
+                        globals.getJSONObject("variables") != null ? globals.getJSONObject("variables") : globals;
+                VariableHelper.bindAndEval(variables, variables);
+                JSONArray hook = globals.getJSONArray(CaseKeys.HOOK) != null ? globals.getJSONArray(CaseKeys.HOOK) : new JSONArray();
+                for (int i = 0; i < hook.size(); i++) {
+                    VariableHelper.hook(hook.getString(i), globals);
                 }
-            } catch (ExtenderException e) {
+            } catch (ExecuteError e) {
                 MiGooLog.log("env exception.", e);
                 System.exit(-1);
             }
@@ -105,7 +103,7 @@ public class TestRunner {
     private TestResult run(TestSuite suite) {
         TestResult result = new TestResult(suite.countTestCases(), suite.getName());
         result.setStartTime(System.currentTimeMillis());
-        suite.addVariables(globals);
+        suite.addVariables(variables);
         suite.run(result);
         result.setEndTime(System.currentTimeMillis());
         return result;

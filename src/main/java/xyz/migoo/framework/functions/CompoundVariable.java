@@ -1,6 +1,8 @@
 package xyz.migoo.framework.functions;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.utils.TypeUtil;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -14,7 +16,7 @@ public class CompoundVariable extends HashMap<String, Object> {
     private static final long serialVersionUID = 362498820763181265L;
 
     static final Pattern FUNC_PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
-    private static final Pattern PARAM_PATTERN = Pattern.compile("(\\$\\{(\\w+)})+");
+    static final Pattern PARAM_PATTERN = Pattern.compile("(\\$\\{(\\w+)})+");
     private static final Pattern REGEX_INTEGER = Pattern.compile("^[-\\+]?[0-9]+$");
     private static final Pattern REGEX_FLOAT = Pattern.compile("^[-\\+]?[0-9]+\\.[0-9]+$");
 
@@ -44,27 +46,39 @@ public class CompoundVariable extends HashMap<String, Object> {
         }
     }
 
-    public String getAsString(String key){
+    public String getString(String key){
         return super.get(key) == null ? "" : super.get(key).toString();
     }
 
-    public Long getAsLong(String key){
-        return super.get(key) == null ? null : Long.valueOf(getAsString(key));
+    public Long getLong(String key){
+        return super.get(key) == null ? null : Long.valueOf(getString(key));
     }
 
-    public Integer getAsInteger(String key){
-        return super.get(key) == null ? null : Integer.valueOf(getAsString(key));
+    public Integer getInteger(String key){
+        return super.get(key) == null ? null : Integer.valueOf(getString(key));
     }
 
-    public Double getAsDouble(String key){
-        return super.get(key) == null ? null : Double.valueOf(getAsString(key));
+    public Double getDouble(String key){
+        return super.get(key) == null ? null : Double.valueOf(getString(key));
     }
 
-    public Float getAsFloat(String key){
-        return super.get(key) == null ? null : Float.valueOf(getAsString(key));
+    public Float getFloat(String key){
+        return super.get(key) == null ? null : Float.valueOf(getString(key));
     }
 
-    public BigDecimal getAsBigDecimal(String key){
-        return super.get(key) == null ? null : new BigDecimal(getAsString(key));
+    public BigDecimal getBigDecimal(String key){
+        return super.get(key) == null ? null : new BigDecimal(getString(key));
+    }
+
+    public Boolean getBoolean(String key){
+        return TypeUtil.booleanOf(get(key));
+    }
+
+    public JSONObject getJSONObject(String key){
+        return (JSONObject)get(key);
+    }
+
+    public JSONArray getJSONArray(String key){
+        return (JSONArray)get(key);
     }
 }

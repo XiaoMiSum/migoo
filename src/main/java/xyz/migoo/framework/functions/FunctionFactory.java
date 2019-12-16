@@ -2,8 +2,7 @@ package xyz.migoo.framework.functions;
 
 import com.alibaba.fastjson.JSONObject;
 import org.reflections.Reflections;
-import xyz.migoo.exception.ExtenderException;
-import xyz.migoo.utils.StringUtil;
+import xyz.migoo.exception.ExecuteError;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +25,7 @@ public class FunctionFactory extends AbstractFunction{
         }
     }
 
-    public static Object execute(String name, String parameter, JSONObject variables) throws ExtenderException {
+    public static Object execute(String name, String parameter, JSONObject variables) throws ExecuteError {
         FACTORY.getFunction(name);
         FACTORY.addParameter(parameter, variables);
         return FACTORY.execute(null);
@@ -34,16 +33,16 @@ public class FunctionFactory extends AbstractFunction{
 
     private AbstractFunction function;
 
-    private void getFunction(String name) throws ExtenderException {
+    private void getFunction(String name) throws ExecuteError {
         try {
             function = FUNCTION_HASH_MAP.get(name.toUpperCase()).newInstance();
         } catch (Exception e) {
-            throw new ExtenderException("get functions error. ", e);
+            throw new ExecuteError("get functions error. ", e);
         }
     }
 
     @Override
-    public Object execute(CompoundVariable parameters) throws ExtenderException {
+    public Object execute(CompoundVariable parameters) throws ExecuteError {
         return function.execute();
     }
 

@@ -1,6 +1,7 @@
 package xyz.migoo.loader;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.Feature;
 import xyz.migoo.exception.ReaderException;
 import xyz.migoo.framework.entity.MiGooCase;
 import xyz.migoo.loader.reader.AbstractReader;
@@ -18,29 +19,10 @@ public class CaseLoader {
     private CaseLoader() {
     }
 
-    /**
-     * 如果 解析 json 没有抛出异常，说明传入的参数不是文件
-     * 如果 解析 json 抛出了异常，说明传入的参数是文件
-     *
-     * @param caseOrPath 测试用例 或者 测试用例文件或所在目录
-     * @return caseSets json对象的测试用例列表
-     */
-    public static JSONObject loadCaseSet(String caseOrPath) throws ReaderException {
-        MiGooLog.log("load case sets begin: {}", caseOrPath);
-        JSONObject caseSet;
-        try {
-            caseSet = JSONObject.parseObject(caseOrPath);
-        } catch (Exception e) {
-            caseSet = (JSONObject) ReaderFactory.getReader(new File(caseOrPath)).read();
-        }
-        MiGooLog.log("load case sets end");
-        return caseSet;
-    }
-
     public static MiGooCase loadMiGooCase(String path) throws ReaderException {
         MiGooLog.log("load case sets begin: {}", path);
         AbstractReader reader = (AbstractReader)ReaderFactory.getReader(new File(path));
-        MiGooCase cases = JSONObject.parseObject(reader.toString(), MiGooCase.class);
+        MiGooCase cases = JSONObject.parseObject(reader.toString(), MiGooCase.class, Feature.OrderedField);
         MiGooLog.log("load case sets end");
         return cases;
     }
@@ -60,11 +42,5 @@ public class CaseLoader {
         }
         MiGooLog.log("load env end");
         return json;
-    }
-
-    public static void main(String[] args) throws ReaderException {
-        AbstractReader reader = (AbstractReader)ReaderFactory.getReader(new File("./case/case.yml"));
-        MiGooCase cases = JSONObject.parseObject(reader.toString(), MiGooCase.class);
-        System.out.println(cases.getName());
     }
 }

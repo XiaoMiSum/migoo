@@ -1,6 +1,6 @@
 package xyz.migoo.functions;
 
-import xyz.migoo.exception.ExtenderException;
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.framework.functions.AbstractFunction;
 import xyz.migoo.framework.functions.CompoundVariable;
 
@@ -12,7 +12,7 @@ import xyz.migoo.framework.functions.CompoundVariable;
 public class GeneratePassword extends AbstractFunction {
 
     @Override
-    public Object execute(CompoundVariable parameters) throws ExtenderException {
-        return parameters.getAsString("password");
+    public Object execute(CompoundVariable parameters) throws ExecuteError {
+        return parameters.getString("password");
     }
 }

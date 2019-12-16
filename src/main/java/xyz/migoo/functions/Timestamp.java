@@ -1,5 +1,6 @@
 package xyz.migoo.functions;
 
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.framework.functions.AbstractFunction;
 import xyz.migoo.framework.functions.CompoundVariable;
 import xyz.migoo.utils.StringUtil;
@@ -14,9 +15,10 @@ import java.util.Date;
 public class Timestamp extends AbstractFunction {
 
     @Override
-    public String execute(CompoundVariable parameters) {
-        String pattern = parameters.getAsString("pattern");
-        if (!StringUtil.isEmpty(pattern)){
+    public String execute(CompoundVariable parameters) throws ExecuteError {
+        String pattern = parameters.getString("format") == null ?
+                parameters.getString("pattern") : parameters.getString("format");
+        if (!StringUtil.isEmpty(pattern)) {
             SimpleDateFormat s = new SimpleDateFormat(pattern);
             return s.format(new Date());
         }

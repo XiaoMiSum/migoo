@@ -1,7 +1,7 @@
 package xyz.migoo.framework;
 
 import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.exception.ExtenderException;
+import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.framework.entity.Cases;
 import xyz.migoo.framework.entity.Config;
 import xyz.migoo.framework.entity.MiGooCase;
@@ -26,7 +26,12 @@ public class TestSuite extends AbstractTest {
         this.initSuite(config);
         request = config.getRequest();
         List<Cases> testCases = testSuite.getCases();
-        testCases.forEach(testCase -> this.addTest(new TestCase(request, testCase)));
+        testCases.forEach(testCase -> {
+            if (testCase.getConfig() == null){
+                testCase.setConfig(new Config());
+            }
+            this.addTest(new TestCase(request, testCase));
+        });
     }
 
     private void initSuite(Config config){
@@ -36,7 +41,7 @@ public class TestSuite extends AbstractTest {
         super.addSetUp(config.getBeforeClass());
         // 3. add config.beforeClass to teardown
         super.addTeardown(config.getAfterClass());
-
+        Vars.add(super.getName(), super.variables);
     }
 
     @Override
@@ -62,7 +67,7 @@ public class TestSuite extends AbstractTest {
                 test.run(result);
             });
             super.teardown("suite teardown");
-        } catch (ExtenderException e) {
+        } catch (ExecuteError e) {
             MiGooLog.log("test suite run error. ", e);
         } finally {
             MiGooLog.log("test suite end: {}", this.getName());

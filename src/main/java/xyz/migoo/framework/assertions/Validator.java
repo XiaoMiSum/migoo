@@ -1,6 +1,7 @@
 package xyz.migoo.framework.assertions;
 
 import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.framework.TestCase;
 import xyz.migoo.framework.entity.Validate;
 import xyz.migoo.framework.functions.VariableHelper;
 import xyz.migoo.exception.AssertionFailure;
@@ -19,28 +20,22 @@ public class Validator {
     private Validator() {
     }
 
-    public synchronized static void validation(Response response, List<Validate> validates, JSONObject variables) throws AssertionFailure, ExecuteError {
+    public synchronized static void validation(TestCase testCase, List<Validate> validates) throws AssertionFailure, ExecuteError {
         validates.forEach(validate -> {
-            VariableHelper.evalValidate(validate, variables);
+            VariableHelper.evalValidate(validate, testCase.variables());
             MiGooLog.log(String.format("check point  : %s, func: %s, expect: %s", validate.getCheck(),
                     validate.getFunc(), validate.getExpect()));
             AbstractAssertion assertion = AssertionFactory.getAssertion(validate.getCheck());
-            assertion.setActual(response);
+            assertion.setActual(testCase.response());
             boolean result = assertion.assertThat(JSONObject.parseObject(validate.toString()));
             validate.setActual(assertion.getActual());
             MiGooLog.log(String.format("check result : %s", result));
             if (!result) {
                 validate.setResult("failure");
-                String check = validate.getCheck();
-                Object expected = validate.getExpect();
-                Object actual = validate.getActual();
-                String clazz = assertion.getClass().getSimpleName();
-                String func = validate.getFunc();
-                String msg = "Value expected(%s) to be '%s', but found '%s' \n" +
-                        "Assertion class is '%s', assert func is '%s'";
-                throw new AssertionFailure(String.format(msg, check, expected, actual, clazz, func));
+                testCase.hasFailure();
+            } else {
+                validate.setResult("success");
             }
-            validate.setResult("success");
         });
     }
 }
