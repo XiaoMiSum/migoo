@@ -15,8 +15,11 @@ public class UrlEncode extends AbstractFunction {
 
     @Override
     public String execute(CompoundVariable parameters) throws ExecuteError {
+        if (parameters.isEmpty()){
+            throw new ExecuteError("parameters con not be null");
+        }
         try {
-            return URLEncoder.encode(parameters.getAsString("string"), "utf-8");
+            return URLEncoder.encode(parameters.getString("string"), "utf-8");
         } catch (UnsupportedEncodingException e) {
             throw new ExecuteError("url encode exception", e);
         }

@@ -16,7 +16,7 @@ public class Hook2 extends AbstractFunction {
         if (parameters.size() > 2){
             throw new ExecuteError("after exception");
         }
-        System.out.println(parameters.getAsString("A") + ": " + parameters.getAsString("B"));
+        System.out.println(parameters.getString("A") + ": " + parameters.getString("B"));
         return null;
     }
 }

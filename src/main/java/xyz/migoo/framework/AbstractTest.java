@@ -119,4 +119,8 @@ public abstract class AbstractTest implements ITest {
     void validates(List<Validate> validates) {
         this.validates = validates;
     }
+
+    public JSONObject variables(){
+        return variables;
+    }
 }

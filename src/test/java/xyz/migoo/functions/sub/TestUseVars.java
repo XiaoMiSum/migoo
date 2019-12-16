@@ -14,7 +14,7 @@ public class TestUseVars extends AbstractFunction {
 
     @Override
     public Object execute(CompoundVariable parameters) throws ExecuteError {
-        String key = parameters.getAsString("title");
+        String key = parameters.getString("title");
         System.out.println(String.format("case = %s", parameters.get("title")));
         String result =Vars.get(key).getString("pwd1");
         System.out.println(String.format("get vars, key = pwd1, value = %s", result));

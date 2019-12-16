@@ -121,12 +121,12 @@ public class Report {
             records.add(item(testFailure, null, id, "error"));
             id++;
         }
-        for (TestFailure testFailure : result.failures()) {
-            records.add(item(testFailure, null, id, "failure"));
+        for (AbstractTest testFailure : result.failures()) {
+            records.add(item(null, testFailure, id, "failure"));
             id++;
         }
-        for (TestFailure testFailure : result.skips()) {
-            records.add(item(testFailure, null, id, "skipped"));
+        for (AbstractTest skip : result.skips()) {
+            records.add(item(null, skip, id, "skipped"));
             id++;
         }
         for (AbstractTest test : result.success()) {

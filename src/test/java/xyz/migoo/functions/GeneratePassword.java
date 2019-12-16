@@ -13,6 +13,6 @@ public class GeneratePassword extends AbstractFunction {
 
     @Override
     public Object execute(CompoundVariable parameters) throws ExecuteError {
-        return parameters.getAsString("password");
+        return parameters.getString("password");
     }
 }

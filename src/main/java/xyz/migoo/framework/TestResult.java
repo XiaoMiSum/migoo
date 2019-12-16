@@ -12,9 +12,9 @@ import java.util.List;
  */
 public class TestResult {
 
-    private List<TestFailure> fFailures;
+    private List<AbstractTest> fFailures;
     private List<TestFailure> fErrors;
-    private List<TestFailure> fSkips;
+    private List<AbstractTest> fSkips;
     private List<AbstractTest> fSuccess;
     private String rName;
     private int fRunTests;
@@ -44,16 +44,16 @@ public class TestResult {
      * Adds a failure to the list of failures. The passed in exception
      * caused the failure.
      */
-    synchronized void addFailure(AbstractTest test, AssertionFailure t) {
-        fFailures.add(new TestFailure(test, t));
+    synchronized void addFailure(AbstractTest test) {
+        fFailures.add(test);
     }
 
     /**
      * Adds a skipped to the list of skips. The passed in exception
      * caused the failure.
      */
-    synchronized void addSkip(AbstractTest test, SkippedRun skip) {
-        fSkips.add(new TestFailure(test, skip));
+    synchronized void addSkip(AbstractTest test) {
+        fSkips.add(test);
     }
 
     /**
@@ -88,7 +88,7 @@ public class TestResult {
     /**
      * Returns the failures
      */
-    public synchronized List<TestFailure> failures() {
+    public synchronized List<AbstractTest> failures() {
         return fFailures;
     }
 
@@ -102,7 +102,7 @@ public class TestResult {
     /**
      * Returns an Enumeration for the skips
      */
-    public synchronized List<TestFailure> skips() {
+    public synchronized List<AbstractTest> skips() {
         return fSkips;
     }
 

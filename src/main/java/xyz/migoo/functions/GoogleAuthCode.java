@@ -18,7 +18,14 @@ public class GoogleAuthCode extends AbstractFunction {
 
     @Override
     public String execute(CompoundVariable parameters) throws ExecuteError {
-        return GoogleAuthenticator.generateVerifyCode(parameters.getAsString("secretKey"));
+        if (parameters.isEmpty()){
+            throw new ExecuteError("parameters con not be null");
+        }
+        String secretKey = parameters.getString("secretKey");
+        if (secretKey == null){
+            throw new ExecuteError("secretKey con not be null");
+        }
+        return GoogleAuthenticator.generateVerifyCode(parameters.getString("secretKey"));
     }
 
     public static class GoogleAuthenticator {

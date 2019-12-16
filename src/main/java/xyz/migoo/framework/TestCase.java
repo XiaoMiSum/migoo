@@ -7,7 +7,6 @@ import xyz.migoo.framework.config.CaseKeys;
 import xyz.migoo.framework.entity.Cases;
 import xyz.migoo.http.MiGooRequest;
 import xyz.migoo.simplehttp.HttpException;
-import xyz.migoo.simplehttp.Response;
 import xyz.migoo.framework.functions.VariableHelper;
 import xyz.migoo.report.MiGooLog;
 import xyz.migoo.utils.StringUtil;
@@ -21,6 +20,7 @@ public class TestCase extends AbstractTest {
 
     private Cases testCase;
     private JSONObject requestConfig;
+    private boolean hasFailure = false;
 
     TestCase(JSONObject request, Cases testCase) {
         super(testCase.getTitle());
@@ -77,14 +77,14 @@ public class TestCase extends AbstractTest {
         if (ex instanceof SkippedRun){
             this.request = null;
             MiGooLog.log("case run skipped");
-            result.addSkip(this, (SkippedRun) ex);
+            result.addSkip(this);
         }
         if (ex instanceof AssertionFailure){
             MiGooLog.log("case assert failure");
-            result.addFailure(this, (AssertionFailure) ex);
+            result.addFailure(this);
         }
         if (ex instanceof ExecuteError){
-            MiGooLog.log("case assert failure");
+            MiGooLog.log("case assert error");
             result.addError(this,  ex);
         }
     }
@@ -141,6 +141,13 @@ public class TestCase extends AbstractTest {
         MiGooLog.log("request params: {}", request.body());
         super.response = request.execute();
         MiGooLog.log("response body: {}", response.text());
-        Validator.validation(response, testCase.getValidates(), super.variables);
+        Validator.validation(this, testCase.getValidates());
+        if (hasFailure){
+            throw new AssertionFailure("assert has failure");
+        }
+    }
+
+    public void hasFailure(){
+        this.hasFailure = true;
     }
 }

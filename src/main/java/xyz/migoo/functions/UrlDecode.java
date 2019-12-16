@@ -15,8 +15,11 @@ public class UrlDecode extends AbstractFunction {
 
     @Override
     public String execute(CompoundVariable parameters) throws ExecuteError {
+        if (parameters.isEmpty()){
+            throw new ExecuteError("parameters con not be null");
+        }
         try {
-            return URLDecoder.decode(parameters.getAsString("string"), "utf-8");
+            return URLDecoder.decode(parameters.getString("string"), "utf-8");
         } catch (UnsupportedEncodingException e) {
             throw new ExecuteError("url decode exception", e);
         }

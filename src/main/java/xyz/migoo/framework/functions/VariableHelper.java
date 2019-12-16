@@ -161,11 +161,4 @@ public class VariableHelper {
             FunctionFactory.execute(func.group(1), func.group(2), variables);
         }
     }
-
-    public static void main(String[] args) {
-        String value = "__json(test=${test})";
-        if (PARAM_PATTERN.matcher(value).find()){
-            System.out.println(1);
-        }
-    }
 }
