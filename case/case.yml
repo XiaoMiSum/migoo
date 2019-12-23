@@ -11,6 +11,7 @@ config:
     method: post
     headers:
       x-host: http://127.0.0.1/
+      x-test: ${user2}
 cases:
   - title: 验证成功
     request:

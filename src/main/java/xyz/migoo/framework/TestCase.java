@@ -122,8 +122,8 @@ public class TestCase extends AbstractTest {
     }
 
     private void bindRequestVariable() throws ExecuteError {
-        VariableHelper.bind(requestConfig,  super.variables);
-        VariableHelper.bind(testCase.getRequest(), super.variables);
+        VariableHelper.bindAndEval(requestConfig,  super.variables);
+        VariableHelper.bindAndEval(testCase.getRequest(), super.variables);
         JSONObject body = testCase.getBody() == null ?
                 testCase.getData() == null ? testCase.getQuery() : testCase.getData() : testCase.getBody();
         super.variables.put("body", body);

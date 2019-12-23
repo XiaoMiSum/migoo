@@ -27,8 +27,8 @@ public class ExtenderHelperTest {
     @Test
     public void testBind2(){
         JSONObject source = new JSONObject();
-        source.put("user", "${user}");
-        source.put("pwd", "${pwd}");
+        source.put("user", "${sign}${user}");
+        source.put("pwd", "__RandomString(length=10,string=${sign}${user})");
         JSONObject data = new JSONObject();
         data.put("sign", "${sign}${user}");
         data.put("test", "123");

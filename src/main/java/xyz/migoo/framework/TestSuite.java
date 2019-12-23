@@ -60,7 +60,7 @@ public class TestSuite extends AbstractTest {
             // 1. add config.variables to variables;
             super.addVariables(config.getVariables());
             VariableHelper.bindAndEval(super.variables, super.variables);
-            VariableHelper.bind(request, super.variables);
+            VariableHelper.bindAndEval(request, super.variables);
             super.setup("suite setup");
             this.fTests.forEach(test -> {
                 test.addVariables(variables);

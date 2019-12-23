@@ -4,15 +4,14 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ExecuteError;
 import xyz.migoo.framework.entity.Validate;
-import xyz.migoo.report.MiGooLog;
 import xyz.migoo.utils.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import static xyz.migoo.framework.functions.CompoundVariable.FUNC_PATTERN;
 import static xyz.migoo.framework.functions.CompoundVariable.PARAM_PATTERN;
+import static xyz.migoo.framework.functions.CompoundVariable.FUNC_PATTERN;
 
 /**
  * @author xiaomi
@@ -20,18 +19,6 @@ import static xyz.migoo.framework.functions.CompoundVariable.PARAM_PATTERN;
 public class VariableHelper {
 
     private VariableHelper() {
-    }
-
-    public static void bind(Object use, JSONObject vars) {
-        if (use == null || vars == null) {
-            return;
-        }
-        if (use instanceof JSONObject) {
-            bind((JSONObject) use, vars);
-        }
-        if (use instanceof JSONArray) {
-            bind((JSONArray) use, vars);
-        }
     }
 
     public static String bind(String source, JSONObject variables){
@@ -46,67 +33,115 @@ public class VariableHelper {
         return source;
     }
 
-    private static void bind(JSONObject use, JSONObject vars) {
-        for (String key : vars.keySet()) {
-            if (FUNC_PATTERN.matcher(vars.getString(key)).find()) {
-                continue;
+    public static void bindAndEval(JSONObject source, JSONObject variables) throws ExecuteError {
+        if (source == null) {
+            return;
+        }
+        bind(source, variables);
+        evalVariables(source, variables);
+        bind(source, variables);
+    }
+
+    private static void bind(JSONObject source, JSONObject variables) {
+        JSONObject usingVarKey = getUsingVarKey(source);
+        usingVarKey.forEach((key, value) -> {
+            if (value instanceof JSONArray) {
+                bind((JSONArray) value, variables);
             }
-            bind(key, vars, use);
+            if (value instanceof JSONObject) {
+                ((JSONObject) value).forEach((k, v) -> {
+                    if (v instanceof List) {
+                        bind(source.getJSONObject(key), k, ((JSONObject) value).getJSONArray(k), variables);
+                    }
+                });
+            }
+            if (value instanceof ArrayList) {
+                bind(source, key, new JSONArray((List<Object>) value), variables);
+            }
+        });
+    }
+
+    private static JSONObject getUsingVarKey(JSONObject source) {
+        JSONObject usingVarKey = new JSONObject(true);
+        source.forEach((key, value) -> {
+            if (value instanceof String) {
+                getUsingVarKey(key, value, usingVarKey);
+            }
+            if (value instanceof JSONObject) {
+                JSONObject valueJson = new JSONObject(true);
+                ((JSONObject) value).forEach((k, v) -> getUsingVarKey(k, v, valueJson));
+                usingVarKey.put(key, valueJson);
+            }
+            if (value instanceof JSONArray) {
+                getUsingVarKey(key, (JSONArray) value, usingVarKey);
+            }
+        });
+        return usingVarKey;
+    }
+
+    private static void getUsingVarKey(String key, Object value, JSONObject usingVarKey) {
+        if (value instanceof String) {
+            List<String> temp = new ArrayList<>();
+            Matcher matcher = PARAM_PATTERN.matcher((String) value);
+            while (matcher.find()) {
+                temp.add(matcher.group());
+            }
+            if (!temp.isEmpty()) {
+                usingVarKey.put(key, temp);
+            }
         }
     }
 
-    private static void bind(JSONArray use, JSONObject vars) {
-        for (String key : vars.keySet()) {
-            if (FUNC_PATTERN.matcher(vars.getString(key)).find()) {
-                continue;
+    private static void getUsingVarKey(String key, JSONArray value, JSONObject usingVarKey) {
+        for (int i = 0; i < value.size(); i++) {
+            List<String> temp = new ArrayList<>();
+            Matcher matcher = PARAM_PATTERN.matcher(value.getString(i));
+            while (matcher.find()) {
+                temp.add(matcher.group());
             }
-            bind(key, vars, use);
+            if (!temp.isEmpty()) {
+                value.remove(i);
+                value.add(i, temp);
+            }
         }
+        usingVarKey.put(key, value);
     }
 
-    private static void bind(String varsKey, JSONObject vars, JSONObject use) {
-        String regex = "${" + varsKey + "}";
-        for (String uKey : use.keySet()) {
-            Object object = use.get(uKey);
-            if (object instanceof String) {
-                String v = (String) object;
-                if (v.contains(regex)) {
-                    v = v.replace(regex, vars.getString(varsKey));
-                    use.put(uKey, v);
-                    MiGooLog.log("bind variable: {} = {} -> {}", uKey, regex, v);
-                    continue;
+    private static void bind(JSONArray value, JSONObject variables) {
+        for (int i = 0; i < value.size(); i++) {
+            if (value.get(i) instanceof List) {
+                JSONArray varList = value.getJSONArray(i);
+                String varValue = getVarValue(varList, variables);
+                if (varValue.length() > 0) {
+                    value.remove(i);
+                    value.add(i, varValue);
                 }
             }
-            if (object instanceof JSONObject) {
-                bind((JSONObject) object, vars);
-            }
-            if (object instanceof JSONArray) {
-                bind((JSONArray) object, vars);
+        }
+    }
+
+    private static void bind(JSONObject source, String key, JSONArray value, JSONObject variables) {
+        for (int i = 0; i < value.size(); i++) {
+            String k = value.getString(i).substring(2, value.getString(i).length() - 1);
+            if (!FUNC_PATTERN.matcher(variables.getString(k)).find()) {
+                if (source.get(key) instanceof List){
+                    source.put(key, getVarValue(source.getJSONArray(key), variables));
+                } else if (source.get(key) instanceof String) {
+                    source.put(key, source.getString(key).replace(value.getString(i), variables.getString(k)));
+                }
             }
         }
     }
 
-    private static void bind(String varsKey, JSONObject vars, JSONArray use) {
-        String regex = "${" + varsKey + "}";
-        for (int i = 0; i < use.size(); i++) {
-            Object object = use.get(i);
-            if (object instanceof String) {
-                String v = (String) object;
-                if (v.contains(regex)) {
-                    v = v.replace(regex, vars.getString(varsKey));
-                    use.remove(i);
-                    use.add(i, v);
-                    MiGooLog.log("bind variable: {} -> {}", regex, v);
-                    continue;
-                }
-            }
-            if (object instanceof JSONObject) {
-                bind((JSONObject) object, vars);
-            }
-            if (object instanceof JSONArray) {
-                bind((JSONArray) object, vars);
+    private static String getVarValue(JSONArray value, JSONObject variables) {
+        StringBuilder str = new StringBuilder();
+        for (int i = 0; i < value.size(); i++) {
+            String k = value.getString(i).substring(2, value.getString(i).length() - 1);
+            if (!FUNC_PATTERN.matcher(variables.getString(k)).find()) {
+                str.append(variables.getString(k));
             }
         }
+        return str.toString();
     }
 
     /**
@@ -121,22 +156,12 @@ public class VariableHelper {
         for (String key : use.keySet()) {
             String value = use.getString(key);
             if (!StringUtil.isEmpty(value)) {
-                Matcher func = FUNC_PATTERN.matcher(value);
-                if (func.find()) {
+                if (FUNC_PATTERN.matcher(value).find()) {
                     Object result = FunctionFactory.execute(value, variables);
                     use.put(key, result);
                 }
             }
         }
-    }
-
-    public static void bindAndEval(JSONObject use, JSONObject variables) throws ExecuteError {
-        if (use == null) {
-            return;
-        }
-        bind(use, variables);
-        evalVariables(use, variables);
-        bind(use, variables);
     }
 
     /**
@@ -149,19 +174,15 @@ public class VariableHelper {
         try {
             String value = String.valueOf(validate.getExpect());
             if (!StringUtil.isEmpty(value)) {
-                Matcher func = FUNC_PATTERN.matcher(value);
-                if (func.find()) {
+                if (PARAM_PATTERN.matcher(value).find()) {
+                    validate.setExpect(variables.get(value.substring(2, value.length() - 1)));
+                } else if (FUNC_PATTERN.matcher(value).find()) {
                     Object result = FunctionFactory.execute(value, variables);
                     validate.setExpect(result);
-                    return;
-                }
-                if (PARAM_PATTERN.matcher(value).find()){
-                    validate.setExpect(variables.get(value.substring(2, value.length() -1)));
                 }
             }
         } catch (Exception e) {
             throw new ExecuteError(e.getMessage(), e);
         }
     }
-
 }
