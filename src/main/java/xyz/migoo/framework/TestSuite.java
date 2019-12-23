@@ -19,10 +19,11 @@ public class TestSuite extends AbstractTest {
 
     private Vector<AbstractTest> fTests= new Vector<>(10);
     private JSONObject request;
+    private Config config;
 
     public TestSuite(MiGooCase testSuite){
         super(testSuite.getName());
-        Config config = testSuite.getConfig();
+        config = testSuite.getConfig();
         this.initSuite(config);
         request = config.getRequest();
         List<Cases> testCases = testSuite.getCases();
@@ -35,8 +36,6 @@ public class TestSuite extends AbstractTest {
     }
 
     private void initSuite(Config config){
-        // 1. add config.variables to variables;
-        super.addVariables(config.getVariables());
         // 2. add config.beforeClass to setUp
         super.addSetUp(config.getBeforeClass());
         // 3. add config.beforeClass to teardown
@@ -58,7 +57,8 @@ public class TestSuite extends AbstractTest {
         try {
             MiGooLog.log("===================================================================");
             MiGooLog.log("test suite begin: {}", this.getName());
-            // bind variable to variables (globals -> variables)
+            // 1. add config.variables to variables;
+            super.addVariables(config.getVariables());
             VariableHelper.bindAndEval(super.variables, super.variables);
             VariableHelper.bind(request, super.variables);
             super.setup("suite setup");

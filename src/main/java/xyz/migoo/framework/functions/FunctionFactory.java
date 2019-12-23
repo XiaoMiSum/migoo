@@ -7,6 +7,9 @@ import xyz.migoo.exception.ExecuteError;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+
+import static xyz.migoo.framework.functions.CompoundVariable.FUNC_PATTERN;
 
 /**
  * @author xiaomi
@@ -25,10 +28,14 @@ public class FunctionFactory extends AbstractFunction{
         }
     }
 
-    public static Object execute(String name, String parameter, JSONObject variables) throws ExecuteError {
-        FACTORY.getFunction(name);
-        FACTORY.addParameter(parameter, variables);
-        return FACTORY.execute(null);
+    public static Object execute(String object, JSONObject variables) throws ExecuteError {
+        Matcher func = FUNC_PATTERN.matcher(object);
+        if (func.find()) {
+            FACTORY.getFunction(func.group(1));
+            FACTORY.addParameter(func.group(2), variables);
+            return FACTORY.execute(null);
+        }
+        throw new ExecuteError("not matcher function: " + object);
     }
 
     private AbstractFunction function;

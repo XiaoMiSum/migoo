@@ -8,6 +8,7 @@ import xyz.migoo.framework.TestResult;
 import xyz.migoo.framework.TestSuite;
 import xyz.migoo.exception.ReaderException;
 import xyz.migoo.framework.entity.MiGooCase;
+import xyz.migoo.framework.functions.FunctionFactory;
 import xyz.migoo.framework.functions.VariableHelper;
 import xyz.migoo.report.Report;
 import xyz.migoo.loader.CaseLoader;
@@ -91,7 +92,7 @@ public class TestRunner {
                 VariableHelper.bindAndEval(variables, variables);
                 JSONArray hook = globals.getJSONArray(CaseKeys.HOOK) != null ? globals.getJSONArray(CaseKeys.HOOK) : new JSONArray();
                 for (int i = 0; i < hook.size(); i++) {
-                    VariableHelper.hook(hook.getString(i), globals);
+                    FunctionFactory.execute(hook.getString(i), globals);
                 }
             } catch (ExecuteError e) {
                 MiGooLog.log("env exception.", e);

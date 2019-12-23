@@ -3,6 +3,7 @@ package xyz.migoo.framework;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ExecuteError;
+import xyz.migoo.framework.functions.FunctionFactory;
 import xyz.migoo.framework.functions.VariableHelper;
 import xyz.migoo.framework.entity.Validate;
 import xyz.migoo.http.MiGooRequest;
@@ -25,7 +26,7 @@ public abstract class AbstractTest implements ITest {
 
     MiGooRequest request;
     Response response;
-    JSONObject variables = new JSONObject();
+    JSONObject variables = new JSONObject(true);
 
     AbstractTest(String name){
         this.fName = name;
@@ -72,7 +73,8 @@ public abstract class AbstractTest implements ITest {
         // bind variable to setUp (this.variables -> this.setUp)
         MiGooLog.log("{} begin", type);
         for (int i = 0; i < setUp.size(); i++) {
-            VariableHelper.hook(setUp.getString(i), variables);
+            String func = VariableHelper.bind(setUp.getString(i), variables);
+            FunctionFactory.execute(func, variables);
         }
         MiGooLog.log("{} end", type);
     }
@@ -96,7 +98,8 @@ public abstract class AbstractTest implements ITest {
         MiGooLog.log("{} begin", type);
         for (int i = 0; i < teardown.size(); i++) {
             try {
-                VariableHelper.hook(teardown.getString(i), variables);
+                String func = VariableHelper.bind(teardown.getString(i), variables);
+                FunctionFactory.execute(func, variables);
             } catch (ExecuteError e) {
                 MiGooLog.log(teardown.getString(i) + " error", e);
             }

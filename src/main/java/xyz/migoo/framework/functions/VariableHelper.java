@@ -3,12 +3,12 @@ package xyz.migoo.framework.functions;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ExecuteError;
-import xyz.migoo.exception.ExecuteError;
-import xyz.migoo.framework.config.CaseKeys;
 import xyz.migoo.framework.entity.Validate;
 import xyz.migoo.report.MiGooLog;
 import xyz.migoo.utils.StringUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 
 import static xyz.migoo.framework.functions.CompoundVariable.FUNC_PATTERN;
@@ -32,6 +32,18 @@ public class VariableHelper {
         if (use instanceof JSONArray) {
             bind((JSONArray) use, vars);
         }
+    }
+
+    public static String bind(String source, JSONObject variables){
+        List<String> temp = new ArrayList<>();
+        Matcher matcher = PARAM_PATTERN.matcher(source);
+        while (matcher.find()) {
+            temp.add(matcher.group());
+        }
+        for (String value : temp){
+            source =  source.replace(value, variables.getString(value.substring(2, value.length() -1)));
+        }
+        return source;
     }
 
     private static void bind(JSONObject use, JSONObject vars) {
@@ -111,7 +123,7 @@ public class VariableHelper {
             if (!StringUtil.isEmpty(value)) {
                 Matcher func = FUNC_PATTERN.matcher(value);
                 if (func.find()) {
-                    Object result = FunctionFactory.execute(func.group(1), func.group(2), variables);
+                    Object result = FunctionFactory.execute(value, variables);
                     use.put(key, result);
                 }
             }
@@ -139,7 +151,7 @@ public class VariableHelper {
             if (!StringUtil.isEmpty(value)) {
                 Matcher func = FUNC_PATTERN.matcher(value);
                 if (func.find()) {
-                    Object result = FunctionFactory.execute(func.group(1), func.group(2), variables);
+                    Object result = FunctionFactory.execute(value, variables);
                     validate.setExpect(result);
                     return;
                 }
@@ -152,13 +164,4 @@ public class VariableHelper {
         }
     }
 
-    public static void hook(String object, JSONObject variables) throws ExecuteError {
-        if (object == null) {
-            return;
-        }
-        Matcher func = FUNC_PATTERN.matcher(object);
-        if (func.find()) {
-            FunctionFactory.execute(func.group(1), func.group(2), variables);
-        }
-    }
 }

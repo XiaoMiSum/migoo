@@ -22,11 +22,15 @@ cases:
         pwd2: __generatePassword(password=${pwd1})
       before:
         - __hook1(A=before)
+        - __hook1(A=${user2}${user2})
       after:
         - __hook2(A=after,B=before)
     body:
       userName: ${user}
       password: ${pwd2}
+      test:
+        - ${user}
+        - ${pwd2}
       sign: __Digest(string=${user}${pwd})
     validates:
       - {check: status, expect: 200, func: ==}

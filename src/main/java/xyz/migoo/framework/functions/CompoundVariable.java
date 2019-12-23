@@ -16,7 +16,7 @@ public class CompoundVariable extends HashMap<String, Object> {
     private static final long serialVersionUID = 362498820763181265L;
 
     static final Pattern FUNC_PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
-    static final Pattern PARAM_PATTERN = Pattern.compile("(\\$\\{(\\w+)})+");
+    static final Pattern PARAM_PATTERN = Pattern.compile("\\$\\{(\\w+)}");
     private static final Pattern REGEX_INTEGER = Pattern.compile("^[-\\+]?[0-9]+$");
     private static final Pattern REGEX_FLOAT = Pattern.compile("^[-\\+]?[0-9]+\\.[0-9]+$");
 
