@@ -149,4 +149,12 @@ public class TestResult {
     public void setEndTime(long endTime) {
         this.endTime = endTime;
     }
+
+    public boolean fStop() {
+        return fStop;
+    }
+
+    public void fStop(boolean fStop) {
+        this.fStop = fStop;
+    }
 }

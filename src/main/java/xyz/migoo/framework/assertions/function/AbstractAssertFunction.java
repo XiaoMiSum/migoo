@@ -15,7 +15,7 @@ import java.util.Map;
 public abstract class AbstractAssertFunction implements IFunction {
 
 
-    private static ThreadLocal<DecimalFormat> decimalFormatter =
+    private final static ThreadLocal<DecimalFormat> decimalFormatter =
             ThreadLocal.withInitial(AbstractAssertFunction::createDecimalFormat);
 
     private static DecimalFormat createDecimalFormat() {
@@ -33,7 +33,6 @@ public abstract class AbstractAssertFunction implements IFunction {
         } else if (subj instanceof List) {
             str = ((List) subj).isEmpty()?"null": JSONArray.toJSONString(subj);
         } else if (subj instanceof Map) {
-            //noinspection unchecked
             str = ((Map) subj).isEmpty()?"null": JSONObject.toJSONString(subj);
         } else if (subj instanceof Double || subj instanceof Float) {
             str = decimalFormatter.get().format(subj);

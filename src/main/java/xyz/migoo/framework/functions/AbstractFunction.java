@@ -9,7 +9,7 @@ import xyz.migoo.exception.ExecuteError;
  */
 public abstract class AbstractFunction implements Function{
 
-    private CompoundVariable parameters = new CompoundVariable();
+    private final CompoundVariable parameters = new CompoundVariable();
 
     public Object execute() throws ExecuteError {
         return execute(parameters);

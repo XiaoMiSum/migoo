@@ -16,10 +16,8 @@ public interface Assertion {
      *
      * support type list:
      * {@linkplain JSONAssertion JSONAssertion}
-     * {@linkplain HTMLAssertion HTMLAssertion}
      * {@linkplain ResponseAssertion ResponseAssertion}
      * {@linkplain ResponseCodeAssertion ResponseCodeAssertion}
-     * {@linkplain CustomAssertion CustomAssertion}
      *
      * @param data Objects that hold expected values
      * @return assert result
