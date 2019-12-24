@@ -65,11 +65,45 @@ public class VariableHelper {
         bind(source, variables);
     }
 
+    /**
+     * 绑定 body 专用，防止多级嵌套 有变量没被绑定到
+     *
+     * @param source  body
+     * @param variables 变量
+     */
+    public static void bindVariable(JSONObject source, JSONObject variables){
+        bindAndEval(source, variables);
+        source.forEach((key, value) -> {
+            if (value instanceof JSONArray) {
+                bindVariable(((JSONArray)value), variables);
+            } else if (value instanceof JSONObject) {
+                bindVariable((JSONObject) value, variables);
+            } else if (value instanceof String) {
+                source.put(key, bind((String) value, variables));
+            }
+        });
+    }
+
+    private static void bindVariable(JSONArray source, JSONObject variables){
+        for (int i = 0; i < source.size(); i++) {
+            Object value = source.get(i);
+            if (value instanceof JSONArray){
+                bindVariable((JSONArray) value, variables);
+            } else if (value instanceof JSONObject) {
+                bindVariable((JSONObject) value, variables);
+            } else if (value instanceof String) {
+                String v = bind((String) value, variables);
+                source.remove(i);
+                source.add(i, v);
+            }
+        }
+    }
+
     private static void bind(JSONObject source, JSONObject variables) {
         JSONObject usingVarKey = getUsingVarKey(source);
         usingVarKey.forEach((key, value) -> {
             if (value instanceof JSONArray) {
-                bind((JSONArray) value, variables);
+                bind(source, (Object)key, (JSONArray) value, variables);
             }
             if (value instanceof JSONObject) {
                 bind(source.getJSONObject(key), (JSONObject) value, variables);
@@ -148,7 +182,7 @@ public class VariableHelper {
         });
     }
 
-    private static void bind(JSONArray value, JSONObject variables) {
+    private static void bind(JSONObject source, Object key, JSONArray value, JSONObject variables) {
         for (int i = 0; i < value.size(); i++) {
             if (value.get(i) instanceof List) {
                 String varValue = getVarValue(value.getJSONArray(i), variables);
@@ -158,6 +192,7 @@ public class VariableHelper {
                 }
             }
         }
+        source.put(key.toString(), value);
     }
 
     private static void bind(JSONObject source, String key, JSONArray value, JSONObject variables) {

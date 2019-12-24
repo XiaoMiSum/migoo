@@ -26,6 +26,7 @@
 
 package xyz.migoo.framework;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.*;
 import xyz.migoo.framework.assertions.Validator;
@@ -78,12 +79,8 @@ public class TestCase extends AbstractTest {
             this.execute();
             result.addSuccess(this);
             MiGooLog.log("test case success");
-        } catch (MiGooException e) {
+        } catch (MiGooException | Exception e) {
             this.processException(e, result);
-        } catch (Exception e) {
-            this.request = null;
-            result.addError(this, e);
-            MiGooLog.log("case run error", e);
         } finally {
             this.validates(testCase.getValidates());
             super.teardown("case teardown");
@@ -99,19 +96,24 @@ public class TestCase extends AbstractTest {
         VariableHelper.bindAndEval(super.variables, super.variables);
     }
 
-    private void processException(MiGooException ex, TestResult result){
-        if (ex instanceof SkippedRun){
+    private void processException(Throwable throwable, TestResult result){
+        if (throwable instanceof SkippedRun){
             this.request = null;
             MiGooLog.log("case run skipped");
             result.addSkip(this);
         }
-        if (ex instanceof AssertionFailure){
+        if (throwable instanceof AssertionFailure){
             MiGooLog.log("case assert failure");
             result.addFailure(this);
         }
-        if (ex instanceof ExecuteError){
-            MiGooLog.log("case assert error");
-            result.addError(this,  ex);
+        if (throwable instanceof ExecuteError){
+            MiGooLog.log("case execute error", throwable);
+            result.addError(this,  throwable);
+        }
+        if (throwable instanceof Exception){
+            this.request = null;
+            MiGooLog.log("case run error", throwable);
+            result.addError(this, throwable);
         }
     }
 
@@ -152,10 +154,8 @@ public class TestCase extends AbstractTest {
         VariableHelper.bindAndEval(testCase.getRequest(), super.variables);
         JSONObject body = testCase.getBody() == null ?
                 testCase.getData() == null ? testCase.getQuery() : testCase.getData() : testCase.getBody();
+        VariableHelper.bindVariable(body, super.variables);
         super.variables.put("body", body);
-        VariableHelper.bindAndEval(testCase.getBody(), super.variables);
-        VariableHelper.bindAndEval(testCase.getData(), super.variables);
-        VariableHelper.bindAndEval(testCase.getQuery(), super.variables);
     }
 
     private void execute() throws HttpException, ExecuteError {
