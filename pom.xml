@@ -5,7 +5,7 @@
     <groupId>xyz.migoo</groupId>
     <artifactId>migoo</artifactId>
 
-    <version>2.0.1</version>
+    <version>2.0.2</version>
     <name>migoo</name>
     <description>a tool for rest-api test</description>
     <url>https://xiaomisum.github.io/MiGoo/</url>
