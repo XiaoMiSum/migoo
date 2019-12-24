@@ -1,3 +1,29 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2018 XiaoMiSum (mi_xiao@qq.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * 'Software'), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+
 package xyz.migoo.framework.functions;
 
 import com.alibaba.fastjson.JSONArray;
@@ -21,14 +47,11 @@ public class VariableHelper {
     private VariableHelper() {
     }
 
-    public static String bind(String source, JSONObject variables){
-        List<String> temp = new ArrayList<>();
+    public static String bind(String source, JSONObject variables) {
         Matcher matcher = PARAM_PATTERN.matcher(source);
         while (matcher.find()) {
-            temp.add(matcher.group());
-        }
-        for (String value : temp){
-            source =  source.replace(value, variables.getString(value.substring(2, value.length() -1)));
+            String value = matcher.group();
+            source = source.replace(value, variables.getString(value.substring(2, value.length() - 1)));
         }
         return source;
     }
@@ -49,11 +72,7 @@ public class VariableHelper {
                 bind((JSONArray) value, variables);
             }
             if (value instanceof JSONObject) {
-                ((JSONObject) value).forEach((k, v) -> {
-                    if (v instanceof List) {
-                        bind(source.getJSONObject(key), k, ((JSONObject) value).getJSONArray(k), variables);
-                    }
-                });
+                bind(source.getJSONObject(key), (JSONObject) value, variables);
             }
             if (value instanceof ArrayList) {
                 bind(source, key, new JSONArray((List<Object>) value), variables);
@@ -61,6 +80,12 @@ public class VariableHelper {
         });
     }
 
+    /**
+     * Get using variables from source object
+     *
+     * @param source use variables source object
+     * @return using variables
+     */
     private static JSONObject getUsingVarKey(JSONObject source) {
         JSONObject usingVarKey = new JSONObject(true);
         source.forEach((key, value) -> {
@@ -68,15 +93,21 @@ public class VariableHelper {
                 getUsingVarKey(key, value, usingVarKey);
             }
             if (value instanceof JSONObject) {
-                JSONObject valueJson = new JSONObject(true);
-                ((JSONObject) value).forEach((k, v) -> getUsingVarKey(k, v, valueJson));
-                usingVarKey.put(key, valueJson);
+                getUsingVarKey(key, (JSONObject) value, usingVarKey);
             }
             if (value instanceof JSONArray) {
                 getUsingVarKey(key, (JSONArray) value, usingVarKey);
             }
         });
         return usingVarKey;
+    }
+
+    private static void getUsingVarKey(String key, JSONObject value, JSONObject usingVarKey) {
+        JSONObject valueJson = new JSONObject(true);
+        value.forEach((k, v) -> getUsingVarKey(k, v, valueJson));
+        if (!valueJson.isEmpty()) {
+            usingVarKey.put(key, valueJson);
+        }
     }
 
     private static void getUsingVarKey(String key, Object value, JSONObject usingVarKey) {
@@ -93,6 +124,7 @@ public class VariableHelper {
     }
 
     private static void getUsingVarKey(String key, JSONArray value, JSONObject usingVarKey) {
+        JSONArray valueArray = new JSONArray();
         for (int i = 0; i < value.size(); i++) {
             List<String> temp = new ArrayList<>();
             Matcher matcher = PARAM_PATTERN.matcher(value.getString(i));
@@ -100,18 +132,26 @@ public class VariableHelper {
                 temp.add(matcher.group());
             }
             if (!temp.isEmpty()) {
-                value.remove(i);
-                value.add(i, temp);
+                valueArray.add(temp);
             }
         }
-        usingVarKey.put(key, value);
+        if (!valueArray.isEmpty()){
+            usingVarKey.put(key, valueArray);
+        }
+    }
+
+    private static void bind(JSONObject source, JSONObject usingVarValue, JSONObject variables) {
+        usingVarValue.forEach((key, value) -> {
+            if (value instanceof List) {
+                bind(source, key, new JSONArray((List)value), variables);
+            }
+        });
     }
 
     private static void bind(JSONArray value, JSONObject variables) {
         for (int i = 0; i < value.size(); i++) {
             if (value.get(i) instanceof List) {
-                JSONArray varList = value.getJSONArray(i);
-                String varValue = getVarValue(varList, variables);
+                String varValue = getVarValue(value.getJSONArray(i), variables);
                 if (varValue.length() > 0) {
                     value.remove(i);
                     value.add(i, varValue);
@@ -123,8 +163,8 @@ public class VariableHelper {
     private static void bind(JSONObject source, String key, JSONArray value, JSONObject variables) {
         for (int i = 0; i < value.size(); i++) {
             String k = value.getString(i).substring(2, value.getString(i).length() - 1);
-            if (!FUNC_PATTERN.matcher(variables.getString(k)).find()) {
-                if (source.get(key) instanceof List){
+            if (!StringUtil.isEmpty(variables.getString(k)) && !FUNC_PATTERN.matcher(variables.getString(k)).find()) {
+                if (source.get(key) instanceof List) {
                     source.put(key, getVarValue(source.getJSONArray(key), variables));
                 } else if (source.get(key) instanceof String) {
                     source.put(key, source.getString(key).replace(value.getString(i), variables.getString(k)));
@@ -137,7 +177,7 @@ public class VariableHelper {
         StringBuilder str = new StringBuilder();
         for (int i = 0; i < value.size(); i++) {
             String k = value.getString(i).substring(2, value.getString(i).length() - 1);
-            if (!FUNC_PATTERN.matcher(variables.getString(k)).find()) {
+            if (!StringUtil.isEmpty(variables.getString(k)) && !FUNC_PATTERN.matcher(variables.getString(k)).find()) {
                 str.append(variables.getString(k));
             }
         }
@@ -174,11 +214,13 @@ public class VariableHelper {
         try {
             String value = String.valueOf(validate.getExpect());
             if (!StringUtil.isEmpty(value)) {
-                if (PARAM_PATTERN.matcher(value).find()) {
-                    validate.setExpect(variables.get(value.substring(2, value.length() - 1)));
-                } else if (FUNC_PATTERN.matcher(value).find()) {
+                if (FUNC_PATTERN.matcher(value).find()) {
                     Object result = FunctionFactory.execute(value, variables);
                     validate.setExpect(result);
+                    return;
+                }
+                if (PARAM_PATTERN.matcher(value).find()) {
+                    validate.setExpect(variables.get(value.substring(2, value.length() - 1)));
                 }
             }
         } catch (Exception e) {
