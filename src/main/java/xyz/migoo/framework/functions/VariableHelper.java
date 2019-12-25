@@ -23,7 +23,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 package xyz.migoo.framework.functions;
 
 import com.alibaba.fastjson.JSONArray;
@@ -36,8 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import static xyz.migoo.framework.functions.CompoundVariable.PARAM_PATTERN;
-import static xyz.migoo.framework.functions.CompoundVariable.FUNC_PATTERN;
+import static xyz.migoo.framework.functions.CompoundVariable.*;
 
 /**
  * @author xiaomi
@@ -47,9 +45,10 @@ public class VariableHelper {
     private VariableHelper() {
     }
 
-    public static String bind(String source, JSONObject variables) {
+    public static String bindConnectedVariables(String source, JSONObject variables) {
+        boolean isConnectedVariables = PARAM_PATTERN2.matcher(source).find();
         Matcher matcher = PARAM_PATTERN.matcher(source);
-        while (matcher.find()) {
+        while (matcher.find() && isConnectedVariables) {
             String value = matcher.group();
             source = source.replace(value, variables.getString(value.substring(2, value.length() - 1)));
         }
@@ -79,7 +78,7 @@ public class VariableHelper {
             } else if (value instanceof JSONObject) {
                 bindVariable((JSONObject) value, variables);
             } else if (value instanceof String) {
-                source.put(key, bind((String) value, variables));
+                source.put(key, bindConnectedVariables((String) value, variables));
             }
         });
     }
@@ -92,7 +91,7 @@ public class VariableHelper {
             } else if (value instanceof JSONObject) {
                 bindVariable((JSONObject) value, variables);
             } else if (value instanceof String) {
-                String v = bind((String) value, variables);
+                String v = bindConnectedVariables((String) value, variables);
                 source.remove(i);
                 source.add(i, v);
             }
@@ -232,7 +231,8 @@ public class VariableHelper {
             String value = use.getString(key);
             if (!StringUtil.isEmpty(value)) {
                 if (FUNC_PATTERN.matcher(value).find()) {
-                    Object result = FunctionFactory.execute(value, variables);
+                    String func = VariableHelper.bindConnectedVariables(value, variables);
+                    Object result = FunctionFactory.execute(func, variables);
                     use.put(key, result);
                 }
             }
@@ -250,11 +250,10 @@ public class VariableHelper {
             String value = String.valueOf(validate.getExpect());
             if (!StringUtil.isEmpty(value)) {
                 if (FUNC_PATTERN.matcher(value).find()) {
-                    Object result = FunctionFactory.execute(value, variables);
+                    String func = VariableHelper.bindConnectedVariables(value, variables);
+                    Object result = FunctionFactory.execute(func, variables);
                     validate.setExpect(result);
-                    return;
-                }
-                if (PARAM_PATTERN.matcher(value).find()) {
+                } else if (PARAM_PATTERN.matcher(value).find()) {
                     validate.setExpect(variables.get(value.substring(2, value.length() - 1)));
                 }
             }

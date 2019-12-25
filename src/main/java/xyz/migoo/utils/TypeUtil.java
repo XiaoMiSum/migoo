@@ -23,7 +23,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 package xyz.migoo.utils;
 
 /**
@@ -32,9 +31,9 @@ package xyz.migoo.utils;
  */
 public class TypeUtil {
 
-    private static final String TRUE = "true";
+    private static final String TRUE = "TRUE";
     private static final String ONE = "1";
-    private static final String FALSE = "false";
+    private static final String FALSE = "FALSE";
     private static final String ZERO = "0";
     private static final String Y = "Y";
     private static final String T = "T";
@@ -43,33 +42,25 @@ public class TypeUtil {
     private static final String N = "N";
     private static final String NO = "NO";
 
-    public static boolean booleanOf(Object value){
+    public static boolean booleanOf(Object value) {
         if (value == null) {
-            return Boolean.FALSE;
-        }else if (value instanceof Boolean) {
+            return false;
+        } else if (value instanceof Boolean) {
             return (Boolean) value;
-        }else if (value instanceof Number) {
+        } else if (value instanceof Number) {
             return ((Number) value).intValue() == 1;
-        }else {
-            if (value instanceof String) {
-                String strVal = ((String) value).toLowerCase();
-                if (StringUtil.isEmpty(StringUtil.toEmpty(strVal))) {
-                    return Boolean.FALSE;
-                }
-                if (TRUE.equals(strVal) || ONE.equals(strVal)) {
-                    return Boolean.TRUE;
-                }
-                if (FALSE.equals(strVal) || ZERO.equals(strVal)) {
-                    return Boolean.FALSE;
-                }
-                if (Y.equals(strVal) || T.equals(strVal) || YES.equals(strVal)) {
-                    return Boolean.TRUE;
-                }
-                if (F.equals(strVal) || N.equals(strVal) || NO.equals(strVal) ) {
-                    return Boolean.FALSE;
-                }
+        } else if (value instanceof String) {
+            String strVal = ((String) value).toUpperCase();
+            if (StringUtil.isEmpty(StringUtil.toEmpty(strVal))) {
+                return false;
             }
-            return Boolean.FALSE;
+            if (TRUE.equals(strVal) || ONE.equals(strVal) || Y.equals(strVal) || T.equals(strVal) || YES.equals(strVal)) {
+                return true;
+            }
+            if (FALSE.equals(strVal) || ZERO.equals(strVal) || F.equals(strVal) || N.equals(strVal) || NO.equals(strVal)) {
+                return false;
+            }
         }
+        return false;
     }
 }

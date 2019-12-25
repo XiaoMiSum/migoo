@@ -23,7 +23,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 package xyz.migoo.framework.functions;
 
 import com.alibaba.fastjson.JSONArray;
@@ -43,6 +42,7 @@ public class CompoundVariable extends HashMap<String, Object> {
 
     static final Pattern FUNC_PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
     static final Pattern PARAM_PATTERN = Pattern.compile("\\$\\{(\\w+)}");
+    static final Pattern PARAM_PATTERN2 = Pattern.compile("\\$\\{(\\w+)}\\$\\{(\\w+)}");
     private static final Pattern REGEX_INTEGER = Pattern.compile("^[-\\+]?[0-9]+$");
     private static final Pattern REGEX_FLOAT = Pattern.compile("^[-\\+]?[0-9]+\\.[0-9]+$");
 
