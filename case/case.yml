@@ -14,9 +14,6 @@ config:
       x-test: ${user2}
 cases:
   - title: 验证成功
-    request:
-      headers:
-        token: abc1234567890
     config:
       variables:
         pwd1: __generatePassword(password=${pwd})
@@ -26,6 +23,9 @@ cases:
         - __hook1(A=${user2}${user2})
       after:
         - __hook2(A=after,B=before)
+      request:
+        headers:
+          token: abc1234567890
     body:
       userName: ${user}
       password: ${pwd2}

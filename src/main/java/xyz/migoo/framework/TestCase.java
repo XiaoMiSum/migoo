@@ -118,23 +118,17 @@ public class TestCase extends AbstractTest {
     private void buildRequest() throws ExecuteError {
         this.bindRequestVariable();
         this.reorganizeRequest();
-        request.uri(testCase.getRequest().getString(CaseKeys.API))
-                .headers(testCase.getRequest().getJSONObject(CaseKeys.HEADER))
+        request.uri(testCase.getConfig().getRequest().getString(CaseKeys.API))
+                .headers(testCase.getConfig().getRequest().getJSONObject(CaseKeys.HEADER))
                 .query(testCase.getQuery())
                 .data(testCase.getData())
                 .body(testCase.getBody());
     }
 
     private void reorganizeRequest(){
-        String url = requestConfig.getString(CaseKeys.URL);
-        JSONObject caseRequest = testCase.getRequest();
+        JSONObject caseRequest = testCase.getConfig().getRequest() == null ? new JSONObject(2) : testCase.getConfig().getRequest();
+        String url = requestConfig.getString(CaseKeys.URL) + StringUtil.toEmpty(caseRequest.getString(CaseKeys.API));
         JSONObject headers = new JSONObject(10);
-        if (caseRequest != null){
-            url = url + StringUtil.toEmpty(testCase.getRequest().getString(CaseKeys.API));
-            caseRequest.put(CaseKeys.API, url);
-        } else {
-            caseRequest = new JSONObject(2);
-        }
         if (requestConfig.getJSONObject(CaseKeys.HEADER) != null){
             headers.putAll(requestConfig.getJSONObject(CaseKeys.HEADER));
         }
@@ -143,17 +137,17 @@ public class TestCase extends AbstractTest {
         }
         caseRequest.put(CaseKeys.API, url);
         caseRequest.put(CaseKeys.HEADER, headers);
-        testCase.setRequest(caseRequest);
+        testCase.getConfig().setRequest(caseRequest);
         request = MiGooRequest.method(requestConfig.getString(CaseKeys.METHOD));
     }
 
     private void bindRequestVariable() throws ExecuteError {
         VariableHelper.bindAndEval(requestConfig,  super.variables);
-        VariableHelper.bindAndEval(testCase.getRequest(), super.variables);
+        VariableHelper.bindAndEval(testCase.getConfig().getRequest(), super.variables);
         JSONObject body = testCase.getBody() == null ?
                 testCase.getData() == null ? testCase.getQuery() : testCase.getData() : testCase.getBody();
-        VariableHelper.bindVariable(body, super.variables);
         super.variables.put("body", body);
+        VariableHelper.bindVariable(body, super.variables);
     }
 
     private void execute() throws HttpException, ExecuteError {

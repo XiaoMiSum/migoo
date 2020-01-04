@@ -40,8 +40,6 @@ public class Cases {
 
     private Config config;
 
-    private JSONObject request;
-
     private JSONObject query;
 
     private JSONObject data;
@@ -64,14 +62,6 @@ public class Cases {
 
     public void setConfig(Config config) {
         this.config = config;
-    }
-
-    public JSONObject getRequest() {
-        return request;
-    }
-
-    public void setRequest(JSONObject request) {
-        this.request = request;
     }
 
     public JSONObject getQuery() {
