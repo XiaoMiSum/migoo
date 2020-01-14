@@ -26,13 +26,15 @@
 
 package xyz.migoo.framework.assertions;
 
+import xyz.migoo.framework.assertions.function.Alias;
 import xyz.migoo.simplehttp.Response;
 
 /**
  * @author xiaomi
  * @date 2019-04-13 21:37
  */
-public class ResponseCodeAssertion extends AbstractAssertion {
+@Alias(aliasList = {"line", "status", "code", "statusCode", "statusLine", "status_code", "status_line"})
+public class ResponseCodeAssertion extends AssertionFactory {
 
     @Override
     public void setActual(Object actual) {

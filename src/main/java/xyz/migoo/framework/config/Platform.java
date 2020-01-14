@@ -59,21 +59,6 @@ public class Platform {
         }
     }
 
-    private static final JSONArray CHECK_JSON = PROPERTIES.getJSONArray("check.json");
-
-    public static boolean isJson(String str) {
-        for (int i = 0; i < CHECK_JSON.size(); i++) {
-            if (Pattern.compile(CHECK_JSON.getString(i)).matcher(str).find()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static final JSONArray CHECK_BODY = PROPERTIES.getJSONArray("check.body");
-
-    public static final JSONArray CHECK_CODE = PROPERTIES.getJSONArray("check.code");
-
     public static final boolean MAIL_SEND = Boolean.parseBoolean(PROPERTIES.getString("mail.send").trim());
 
     public static final String MAIL_IMAP_HOST = PROPERTIES.getString("mail.imap.host").trim();

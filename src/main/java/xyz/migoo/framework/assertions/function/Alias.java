@@ -30,6 +30,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Arrays;
+import java.util.regex.Pattern;
 
 /**
  * @author xiaomi
@@ -40,4 +42,20 @@ import java.lang.annotation.Target;
 public @interface Alias {
 
     String[] aliasList();
+
+    class Check {
+
+        public static boolean isJson(String searchStr, String[] checkList) {
+            for (String s : checkList) {
+                if (Pattern.compile(s).matcher(searchStr).find()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static boolean contains(String searchStr, String[] checkList) {
+            return Arrays.asList(checkList).contains(searchStr);
+        }
+    }
 }

@@ -27,20 +27,22 @@
 package xyz.migoo.framework.assertions;
 
 import com.alibaba.fastjson.JSONPath;
+import xyz.migoo.framework.assertions.function.Alias;
 import xyz.migoo.simplehttp.Response;
 
 /**
  * @author xiaomi
  * @date 2019-04-13 21:37
  */
-public class JSONAssertion extends AbstractAssertion {
+@Alias(aliasList = {"^\\$.[\\w]+(.\\w+)*", "^json.[\\w]+(.\\w+)*", "^body.[\\w]+(.\\w+)*"})
+public class JSONAssertion extends AssertionFactory {
 
     private static final String BODY_ = "body";
     private static final String JSON_ = "json";
 
     private String jsonPath;
 
-    JSONAssertion(String jsonPath){
+    public void setJsonPath(String jsonPath){
         if (jsonPath.startsWith(JSON_) || jsonPath.startsWith(BODY_)){
             jsonPath = "$" + jsonPath.substring(BODY_.length());
         }
