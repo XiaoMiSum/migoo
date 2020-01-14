@@ -1,3 +1,28 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2018 XiaoMiSum (mi_xiao@qq.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * 'Software'), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package xyz.migoo.framework.functions;
 
 import com.alibaba.fastjson.JSONArray;
@@ -16,7 +41,8 @@ public class CompoundVariable extends HashMap<String, Object> {
     private static final long serialVersionUID = 362498820763181265L;
 
     static final Pattern FUNC_PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
-    static final Pattern PARAM_PATTERN = Pattern.compile("(\\$\\{(\\w+)})+");
+    static final Pattern PARAM_PATTERN = Pattern.compile("\\$\\{(\\w+)}");
+    static final Pattern PARAM_PATTERN2 = Pattern.compile("\\$\\{(\\w+)}\\$\\{(\\w+)}");
     private static final Pattern REGEX_INTEGER = Pattern.compile("^[-\\+]?[0-9]+$");
     private static final Pattern REGEX_FLOAT = Pattern.compile("^[-\\+]?[0-9]+\\.[0-9]+$");
 

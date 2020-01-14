@@ -11,22 +11,27 @@ config:
     method: post
     headers:
       x-host: http://127.0.0.1/
+      x-test: ${user2}
 cases:
   - title: 验证成功
-    request:
-      headers:
-        token: abc1234567890
     config:
       variables:
         pwd1: __generatePassword(password=${pwd})
         pwd2: __generatePassword(password=${pwd1})
       before:
         - __hook1(A=before)
+        - __hook1(A=${user2}${user2})
       after:
         - __hook2(A=after,B=before)
+      request:
+        headers:
+          token: abc1234567890
     body:
       userName: ${user}
       password: ${pwd2}
+      test:
+        - ${user}
+        - ${pwd2}
       sign: __Digest(string=${user}${pwd})
     validates:
       - {check: status, expect: 200, func: ==}
@@ -129,3 +134,26 @@ cases:
       sign: __Digest(algorithm=md5,string=${user}${pwd})
     validates:
       - {check: xyz.migoo.test.example.TestAssertion, expect: '__TestUseVars(title=${title})'}
+  - title: body 多层嵌套使用变量
+    config:
+      variables:
+        pwd1: __generatePassword(password=${pwd})
+        pwd2: __generatePassword(password=${pwd1})
+      before:
+        - __hook1(A=before)
+      after:
+        - __hook2(A=after,B=before)
+    body:
+      userName: ${user}
+      password: ${pwd2}
+      test:
+        first:
+          key: ${user}
+          second:
+            value: ${pwd2}
+            third:
+              - ${user}
+              - ${pwd2}
+      sign: __Digest(algorithm=md5,string=${user}${pwd})
+    validates:
+      - {check: status, expect: 200, func: ==}

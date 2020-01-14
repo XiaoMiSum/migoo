@@ -1,3 +1,28 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2018 XiaoMiSum (mi_xiao@qq.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * 'Software'), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package xyz.migoo.framework;
 
 import com.alibaba.fastjson.JSONObject;
@@ -52,12 +77,8 @@ public class TestCase extends AbstractTest {
             this.execute();
             result.addSuccess(this);
             MiGooLog.log("test case success");
-        } catch (MiGooException e) {
+        } catch (MiGooException | Exception e) {
             this.processException(e, result);
-        } catch (Exception e) {
-            this.request = null;
-            result.addError(this, e);
-            MiGooLog.log("case run error", e);
         } finally {
             this.validates(testCase.getValidates());
             super.teardown("case teardown");
@@ -73,42 +94,41 @@ public class TestCase extends AbstractTest {
         VariableHelper.bindAndEval(super.variables, super.variables);
     }
 
-    private void processException(MiGooException ex, TestResult result){
-        if (ex instanceof SkippedRun){
+    private void processException(Throwable throwable, TestResult result){
+        if (throwable instanceof SkippedRun){
             this.request = null;
             MiGooLog.log("case run skipped");
             result.addSkip(this);
         }
-        if (ex instanceof AssertionFailure){
+        if (throwable instanceof AssertionFailure){
             MiGooLog.log("case assert failure");
             result.addFailure(this);
         }
-        if (ex instanceof ExecuteError){
-            MiGooLog.log("case assert error");
-            result.addError(this,  ex);
+        if (throwable instanceof ExecuteError){
+            MiGooLog.log("case execute error", throwable);
+            result.addError(this,  throwable);
+        }
+        if (throwable instanceof Exception){
+            this.request = null;
+            MiGooLog.log("case run error", throwable);
+            result.addError(this, throwable);
         }
     }
 
     private void buildRequest() throws ExecuteError {
         this.bindRequestVariable();
         this.reorganizeRequest();
-        request.uri(testCase.getRequest().getString(CaseKeys.API))
-                .headers(testCase.getRequest().getJSONObject(CaseKeys.HEADER))
+        request.uri(testCase.getConfig().getRequest().getString(CaseKeys.API))
+                .headers(testCase.getConfig().getRequest().getJSONObject(CaseKeys.HEADER))
                 .query(testCase.getQuery())
                 .data(testCase.getData())
                 .body(testCase.getBody());
     }
 
     private void reorganizeRequest(){
-        String url = requestConfig.getString(CaseKeys.URL);
-        JSONObject caseRequest = testCase.getRequest();
+        JSONObject caseRequest = testCase.getConfig().getRequest() == null ? new JSONObject(2) : testCase.getConfig().getRequest();
+        String url = requestConfig.getString(CaseKeys.URL) + StringUtil.toEmpty(caseRequest.getString(CaseKeys.API));
         JSONObject headers = new JSONObject(10);
-        if (caseRequest != null){
-            url = url + StringUtil.toEmpty(testCase.getRequest().getString(CaseKeys.API));
-            caseRequest.put(CaseKeys.API, url);
-        } else {
-            caseRequest = new JSONObject(2);
-        }
         if (requestConfig.getJSONObject(CaseKeys.HEADER) != null){
             headers.putAll(requestConfig.getJSONObject(CaseKeys.HEADER));
         }
@@ -117,19 +137,17 @@ public class TestCase extends AbstractTest {
         }
         caseRequest.put(CaseKeys.API, url);
         caseRequest.put(CaseKeys.HEADER, headers);
-        testCase.setRequest(caseRequest);
+        testCase.getConfig().setRequest(caseRequest);
         request = MiGooRequest.method(requestConfig.getString(CaseKeys.METHOD));
     }
 
     private void bindRequestVariable() throws ExecuteError {
-        VariableHelper.bind(requestConfig,  super.variables);
-        VariableHelper.bind(testCase.getRequest(), super.variables);
+        VariableHelper.bindAndEval(requestConfig,  super.variables);
+        VariableHelper.bindAndEval(testCase.getConfig().getRequest(), super.variables);
         JSONObject body = testCase.getBody() == null ?
                 testCase.getData() == null ? testCase.getQuery() : testCase.getData() : testCase.getBody();
         super.variables.put("body", body);
-        VariableHelper.bindAndEval(testCase.getBody(), super.variables);
-        VariableHelper.bindAndEval(testCase.getData(), super.variables);
-        VariableHelper.bindAndEval(testCase.getQuery(), super.variables);
+        VariableHelper.bindVariable(body, super.variables);
     }
 
     private void execute() throws HttpException, ExecuteError {
