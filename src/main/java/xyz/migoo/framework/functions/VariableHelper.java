@@ -45,7 +45,7 @@ public class VariableHelper {
     private VariableHelper() {
     }
 
-    public static String bindConnectedVariables(String source, JSONObject variables) {
+    public static String bindMultiVariable(String source, JSONObject variables) {
         boolean isConnectedVariables = PARAM_PATTERN2.matcher(source).find();
         Matcher matcher = PARAM_PATTERN.matcher(source);
         while (matcher.find() && isConnectedVariables) {
@@ -78,7 +78,7 @@ public class VariableHelper {
             } else if (value instanceof JSONObject) {
                 bindVariable((JSONObject) value, variables);
             } else if (value instanceof String) {
-                source.put(key, bindConnectedVariables((String) value, variables));
+                source.put(key, bindMultiVariable((String) value, variables));
             }
         });
     }
@@ -91,7 +91,7 @@ public class VariableHelper {
             } else if (value instanceof JSONObject) {
                 bindVariable((JSONObject) value, variables);
             } else if (value instanceof String) {
-                String v = bindConnectedVariables((String) value, variables);
+                String v = bindMultiVariable((String) value, variables);
                 source.remove(i);
                 source.add(i, v);
             }
@@ -203,6 +203,8 @@ public class VariableHelper {
                 } else if (source.get(key) instanceof String) {
                     source.put(key, source.getString(key).replace(value.getString(i), variables.getString(k)));
                 }
+            } else if (variables.containsKey(k) && StringUtil.isEmpty(variables.getString(k))) {
+                source.put(key, variables.get(k));
             }
         }
     }
@@ -231,7 +233,7 @@ public class VariableHelper {
             String value = use.getString(key);
             if (!StringUtil.isEmpty(value)) {
                 if (FUNC_PATTERN.matcher(value).find()) {
-                    String func = VariableHelper.bindConnectedVariables(value, variables);
+                    String func = VariableHelper.bindMultiVariable(value, variables);
                     Object result = FunctionFactory.execute(func, variables);
                     use.put(key, result);
                 }
@@ -250,11 +252,11 @@ public class VariableHelper {
             String value = String.valueOf(validate.getExpect());
             if (!StringUtil.isEmpty(value)) {
                 if (FUNC_PATTERN.matcher(value).find()) {
-                    String func = VariableHelper.bindConnectedVariables(value, variables);
+                    String func = VariableHelper.bindMultiVariable(value, variables);
                     Object result = FunctionFactory.execute(func, variables);
                     validate.setExpect(result);
                 } else if (PARAM_PATTERN.matcher(value).find()) {
-                    validate.setExpect(variables.get(value.substring(2, value.length() - 1)));
+                    validate.setExpect(VariableHelper.bindMultiVariable(value, variables));
                 }
             }
         } catch (Exception e) {

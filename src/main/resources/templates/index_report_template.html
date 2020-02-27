@@ -7,22 +7,25 @@
     <title th:text="${project_name} + ' - 接口测试报告'"></title>
     <style>
         body {
-            background-color: #d8d8d8 ;
+            background-color: #d8d8d8;
             height: 100%;
             width: 100%;
         }
+
         .binTu {
             height: 300px;
             width: 40%;
-            float:left;
-            display:inline;
-            margin : 1% 5%;
+            float: left;
+            display: inline;
+            margin: 1% 5%;
         }
+
         .zhuTu {
             height: 200px;
             width: 80%;
-            margin : 10% 10%;
+            margin: 10% 10%;
         }
+
         .bottom {
             right: 0px;
             bottom: 0px;
@@ -30,9 +33,10 @@
             text-align: center;
             z-index: 10;
         }
+
         .bottom .pre {
             font-size: 16px;
-            line-height: 5px;
+            line-height: 40px;
         }
     </style>
 </head>
@@ -162,8 +166,8 @@
         },
         tooltip: {
             trigger: 'axis',
-            axisPointer : {
-                type : 'shadow'
+            axisPointer: {
+                type: 'shadow'
             }
         },
         legend: {
@@ -194,12 +198,12 @@
         yAxis: [
             {
                 type: 'category',
-                triggerEvent:true,
+                triggerEvent: true,
                 data: legend_data
             }
         ],
         series: [
-{
+            {
                 name: 'SUCCESS',
                 type: 'bar',
                 stack: '总量',
@@ -297,7 +301,7 @@
     var myChart2 = echarts.init(document.getElementById('main2'));
     myChart2.setOption(option2);
 
-   if(legend_data.length > 1){
+    if (legend_data.length > 1) {
         document.getElementById("main3").style.height = legend_data.length * 60 + 'px';
     }
 
@@ -311,8 +315,8 @@
 </script>
 <div class="bottom">
     <a class="pre" href="https://github.com/XiaoMiSum/MiGoo" target="_black">
-        <img src="https://www.easyicon.net/api/resizeApi.php?id=1181185&size=32" style="max-width: 15px; max-height: 15px">
-        MiGoo GitHub</a>
+        <img src="https://img.shields.io/badge/MiGoo-yellow.svg?style=social&amp;logo=github">
+    </a>
 </div>
 </body>
 </html>

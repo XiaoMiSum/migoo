@@ -66,6 +66,7 @@ public class TestSuite extends AbstractTest {
         super.addSetUp(config.getBeforeClass());
         // 3. add config.beforeClass to teardown
         super.addTeardown(config.getAfterClass());
+        super.variables.put("name", getName());
         Vars.add(super.getName(), super.variables);
     }
 
