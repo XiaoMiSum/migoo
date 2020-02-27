@@ -98,7 +98,7 @@ public abstract class AbstractTest implements ITest {
         // bind variable to setUp (this.variables -> this.setUp)
         MiGooLog.log("{} begin", type);
         for (int i = 0; i < setUp.size(); i++) {
-            String func = VariableHelper.bindConnectedVariables(setUp.getString(i), variables);
+            String func = VariableHelper.bindMultiVariable(setUp.getString(i), variables);
             FunctionFactory.execute(func, variables);
         }
         MiGooLog.log("{} end", type);
@@ -123,7 +123,7 @@ public abstract class AbstractTest implements ITest {
         MiGooLog.log("{} begin", type);
         for (int i = 0; i < teardown.size(); i++) {
             try {
-                String func = VariableHelper.bindConnectedVariables(teardown.getString(i), variables);
+                String func = VariableHelper.bindMultiVariable(teardown.getString(i), variables);
                 FunctionFactory.execute(func, variables);
             } catch (ExecuteError e) {
                 MiGooLog.log(teardown.getString(i) + " error", e);
