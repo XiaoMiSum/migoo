@@ -27,24 +27,35 @@
  */
 
 
-package xyz.migoo.framework.assertions.function;
+package assertions.migoo.xyz.assertions.functions;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import core.xyz.migoo.assertions.function.Alias;
+import core.xyz.migoo.assertions.function.IFunction;
+import xyz.migoo.utils.StringUtil;
 
 import java.util.Map;
 
 /**
  * @author xiaomi
- * @date 2019-04-14 02:05
+ * @date 2019-08-13 22:17
  */
-public interface IFunction {
+@Alias(aliasList = {"isEmpty", "isNull", "empty", "blank"})
+public class IsEmpty extends AbstractFunction implements IFunction {
 
-    /**
-     * Implement the interface to extend the assertion method
-     * get expected values from Map Object
-     * and the expected values can be null
-     * use:  data.get("expect")
-     *
-     * @param data Objects that hold the actual and expected values
-     * @return Boolean Object
-     */
-    boolean assertTrue(Map<String, Object> data);
+    @Override
+    public boolean assertTrue(Map<String, Object> data) {
+        Object actual = data.get("actual");
+        if (actual instanceof JSONObject) {
+            return ((JSONObject) actual).isEmpty();
+        }
+        if (actual instanceof JSONArray) {
+            return ((JSONArray) actual).isEmpty();
+        }
+        if (actual instanceof String) {
+            return StringUtil.isEmpty((String) actual);
+        }
+        return actual == null;
+    }
 }

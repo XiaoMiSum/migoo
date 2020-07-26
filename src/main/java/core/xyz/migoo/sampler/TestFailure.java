@@ -24,7 +24,7 @@
  */
 
 
-package xyz.migoo.framework;
+package core.xyz.migoo.sampler;
 
 import xyz.migoo.exception.AssertionFailure;
 

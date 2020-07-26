@@ -24,26 +24,22 @@
  */
 
 
-package xyz.migoo.framework;
+package functions.xyz.migoo.functions;
+
+import core.xyz.migoo.functions.AbstractFunction;
+import core.xyz.migoo.functions.CompoundVariable;
+import core.xyz.migoo.functions.FunctionsException;
 
 /**
  * @author xiaomi
- * @date 2019-08-10 11:02
+ * @date 2019/11/18 17:22
  */
-public interface ITest {
+public class Random extends AbstractFunction {
 
-    /**
-     * Returns count of the test.
-     * can return zero.
-     *
-     * @return test count
-     */
-    int countTestCases();
-
-    /**
-     * running the test
-     *
-     * @param result the test result
-     */
-    void run(TestResult result);
+    @Override
+    public Integer execute(CompoundVariable parameters) throws FunctionsException {
+        Integer bound = parameters.getInteger("bound");
+        java.util.Random random = new java.util.Random();
+        return bound != null && bound > 0 ? random.nextInt(bound) : random.nextInt();
+    }
 }

@@ -26,25 +26,33 @@
  *
  */
 
+package core.xyz.migoo.sampler;
 
-package xyz.migoo.framework.assertions.function;
-
-import java.util.Map;
+import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.report.MiGooLog;
 
 /**
  * @author xiaomi
- * @date 2019-04-14 02:05
+ * @date 2020/7/26 16:24
  */
-public interface IFunction {
+public class TestSet extends AbstractTest {
 
-    /**
-     * Implement the interface to extend the assertion method
-     * get expected values from Map Object
-     * and the expected values can be null
-     * use:  data.get("expect")
-     *
-     * @param data Objects that hold the actual and expected values
-     * @return Boolean Object
-     */
-    boolean assertTrue(Map<String, Object> data);
+    TestSet(JSONObject set, JSONObject requestConfig) {
+        super(set.getString("name"));
+        super.initTest(set.getJSONObject("config"), set.getJSONObject("dataset"));
+        super.addVariables("name", super.getName());
+        super.addToGlobals();
+        super.initRequest(requestConfig);
+        JSONObject finalRequestConfig = this.requestConfig;
+        set.getJSONArray("cases").forEach(testCase -> {
+            super.addRTest(new TestCase((JSONObject) testCase, finalRequestConfig));
+        });
+    }
+
+    @Override
+    public void run(TestResult result) {
+        MiGooLog.log("===================================================================");
+        super.run(result, this.getClass().getSimpleName());
+    }
+
 }

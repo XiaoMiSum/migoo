@@ -27,24 +27,29 @@
  */
 
 
-package xyz.migoo.framework.assertions.function;
+package assertions.migoo.xyz.assertions.functions;
 
+import core.xyz.migoo.assertions.function.Alias;
+import core.xyz.migoo.assertions.function.IFunction;
+
+import java.math.BigDecimal;
 import java.util.Map;
 
 /**
  * @author xiaomi
- * @date 2019-04-14 02:05
+ * @date 2019-08-13 22:17
  */
-public interface IFunction {
+@Alias(aliasList = {"<", "less", "lessThan", "lt"})
+public class LessThan extends AbstractFunction implements IFunction {
 
-    /**
-     * Implement the interface to extend the assertion method
-     * get expected values from Map Object
-     * and the expected values can be null
-     * use:  data.get("expect")
-     *
-     * @param data Objects that hold the actual and expected values
-     * @return Boolean Object
-     */
-    boolean assertTrue(Map<String, Object> data);
+    @Override
+    public boolean assertTrue(Map<String, Object> data) {
+        try {
+            BigDecimal b1 = new BigDecimal(String.valueOf(data.get("actual")));
+            BigDecimal b2 = new BigDecimal(String.valueOf(data.get("expect")));
+            return b1.compareTo(b2) < 0;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

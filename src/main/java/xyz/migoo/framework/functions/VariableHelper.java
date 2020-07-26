@@ -248,16 +248,16 @@ public class VariableHelper {
      * @param validate 检查点
      * @throws ExecuteError 检查异常
      */
-    public static void evalValidate(Validate validate, JSONObject variables) throws ExecuteError {
+    public static void evalValidate(JSONObject checker, JSONObject variables) throws ExecuteError {
         try {
-            String value = String.valueOf(validate.getExpect());
+            String value = String.valueOf(checker.getString("expect"));
             if (!StringUtil.isEmpty(value)) {
                 if (FUNC_PATTERN.matcher(value).find()) {
                     String func = VariableHelper.bindMultiVariable(value, variables);
                     Object result = FunctionFactory.execute(func, variables);
-                    validate.setExpect(result);
+                    checker.put("expect", result);
                 } else if (PARAM_PATTERN.matcher(value).find()) {
-                    validate.setExpect(VariableHelper.bindMultiVariable(value, variables));
+                    checker.put("expect", VariableHelper.bindMultiVariable(value, variables));
                 }
             }
         } catch (Exception e) {

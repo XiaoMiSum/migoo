@@ -27,24 +27,35 @@
  */
 
 
-package xyz.migoo.framework.assertions.function;
+package assertions.migoo.xyz.assertions.functions;
 
+import core.xyz.migoo.assertions.function.Alias;
+import core.xyz.migoo.assertions.function.IFunction;
+
+import java.util.List;
 import java.util.Map;
 
 /**
  * @author xiaomi
- * @date 2019-04-14 02:05
+ * @date 2019-08-13 22:17
  */
-public interface IFunction {
+@Alias(aliasList = {"contains", "contain", "ct", "⊆"})
+public class Contains extends AbstractFunction implements IFunction {
 
-    /**
-     * Implement the interface to extend the assertion method
-     * get expected values from Map Object
-     * and the expected values can be null
-     * use:  data.get("expect")
-     *
-     * @param data Objects that hold the actual and expected values
-     * @return Boolean Object
-     */
-    boolean assertTrue(Map<String, Object> data);
+    @Override
+    public boolean assertTrue(Map<String, Object> data) {
+        Object actual = data.get("actual");
+        Object expect = data.get("expect");
+        if (actual instanceof String) {
+            return ((String) actual).contains((String) expect);
+        }
+        if (actual instanceof Map) {
+            Map json = (Map) actual;
+            return json.containsValue(expect) || json.containsKey(expect);
+        }
+        if (actual instanceof List) {
+            return ((List) actual).contains(expect);
+        }
+        return false;
+    }
 }

@@ -26,25 +26,11 @@
  *
  */
 
-
-package xyz.migoo.framework.assertions.function;
-
-import java.util.Map;
+package core.xyz.migoo.functions;
 
 /**
  * @author xiaomi
- * @date 2019-04-14 02:05
+ * @date 2020/7/26 15:11
  */
-public interface IFunction {
-
-    /**
-     * Implement the interface to extend the assertion method
-     * get expected values from Map Object
-     * and the expected values can be null
-     * use:  data.get("expect")
-     *
-     * @param data Objects that hold the actual and expected values
-     * @return Boolean Object
-     */
-    boolean assertTrue(Map<String, Object> data);
+public abstract class AbstractFunction implements Function {
 }

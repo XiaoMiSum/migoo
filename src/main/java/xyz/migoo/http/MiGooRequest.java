@@ -28,8 +28,10 @@ package xyz.migoo.http;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.BasicCookieStore;
@@ -48,28 +50,64 @@ public class MiGooRequest extends Request {
 
     private String method;
 
-    public static MiGooRequest method(String method) {
+    private String protocol;
+
+    private String host;
+
+    private Integer port;
+
+    private String api = "";
+
+    public static MiGooRequest create(String method) {
         return new MiGooRequest(method);
     }
 
     private MiGooRequest(String method){
         super();
-        this.method = method.toUpperCase();
+        this.method = StringUtils.isNotEmpty(method) ? method.toUpperCase() : HttpGet.METHOD_NAME;
     }
 
     private MiGooRequest(HttpRequest request) {
         super(request);
     }
 
-    public MiGooRequest uri(String uri){
+    public MiGooRequest uri(String url){
         switch (method){
             case HttpPost.METHOD_NAME:
             case HttpPut.METHOD_NAME:
-                request(new EntityEnclosingHttpRequest(method, URI.create(uri)));
+                request(new EntityEnclosingHttpRequest(method, URI.create(url)));
                 break;
             default:
-                request(new HttpRequest(method, URI.create(uri)));
+                request(new HttpRequest(method, URI.create(url)));
         }
+        return this;
+    }
+
+    public MiGooRequest build(){
+        return uri(String.format( "%s://%s:%s%s", protocol, host, port, api));
+    }
+
+    public MiGooRequest(){
+
+    }
+
+    public MiGooRequest protocol(String protocol){
+        this.protocol = StringUtils.isBlank(protocol) ? "http" : protocol;
+        return this;
+    }
+
+    public MiGooRequest host(String host){
+        this.host = StringUtils.isBlank(host) ?  "127.0.0.1" : host;
+        return this;
+    }
+
+    public MiGooRequest port(Integer port){
+        this.port = port == null || port <= 0 ? 80 : port;
+        return this;
+    }
+
+    public MiGooRequest api(String api){
+        this.api = StringUtils.isBlank(api) ?  "" : api;
         return this;
     }
 
@@ -90,9 +128,7 @@ public class MiGooRequest extends Request {
     public MiGooRequest data(JSONObject data) {
         if (data != null && !data.isEmpty()){
             Form form = Form.form();
-            data.forEach((k, v) ->
-                form.add(k, v == null ? null : String.valueOf(v))
-            );
+            data.forEach((k, v) -> form.add(k, v == null ? "" : String.valueOf(v)));
             data(form);
         }
         return this;
@@ -101,9 +137,7 @@ public class MiGooRequest extends Request {
     public MiGooRequest query(JSONObject query) {
         if (query != null && !query.isEmpty()){
             Form form = Form.form();
-            query.forEach((k, v) ->
-                form.add(k, v == null ? null : String.valueOf(v))
-            );
+            query.forEach((k, v) -> form.add(k, v == null ? "" : String.valueOf(v)));
             query(form);
         }
         return this;

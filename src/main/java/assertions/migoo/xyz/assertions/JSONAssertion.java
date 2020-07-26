@@ -27,24 +27,35 @@
  */
 
 
-package xyz.migoo.framework.assertions.function;
+package assertions.migoo.xyz.assertions;
 
-import java.util.Map;
+import com.alibaba.fastjson.JSONPath;
+import core.xyz.migoo.assertions.AbstractAssertion;
+import core.xyz.migoo.assertions.function.Alias;
+import xyz.migoo.simplehttp.Response;
 
 /**
  * @author xiaomi
- * @date 2019-04-14 02:05
+ * @date 2019-04-13 21:37
  */
-public interface IFunction {
+@Alias(aliasList = {"^\\$.[\\w]+(.\\w+)*", "^json.[\\w]+(.\\w+)*", "^body.[\\w]+(.\\w+)*"})
+public class JSONAssertion extends AbstractAssertion {
 
-    /**
-     * Implement the interface to extend the assertion method
-     * get expected values from Map Object
-     * and the expected values can be null
-     * use:  data.get("expect")
-     *
-     * @param data Objects that hold the actual and expected values
-     * @return Boolean Object
-     */
-    boolean assertTrue(Map<String, Object> data);
+    private static final String BODY_ = "body";
+    private static final String JSON_ = "json";
+
+    private String jsonPath;
+
+    public void setJsonPath(String jsonPath){
+        if (jsonPath.startsWith(JSON_) || jsonPath.startsWith(BODY_)){
+            jsonPath = "$" + jsonPath.substring(BODY_.length());
+        }
+        this.jsonPath = jsonPath;
+    }
+
+    @Override
+    public void setActual(Object actual) {
+        Response response = (Response) actual;
+        this.actual = JSONPath.read(response.text(), jsonPath);
+    }
 }

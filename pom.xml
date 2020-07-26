@@ -49,7 +49,7 @@
         <compile.version>3.5.1</compile.version>
         <ant-zip.version>1.10.5</ant-zip.version>
         <fastjson.version>1.2.54</fastjson.version>
-        <simplehttp.version>1.0.2</simplehttp.version>
+        <simplehttp.version>1.0.4</simplehttp.version>
         <reflections.version>0.9.10</reflections.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <commons-codec.version>1.11</commons-codec.version>

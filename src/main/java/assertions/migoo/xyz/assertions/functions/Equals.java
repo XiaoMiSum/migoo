@@ -27,24 +27,32 @@
  */
 
 
-package xyz.migoo.framework.assertions.function;
+package assertions.migoo.xyz.assertions.functions;
 
+import core.xyz.migoo.assertions.function.Alias;
+import core.xyz.migoo.assertions.function.IFunction;
+
+import java.math.BigDecimal;
 import java.util.Map;
 
 /**
  * @author xiaomi
- * @date 2019-04-14 02:05
+ * @date 2019-08-13 22:17
  */
-public interface IFunction {
+@Alias(aliasList = {"==", "===", "eq", "equal", "equals", "is"})
+public class Equals extends AbstractFunction implements IFunction {
 
-    /**
-     * Implement the interface to extend the assertion method
-     * get expected values from Map Object
-     * and the expected values can be null
-     * use:  data.get("expect")
-     *
-     * @param data Objects that hold the actual and expected values
-     * @return Boolean Object
-     */
-    boolean assertTrue(Map<String, Object> data);
+    @Override
+    public boolean assertTrue(Map<String, Object> data) {
+        Object actual = data.get("actual");
+        Object expect = data.get("expect");
+        String str1 = objectToString(actual);
+        String str2 = objectToString(expect);
+        if (actual instanceof Number || expect instanceof Number){
+            str1 = "null".equals(str1) ? "0" : str1;
+            str2 = "null".equals(str2) ? "0" : str2;
+            return new BigDecimal(str1).compareTo(new BigDecimal(str2)) == 0;
+        }
+        return str1.equals(str2);
+    }
 }
