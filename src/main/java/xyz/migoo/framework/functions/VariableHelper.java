@@ -25,6 +25,7 @@
 
 package xyz.migoo.framework.functions;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import xyz.migoo.exception.ExecuteError;
@@ -200,7 +201,7 @@ public class VariableHelper {
             if (!StringUtil.isEmpty(variables.getString(k)) && !FUNC_PATTERN.matcher(variables.getString(k)).find()) {
                 if (source.get(key) instanceof List) {
                     source.put(key, getVarValue(source.getJSONArray(key), variables));
-                } else if (source.get(key) instanceof String) {
+                } else if (source.get(key) instanceof String && !(variables.get(k) instanceof JSON)) {
                     source.put(key, source.getString(key).replace(value.getString(i), variables.getString(k)));
                 }
             } else if (variables.containsKey(k) && StringUtil.isEmpty(variables.getString(k))) {

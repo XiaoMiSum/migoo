@@ -157,3 +157,13 @@ cases:
       sign: __Digest(algorithm=md5,string=${user}${pwd})
     validates:
       - {check: status, expect: 200, func: ==}
+  - title: body 扩展参数包含json
+    config:
+      variables:
+        pwd1: __json(password=${pwd})
+    body:
+      userName: user
+      password: __value(object=${pwd1},key=password)
+      sign: __Digest(algorithm=md5,string=${user}${pwd})
+    validates:
+      - {check: status, expect: 200, func: ==}
