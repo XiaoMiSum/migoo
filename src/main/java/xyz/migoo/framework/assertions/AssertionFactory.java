@@ -90,7 +90,7 @@ public class AssertionFactory extends AbstractAssertion {
     }
 
     private IFunction getFunction(String searchChar) throws ExecuteError, Exception {
-        for (Class<? extends AbstractAssertFunction> sub : FUNC_SUBS){
+        for (Class<? extends AbstractAssertFunction> sub : FUNC_SUBS) {
             Alias alias = sub.getAnnotation(Alias.class);
             if (Alias.Check.contains(searchChar, alias.aliasList())) {
                 return sub.newInstance();
@@ -101,21 +101,22 @@ public class AssertionFactory extends AbstractAssertion {
 
     private void setInstance(String check) throws Exception {
         for (Class<? extends AssertionFactory> sub : ASSERT_SUBS) {
-            Alias alias = sub.getAnnotation(Alias.class);
-            if (Alias.Check.contains(check, alias.aliasList()) || Alias.Check.isJson(check, alias.aliasList())) {
-                assertion = sub.newInstance();
-                if (assertion instanceof JSONAssertion) {
-                    ((JSONAssertion) assertion).setJsonPath(check);
-                }
-                return;
+            String[] aliasList = sub.getAnnotation(Alias.class).aliasList();
+            boolean isJSONAssertion = (sub == JSONAssertion.class && Alias.Check.isJson(check, aliasList));
+            assertion = isJSONAssertion || Alias.Check.contains(check, aliasList) ? sub.newInstance() : null;
+            if (assertion instanceof JSONAssertion) {
+                ((JSONAssertion) assertion).setJsonPath(check);
             }
+            if (assertion != null) {return;}
         }
-        if (assertion == null) {
-            assertion = (AbstractAssertion) Class.forName(check).newInstance();
-        }
+        assertion = (AbstractAssertion) Class.forName(check).newInstance();
     }
 
-    private void clear(){
+    private void clear() {
         assertion = null;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(null instanceof JSONAssertion);
     }
 }
