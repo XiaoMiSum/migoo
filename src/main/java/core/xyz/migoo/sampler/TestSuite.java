@@ -47,6 +47,5 @@ public class TestSuite extends AbstractTest {
     @Override
     public void run(TestResult result) {
         super.run(result, this.getClass().getSimpleName());
-
     }
 }

@@ -35,21 +35,21 @@ import java.util.List;
  */
 public class TestResult {
 
-    private List<AbstractTest> fFailures;
-    private List<TestFailure> fErrors;
-    private List<AbstractTest> fSkips;
-    private List<AbstractTest> fSuccess;
-    private String rName;
-    private int fRunTests;
+    private final List<AbstractTest> fTests;
+    private final List<TestFailure> eTests;
+    private final List<AbstractTest> skipTests;
+    private final List<AbstractTest> sTests;
+    private final String rName;
+    private final int fRunTests;
     private long startTime;
     private long endTime;
     private boolean fStop;
 
     public TestResult(int fRunTests, String name) {
-        this.fFailures= new ArrayList<>();
-        this.fErrors= new ArrayList<>();
-        this.fSkips= new ArrayList<>();
-        this.fSuccess= new ArrayList<>();
+        this.fTests = new ArrayList<>();
+        this.eTests = new ArrayList<>();
+        this.skipTests= new ArrayList<>();
+        this.sTests = new ArrayList<>();
         this.fRunTests= fRunTests;
         this.fStop= false;
         this.rName = name;
@@ -60,7 +60,7 @@ public class TestResult {
      * caused the error.
      */
     synchronized void addError(AbstractTest test, Throwable t) {
-        fErrors.add(new TestFailure(test, t));
+        eTests.add(new TestFailure(test, t));
     }
 
     /**
@@ -68,7 +68,7 @@ public class TestResult {
      * caused the failure.
      */
     synchronized void addFailure(AbstractTest test) {
-        fFailures.add(test);
+        fTests.add(test);
     }
 
     /**
@@ -76,7 +76,7 @@ public class TestResult {
      * caused the failure.
      */
     synchronized void addSkip(AbstractTest test) {
-        fSkips.add(test);
+        skipTests.add(test);
     }
 
     /**
@@ -84,63 +84,63 @@ public class TestResult {
      * caused the failure.
      */
     synchronized void addSuccess(AbstractTest test) {
-        fSuccess.add(test);
+        sTests.add(test);
     }
 
     /**
      * Gets the number of detected errors.
      */
     public synchronized int errorCount() {
-        return fErrors.size();
+        return eTests.size();
     }
 
     /**
      * Returns the errors
      */
     public synchronized List<TestFailure> errors() {
-        return fErrors;
+        return eTests;
     }
 
     /**
      * Gets the number of detected failures.
      */
     public synchronized int failureCount() {
-        return fFailures.size();
+        return fTests.size();
     }
 
     /**
      * Returns the failures
      */
     public synchronized List<AbstractTest> failures() {
-        return fFailures;
+        return fTests;
     }
 
     /**
      * Gets the number of detected skips.
      */
     public synchronized int skipCount() {
-        return fSkips.size();
+        return skipTests.size();
     }
 
     /**
      * Returns an Enumeration for the skips
      */
     public synchronized List<AbstractTest> skips() {
-        return fSkips;
+        return skipTests;
     }
 
     /**
      * Gets the number of detected successes.
      */
     public synchronized int successCount() {
-        return fSuccess.size();
+        return sTests.size();
     }
 
     /**
      * Returns the success
      */
     public synchronized List<AbstractTest> success() {
-        return fSuccess;
+        return sTests;
     }
 
     /**

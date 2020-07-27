@@ -37,8 +37,8 @@ import java.io.StringWriter;
  */
 public class TestFailure {
 
-    private AbstractTest fFailedTest;
-    private Throwable fThrownException;
+    private final AbstractTest fFailedTest;
+    private final Throwable fThrownException;
 
 
     /**
