@@ -115,8 +115,4 @@ public class AssertionFactory extends AbstractAssertion {
     private void clear() {
         assertion = null;
     }
-
-    public static void main(String[] args) {
-        System.out.println(null instanceof JSONAssertion);
-    }
 }

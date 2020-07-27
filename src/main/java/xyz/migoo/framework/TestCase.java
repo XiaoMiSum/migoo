@@ -37,6 +37,8 @@ import xyz.migoo.report.MiGooLog;
 import xyz.migoo.utils.StringUtil;
 import xyz.migoo.utils.TypeUtil;
 
+import java.io.IOException;
+
 /**
  * @author xiaomi
  * @date 2019-08-10 14:50
@@ -150,7 +152,7 @@ public class TestCase extends AbstractTest {
         VariableHelper.bindVariable(body, super.variables);
     }
 
-    private void execute() throws HttpException, ExecuteError {
+    private void execute() throws HttpException, ExecuteError, IOException {
         super.setup("case setup");
         this.buildRequest();
         MiGooLog.log("request api: {}", request.uri());
