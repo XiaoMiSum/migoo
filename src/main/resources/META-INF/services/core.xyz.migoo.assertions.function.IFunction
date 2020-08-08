@@ -26,15 +26,15 @@
 #
 #
 
-assertions.migoo.xyz.assertions.functions.Contains
-assertions.migoo.xyz.assertions.functions.DoseNotContains
-assertions.migoo.xyz.assertions.functions.DoseNotEquals
-assertions.migoo.xyz.assertions.functions.Equals
-assertions.migoo.xyz.assertions.functions.EqualsIgnoreCase
-assertions.migoo.xyz.assertions.functions.GreaterThan
-assertions.migoo.xyz.assertions.functions.GreaterThanOrEquals
-assertions.migoo.xyz.assertions.functions.IsEmpty
-assertions.migoo.xyz.assertions.functions.IsNotEmpty
-assertions.migoo.xyz.assertions.functions.LessThan
-assertions.migoo.xyz.assertions.functions.LessThanOrEquals
-assertions.migoo.xyz.assertions.functions.Regex
+components.migoo.xyz.assertions.functions.Contains
+components.migoo.xyz.assertions.functions.DoseNotContains
+components.migoo.xyz.assertions.functions.DoseNotEquals
+components.migoo.xyz.assertions.functions.Equals
+components.migoo.xyz.assertions.functions.EqualsIgnoreCase
+components.migoo.xyz.assertions.functions.GreaterThan
+components.migoo.xyz.assertions.functions.GreaterThanOrEquals
+components.migoo.xyz.assertions.functions.IsEmpty
+components.migoo.xyz.assertions.functions.IsNotEmpty
+components.migoo.xyz.assertions.functions.LessThan
+components.migoo.xyz.assertions.functions.LessThanOrEquals
+components.migoo.xyz.assertions.functions.Regex

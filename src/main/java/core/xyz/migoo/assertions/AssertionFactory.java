@@ -26,10 +26,10 @@
 
 package core.xyz.migoo.assertions;
 
-import assertions.migoo.xyz.assertions.JSONAssertion;
+import components.migoo.xyz.assertions.JSONAssertion;
 import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.assertions.function.Alias;
-import core.xyz.migoo.functions.FunctionsException;
+import core.xyz.migoo.functions.FunctionException;
 import xyz.migoo.simplehttp.Response;
 
 import java.util.HashMap;
@@ -53,7 +53,7 @@ public class AssertionFactory {
 
     private static final AssertionFactory FACTORY = new AssertionFactory();
 
-    public static boolean assertThat(JSONObject checker, Response response) throws FunctionsException {
+    public static boolean assertThat(JSONObject checker, Response response) throws FunctionException {
         FACTORY.setInstance(checker.getString("checker"));
         FACTORY.setActual(response);
         return FACTORY.assertThat(checker);
@@ -67,20 +67,20 @@ public class AssertionFactory {
         assertion.setActual(actual);
     }
 
-    private boolean assertThat(JSONObject checker) throws FunctionsException {
+    private boolean assertThat(JSONObject checker) throws FunctionException {
         boolean result = assertion.assertThat(checker);
         checker.put("actual", assertion.getActual());
         this.clear();
         return result;
     }
 
-    private void setInstance(String check) throws FunctionsException {
+    private void setInstance(String check) throws FunctionException {
         this.loadDefaultAssertion();
         check = Alias.Check.isJson(check, JSONAssertion.class.getAnnotation(Alias.class).aliasList()) ?
                 JSONAssertion.class.getSimpleName().toUpperCase() : check.toUpperCase();
         assertion = defaultAssertion.get(check) == null ? SELF_DEFINED_ASSERTION.get(check) : defaultAssertion.get(check);
         if (assertion == null) {
-            throw new FunctionsException("assertion not found: " + check);
+            throw new FunctionException("assertion not found: " + check);
         }
     }
 

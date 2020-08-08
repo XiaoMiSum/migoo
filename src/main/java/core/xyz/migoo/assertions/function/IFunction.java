@@ -26,6 +26,8 @@
 
 package core.xyz.migoo.assertions.function;
 
+import core.xyz.migoo.functions.FunctionException;
+
 import java.util.Map;
 
 /**
@@ -43,5 +45,5 @@ public interface IFunction {
      * @param data Objects that hold the actual and expected values
      * @return Boolean Object
      */
-    boolean assertTrue(Map<String, Object> data);
+    boolean assertTrue(Map<String, Object> data) throws FunctionException;
 }

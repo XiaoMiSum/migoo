@@ -27,11 +27,13 @@ package core.xyz.migoo.functions;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import xyz.migoo.utils.TypeUtil;
+import core.xyz.migoo.utils.TypeUtil;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.regex.Pattern;
+
+import static core.xyz.migoo.functions.FunctionHelper.FUNC_PATTERN;
 
 /**
  * @author xiaomi
@@ -40,8 +42,7 @@ import java.util.regex.Pattern;
 public class CompoundVariable extends HashMap<String, Object> {
     private static final long serialVersionUID = 362498820763181265L;
 
-    static final Pattern FUNC_PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
-    static final Pattern PARAM_PATTERN = Pattern.compile("\\$\\{(\\w+)}");
+    public static final Pattern PARAM_PATTERN = Pattern.compile("\\$\\{(\\w+)}");
     private static final Pattern REGEX_INTEGER = Pattern.compile("^[-\\+]?[0-9]+$");
     private static final Pattern REGEX_FLOAT = Pattern.compile("^[-\\+]?[0-9]+\\.[0-9]+$");
 

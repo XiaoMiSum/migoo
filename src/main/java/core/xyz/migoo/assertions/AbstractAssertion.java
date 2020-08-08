@@ -29,8 +29,8 @@ package core.xyz.migoo.assertions;
 import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.assertions.function.Alias;
 import core.xyz.migoo.assertions.function.IFunction;
-import xyz.migoo.exception.ExecuteError;
-import xyz.migoo.utils.TypeUtil;
+import core.xyz.migoo.functions.FunctionException;
+import core.xyz.migoo.utils.TypeUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,12 +62,13 @@ public abstract class AbstractAssertion implements Assertion {
     }
 
     @Override
-    public boolean assertThat(JSONObject data) throws ExecuteError {
+    public boolean assertThat(JSONObject data) throws FunctionException {
         IFunction function = FUNCTIONS.get(data.getString("func"));
         if (function == null) {
-            throw new ExecuteError(String.format("assert method '%s' not found", data.get("func")));
+            throw new FunctionException(String.format("assert method '%s' not found", data.get("func")));
         }
         data.put("actual", actual);
-        return TypeUtil.booleanOf(function.assertTrue(data));
+        boolean result = TypeUtil.booleanOf(function.assertTrue(data));
+        return result;
     }
 }

@@ -5,7 +5,7 @@
     <groupId>xyz.migoo</groupId>
     <artifactId>migoo</artifactId>
 
-    <version>2.0.4</version>
+    <version>3.0.0</version>
     <name>migoo</name>
     <description>a tool for rest-api test</description>
     <url>https://xiaomisum.github.io/MiGoo/</url>
@@ -46,11 +46,11 @@
         <dbutil.version>1.7</dbutil.version>
         <mysql.version>8.0.16</mysql.version>
         <slf4j.version>1.7.25</slf4j.version>
+        <reports.version>5.0.2</reports.version>
         <compile.version>3.5.1</compile.version>
         <ant-zip.version>1.10.5</ant-zip.version>
         <fastjson.version>1.2.54</fastjson.version>
         <simplehttp.version>1.0.4</simplehttp.version>
-        <reflections.version>0.9.10</reflections.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <commons-codec.version>1.11</commons-codec.version>
         <thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
@@ -140,11 +140,11 @@
             <version>${mysql.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.reflections/reflections -->
+        <!-- https://mvnrepository.com/artifact/com.aventstack/extentreports -->
         <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>${reflections.version}</version>
+            <groupId>com.aventstack</groupId>
+            <artifactId>extentreports</artifactId>
+            <version>${reports.version}</version>
         </dependency>
 
         <dependency>

@@ -26,11 +26,11 @@
 
 package core.xyz.migoo.assertions;
 
-import assertions.migoo.xyz.assertions.JSONAssertion;
-import assertions.migoo.xyz.assertions.ResponseAssertion;
-import assertions.migoo.xyz.assertions.ResponseCodeAssertion;
+import components.migoo.xyz.assertions.JSONAssertion;
+import components.migoo.xyz.assertions.ResponseAssertion;
+import components.migoo.xyz.assertions.ResponseCodeAssertion;
 import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.functions.FunctionsException;
+import core.xyz.migoo.functions.FunctionException;
 
 /**
  * @author xiaomi
@@ -50,9 +50,10 @@ public interface Assertion {
      *
      * @param data Objects that hold expected values
      * @return assert result
-     * @throws FunctionsException
+     * @throws FunctionException FunctionsException
+     * @throws AssertionError AssertionError
      */
-    boolean assertThat(JSONObject data) throws FunctionsException;
+    boolean assertThat(JSONObject data) throws FunctionException, AssertionError;
 
     /**
      * setting actual values

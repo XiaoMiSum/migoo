@@ -50,18 +50,18 @@ public class FunctionHelper {
     static {
         ServiceLoader<Function> loaders = ServiceLoader.load(Function.class);
         for (Function function : loaders) {
-            SELF_DEFINED_FUNCTIONS.put(function.getClass().getSimpleName().toUpperCase(), function);
+            SELF_DEFINED_FUNCTIONS.put(function.funcKey(), function);
         }
     }
 
-    public static Object execute(String object, JSONObject variables) throws FunctionsException {
+    public static Object execute(String object, JSONObject variables) throws FunctionException {
         Matcher func = FUNC_PATTERN.matcher(object);
         if (func.find()) {
             FACTORY.initFunc(func.group(1));
             FACTORY.initParameter(func.group(2), variables);
             return FACTORY.execute();
         }
-        throw new FunctionsException("not matcher function: " + object);
+        throw new FunctionException("not matcher function: " + object);
     }
 
     private Function function;
@@ -80,7 +80,7 @@ public class FunctionHelper {
         String upper = name.toUpperCase();
         function = defaultFunctions.get(upper) == null ? SELF_DEFINED_FUNCTIONS.get(upper) : defaultFunctions.get(upper);
         if (function == null) {
-            throw new FunctionsException("function not found: " + name);
+            throw new FunctionException("function not found: " + name);
         }
     }
 
@@ -93,11 +93,11 @@ public class FunctionHelper {
                 }
             }
         } catch (Exception e) {
-            throw new FunctionsException("init parameter exception", e);
+            throw new FunctionException("init parameter exception", e);
         }
     }
 
-    public Object execute() throws FunctionsException {
+    public Object execute() throws FunctionException {
         return function.execute(parameters);
     }
 }

@@ -7,17 +7,15 @@ config: # 配置信息
     method: post # 可缺省，默认 GET
     headers:
       Content-Type: Application/json;charSet=utf-8
-  jdbc: # 可缺省，此配置存在时，会创建一个默认jdbc连接添加到变量，key值：jdbc_default
-    type: mysql # 可缺省，默认 mysql
-    host: 127.0.0.1 # 可缺省，默认 127.0.0.1
-    port: 3306 # 可缺省，默认 3306
-    user: user
-    password: password
-  redis: # 可缺省，此配置存在时，会创建一个默认redis连接添加到变量，key值：redis_default
-    p: 127.0.0.1 # 可缺省，默认 127.0.0.1
-    port: 6379 # 可缺省，默认6379
-    password: password # 可缺省
-    selete: 0 # 可缺省，默认 0
+  report: # 可缺省，配置测试报告
+    class: default # 可缺省，测试报告实现类
+    output: default # 可缺省，测试报告保存地址
+  email: # 可缺省，配置邮件发送测试报告
+    imaphost: imap.exmail.qq.com   # imap 服务器地址
+    user: your@qq.com   # 你的发件人邮箱地址
+    password: password   # 你的发件人邮箱密码
+    tolist:   # 收件人列表，可配置多个收件人
+      - your@email.com
 dataset: # 可空，正对当前 suite 生效
   setup: # 可空，在完成 suite 中的 vars绑定后执行
     - __method1()
@@ -26,7 +24,6 @@ dataset: # 可空，正对当前 suite 生效
   vars: # 可空，自定义变量，完成 suite解析后，优先进行vars绑定
     vars1: value1
 suite:
-  enable_import: false # 可缺省
   sets:
     - name: xx接口测试用例集
       config:
@@ -38,17 +35,6 @@ suite:
           headers:
             Content-Type: Application/json;charSet=utf-8
           api: /api/test # 可缺省
-        jdbc: # 可缺省，此配置存在时，会创建一个默认jdbc连接添加到变量，key值：jdbc_default
-          type: mysql # 可缺省，默认 mysql
-          host: 127.0.0.1 # 可缺省，默认 127.0.0.1
-          port: 3306 # 可缺省，默认 3306
-          user: user
-          password: password
-        redis: # 可缺省，此配置存在时，会创建一个默认redis连接添加到变量，key值：redis_default
-          host: 127.0.0.1 # 可缺省，默认 127.0.0.1
-          port: 6379 # 可缺省，默认6379
-          password: password # 可缺省
-          selete: 0 # 可缺省，默认 0
       dataset: # 可空，针对当前 caseset 生效
         setup: # 可空，在完成当前 caseset 中的 vars绑定后执行
           - __method1()
@@ -105,7 +91,8 @@ suite:
       cases:
         - title: 测试用例1
           dateset:
-            vars2: value2
+            vars:
+              vars2: value2
           data:
             user: xx1
             password: xx2

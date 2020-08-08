@@ -37,7 +37,9 @@ public interface Function {
      *
      * @param parameters function parameters
      * @return function execute result
-     * @throws FunctionsException
+     * @throws FunctionException
      */
-    Object execute(CompoundVariable parameters) throws FunctionsException;
+    Object execute(CompoundVariable parameters) throws FunctionException;
+
+    String funcKey();
 }

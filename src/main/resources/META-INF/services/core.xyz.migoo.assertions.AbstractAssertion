@@ -26,6 +26,6 @@
 #
 #
 
-assertions.migoo.xyz.assertions.JSONAssertion
-assertions.migoo.xyz.assertions.ResponseAssertion
-assertions.migoo.xyz.assertions.ResponseCodeAssertion
+components.migoo.xyz.assertions.JSONAssertion
+components.migoo.xyz.assertions.ResponseAssertion
+components.migoo.xyz.assertions.ResponseCodeAssertion

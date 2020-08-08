@@ -2,9 +2,9 @@ package xyz.migoo.test.extender;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import core.xyz.migoo.vars.VarsHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import xyz.migoo.framework.functions.VariableHelper;
 
 /**
  * @author xiaomi
@@ -20,7 +20,7 @@ public class ExtenderHelperTest {
         JSONObject vars = new JSONObject();
         vars.put("user", "MiGoo");
         vars.put("pwd", "abb");
-        VariableHelper.bindAndEval(source, vars);
+        VarsHelper.bindAndEval(source, vars);
         Assertions.assertEquals(source, vars);
     }
 
@@ -38,7 +38,7 @@ public class ExtenderHelperTest {
         vars.put("user", "MiGoo");
         vars.put("pwd", "abb");
         vars.put("sign", "better");
-        VariableHelper.bindAndEval(source, vars);
+        VarsHelper.bindAndEval(source, vars);
         Assertions.assertEquals(source.getJSONObject("data").get("sign"), vars.getString("sign") + vars.get("user"));
     }
     @Test
@@ -54,7 +54,7 @@ public class ExtenderHelperTest {
         vars.put("user", "MiGoo");
         vars.put("pwd", "abb");
         vars.put("sign", "better");
-        VariableHelper.bindAndEval(source, vars);
+        VarsHelper.bindAndEval(source, vars);
         Assertions.assertEquals(source.getJSONArray("data").get(0), vars.getString("sign"));
     }
     @Test
@@ -71,9 +71,9 @@ public class ExtenderHelperTest {
         vars.put("pwd", "abb");
         vars.put("sign", "better");
         vars.put("func", "__random()");
-        VariableHelper.bindAndEval(vars, vars);
-        VariableHelper.bindAndEval(source, vars);
+        VarsHelper.bindAndEval(vars, vars);
+        VarsHelper.bindAndEval(source, vars);
         Assertions.assertEquals(source.getJSONArray("data").get(0), vars.getString("sign"));
-        Assertions.assertFalse("${func}".equals(source.getJSONArray("data").get(1)));
+        Assertions.assertNotEquals("${func}", source.getJSONArray("data").get(1));
     }
 }
