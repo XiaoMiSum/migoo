@@ -26,62 +26,19 @@
  *
  */
 
-
 package core.xyz.migoo;
 
-import xyz.migoo.simplehttp.Request;
-import xyz.migoo.simplehttp.Response;
-
-import java.util.List;
+import java.util.Vector;
 
 /**
  * @author xiaomi
- * @date 2019-08-10 14:51
+ * @date 2020/8/10 22:56
  */
-public class TestResult extends Result implements ITestResult {
+public interface ISuite {
 
-    @Override
-    public void init(ITest test) {
-        TestCase t = (TestCase) test;
-        super.init(t);
-        setCheckers(t.checkers());
-        setRequest(t.request());
-        setResponse(t.response());
-    }
+    void addTest(ITest subTest);
 
-    private List<TestChecker> checkers;
+    Vector<ITest> getSubTests();
 
-    private Request request;
-
-    private Response response;
-
-    @Override
-    public List<TestChecker> getCheckers() {
-        return this.checkers;
-    }
-
-    @Override
-    public void setCheckers(List<TestChecker> checkers) {
-        this.checkers = checkers;
-    }
-
-    @Override
-    public Request getRequest() {
-        return this.request;
-    }
-
-    @Override
-    public void setRequest(Request request) {
-        this.request = request;
-    }
-
-    @Override
-    public Response getResponse() {
-        return this.response;
-    }
-
-    @Override
-    public void setResponse(Response response) {
-        this.response = response;
-    }
+    ITest getSubTestByName(String testName);
 }

@@ -46,17 +46,49 @@ public class TestSet extends AbstractTest {
         super.addToGlobals();
         super.initRequest(requestConfig);
         JSONObject finalRequestConfig = this.requestConfig;
-        set.getJSONArray("cases").forEach(testCase -> {
-            super.addTest(new TestCase((JSONObject) testCase, finalRequestConfig));
-        });
+        set.getJSONArray("cases").forEach(testCase ->
+                super.addTest(new TestCase((JSONObject) testCase, finalRequestConfig))
+        );
     }
 
     @Override
-    public void run(IResult result) {
+    public IResult run() {
         Report.log("===================================================================");
-        IResult testResult = new TestResult();
-        super.run(testResult, TYPE);
-        result.init(this);
-        ((ISuiteResult) result).addTestResult(testResult);
+        IResult result = new SuiteResult();
+        try {
+            Report.log("{} begin: {}", TYPE, this.getTestName());
+            this.start();
+            if (!this.isSkipped) {
+                this.processVariable();
+                this.setup();
+                for (AbstractTest test : this.getRunTests()) {
+                    test.addVars(getVars());
+                    this.runTest(test, (ISuiteResult) result);
+                }
+                this.teardown();
+            }
+        } catch (Throwable t) {
+            Report.log(TYPE + " run error. ", t);
+            this.setThrowable(t);
+            this.setStatus(ERROR);
+        } finally {
+            this.end();
+            result.init(this);
+            Report.log("{} end: {}", TYPE, this.getTestName());
+        }
+        return result;
+    }
+
+    private void runTest(ITest test, ISuiteResult result){
+        result.addTestResult(test.run());
+        if (test.getStatus() == SUCCESS) {
+            result.addSuccess();
+        } else if (test.getStatus() == FAILURE) {
+            result.addFailure();
+        } else if (test.getStatus() == ERROR) {
+            result.addError();
+        } else if (test.getStatus() == SKIP) {
+            result.addSkip();
+        }
     }
 }

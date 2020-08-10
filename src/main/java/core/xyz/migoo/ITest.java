@@ -29,11 +29,20 @@
 
 package core.xyz.migoo;
 
+import java.util.Date;
+
 /**
  * @author xiaomi
  * @date 2019-08-10 11:02
  */
 public interface ITest {
+
+    int CREATED = -1;
+    int SUCCESS = 1;
+    int FAILURE = 2;
+    int SKIP = 3;
+    int ERROR = 4;
+    int STARTED = 16;
 
     /**
      * The name of test instance(s).
@@ -53,21 +62,21 @@ public interface ITest {
     /**
      * running the test
      *
-     * @param result the test result
+     * @return result the test result
      */
-    void run(IResult result);
+    IResult run();
 
     void start();
 
-    long getStartTime();
+    Date getStartTime();
 
     void end();
 
-    long getEndTime();
+    Date getEndTime();
 
-    String getStatus();
+    int getStatus();
 
-    void setStatus(String status);
+    void setStatus(int status);
 
     Throwable getThrowable();
 

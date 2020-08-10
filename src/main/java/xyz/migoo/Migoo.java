@@ -49,8 +49,7 @@ public class Migoo {
     public void run(String file) {
         try {
             TestSuite suite = new TestSuite(processor(file));
-            IResult result = new SuiteResult();
-            suite.run(result);
+            IResult result = suite.run();
             this.report(suite, result);
         } catch (Exception e) {
             Report.log("run error", e);

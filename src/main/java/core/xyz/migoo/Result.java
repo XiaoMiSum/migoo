@@ -39,7 +39,7 @@ public class Result implements IResult{
 
     private String testName;
 
-    private String status;
+    private int status;
 
     private long startTime;
 
@@ -58,12 +58,12 @@ public class Result implements IResult{
     }
 
     @Override
-    public String getStatus() {
+    public int getStatus() {
         return this.status;
     }
 
     @Override
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 
@@ -104,5 +104,40 @@ public class Result implements IResult{
         throwable.printStackTrace(writer);
         StringBuffer buffer = stringWriter.getBuffer();
         return buffer.toString();
+    }
+
+    @Override
+    public int countTest() {
+        return 0;
+    }
+
+    @Override
+    public int countFailure() {
+        return 0;
+    }
+
+    @Override
+    public int countError() {
+        return 0;
+    }
+
+    @Override
+    public boolean isSuccess() {
+        return false;
+    }
+
+    @Override
+    public boolean isSkip() {
+        return false;
+    }
+
+    @Override
+    public boolean isError() {
+        return false;
+    }
+
+    @Override
+    public boolean isFailure() {
+        return false;
     }
 }

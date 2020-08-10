@@ -48,7 +48,7 @@ public class Vars extends JSONObject{
         }
     }
 
-    public static Vars getFromGlobals(String key){
+    public static Vars getVars(String key){
         return VARS.get(key);
     }
 

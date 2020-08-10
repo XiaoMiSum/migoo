@@ -30,6 +30,7 @@
 package core.xyz.migoo;
 
 import com.alibaba.fastjson.JSONObject;
+import components.migoo.xyz.reports.Report;
 import core.xyz.migoo.vars.VarsHelper;
 
 /**
@@ -69,11 +70,29 @@ public class TestSuite extends AbstractTest {
     }
 
     @Override
-    public void run(IResult result) {
-        IResult resultSet = new SuiteResult();
-        super.run(resultSet, TYPE);
-        result.init(this);
-        ((ISuiteResult) result).addTestResult(resultSet);
+    public IResult run() {
+        IResult result = new SuiteResult();
+        try {
+            Report.log("{} begin: {}", TYPE, this.getTestName());
+            this.start();
+            if (!this.isSkipped) {
+                this.processVariable();
+                this.setup();
+                this.getRunTests().forEach(test -> {
+                    test.addVars(getVars());
+                    ((ISuiteResult) result).addTestResult(test.run());
+                });
+            }
+        } catch (Throwable t) {
+            Report.log(TYPE + " run error. ", t);
+            this.setThrowable(t);
+        } finally {
+            this.end();
+            this.teardown();
+            result.init(this);
+            Report.log("{} end: {}", TYPE, this.getTestName());
+        }
+        return result;
     }
 
     @Override

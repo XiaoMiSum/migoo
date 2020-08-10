@@ -44,4 +44,20 @@ public interface ISuiteResult {
     void addTestResult(IResult result);
 
     int size();
+
+    void addSuccess();
+
+    int getSuccessCount();
+
+    void addError();
+
+    int getErrorCount();
+
+    void addFailure();
+
+    int getFailureCount();
+
+    void addSkip();
+
+    int getSkipCount();
 }

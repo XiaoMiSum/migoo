@@ -34,12 +34,10 @@ import components.migoo.xyz.reports.Report;
 import core.xyz.migoo.functions.FunctionException;
 import core.xyz.migoo.functions.FunctionHelper;
 import core.xyz.migoo.vars.Vars;
-import core.xyz.migoo.http.MiGooRequest;
 import core.xyz.migoo.utils.TypeUtil;
 import core.xyz.migoo.vars.VarsHelper;
-import xyz.migoo.simplehttp.Response;
 
-import java.util.List;
+import java.util.Date;
 import java.util.Vector;
 
 /**
@@ -54,19 +52,16 @@ public abstract class AbstractTest implements ITest {
 
     private final String tName;
     private final Vector<AbstractTest> rTests = new Vector<>(10);
-    private List<TestChecker> checkers;
 
     protected JSONObject requestConfig;
-    protected MiGooRequest request;
-    protected Response response;
 
     protected boolean isSkipped;
 
-    private long startTime;
+    private Date startTime;
 
-    private long endTime;
+    private Date endTime;
 
-    private String status;
+    private int status = CREATED;
 
     private Throwable throwable;
 
@@ -209,22 +204,6 @@ public abstract class AbstractTest implements ITest {
         return this.rTests;
     }
 
-    public MiGooRequest request() {
-        return request;
-    }
-
-    public Response response() {
-        return response;
-    }
-
-    public List<TestChecker> checkers() {
-        return checkers;
-    }
-
-    void checkers(List<TestChecker> checkers) {
-        this.checkers = checkers;
-    }
-
     @Override
     public int countTestCases() {
         return rTests.size();
@@ -232,31 +211,31 @@ public abstract class AbstractTest implements ITest {
 
     @Override
     public void start() {
-        this.startTime = System.currentTimeMillis();
+        this.startTime = new Date();
     }
 
     @Override
-    public long getStartTime() {
+    public Date getStartTime() {
         return this.startTime;
     }
 
     @Override
     public void end() {
-        this.endTime = System.currentTimeMillis();
+        this.endTime = new Date();
     }
 
     @Override
-    public long getEndTime() {
+    public Date getEndTime() {
         return this.endTime;
     }
 
     @Override
-    public String getStatus() {
-        return isSkipped ? "skipped" : this.status;
+    public int getStatus() {
+        return isSkipped ? SKIP : this.status;
     }
 
     @Override
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 
@@ -268,28 +247,5 @@ public abstract class AbstractTest implements ITest {
     @Override
     public void setThrowable(Throwable throwable) {
         this.throwable = throwable;
-    }
-
-    void run(IResult result, String type) {
-        try {
-            Report.log("{} begin: {}", type, this.getTestName());
-            this.start();
-            if (!this.isSkipped) {
-                this.processVariable();
-                this.setup();
-                this.getRunTests().forEach(test -> {
-                    test.addVars(getVars());
-                    test.run(result);
-                });
-                this.teardown();
-                this.setStatus("success");
-            }
-        } catch (Throwable t) {
-            Report.log(type + " run error. ", t);
-            this.setThrowable(t);
-        } finally {
-            this.end();
-            Report.log("{} end: {}", type, this.getTestName());
-        }
     }
 }

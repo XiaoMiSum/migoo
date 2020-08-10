@@ -30,7 +30,7 @@ package core.xyz.migoo.functions;
  * @author xiaomi
  * @date 2020/7/26 14:05
  */
-public class FunctionException extends Error {
+public class FunctionException extends Exception {
 
     public FunctionException(String message) {
         super(message);

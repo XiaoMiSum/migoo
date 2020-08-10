@@ -40,6 +40,14 @@ public class SuiteResult extends Result implements ISuiteResult {
 
     private List<IResult> results;
 
+    private int successCount;
+
+    private int failureCount;
+
+    private int errorCount;
+
+    private int skipCount;
+
     @Override
     public List<IResult> getTestResults() {
         return this.results;
@@ -63,5 +71,45 @@ public class SuiteResult extends Result implements ISuiteResult {
     @Override
     public int size() {
         return results == null ? 0 : results.size();
+    }
+
+    @Override
+    public void addSuccess() {
+        successCount = successCount + 1;
+    }
+
+    @Override
+    public int getSuccessCount() {
+        return successCount;
+    }
+
+    @Override
+    public void addError() {
+        errorCount = errorCount + 1;
+    }
+
+    @Override
+    public int getErrorCount() {
+        return errorCount;
+    }
+
+    @Override
+    public void addFailure() {
+        failureCount = failureCount + 1;
+    }
+
+    @Override
+    public int getFailureCount() {
+        return failureCount;
+    }
+
+    @Override
+    public void addSkip() {
+        skipCount = skipCount + 1;
+    }
+
+    @Override
+    public int getSkipCount() {
+        return skipCount;
     }
 }

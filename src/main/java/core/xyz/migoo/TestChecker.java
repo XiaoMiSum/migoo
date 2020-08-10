@@ -45,6 +45,8 @@ public class TestChecker {
 
     private String result;
 
+    private Throwable throwable;
+
     public String getChecker() {
         return checker;
     }
@@ -83,6 +85,27 @@ public class TestChecker {
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+    public Throwable getThrowable() {
+        return throwable;
+    }
+
+    public void setThrowable(Throwable throwable) {
+        this.throwable = throwable;
+    }
+
+    public boolean isSuccess() {
+        return "success".equals(getResult());
+    }
+    public boolean isFailure() {
+        return "failure".equals(getResult());
+    }
+    public boolean isSkipped() {
+        return "skipped".equals(getResult());
+    }
+    public boolean isError() {
+        return "error".equals(getResult());
     }
 
     @Override

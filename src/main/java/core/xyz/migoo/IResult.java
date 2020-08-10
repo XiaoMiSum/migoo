@@ -28,6 +28,8 @@
 
 package core.xyz.migoo;
 
+import java.util.Date;
+
 /**
  * @author xiaomi
  * @date 2020/7/27 21:41
@@ -37,7 +39,7 @@ public interface IResult {
     /**
      * @param test
      */
-    default void init(AbstractTest test){
+    default void init(ITest test){
         setTestName(test.getTestName());
         setStatus(test.getStatus());
         setThrowable(test.getThrowable());
@@ -61,42 +63,51 @@ public interface IResult {
      * The status of this result, using one of the constants above.
      * @return The status of this result, using one of the constants above.
      */
-    String getStatus();
+    int getStatus();
 
     /**
      * set status of this result
      * @param status The status of this result
      */
-    void setStatus(String status);
+    void setStatus(int status);
 
 
     /**
      * the start date for this test, in milliseconds.
      * @return the start date for this test, in milliseconds.
      */
-    long getStartTime();
+    Date getStartTime();
 
     /**
      * set start date for this test, in milliseconds.
      * @param startTime the start date for this test, in milliseconds.
      */
-    void setStartTime(long startTime);
+    void setStartTime(Date startTime);
 
     /**
      * the end date for this test, in milliseconds.
      * @return the end date for this test, in milliseconds.
      */
-    long getEndTime();
+    Date getEndTime();
 
     /**
      * set end date for this test, in milliseconds.
      * @param endTime the end date for this test, in milliseconds.
      */
-    void setEndTime(long endTime);
+    void setEndTime(Date endTime);
 
     void setThrowable(Throwable throwable);
 
     Throwable getThrowable();
 
     String getThrowableAsString();
+
+    int countTest();
+    int countFailure();
+    int countError();
+
+    boolean isSuccess();
+    boolean isSkip();
+    boolean isError();
+    boolean isFailure();
 }

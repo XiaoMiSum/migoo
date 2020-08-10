@@ -35,9 +35,9 @@ import core.xyz.migoo.vars.VarsHelper;
 import org.apache.commons.lang3.StringUtils;
 import core.xyz.migoo.http.MiGooRequest;
 import components.migoo.xyz.reports.Report;
-import xyz.migoo.simplehttp.HttpException;
+import xyz.migoo.simplehttp.Response;
 
-import java.io.IOException;
+import java.util.List;
 
 /**
  * @author xiaomi
@@ -45,9 +45,11 @@ import java.io.IOException;
  */
 public class TestCase extends AbstractTest {
 
-    private boolean hasFailure = false;
-    private final JSONArray checkers;
+    private final JSONArray arrayCheck;
     private final JSONObject testCase;
+    private MiGooRequest request;
+    private Response response;
+    private List<TestChecker> checkers;
 
     TestCase(JSONObject testCase, JSONObject requestConfig) {
         super(testCase.getString("title"));
@@ -55,7 +57,7 @@ public class TestCase extends AbstractTest {
         super.addVars("title", super.getTestName());
         super.addToGlobals();
         super.initRequest(requestConfig);
-        this.checkers = testCase.getJSONArray("checkers");
+        this.arrayCheck = testCase.getJSONArray("checkers");
         this.testCase = testCase;
     }
 
@@ -65,27 +67,32 @@ public class TestCase extends AbstractTest {
     }
 
     @Override
-    public void run(IResult result) {
+    public IResult run() {
+        IResult result = new TestResult();
         try {
             Report.log("--------------------------------------------------------------------");
             Report.log("test case begin: {}", this.getTestName());
             this.start();
             if (!super.isSkipped) {
                 this.processVariable();
-                this.run();
+                super.setup();
+                this.buildRequest();
+                this.response = request.execute();
+                this.printRequestLog();
+                this.doCheck();
             }
         } catch (Throwable t) {
             this.setThrowable(t);
             Report.log("case run failure or assert failure", t);
-            this.setStatus("error");
+            this.setStatus(ERROR);
         } finally {
-            this.checkers(checkers.toJavaList(TestChecker.class));
+            this.checkers(arrayCheck.toJavaList(TestChecker.class));
             super.teardown();
             this.end();
-            this.setStatus(hasFailure ? "failure" : "success");
             Report.log("test case end: {}", this.getTestName());
             result.init(this);
         }
+        return result;
     }
 
     private void buildRequest() {
@@ -118,9 +125,7 @@ public class TestCase extends AbstractTest {
         }
     }
 
-    private void run() throws IOException, HttpException {
-        super.setup();
-        this.buildRequest();
+    private void printRequestLog() {
         Report.log("request api: {}", request.uri());
         Report.log("request header: {}", request.jsonHeaders());
         Report.log("request cookies: {}", request.cookies());
@@ -133,26 +138,39 @@ public class TestCase extends AbstractTest {
         if (StringUtils.isNotEmpty(request.body())) {
             Report.log("request body: {}", request.body());
         }
-        super.response = request.execute();
         Report.log("response body: {}", response.text());
-        this.doCheck();
     }
 
     public void doCheck() {
         for (int i = 0; i < checkers.size(); i++) {
-            JSONObject checker = checkers.getJSONObject(i);
+            JSONObject checker = arrayCheck.getJSONObject(i);
             VarsHelper.evalValidate(checker, this.getVars());
-            boolean result;
             try {
-                result = AssertionFactory.assertThat(checker, response);
+                boolean result = AssertionFactory.assertThat(checker, response);
+                checker.put("result", result ? "success" : "failure");
             } catch (AssertionError t) {
-                this.setThrowable(t);
-                result = false;
-            }
-            checker.put("result", result ? "success" : "failure");
-            if (!result) {
-                this.hasFailure = true;
+                checker.put("result", "failure");
+                checker.put("throwable", t);
+            } catch (Exception e) {
+                checker.put("throwable", e);
+                checker.put("result", "error");
             }
         }
+    }
+
+    public MiGooRequest request() {
+        return request;
+    }
+
+    public Response response() {
+        return response;
+    }
+
+    public List<TestChecker> checkers() {
+        return checkers;
+    }
+
+    void checkers(List<TestChecker> checkers) {
+        this.checkers = checkers;
     }
 }

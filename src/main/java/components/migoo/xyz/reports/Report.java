@@ -28,13 +28,14 @@
 
 package components.migoo.xyz.reports;
 
-import com.alibaba.fastjson.JSONObject;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 import core.xyz.migoo.IResult;
 import core.xyz.migoo.ISuiteResult;
+import core.xyz.migoo.ITestResult;
+import core.xyz.migoo.TestChecker;
 import core.xyz.migoo.report.IReport;
 import core.xyz.migoo.utils.DateUtil;
 import org.apache.commons.mail.EmailException;
@@ -73,13 +74,13 @@ public class Report implements IReport {
 
     private void initReport(IResult result, String outputDirectoryName) {
         ExtentSparkReporter reporter = new ExtentSparkReporter(outputDirectoryName);
-        //reporter.config().setDocumentTitle(result.getTestName() + " Reports - Created by MiGoo");
-        reporter.config().setDocumentTitle(" Reports - Created by MiGoo");
-        // reporter.config().setReportName(result.getTestName() + " Reports");
-        reporter.config().setReportName(" Reports");
+        reporter.config().setDocumentTitle(result.getTestName() + " Reports - Created by MiGoo");
+        reporter.config().setReportName(result.getTestName() + " Reports");
+        reporter.config().setTimeStampFormat("yyyy-MM-dd HH:mm:ss");
+        reporter.config().setEncoding("UTF-8");
         reporter.config().setTheme(Theme.DARK);
-        //reporter.config().setResourceCDN(ResourceCDN.EXTENTREPORTS);
-
+        reporter.config().enableOfflineMode(true);
+        reporter.config().setTimelineEnabled(false);
         extent = new ExtentReports();
         extent.attachReporter(reporter);
     }
@@ -87,39 +88,28 @@ public class Report implements IReport {
     @Override
     public void generateReport(IResult result, String outputDirectoryName) {
         this.initReport(result, outputDirectoryName);
-        extent.createTest("积分发放接口")
-                .createNode("参数值为负数", "Jeff returns a faulty microwave")
-                .fail(new NullPointerException("hah")).warning("这是响应信息").warning("这是请求信息");
-        extent.createTest("积分发放接口")
-                .createNode("参数值为负数", "Jeff returns a faulty microwave")
-                .fail(new NullPointerException("hah")).warning("这是响应信息").warning("这是请求信息");
-        extent.createTest("积分扣减接口")
-                .createNode("参数值为负数").pass("pass").warning("这是响应信息").warning("这是请求信息");
-
-        extent.flush();
-
-// short-hand
-        extent.createTest("MyFirstTest").createNode("MyFirstChildTest").pass("details");
-
-// description
-
-    }
-
-    private void createSetNode(IResult result) {
-        if (result instanceof ISuiteResult) {
-            for (IResult iResult : ((ISuiteResult) result).getTestResults()) {
-                ExtentTest feature = extent.createTest(iResult.getTestName());
-                //feature.
+        for (IResult iSuiteResult : ((ISuiteResult) result).getTestResults()) {
+            ISuiteResult suiteResult = (ISuiteResult) iSuiteResult;
+            ExtentTest feature = extent.createTest(iSuiteResult.getTestName(),
+                    String.format("用例总数：%s，成功：%s，失败：%s，错误：%s，跳过：%s", suiteResult.size(),
+                            suiteResult.getSuccessCount(), suiteResult.getErrorCount(), suiteResult.getFailureCount(),
+                            suiteResult.getSkipCount()));
+            feature.getModel().setStartTime(iSuiteResult.getStartTime());
+            feature.getModel().setEndTime(iSuiteResult.getEndTime());
+            for (IResult testResult : suiteResult.getTestResults()) {
+                ITestResult iTestResult = (ITestResult) testResult;
+                ExtentTest node = feature.createNode(testResult.getTestName());
+                node.getModel().setStartTime(testResult.getStartTime());
+                node.getModel().setEndTime(testResult.getEndTime());
+                node = testResult.isSkip() ? node.warning("This test case skips execution ") :
+                        testResult.isError() ? node.fail(testResult.getThrowable()) : node;
+                for (TestChecker checker : iTestResult.getCheckers()) {
+                    String message = checker.toString();
+                    node = checker.isSuccess() ? node.pass(message) : checker.isFailure() ? node.fail(message) :
+                            checker.isError() ? node.fail(checker.getThrowable()) : node.warning(checker.toString());
+                }
             }
         }
-    }
-
-    private void createCaseNode(IResult result) {
-
-    }
-
-    public static void main(String[] args) {
-        new Report().generateReport(null, "./reports");
     }
 
     @Override
