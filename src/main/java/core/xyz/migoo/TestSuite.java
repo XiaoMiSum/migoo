@@ -31,6 +31,7 @@ package core.xyz.migoo;
 
 import com.alibaba.fastjson.JSONObject;
 import components.migoo.xyz.reports.Report;
+import core.xyz.migoo.functions.FunctionException;
 import core.xyz.migoo.vars.VarsHelper;
 
 /**
@@ -96,7 +97,7 @@ public class TestSuite extends AbstractTest {
     }
 
     @Override
-    public void processVariable() {
+    public void processVariable() throws FunctionException {
         super.processVariable();
         VarsHelper.bindAndEval(reportConfig, super.getVars());
         VarsHelper.bindAndEval(emailConfig, super.getVars());

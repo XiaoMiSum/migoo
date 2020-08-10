@@ -141,7 +141,7 @@ public abstract class AbstractTest implements ITest {
         Vars.addToGlobals(tName, vars);
     }
 
-    public void processVariable() {
+    public void processVariable() throws FunctionException {
         VarsHelper.bindAndEval(vars, vars);
         VarsHelper.bindAndEval(requestConfig, vars);
     }

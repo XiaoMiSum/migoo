@@ -70,7 +70,7 @@ public class FunctionHelper {
 
     private final Map<String, AbstractFunction> defaultFunctions = new HashMap<>(11);
 
-    private void initFunc(String name) {
+    private void initFunc(String name) throws FunctionException {
         if (defaultFunctions.isEmpty()) {
             ServiceLoader<AbstractFunction> loaders = ServiceLoader.load(AbstractFunction.class);
             for (AbstractFunction function : loaders) {
@@ -84,7 +84,7 @@ public class FunctionHelper {
         }
     }
 
-    public void initParameter(String origin, JSONObject variables) {
+    public void initParameter(String origin, JSONObject variables) throws FunctionException {
         try {
             if (StringUtils.isNotBlank(origin)) {
                 String[] array = origin.split(",");

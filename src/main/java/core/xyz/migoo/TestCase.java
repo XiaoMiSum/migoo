@@ -31,6 +31,7 @@ package core.xyz.migoo;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.assertions.AssertionFactory;
+import core.xyz.migoo.functions.FunctionException;
 import core.xyz.migoo.vars.VarsHelper;
 import org.apache.commons.lang3.StringUtils;
 import core.xyz.migoo.http.MiGooRequest;
@@ -95,7 +96,7 @@ public class TestCase extends AbstractTest {
         return result;
     }
 
-    private void buildRequest() {
+    private void buildRequest() throws FunctionException {
         this.bindRequestVariable();
         request = MiGooRequest.create(requestConfig.getString("method"))
                 .protocol(requestConfig.getString("protocol"))
@@ -109,7 +110,7 @@ public class TestCase extends AbstractTest {
                 .build();
     }
 
-    private void bindRequestVariable() {
+    private void bindRequestVariable() throws FunctionException {
         VarsHelper.bindAndEval(requestConfig, super.getVars());
         if (testCase.get("data") != null) {
             VarsHelper.bindVariable(testCase.getJSONObject("data"), super.getVars());

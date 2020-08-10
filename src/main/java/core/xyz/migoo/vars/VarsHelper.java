@@ -31,11 +31,13 @@ package core.xyz.migoo.vars;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import core.xyz.migoo.functions.FunctionException;
 import core.xyz.migoo.functions.FunctionHelper;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,7 +74,7 @@ public class VarsHelper {
         return source;
     }
 
-    public static void bindAndEval(JSONObject source, JSONObject variables) {
+    public static void bindAndEval(JSONObject source, JSONObject variables) throws FunctionException {
         if (source == null) {
             return;
         }
@@ -87,9 +89,11 @@ public class VarsHelper {
      * @param source    body
      * @param variables 变量
      */
-    public static void bindVariable(JSONObject source, JSONObject variables) {
+    public static void bindVariable(JSONObject source, JSONObject variables) throws FunctionException {
         bindAndEval(source, variables);
-        source.forEach((key, value) -> {
+        for (Map.Entry<String, Object> entry : source.entrySet()) {
+            Object value = entry.getValue();
+            String key = entry.getKey();
             if (value instanceof JSONArray) {
                 bindVariable(((JSONArray) value), variables);
             } else if (value instanceof JSONObject) {
@@ -97,10 +101,10 @@ public class VarsHelper {
             } else if (value instanceof String) {
                 source.put(key, bindMultiVariable((String) value, variables));
             }
-        });
+        }
     }
 
-    private static void bindVariable(JSONArray source, JSONObject variables) {
+    private static void bindVariable(JSONArray source, JSONObject variables) throws FunctionException {
         for (int i = 0; i < source.size(); i++) {
             Object value = source.get(i);
             if (value instanceof JSONArray) {
@@ -300,7 +304,7 @@ public class VarsHelper {
      *
      * @param use 使用方法变量的对象
      */
-    private static void evalVariables(JSONObject use, JSONObject variables) {
+    private static void evalVariables(JSONObject use, JSONObject variables) throws FunctionException {
         if (use == null) {
             return;
         }

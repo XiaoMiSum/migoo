@@ -2,6 +2,7 @@ package xyz.migoo.test.extender;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import core.xyz.migoo.functions.FunctionException;
 import core.xyz.migoo.vars.VarsHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,7 @@ import org.junit.jupiter.api.Test;
 public class ExtenderHelperTest {
 
     @Test
-    public void testBind1(){
+    public void testBind1() throws FunctionException {
         JSONObject source = new JSONObject();
         source.put("user", "${user}");
         source.put("pwd", "${pwd}");
@@ -25,7 +26,7 @@ public class ExtenderHelperTest {
     }
 
     @Test
-    public void testBind2(){
+    public void testBind2() throws FunctionException {
         JSONObject source = new JSONObject();
         source.put("user", "${sign}${user}");
         source.put("pwd", "__RandomString(length=10,string=${sign}${user})");
@@ -42,7 +43,7 @@ public class ExtenderHelperTest {
         Assertions.assertEquals(source.getJSONObject("data").get("sign"), vars.getString("sign") + vars.get("user"));
     }
     @Test
-    public void testBind3(){
+    public void testBind3() throws FunctionException {
         JSONObject source = new JSONObject();
         source.put("user", "${user}");
         source.put("pwd", "${pwd}");
@@ -58,7 +59,7 @@ public class ExtenderHelperTest {
         Assertions.assertEquals(source.getJSONArray("data").get(0), vars.getString("sign"));
     }
     @Test
-    public void testBind4(){
+    public void testBind4() throws FunctionException {
         JSONObject source = new JSONObject();
         source.put("user", "${user}");
         source.put("pwd", "${pwd}");
