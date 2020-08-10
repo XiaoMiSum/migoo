@@ -30,6 +30,7 @@ package core.xyz.migoo;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Date;
 
 /**
  * @author xiaomi
@@ -41,9 +42,9 @@ public class Result implements IResult{
 
     private int status;
 
-    private long startTime;
+    private Date startTime;
 
-    private long endTime;
+    private Date endTime;
 
     private Throwable throwable;
 
@@ -68,22 +69,22 @@ public class Result implements IResult{
     }
 
     @Override
-    public long getStartTime() {
+    public Date getStartTime() {
         return this.startTime;
     }
 
     @Override
-    public void setStartTime(long startTime) {
+    public void setStartTime(Date startTime) {
         this.startTime = startTime;
     }
 
     @Override
-    public long getEndTime() {
+    public Date getEndTime() {
         return this.endTime;
     }
 
     @Override
-    public void setEndTime(long endTime) {
+    public void setEndTime(Date endTime) {
         this.endTime = endTime;
     }
 
