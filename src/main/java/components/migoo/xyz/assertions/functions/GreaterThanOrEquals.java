@@ -22,7 +22,7 @@
  *  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  *  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  *  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *  
+ *
  *
  */
 
@@ -44,12 +44,8 @@ public class GreaterThanOrEquals extends AbstractFunction implements IFunction {
 
     @Override
     public boolean assertTrue(Map<String, Object> data) {
-        try {
-            BigDecimal b1 = new BigDecimal(String.valueOf(data.get("actual")));
-            BigDecimal b2 = new BigDecimal(String.valueOf(data.get("expect")));
-            return b1.compareTo(b2) >= 0;
-        } catch (Exception e) {
-            return false;
-        }
+        BigDecimal b1 = new BigDecimal(objectToString(data.get("actual"), "0"));
+        BigDecimal b2 = new BigDecimal(objectToString(data.get("expect"), "0"));
+        return b1.compareTo(b2) >= 0;
     }
 }

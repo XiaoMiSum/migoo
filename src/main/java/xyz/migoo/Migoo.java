@@ -61,7 +61,7 @@ public class Migoo {
         JSONObject fileJson = (JSONObject) new YamlReader(file).read();
         JSONObject config = fileJson.getJSONObject("config");
         JSONObject dataset = fileJson.getJSONObject("dataset");
-        JSONObject suites = fileJson.getJSONObject("suite");
+        JSONArray files = fileJson.getJSONArray("files");
         // 判断是否为导入文件
         if (config != null && config.get("file") != null) {
             fileJson.put("config", new YamlReader(config.getString("file")).read());
@@ -69,22 +69,24 @@ public class Migoo {
         if (dataset != null && dataset.get("file") != null) {
             fileJson.put("dataset", new YamlReader(dataset.getString("file")).read());
         }
-        if (suites.get("files") != null) {
-            JSONArray sets = suites.get("sets") != null ? suites.getJSONArray("sets") : new JSONArray();
-            for (Object filePath : suites.getJSONArray("files")) {
+        JSONArray sets = files != null ? new JSONArray() : fileJson.getJSONArray("sets");
+        if (files != null) {
+            for (Object filePath : files) {
                 sets.add(new YamlReader(filePath.toString()).read());
             }
-            suites.put("sets", sets);
-            suites.remove("files");
+            fileJson.remove("files");
         }
+        fileJson.put("sets", sets);
         return fileJson;
     }
 
     private void report(TestSuite suite, IResult result) {
-        String output = suite.getReportConfig() != null && suite.getReportConfig().get("output") != null ?
+        String output = suite.getReportConfig() != null && suite.getReportConfig().get("output") != null
+                && !"default".equalsIgnoreCase(suite.getReportConfig().getString("output"))?
                 suite.getReportConfig().getString("output") : "./reports/" + DateUtil.TODAY_DATE ;
-        String clazz = suite.getReportConfig() != null && suite.getReportConfig().get("class") != null ?
-                suite.getReportConfig().getString("class") : "";
+        String clazz = suite.getReportConfig() != null && suite.getReportConfig().get("class") != null
+                && !"default".equalsIgnoreCase(suite.getReportConfig().getString("class"))?
+                suite.getReportConfig().getString("class") : "components.migoo.xyz.reports.Report";
         IReport report;
         try {
             report = (IReport) Class.forName(clazz).newInstance();

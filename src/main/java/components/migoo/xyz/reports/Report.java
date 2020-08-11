@@ -73,7 +73,7 @@ public class Report implements IReport {
     private ExtentReports extent;
 
     private void initReport(IResult result, String outputDirectoryName) {
-        ExtentSparkReporter reporter = new ExtentSparkReporter(outputDirectoryName);
+        ExtentSparkReporter reporter = new ExtentSparkReporter(outputDirectoryName + "/index.html");
         reporter.config().setDocumentTitle(result.getTestName() + " Reports - Created by MiGoo");
         reporter.config().setReportName(result.getTestName() + " Reports");
         reporter.config().setTimeStampFormat("yyyy-MM-dd HH:mm:ss");
@@ -105,38 +105,40 @@ public class Report implements IReport {
                         testResult.isError() ? node.fail(testResult.getThrowable()) : node;
                 for (TestChecker checker : iTestResult.getCheckers()) {
                     String message = checker.toString();
-                    node = checker.isSuccess() ? node.pass(message) : checker.isFailure() ? node.fail(message) :
-                            checker.isError() ? node.fail(checker.getThrowable()) : node.warning(checker.toString());
+                    node = checker.isSuccess() ? node.pass(message) : checker.isSkipped() ? node.warning(message)
+                            : checker.isFailure() && checker.getThrowable() != null ? node.fail(checker.getThrowable())
+                            : node.fail(message);
                 }
             }
         }
+        extent.flush();
     }
 
     @Override
     public void sendReport(Map<String, Object> config, String project, String outputDirectoryName) {
-        HtmlEmail email = new HtmlEmail();
-        email.setAuthentication((String) config.get("user"), (String) config.get("password"));
-        email.setHostName((String) config.get("imaphost"));
-        email.setCharset("UTF-8");
-        String path = String.format("%s/%s/", System.getProperty("user.dir"), outputDirectoryName);
-        String subject = project + " api test reports " + DateUtil.format(DateUtil.YYYY_MM_DD_HH_MM_SS);
-        File zip = zipFile(path, "reports-" + DateUtil.TODAY_DATE);
-        try {
-            email.setFrom((String) config.get("user"));
-            for (String to : (List<String>) config.get("tolist")) {
-                email.addTo(to);
+        if (config != null) {
+            HtmlEmail email = new HtmlEmail();
+            email.setAuthentication((String) config.get("user"), (String) config.get("password"));
+            email.setHostName((String) config.get("imaphost"));
+            email.setCharset("UTF-8");
+            String subject = project + " api test reports " + DateUtil.format(DateUtil.YYYY_MM_DD_HH_MM_SS);
+            File zip = zipFile(outputDirectoryName, "reports-" + DateUtil.TODAY_DATE);
+            try {
+                email.setFrom((String) config.get("user"));
+                for (String to : (List<String>) config.get("tolist")) {
+                    email.addTo(to);
+                }
+                email.setSubject(subject);
+                email.setMsg("附件为本次 '" + project + "项目' 的接口测试报告，请查收!" +
+                        "\n\n" +
+                        "这是由 <a href = \"https://github.com/XiaoMiSum/MiGoo\">migoo接口测试工具</a> 发送的一封邮件!");
+                email.attach(zip);
+                email.send();
+            } catch (EmailException e) {
+                Report.log("email send error.", e);
             }
-            email.setSubject(subject);
-            email.setMsg("附件为本次 '" + project + "项目' 的接口测试报告，请查收!" +
-                    "\n\n" +
-                    "这是由 <a href = \"https://github.com/XiaoMiSum/MiGoo\">migoo接口测试工具</a> 发送的一封邮件!");
-            email.attach(zip);
-            email.send();
-        } catch (EmailException e) {
-            Report.log("email send error.", e);
+            // zip.delete();
         }
-        zip.delete();
-
     }
 
     private File zipFile(String path, String fileName) {

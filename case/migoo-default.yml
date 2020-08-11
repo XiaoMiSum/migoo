@@ -1,8 +1,8 @@
 name: migoo接口测试框架
 config: # 配置信息
   request:
-    protocol: https # 可缺省，默认http协议
-    host: 127.0.0.1 # 可缺省，默认 127.0.0.1
+    protocol: http # 可缺省，默认http协议
+    host: migoo.xyz # 可缺省，默认 127.0.0.1
     port: 80 #可缺省，http协议默认80，https默认443
     method: post # 可缺省，默认 GET
     headers:
@@ -12,90 +12,69 @@ config: # 配置信息
     output: default # 可缺省，测试报告保存地址
   email: # 可缺省，配置邮件发送测试报告
     imaphost: imap.exmail.qq.com   # imap 服务器地址
-    user: your@qq.com   # 你的发件人邮箱地址
-    password: password   # 你的发件人邮箱密码
+    user: mi_xiao@qq.com   # 你的发件人邮箱地址
+    password: unfinishedsong.1   # 你的发件人邮箱密码
     tolist:   # 收件人列表，可配置多个收件人
-      - your@email.com
+      - mi_xiao@qq.com
 dataset: # 可空，正对当前 suite 生效
   setup: # 可空，在完成 suite 中的 vars绑定后执行
-    - __method1()
+    - '__method(str=演示从用例传参调用扩展1)'
   teardown: # 可空，在 suite 中的所有用例执行完成后执行
-    - __method2()
+    - '__method(str=演示从用例传参调用扩展2)'
   vars: # 可空，自定义变量，完成 suite解析后，优先进行vars绑定
-    vars1: value1
-suite:
-  sets:
-    - name: xx接口测试用例集
-      config:
-        request:
-          protocol: https # 可缺省，默认http协议
-          host: 127.0.0.1 # 可缺省，默认 127.0.0.1
-          port: 80 #可缺省，http协议默认80，https默认443
-          method: post # 可缺省，默认 GET
-          headers:
-            Content-Type: Application/json;charSet=utf-8
-          api: /api/test # 可缺省
-      dataset: # 可空，针对当前 caseset 生效
-        setup: # 可空，在完成当前 caseset 中的 vars绑定后执行
-          - __method1()
-        teardown: # 可空，在当前 caseset 中的所有用例执行完成后执行
-          - __method2()
-        vars: # 可空，自定义变量，执行当前caseset中的用例时，优先进行vars绑定
-          vars1: value1
-      cases:
-        - title: 测试用例1
-          config:
-            request:
-              protocol: https # 可缺省，默认http协议
-              host: 127.0.0.1 # 可缺省，默认 127.0.0.1
-              port: 80 #可缺省，http协议默认80，https默认443
-              method: post # 可缺省，默认 GET
-              headers:
-                Content-Type: Application/json;charSet=utf-8
-              api: /api/test # 可缺省
-          dateset: # 可空，针对当前 case 生效
-            setup: # 可空，在完成当前 case 中的 vars绑定后执行
-              - __method1()
-            teardown: # 可空，在当前 case 中的所有用例执行完成后执行
-              - __method2()
-            vars: # 可空，自定义变量，执行当前 case时，优先进行vars绑定
-              vars1: value1
-          data: # 请求参数，可空，url参数使用 query，form-urlencode使用 data，json使用body
-            user: xx1
-            password: xx2
-          checkers: # 检查点
-            - {checker: status, expect: 200, func: ==}
-            - {checker: $.code, expect: 0, func: ==}
-        - title: 测试用例2
-          config:
-            skip: true
-          dateset:
-            vars:
-              vars1: value1
-          data:
-            user: xx1
-            password: xx2
-          checkers:
-            - {checker: status, expect: 200, func: ==}
-            - {checker: $.code, expect: 0, func: ==}
-    - name: yy接口测试用例集
-      config:
-        request:
-          protocol: https # 可缺省，默认http协议
-          host: 127.0.0.1 # 可缺省，默认 127.0.0.1
-          port: 80 #可缺省，http协议默认80，https默认443
-          method: post # 可缺省，默认 GET
-          headers:
-            Content-Type: Application/json;charSet=utf-8
-          api: /api/test # 可缺省
-      cases:
-        - title: 测试用例1
-          dateset:
-            vars:
-              vars2: value2
-          data:
-            user: xx1
-            password: xx2
-          checkers:
-            - {checker: status, expect: 200, func: ==}
-            - {checker: $.code, expect: 0, func: ==}
+    sign: '__digest(string=migoo123456qq)'
+sets:
+  - name: xx接口测试用例集
+    config:
+      request:
+        protocol: http # 可缺省，默认http协议
+        host: migoo.xyz # 可缺省，默认 127.0.0.1
+        port: 80 #可缺省，http协议默认80，https默认443
+        method: post # 可缺省，默认 GET
+        headers:
+          Content-Type: Application/json;charSet=utf-8
+        api: /api/login # 可缺省
+    dataset: # 可空，针对当前 caseset 生效
+      setup: # 可空，在完成当前 caseset 中的 vars绑定后执行
+        - '__method(str=演示从用例传参调用扩展3)'
+      teardown: # 可空，在当前 caseset 中的所有用例执行完成后执行
+        - '__method(str=演示从用例传参调用扩展4)'
+      vars: # 可空，自定义变量，执行当前caseset中的用例时，优先进行vars绑定
+        vars1: value1
+    cases:
+      - title: 测试用例1
+        config:
+          request:
+            protocol: https # 可缺省，默认http协议
+            host: 127.0.0.1 # 可缺省，默认 127.0.0.1
+            port: 80 #可缺省，http协议默认80，https默认443
+            method: post # 可缺省，默认 GET
+            headers:
+              Content-Type: Application/json;charSet=utf-8
+            api: /api/test # 可缺省
+        dateset: # 可空，针对当前 case 生效
+          setup: # 可空，在完成当前 case 中的 vars绑定后执行
+            - '__method(str=演示从用例传参调用扩展5)'
+          teardown: # 可空，在当前 case 中的所有用例执行完成后执行
+            - '__method(str=演示从用例传参调用扩展6)'
+          vars: # 可空，自定义变量，执行当前 case时，优先进行vars绑定
+            password: 123456qq
+        data: # 请求参数，可空，url参数使用 query，form-urlencode使用 data，json使用body
+          user: ${user}
+          password: ${password}
+          sign: ${sign}
+        checkers: # 检查点
+          - {checker: status, expect: 200, func: ==}
+          - {checker: $.code, expect: 0, func: ==}
+      - title: 测试用例2
+        config:
+          skip: true
+        dateset:
+          vars:
+            vars1: value1
+        data:
+          user: xx1
+          password: xx2
+        checkers:
+          - {checker: status, expect: 200, func: ==}
+          - {checker: $.code, expect: 0, func: ==}

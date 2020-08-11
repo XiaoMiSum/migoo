@@ -13,6 +13,6 @@ public class MiGooTest {
 
     @Test
     public void testApiCaseSet(){
-       // runner.run("./case/case.yml", "./case/vars.yml");
+        runner.run("./case/migoo-default.yml");
     }
 }

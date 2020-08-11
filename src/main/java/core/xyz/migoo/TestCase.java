@@ -51,6 +51,7 @@ public class TestCase extends AbstractTest {
     private MiGooRequest request;
     private Response response;
     private List<TestChecker> checkers;
+    private boolean hasFailure = false;
 
     TestCase(JSONObject testCase, JSONObject requestConfig) {
         super(testCase.getString("title"));
@@ -82,6 +83,7 @@ public class TestCase extends AbstractTest {
                 this.printRequestLog();
                 this.doCheck();
             }
+            this.setStatus(hasFailure ? FAILURE : SUCCESS);
         } catch (Throwable t) {
             this.setThrowable(t);
             Report.log("case run failure or assert failure", t);
@@ -143,18 +145,21 @@ public class TestCase extends AbstractTest {
     }
 
     public void doCheck() {
-        for (int i = 0; i < checkers.size(); i++) {
+        for (int i = 0; i < arrayCheck.size(); i++) {
             JSONObject checker = arrayCheck.getJSONObject(i);
             VarsHelper.evalValidate(checker, this.getVars());
             try {
                 boolean result = AssertionFactory.assertThat(checker, response);
                 checker.put("result", result ? "success" : "failure");
+                this.hasFailure = hasFailure && !result ? true : false;
             } catch (AssertionError t) {
                 checker.put("result", "failure");
                 checker.put("throwable", t);
+                this.hasFailure = true;
             } catch (Exception e) {
                 checker.put("throwable", e);
                 checker.put("result", "error");
+                this.setStatus(ERROR);
             }
         }
     }

@@ -22,7 +22,7 @@
  *  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  *  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  *  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *  
+ *
  *
  */
 
@@ -54,14 +54,19 @@ public abstract class AbstractFunction {
         return decimalFormatter;
     }
 
-   public String objectToString(Object subj) {
+    public String objectToString(Object subj) {
+        return objectToString(subj, "null");
+    }
+
+    public String objectToString(Object subj, String defaultString) {
         String str;
+        defaultString = StringUtil.isEmpty(defaultString) ? "null" : defaultString;
         if (subj == null || StringUtil.isEmpty(subj.toString())) {
-            str = "null";
+            str =  defaultString;
         } else if (subj instanceof List) {
-            str = ((List) subj).isEmpty()?"null": JSONArray.toJSONString(subj);
+            str = ((List) subj).isEmpty() ? defaultString : JSONArray.toJSONString(subj);
         } else if (subj instanceof Map) {
-            str = ((Map) subj).isEmpty()?"null": JSONObject.toJSONString(subj);
+            str = ((Map) subj).isEmpty() ? defaultString : JSONObject.toJSONString(subj);
         } else if (subj instanceof Double || subj instanceof Float) {
             str = FORMAT_THREAD_LOCAL.get().format(subj);
         } else {

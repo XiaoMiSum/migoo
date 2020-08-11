@@ -50,7 +50,7 @@ public class TestSuite extends AbstractTest {
         this.initTest(suite.getJSONObject("config"), suite.getJSONObject("dataset"));
         super.addVars("name", this.getTestName());
         super.addToGlobals();
-        suite.getJSONObject("suite").getJSONArray("sets").forEach(set -> {
+        suite.getJSONArray("sets").forEach(set -> {
             super.addTest(new TestSet((JSONObject) set, requestConfig));
         });
     }

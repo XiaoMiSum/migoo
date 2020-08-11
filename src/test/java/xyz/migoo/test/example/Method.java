@@ -26,26 +26,25 @@
  *
  */
 
+package xyz.migoo.test.example;
 
-package components.migoo.xyz.assertions.functions;
-
-import core.xyz.migoo.assertions.function.Alias;
-import core.xyz.migoo.assertions.function.IFunction;
-
-import java.math.BigDecimal;
-import java.util.Map;
+import core.xyz.migoo.functions.CompoundVariable;
+import core.xyz.migoo.functions.Function;
+import core.xyz.migoo.functions.FunctionException;
 
 /**
  * @author xiaomi
- * @date 2019-08-13 22:17
+ * @date 2020/8/11 09:08
  */
-@Alias(aliasList = {"<="})
-public class LessThanOrEquals extends AbstractFunction implements IFunction {
+public class Method implements Function {
+    @Override
+    public Object execute(CompoundVariable parameters) throws FunctionException {
+        System.out.println(parameters.get("str"));
+        return null;
+    }
 
     @Override
-    public boolean assertTrue(Map<String, Object> data) {
-        BigDecimal b1 = new BigDecimal(objectToString(data.get("actual"), "0"));
-        BigDecimal b2 = new BigDecimal(objectToString(data.get("expect"), "0"));
-        return b1.compareTo(b2) <= 0;
+    public String funcKey() {
+        return "METHOD";
     }
 }

@@ -58,6 +58,8 @@ public class MiGooRequest extends Request {
 
     private String api;
 
+    private JSONObject headers;
+
     public static MiGooRequest create(String method) {
         return new MiGooRequest(method);
     }
@@ -153,9 +155,7 @@ public class MiGooRequest extends Request {
     }
 
     public MiGooRequest headers(JSONObject headers){
-        if (headers != null && !headers.isEmpty()){
-            headers.forEach((k, v) -> addHeader(k, String.valueOf(v)));
-        }
+        this.headers = headers;
         return this;
     }
 

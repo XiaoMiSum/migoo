@@ -68,8 +68,8 @@ public class AssertionFactory {
     }
 
     private boolean assertThat(JSONObject checker) throws FunctionException {
-        boolean result = assertion.assertThat(checker);
         checker.put("actual", assertion.getActual());
+        boolean result = assertion.assertThat(checker);
         this.clear();
         return result;
     }
@@ -79,6 +79,9 @@ public class AssertionFactory {
         check = Alias.Check.isJson(check, JSONAssertion.class.getAnnotation(Alias.class).aliasList()) ?
                 JSONAssertion.class.getSimpleName().toUpperCase() : check.toUpperCase();
         assertion = defaultAssertion.get(check) == null ? SELF_DEFINED_ASSERTION.get(check) : defaultAssertion.get(check);
+        if (assertion instanceof JSONAssertion) {
+            ((JSONAssertion)assertion).setJsonPath(check);
+        }
         if (assertion == null) {
             throw new FunctionException("assertion not found: " + check);
         }
