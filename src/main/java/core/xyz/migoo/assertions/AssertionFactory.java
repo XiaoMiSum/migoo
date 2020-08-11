@@ -76,9 +76,9 @@ public class AssertionFactory {
 
     private void setInstance(String check) throws FunctionException {
         this.loadDefaultAssertion();
-        check = Alias.Check.isJson(check, JSONAssertion.class.getAnnotation(Alias.class).aliasList()) ?
+        String type =  Alias.Check.isJson(check, JSONAssertion.class.getAnnotation(Alias.class).aliasList()) ?
                 JSONAssertion.class.getSimpleName().toUpperCase() : check.toUpperCase();
-        assertion = defaultAssertion.get(check) == null ? SELF_DEFINED_ASSERTION.get(check) : defaultAssertion.get(check);
+        assertion = defaultAssertion.get(type) == null ? SELF_DEFINED_ASSERTION.get(type) : defaultAssertion.get(type);
         if (assertion instanceof JSONAssertion) {
             ((JSONAssertion)assertion).setJsonPath(check);
         }

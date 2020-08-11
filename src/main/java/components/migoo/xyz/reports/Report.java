@@ -30,12 +30,17 @@ package components.migoo.xyz.reports;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.markuputils.CodeLanguage;
+import com.aventstack.extentreports.markuputils.Markup;
+import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 import core.xyz.migoo.IResult;
 import core.xyz.migoo.ISuiteResult;
 import core.xyz.migoo.ITestResult;
 import core.xyz.migoo.TestChecker;
+import core.xyz.migoo.http.MiGooRequest;
 import core.xyz.migoo.report.IReport;
 import core.xyz.migoo.utils.DateUtil;
 import org.apache.commons.mail.EmailException;
@@ -45,8 +50,11 @@ import org.apache.tools.ant.taskdefs.Zip;
 import org.apache.tools.ant.types.FileSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.migoo.simplehttp.Request;
+import xyz.migoo.simplehttp.Response;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -75,7 +83,8 @@ public class Report implements IReport {
     private void initReport(IResult result, String outputDirectoryName) {
         ExtentSparkReporter reporter = new ExtentSparkReporter(outputDirectoryName + "/index.html");
         reporter.config().setDocumentTitle(result.getTestName() + " Reports - Created by MiGoo");
-        reporter.config().setReportName(result.getTestName() + " Reports");
+        reporter.config().setReportName(result.getTestName() + " Reports"
+                + "</span></a></li>\n<li><a href='https://github.com/XiaoMiSum/MiGoo' target=\"_blank\"><span class=\"badge badge-primary\">migoo - github");
         reporter.config().setTimeStampFormat("yyyy-MM-dd HH:mm:ss");
         reporter.config().setEncoding("UTF-8");
         reporter.config().setTheme(Theme.DARK);
@@ -92,7 +101,7 @@ public class Report implements IReport {
             ISuiteResult suiteResult = (ISuiteResult) iSuiteResult;
             ExtentTest feature = extent.createTest(iSuiteResult.getTestName(),
                     String.format("用例总数：%s，成功：%s，失败：%s，错误：%s，跳过：%s", suiteResult.size(),
-                            suiteResult.getSuccessCount(), suiteResult.getErrorCount(), suiteResult.getFailureCount(),
+                            suiteResult.getSuccessCount(), suiteResult.getFailureCount(), suiteResult.getErrorCount(),
                             suiteResult.getSkipCount()));
             feature.getModel().setStartTime(iSuiteResult.getStartTime());
             feature.getModel().setEndTime(iSuiteResult.getEndTime());
@@ -101,17 +110,66 @@ public class Report implements IReport {
                 ExtentTest node = feature.createNode(testResult.getTestName());
                 node.getModel().setStartTime(testResult.getStartTime());
                 node.getModel().setEndTime(testResult.getEndTime());
-                node = testResult.isSkip() ? node.warning("This test case skips execution ") :
-                        testResult.isError() ? node.fail(testResult.getThrowable()) : node;
-                for (TestChecker checker : iTestResult.getCheckers()) {
-                    String message = checker.toString();
-                    node = checker.isSuccess() ? node.pass(message) : checker.isSkipped() ? node.warning(message)
-                            : checker.isFailure() && checker.getThrowable() != null ? node.fail(checker.getThrowable())
-                            : node.fail(message);
+                if (iTestResult.getRequest() != null) {
+                    node.info(iTestResult.getRequest().uriNotContainsParam());
+                    if (iTestResult.getRequest().headers() != null || iTestResult.getRequest().headers().length > 0) {
+                        node.info(Arrays.toString(iTestResult.getRequest().headers()));
+                    }
+                    if (!iTestResult.getRequest().body().isEmpty()) {
+                        node.info(iTestResult.getRequest().body());
+                    }
+                    if (!iTestResult.getRequest().data().isEmpty()) {
+                        node.info(iTestResult.getRequest().data());
+                    }
+                    if (!iTestResult.getRequest().query().isEmpty()) {
+                        node.info(iTestResult.getRequest().query());
+                    }
+                    if (!iTestResult.getResponse().text().isEmpty()) {
+                        node.info(iTestResult.getResponse().text());
+                    }
+                }
+                if (!testResult.isError()) {
+                    for (TestChecker checker : iTestResult.getCheckers()) {
+                        Markup m = MarkupHelper.createCodeBlock(checker.toString(), CodeLanguage.JSON);
+                        node = checker.isSuccess() ? node.pass(m) : checker.isSkipped() ? node.skip(m)
+                                : checker.isFailure() && checker.getThrowable() != null ? node.fail(m).fail(checker.getThrowable())
+                                : node.fail(m);
+
+                    }
                 }
             }
         }
         extent.flush();
+    }
+
+    private String getDetailTable(Request request, Response response) {
+        String format = "\n<table class=\"table table-sm\">\n<tbody>\n%s%s%s%s\n</tbody>\n</table>\n";
+        String url = "<tr class=\"event-row\"><td><span>Url</span></td>\n" +
+                "        <td>\n" +
+                "          <span>" + request.uriNotContainsParam() + "</span>" +
+                "        </td></tr>\n";
+        String headers = request.headers() == null || request.headers().length == 0 ? "" :
+                "<tr class=\"event-row\"><td><span>Headers</span></td>\n" +
+                        "        <td>\n" +
+                        "          <span>" + Arrays.toString(request.headers()) + "</span>" +
+                        "        </td></tr>\n";
+        String body = !request.body().isEmpty() ? "<tr class=\"event-row\"><td><span>Body</span></td>\n" +
+                "        <td>\n" +
+                "          <span>" + request.body() + "</span>" +
+                "        </td></tr>\n" :
+                !request.query().isEmpty() ? "<tr class=\"event-row\"><td><span>Query</span></td>\n" +
+                        "        <td>\n" +
+                        "          <span>" + request.query() + "</span>" +
+                        "        </td></tr>\n" :
+                        !request.data().isEmpty() ? "<tr class=\"event-row\"><td><span>Data</span></td>\n" +
+                                "        <td>\n" +
+                                "          <span>" + request.data() + "</span>" +
+                                "        </td></tr>\n" : "";
+        String responseText = !response.text().isEmpty() ? "<tr class=\"event-row\"><td><span>Response</span></td>\n" +
+                "        <td>\n" +
+                "          <span>" + response.text() + "</span>" +
+                "        </td></tr>\n" : "";
+        return String.format(format, url, headers, body, responseText);
     }
 
     @Override
@@ -137,7 +195,7 @@ public class Report implements IReport {
             } catch (EmailException e) {
                 Report.log("email send error.", e);
             }
-            // zip.delete();
+            zip.delete();
         }
     }
 

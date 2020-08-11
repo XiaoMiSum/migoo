@@ -29,6 +29,9 @@
 
 package core.xyz.migoo;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.annotation.JSONField;
+
 /**
  * @author xiaomi
  * @date 2019-08-10 20:36
@@ -45,6 +48,7 @@ public class TestChecker {
 
     private String result;
 
+    @JSONField(serialize = false)
     private Throwable throwable;
 
     public String getChecker() {
@@ -95,31 +99,28 @@ public class TestChecker {
         this.throwable = throwable;
     }
 
+    @JSONField(serialize = false)
     public boolean isSuccess() {
         return "success".equals(getResult());
     }
+
+    @JSONField(serialize = false)
     public boolean isFailure() {
         return "failure".equals(getResult());
     }
+
+    @JSONField(serialize = false)
     public boolean isSkipped() {
         return "skipped".equals(getResult());
     }
+
+    @JSONField(serialize = false)
     public boolean isError() {
         return "error".equals(getResult());
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("{");
-        sb.append("\"checker\": \"").append(checker).append("\"").append(",");
-        if (expect instanceof String) {
-            sb.append("\"expect\": \"").append(expect).append("\"").append(",");
-        } else {
-            sb.append("\"expect\": ").append(expect).append(",");
-        }
-        return sb.append("\"actual\": \"").append(actual).append("\"").append(",")
-                .append("\"func\": \"").append(func).append("\"").append(",")
-                .append("\"result\": \"").append(getResult()).append("\"").append("}")
-                .toString();
+        return JSON.toJSONString(this);
     }
 }

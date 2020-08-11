@@ -10,12 +10,6 @@ config: # 配置信息
   report: # 可缺省，配置测试报告
     class: default # 可缺省，测试报告实现类
     output: default # 可缺省，测试报告保存地址
-  email: # 可缺省，配置邮件发送测试报告
-    imaphost: imap.exmail.qq.com   # imap 服务器地址
-    user: mi_xiao@qq.com   # 你的发件人邮箱地址
-    password: unfinishedsong.1   # 你的发件人邮箱密码
-    tolist:   # 收件人列表，可配置多个收件人
-      - mi_xiao@qq.com
 dataset: # 可空，正对当前 suite 生效
   setup: # 可空，在完成 suite 中的 vars绑定后执行
     - '__method(str=演示从用例传参调用扩展1)'
@@ -40,7 +34,7 @@ sets:
       teardown: # 可空，在当前 caseset 中的所有用例执行完成后执行
         - '__method(str=演示从用例传参调用扩展4)'
       vars: # 可空，自定义变量，执行当前caseset中的用例时，优先进行vars绑定
-        vars1: value1
+        user: migoo
     cases:
       - title: 测试用例1
         config:
@@ -52,29 +46,30 @@ sets:
             headers:
               Content-Type: Application/json;charSet=utf-8
             api: /api/test # 可缺省
-        dateset: # 可空，针对当前 case 生效
+        dataset: # 可空，针对当前 case 生效
           setup: # 可空，在完成当前 case 中的 vars绑定后执行
             - '__method(str=演示从用例传参调用扩展5)'
           teardown: # 可空，在当前 case 中的所有用例执行完成后执行
             - '__method(str=演示从用例传参调用扩展6)'
           vars: # 可空，自定义变量，执行当前 case时，优先进行vars绑定
             password: 123456qq
-        data: # 请求参数，可空，url参数使用 query，form-urlencode使用 data，json使用body
-          user: ${user}
+        body: # 请求参数，可空，url参数使用 query，form-urlencode使用 data，json使用body
+          userName: ${user}
           password: ${password}
           sign: ${sign}
         checkers: # 检查点
           - {checker: status, expect: 200, func: ==}
-          - {checker: $.code, expect: 0, func: ==}
+          - {checker: $.status, expect: 200, func: ==}
+          - {checker: $.data.token, expect: '\w+\.\w+\.\w+', func: regex}
       - title: 测试用例2
         config:
           skip: true
-        dateset:
+        dataset:
           vars:
             vars1: value1
-        data:
-          user: xx1
+        body:
+          userName: xx1
           password: xx2
         checkers:
           - {checker: status, expect: 200, func: ==}
-          - {checker: $.code, expect: 0, func: ==}
+          - {checker: $.status, expect: 0, func: ==}

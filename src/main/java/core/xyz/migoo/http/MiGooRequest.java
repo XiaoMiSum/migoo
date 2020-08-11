@@ -26,6 +26,7 @@
 
 package core.xyz.migoo.http;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
@@ -60,6 +61,10 @@ public class MiGooRequest extends Request {
 
     private JSONObject headers;
 
+    private JSON body;
+    private JSONObject data;
+    private JSONObject query;
+
     public static MiGooRequest create(String method) {
         return new MiGooRequest(method);
     }
@@ -86,7 +91,20 @@ public class MiGooRequest extends Request {
     }
 
     public MiGooRequest build(){
-        return uri(String.format( "%s://%s:%s%s", protocol, host, port, api));
+        this.uri(String.format( "%s://%s:%s%s", protocol, host, port, api));
+        if (headers != null && !headers.isEmpty()) {
+            headers.forEach((k, v) -> super.addHeader(k, v == null ? null : v.toString()));
+        }
+        if (query != null && !query.isEmpty()) {
+            query.forEach((k, v) -> super.query(new Form().add(k, v == "" ? null : v.toString())));
+        }
+        if (data != null && !data.isEmpty()) {
+            data.forEach((k, v) -> super.data(new Form().add(k, v == "" ? null : v.toString())));
+        }
+        if (body != null) {
+            super.bodyJson(body.toJSONString());
+        }
+        return this;
     }
 
     public MiGooRequest(){
@@ -114,33 +132,29 @@ public class MiGooRequest extends Request {
     }
 
     public MiGooRequest body(JSONObject body) {
-        if (body == null || body.isEmpty()){
-            return this;
+        if (body != null && !body.isEmpty()){
+            this.body = body;
         }
-        return (MiGooRequest) bodyJson(body.toString());
+        return this;
     }
 
     public MiGooRequest body(JSONArray body) {
-        if (body == null || body.isEmpty()){
-            return this;
+        if (body != null && !body.isEmpty()){
+            this.body = body;
         }
-        return (MiGooRequest) bodyJson(body.toString());
+        return this;
     }
 
     public MiGooRequest data(JSONObject data) {
         if (data != null && !data.isEmpty()){
-            Form form = Form.form();
-            data.forEach((k, v) -> form.add(k, v == null ? "" : String.valueOf(v)));
-            data(form);
+            this.data = data;
         }
         return this;
     }
 
     public MiGooRequest query(JSONObject query) {
         if (query != null && !query.isEmpty()){
-            Form form = Form.form();
-            query.forEach((k, v) -> form.add(k, v == null ? "" : String.valueOf(v)));
-            query(form);
+            this.query = query;
         }
         return this;
     }

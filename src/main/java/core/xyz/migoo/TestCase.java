@@ -39,6 +39,7 @@ import components.migoo.xyz.reports.Report;
 import xyz.migoo.simplehttp.Response;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * @author xiaomi
@@ -106,9 +107,9 @@ public class TestCase extends AbstractTest {
                 .port(requestConfig.getInteger("port"))
                 .api(requestConfig.getString("api"))
                 .headers(requestConfig.getJSONObject("headers"))
-                .query(requestConfig.getJSONObject("query"))
-                .data(requestConfig.getJSONObject("data"))
-                .body(requestConfig.getJSONObject("body"))
+                .query(testCase.getJSONObject("query"))
+                .data(testCase.getJSONObject("data"))
+                .body(testCase.getJSONObject("body"))
                 .build();
     }
 
@@ -130,8 +131,12 @@ public class TestCase extends AbstractTest {
 
     private void printRequestLog() {
         Report.log("request api: {}", request.uri());
-        Report.log("request header: {}", request.jsonHeaders());
-        Report.log("request cookies: {}", request.cookies());
+        if (request.jsonHeaders() != null && !request.jsonHeaders().isEmpty()) {
+            Report.log("request header: {}", request.jsonHeaders());
+        }
+        if (request.cookies() != null && !request.cookies().isEmpty()) {
+            Report.log("request cookies: {}", request.cookies());
+        }
         if (StringUtils.isNotEmpty(request.query())) {
             Report.log("request query: {}", request.query());
         }
