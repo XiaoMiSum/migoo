@@ -54,6 +54,7 @@ import xyz.migoo.simplehttp.Request;
 import xyz.migoo.simplehttp.Response;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +85,9 @@ public class Report implements IReport {
         ExtentSparkReporter reporter = new ExtentSparkReporter(outputDirectoryName + "/index.html");
         reporter.config().setDocumentTitle(result.getTestName() + " Reports - Created by MiGoo");
         reporter.config().setReportName(result.getTestName() + " Reports"
-                + "</span></a></li>\n<li><a href='https://github.com/XiaoMiSum/MiGoo' target=\"_blank\"><span class=\"badge badge-primary\">migoo - github");
+                +"</span></a></li>\n" +
+                "<li><a href='https://github.com/XiaoMiSum/MiGoo' target=\"_blank\">" +
+                "<span><img src=\"https://img.shields.io/badge/MiGoo-yellow.svg?style=social&amp;logo=github\">");
         reporter.config().setTimeStampFormat("yyyy-MM-dd HH:mm:ss");
         reporter.config().setEncoding("UTF-8");
         reporter.config().setTheme(Theme.DARK);
@@ -92,6 +95,10 @@ public class Report implements IReport {
         reporter.config().setTimelineEnabled(false);
         extent = new ExtentReports();
         extent.attachReporter(reporter);
+        try {
+            extent.setGherkinDialect("zh-CN");
+        } catch (UnsupportedEncodingException ignored) {
+        }
     }
 
     @Override
@@ -115,14 +122,14 @@ public class Report implements IReport {
                     if (iTestResult.getRequest().headers() != null || iTestResult.getRequest().headers().length > 0) {
                         node.info(Arrays.toString(iTestResult.getRequest().headers()));
                     }
+                    if (!iTestResult.getRequest().query().isEmpty()) {
+                        node.info(iTestResult.getRequest().query());
+                    }
                     if (!iTestResult.getRequest().body().isEmpty()) {
                         node.info(iTestResult.getRequest().body());
                     }
                     if (!iTestResult.getRequest().data().isEmpty()) {
                         node.info(iTestResult.getRequest().data());
-                    }
-                    if (!iTestResult.getRequest().query().isEmpty()) {
-                        node.info(iTestResult.getRequest().query());
                     }
                     if (!iTestResult.getResponse().text().isEmpty()) {
                         node.info(iTestResult.getResponse().text());
@@ -140,36 +147,6 @@ public class Report implements IReport {
             }
         }
         extent.flush();
-    }
-
-    private String getDetailTable(Request request, Response response) {
-        String format = "\n<table class=\"table table-sm\">\n<tbody>\n%s%s%s%s\n</tbody>\n</table>\n";
-        String url = "<tr class=\"event-row\"><td><span>Url</span></td>\n" +
-                "        <td>\n" +
-                "          <span>" + request.uriNotContainsParam() + "</span>" +
-                "        </td></tr>\n";
-        String headers = request.headers() == null || request.headers().length == 0 ? "" :
-                "<tr class=\"event-row\"><td><span>Headers</span></td>\n" +
-                        "        <td>\n" +
-                        "          <span>" + Arrays.toString(request.headers()) + "</span>" +
-                        "        </td></tr>\n";
-        String body = !request.body().isEmpty() ? "<tr class=\"event-row\"><td><span>Body</span></td>\n" +
-                "        <td>\n" +
-                "          <span>" + request.body() + "</span>" +
-                "        </td></tr>\n" :
-                !request.query().isEmpty() ? "<tr class=\"event-row\"><td><span>Query</span></td>\n" +
-                        "        <td>\n" +
-                        "          <span>" + request.query() + "</span>" +
-                        "        </td></tr>\n" :
-                        !request.data().isEmpty() ? "<tr class=\"event-row\"><td><span>Data</span></td>\n" +
-                                "        <td>\n" +
-                                "          <span>" + request.data() + "</span>" +
-                                "        </td></tr>\n" : "";
-        String responseText = !response.text().isEmpty() ? "<tr class=\"event-row\"><td><span>Response</span></td>\n" +
-                "        <td>\n" +
-                "          <span>" + response.text() + "</span>" +
-                "        </td></tr>\n" : "";
-        return String.format(format, url, headers, body, responseText);
     }
 
     @Override
