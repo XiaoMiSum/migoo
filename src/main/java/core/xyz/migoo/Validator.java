@@ -112,12 +112,12 @@ public class Validator {
 
     @JSONField(serialize = false)
     public boolean isSuccess() {
-        return "success".equals(getResult());
+        return "passed".equals(getResult());
     }
 
     @JSONField(serialize = false)
     public boolean isFailure() {
-        return "failure".equals(getResult());
+        return "failed".equals(getResult());
     }
 
     @JSONField(serialize = false)

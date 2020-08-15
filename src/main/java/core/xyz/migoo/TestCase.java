@@ -54,10 +54,10 @@ public class TestCase extends AbstractTest {
 
     TestCase(JSONObject testCase, JSONObject requestConfig) {
         super(testCase.getString("title"));
-        super.initTest(testCase.getJSONObject("config"), testCase.getJSONObject("dataset"));
+        super.initTest(testCase.getJSONObject("config"), testCase.getJSONObject("dataset"), requestConfig);
         super.addVars("title", super.getTestName());
         super.addToGlobals();
-        super.initRequest(requestConfig);
+        super.initRequest(testCase.getJSONObject("config"));
         this.validators = testCase.getJSONArray("validators");
         this.testCase = testCase;
     }

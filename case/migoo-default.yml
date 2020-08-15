@@ -6,7 +6,7 @@ config: # 配置信息
     port: 80 #可缺省，http协议默认80，https默认443
     method: post # 可缺省，默认 GET
     headers:
-      Content-Type: Application/json;charSet=utf-8
+      x-header: migoo
   report: # 可缺省，配置测试报告
     listener: # 可缺省，测试报告实现类
     output: # 可缺省，测试报告保存地址
@@ -28,13 +28,9 @@ sets:
   - name: xx接口测试用例集
     config:
       request:
-        protocol: http # 可缺省，默认http协议
-        host: migoo.xyz # 可缺省，默认 127.0.0.1
-        port: 80 #可缺省，http协议默认80，https默认443
-        method: post # 可缺省，默认 GET
         headers:
-          Content-Type: Application/json;charSet=utf-8
-        api: /api/login # 可缺省
+          x-t: x-t
+        api: /api/test # 可缺省
     dataset: # 可空，针对当前 caseset 生效
       setup: # 可空，在完成当前 caseset 中的 vars绑定后执行
         - '__method(str=演示从用例传参调用扩展3)'
@@ -46,13 +42,9 @@ sets:
       - title: 测试用例1
         config:
           request:
-            protocol: https # 可缺省，默认http协议
-            host: 127.0.0.1 # 可缺省，默认 127.0.0.1
-            port: 80 #可缺省，http协议默认80，https默认443
-            method: post # 可缺省，默认 GET
             headers:
-              Content-Type: Application/json;charSet=utf-8
-            api: /api/test # 可缺省
+              x-a: x-a
+            api: /api/login # 可缺省
         dataset: # 可空，针对当前 case 生效
           setup: # 可空，在完成当前 case 中的 vars绑定后执行
             - '__method(str=演示从用例传参调用扩展5)'
@@ -70,13 +62,24 @@ sets:
           - {field: $.data.token, expect: '\w+\.\w+\.\w+', rule: regex}
       - title: 测试用例2
         config:
-          skip: true
-        dataset:
-          vars:
-            vars1: value1
-        body:
-          userName: xx1
-          password: xx2
-        validators:
+          request:
+            api: /api/login # 可缺省
+        dataset: # 可空，针对当前 case 生效
+          setup: # 可空，在完成当前 case 中的 vars绑定后执行
+            - '__method(str=演示从用例传参调用扩展5)'
+          teardown: # 可空，在当前 case 中的所有用例执行完成后执行
+            - '__method(str=演示从用例传参调用扩展6)'
+          vars: # 可空，自定义变量，执行当前 case时，优先进行vars绑定
+            password: 123456qq
+        query:
+          test1: test1
+          test2: test2
+          test3: test3
+        body: # 请求参数，可空，url参数使用 query，form-urlencode使用 data，json使用body
+          userName: ${user}
+          password: ${password}
+          sign: ${sign}
+        validators: # 检查点， 当 assertion 为JSON 时可空
           - {assertion: response, field: status, expect: 200, rule: ==}
-          - {field: $.status, expect: 0, rule: ==}
+          - {assertion: json, field: $.status, expect: 200, rule: ==}
+          - {field: $.data.token, expect: '\w+\.\w+\.\w+', rule: regex}

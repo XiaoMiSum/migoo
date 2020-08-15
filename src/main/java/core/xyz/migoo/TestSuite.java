@@ -63,9 +63,8 @@ public class TestSuite extends AbstractTest {
         return emailConfig;
     }
 
-    @Override
     public void initTest(JSONObject config, JSONObject dataset) {
-        super.initTest(config, dataset);
+        super.initTest(config, dataset, config.getJSONObject("request"));
         this.reportConfig = config.get("report") == null ? config.getJSONObject("reports") : config.getJSONObject("report");
         this.emailConfig = config.get("email") == null ? config.getJSONObject("mail") : config.getJSONObject("email");
     }

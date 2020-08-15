@@ -96,10 +96,14 @@ public class MiGooRequest extends Request {
             headers.forEach((k, v) -> super.addHeader(k, v == null ? null : v.toString()));
         }
         if (query != null && !query.isEmpty()) {
-            query.forEach((k, v) -> super.query(new Form().add(k, v == "" ? null : v.toString())));
+            Form form = new Form();
+            query.forEach((k, v) -> form.add(k, v == "" ? null : v.toString()));
+            super.query(form);
         }
         if (data != null && !data.isEmpty()) {
-            data.forEach((k, v) -> super.data(new Form().add(k, v == "" ? null : v.toString())));
+            Form form = new Form();
+            data.forEach((k, v) -> form.add(k, v == "" ? null : v.toString()));
+            super.data(form);
         }
         if (body != null) {
             super.bodyJson(body.toJSONString());
@@ -188,11 +192,5 @@ public class MiGooRequest extends Request {
     public JSONArray cookies(){
         return context() != null && context().getCookieStore() != null ?
                 new JSONArray(new ArrayList<>(context().getCookieStore().getCookies())) : null;
-    }
-
-    @Override
-    public String uri(){
-        String uri = super.uri();
-        return uri.substring(0, !uri.contains("?") ? uri.length() : uri.indexOf("?"));
     }
 }
