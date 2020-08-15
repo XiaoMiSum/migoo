@@ -26,5 +26,15 @@
 #
 #
 
-components.xyz.migoo.assertions.JSONAssertion
-components.xyz.migoo.assertions.ResponseAssertion
+components.xyz.migoo.assertions.rules.Contains
+components.xyz.migoo.assertions.rules.DoseNotContains
+components.xyz.migoo.assertions.rules.DoseNotEquals
+components.xyz.migoo.assertions.rules.Equals
+components.xyz.migoo.assertions.rules.EqualsIgnoreCase
+components.xyz.migoo.assertions.rules.GreaterThan
+components.xyz.migoo.assertions.rules.GreaterThanOrEquals
+components.xyz.migoo.assertions.rules.IsEmpty
+components.xyz.migoo.assertions.rules.IsNotEmpty
+components.xyz.migoo.assertions.rules.LessThan
+components.xyz.migoo.assertions.rules.LessThanOrEquals
+components.xyz.migoo.assertions.rules.Regex

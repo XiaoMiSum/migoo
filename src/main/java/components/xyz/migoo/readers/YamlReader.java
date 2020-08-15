@@ -26,29 +26,55 @@
  *
  */
 
-package core.xyz.migoo;
 
-import xyz.migoo.simplehttp.Request;
-import xyz.migoo.simplehttp.Response;
+package components.xyz.migoo.readers;
 
-import java.util.List;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.File;
 
 /**
  * @author xiaomi
- * @date 2020/7/27 22:30
+ * @date 2018/09/28 14:25:22
  */
-public interface ITestResult {
+public class YamlReader extends AbstractReader implements Reader{
 
-    List<Validator> getValidators();
+    private JSON json;
 
-    void setValidators(List<Validator> validators);
+    public YamlReader(String path) throws ReaderException {
+        stream(ReaderFactory.YAML_SUFFIX, path);
+    }
 
-    Request getRequest();
+    public YamlReader(File file) throws ReaderException {
+        stream(ReaderFactory.YAML_SUFFIX, file);
+    }
 
-    void setRequest(Request request);
+    @Override
+    public JSON read(){
+        Yaml yaml = new Yaml();
+        Object object = yaml.load(inputStream);
+        json = (JSON) JSON.toJSON(object);
+        return json;
+    }
 
-    Response getResponse();
+    @Override
+    public String get(String key) {
+        if (json == null){
+            read();
+        }
+        if (json instanceof JSONObject){
+            return ((JSONObject) json).getString(key);
+        }
+        return null;
+    }
 
-    void setResponse(Response response);
-
+    @Override
+    public String toString(){
+        if (json == null){
+            read();
+        }
+        return json.toString();
+    }
 }

@@ -26,29 +26,36 @@
  *
  */
 
-package core.xyz.migoo;
 
-import xyz.migoo.simplehttp.Request;
-import xyz.migoo.simplehttp.Response;
+package components.xyz.migoo.assertions.rules;
+
+import core.xyz.migoo.assertions.rules.Alias;
+import core.xyz.migoo.assertions.rules.IRule;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author xiaomi
- * @date 2020/7/27 22:30
+ * @date 2019-08-13 22:17
  */
-public interface ITestResult {
+@Alias(aliasList = {"contains", "contain", "ct", "⊆"})
+public class Contains extends BaseRule implements IRule {
 
-    List<Validator> getValidators();
-
-    void setValidators(List<Validator> validators);
-
-    Request getRequest();
-
-    void setRequest(Request request);
-
-    Response getResponse();
-
-    void setResponse(Response response);
-
+    @Override
+    public boolean assertTrue(Map<String, Object> data) {
+        Object actual = data.get("actual");
+        Object expect = data.get("expect");
+        if (actual instanceof String) {
+            return ((String) actual).contains((String) expect);
+        }
+        if (actual instanceof Map) {
+            Map json = (Map) actual;
+            return json.containsValue(expect) || json.containsKey(expect);
+        }
+        if (actual instanceof List) {
+            return ((List) actual).contains(expect);
+        }
+        return false;
+    }
 }

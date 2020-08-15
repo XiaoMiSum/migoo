@@ -26,29 +26,29 @@
  *
  */
 
-package core.xyz.migoo;
+package components.xyz.migoo.functions;
 
-import xyz.migoo.simplehttp.Request;
-import xyz.migoo.simplehttp.Response;
-
-import java.util.List;
+import core.xyz.migoo.functions.AbstractFunction;
+import core.xyz.migoo.functions.CompoundVariable;
+import core.xyz.migoo.functions.FunctionException;
 
 /**
  * @author xiaomi
- * @date 2020/7/27 22:30
+ * @date 2020/8/1 09:52
  */
-public interface ITestResult {
+public class RedisConn extends AbstractFunction {
+    @Override
+    public Object execute(CompoundVariable parameters) throws FunctionException {
+        try {
+            return null;
+        } catch (Exception e) {
+            throw new FunctionException("create redis conn error.", e);
+        }
 
-    List<Validator> getValidators();
+    }
 
-    void setValidators(List<Validator> validators);
-
-    Request getRequest();
-
-    void setRequest(Request request);
-
-    Response getResponse();
-
-    void setResponse(Response response);
-
+    @Override
+    public String funcKey() {
+        return "REDISCONN";
+    }
 }

@@ -26,29 +26,32 @@
  *
  */
 
-package core.xyz.migoo;
 
-import xyz.migoo.simplehttp.Request;
-import xyz.migoo.simplehttp.Response;
+package components.xyz.migoo.functions;
 
-import java.util.List;
+import com.alibaba.fastjson.JSONObject;
+import core.xyz.migoo.functions.AbstractFunction;
+import core.xyz.migoo.functions.CompoundVariable;
+import core.xyz.migoo.functions.FunctionException;
 
 /**
  * @author xiaomi
- * @date 2020/7/27 22:30
+ * @date 2019/11/18 17:22
  */
-public interface ITestResult {
+public class Json extends AbstractFunction {
 
-    List<Validator> getValidators();
+    @Override
+    public JSONObject execute(CompoundVariable parameters) throws FunctionException {
+        if (parameters.isEmpty()){
+            throw new FunctionException("parameters con not be null");
+        }
+        JSONObject json = new JSONObject();
+        parameters.forEach(json::put);
+        return json;
+    }
 
-    void setValidators(List<Validator> validators);
-
-    Request getRequest();
-
-    void setRequest(Request request);
-
-    Response getResponse();
-
-    void setResponse(Response response);
-
+    @Override
+    public String funcKey() {
+        return "JSON";
+    }
 }

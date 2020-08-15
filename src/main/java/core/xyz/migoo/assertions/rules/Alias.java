@@ -24,35 +24,32 @@
  */
 
 
-package core.xyz.migoo.utils;
+package core.xyz.migoo.assertions.rules;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.regex.Pattern;
 
 /**
  * @author xiaomi
+ * @date 2019/11/21 17:42
  */
-public class DateUtil {
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Alias {
 
-    public static final String TODAY_DATE = format("yyyyMMdd");
+    String[] aliasList();
 
-    public static String format(String pattern, long time) {
-        return new SimpleDateFormat(pattern).format(time);
-    }
-
-    public static String format(String pattern, Date date) {
-        return format(pattern, date.getTime());
-    }
-
-    public static String format(String pattern) {
-        return format(pattern, System.currentTimeMillis());
-    }
-
-    public static String format() {
-        return format("yyyy-MM-dd HH:mm:ss", System.currentTimeMillis());
-    }
-
-    public static String format(Date date) {
-        return format("yyyy-MM-dd HH:mm:ss", date.getTime());
+    class Check {
+        public static boolean isJson(String searchStr, String[] checkList) {
+            for (String s : checkList) {
+                if (Pattern.compile(s).matcher(searchStr).find()) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

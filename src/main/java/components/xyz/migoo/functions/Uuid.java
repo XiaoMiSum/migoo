@@ -26,29 +26,27 @@
  *
  */
 
-package core.xyz.migoo;
 
-import xyz.migoo.simplehttp.Request;
-import xyz.migoo.simplehttp.Response;
+package components.xyz.migoo.functions;
 
-import java.util.List;
+import core.xyz.migoo.functions.AbstractFunction;
+import core.xyz.migoo.functions.CompoundVariable;
+
+import java.util.UUID;
 
 /**
  * @author xiaomi
- * @date 2020/7/27 22:30
+ * @date 2019/11/18 17:22
  */
-public interface ITestResult {
+public class Uuid extends AbstractFunction {
 
-    List<Validator> getValidators();
+    @Override
+    public String execute(CompoundVariable parameters) {
+        return UUID.randomUUID().toString();
+    }
 
-    void setValidators(List<Validator> validators);
-
-    Request getRequest();
-
-    void setRequest(Request request);
-
-    Response getResponse();
-
-    void setResponse(Response response);
-
+    @Override
+    public String funcKey() {
+        return "UUID";
+    }
 }

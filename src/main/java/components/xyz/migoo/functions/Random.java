@@ -26,29 +26,28 @@
  *
  */
 
-package core.xyz.migoo;
 
-import xyz.migoo.simplehttp.Request;
-import xyz.migoo.simplehttp.Response;
+package components.xyz.migoo.functions;
 
-import java.util.List;
+import core.xyz.migoo.functions.AbstractFunction;
+import core.xyz.migoo.functions.CompoundVariable;
+import core.xyz.migoo.functions.FunctionException;
 
 /**
  * @author xiaomi
- * @date 2020/7/27 22:30
+ * @date 2019/11/18 17:22
  */
-public interface ITestResult {
+public class Random extends AbstractFunction {
 
-    List<Validator> getValidators();
+    @Override
+    public Integer execute(CompoundVariable parameters) throws FunctionException {
+        Integer bound = parameters.getInteger("bound");
+        java.util.Random random = new java.util.Random();
+        return bound != null && bound > 0 ? random.nextInt(bound) : random.nextInt();
+    }
 
-    void setValidators(List<Validator> validators);
-
-    Request getRequest();
-
-    void setRequest(Request request);
-
-    Response getResponse();
-
-    void setResponse(Response response);
-
+    @Override
+    public String funcKey() {
+        return "RANDOM";
+    }
 }

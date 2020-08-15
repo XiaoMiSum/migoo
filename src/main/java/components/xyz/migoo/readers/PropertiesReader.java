@@ -26,29 +26,50 @@
  *
  */
 
-package core.xyz.migoo;
 
-import xyz.migoo.simplehttp.Request;
-import xyz.migoo.simplehttp.Response;
+package components.xyz.migoo.readers;
 
-import java.util.List;
+import com.alibaba.fastjson.JSONObject;
+import components.xyz.migoo.reports.Report;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * @author xiaomi
- * @date 2020/7/27 22:30
  */
-public interface ITestResult {
+public class PropertiesReader extends AbstractReader implements Reader {
 
-    List<Validator> getValidators();
 
-    void setValidators(List<Validator> validators);
+    private JSONObject json;
 
-    Request getRequest();
+    public PropertiesReader(String path) throws ReaderException {
+        super.stream(ReaderFactory.PROS_SUFFIX, path);
+    }
 
-    void setRequest(Request request);
+    public PropertiesReader(File file) throws ReaderException {
+        super.stream(ReaderFactory.PROS_SUFFIX, file);
+    }
 
-    Response getResponse();
+    @Override
+    public JSONObject read() throws ReaderException {
+        Properties props = new Properties();
+        try {
+            props.load(inputStream);
+        } catch (IOException e) {
+            Report.log(e.getMessage(), e);
+            throw new ReaderException("file read exception: " + e.getMessage());
+        }
+        json = (JSONObject)JSONObject.toJSON(props);
+        return json;
+    }
 
-    void setResponse(Response response);
-
+    @Override
+    public String get(String key) throws ReaderException {
+        if (json == null){
+            read();
+        }
+        return json.getString(key);
+    }
 }

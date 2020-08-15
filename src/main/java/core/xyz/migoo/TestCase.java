@@ -35,11 +35,10 @@ import core.xyz.migoo.functions.FunctionException;
 import core.xyz.migoo.vars.VarsHelper;
 import org.apache.commons.lang3.StringUtils;
 import core.xyz.migoo.http.MiGooRequest;
-import components.migoo.xyz.reports.Report;
+import components.xyz.migoo.reports.Report;
 import xyz.migoo.simplehttp.Response;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * @author xiaomi
@@ -47,11 +46,10 @@ import java.util.regex.Pattern;
  */
 public class TestCase extends AbstractTest {
 
-    private final JSONArray arrayCheck;
+    private final JSONArray validators;
     private final JSONObject testCase;
     private MiGooRequest request;
     private Response response;
-    private List<TestChecker> checkers;
     private boolean hasFailure = false;
 
     TestCase(JSONObject testCase, JSONObject requestConfig) {
@@ -60,7 +58,7 @@ public class TestCase extends AbstractTest {
         super.addVars("title", super.getTestName());
         super.addToGlobals();
         super.initRequest(requestConfig);
-        this.arrayCheck = testCase.getJSONArray("checkers");
+        this.validators = testCase.getJSONArray("validators");
         this.testCase = testCase;
     }
 
@@ -90,7 +88,6 @@ public class TestCase extends AbstractTest {
             Report.log("case run failure or assert failure", t);
             this.setStatus(ERROR);
         } finally {
-            this.checkers(arrayCheck.toJavaList(TestChecker.class));
             super.teardown();
             this.end();
             Report.log("test case end: {}", this.getTestName());
@@ -150,20 +147,23 @@ public class TestCase extends AbstractTest {
     }
 
     public void doCheck() {
-        for (int i = 0; i < arrayCheck.size(); i++) {
-            JSONObject checker = arrayCheck.getJSONObject(i);
-            VarsHelper.evalValidate(checker, this.getVars());
+        for (int i = 0; i < validators.size(); i++) {
+            JSONObject validator = validators.getJSONObject(i);
+            VarsHelper.evalValidate(validator, this.getVars());
             try {
-                boolean result = AssertionFactory.assertThat(checker, response);
-                checker.put("result", result ? "success" : "failure");
-                this.hasFailure = hasFailure && !result ? true : false;
+                if (AssertionFactory.assertThat(validator, response)) {
+                    validator.put("result", "success");
+                } else {
+                    validator.put("result", "failure");
+                    hasFailure = true;
+                }
             } catch (AssertionError t) {
-                checker.put("result", "failure");
-                checker.put("throwable", t);
+                validator.put("result", "failure");
+                validator.put("throwable", t);
                 this.hasFailure = true;
             } catch (Exception e) {
-                checker.put("throwable", e);
-                checker.put("result", "error");
+                validator.put("throwable", e);
+                validator.put("result", "error");
                 this.setStatus(ERROR);
             }
         }
@@ -177,11 +177,7 @@ public class TestCase extends AbstractTest {
         return response;
     }
 
-    public List<TestChecker> checkers() {
-        return checkers;
-    }
-
-    void checkers(List<TestChecker> checkers) {
-        this.checkers = checkers;
+    public List<Validator> validators() {
+        return validators.toJavaList(Validator.class);
     }
 }

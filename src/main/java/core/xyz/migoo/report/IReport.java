@@ -43,6 +43,11 @@ public interface IReport {
      */
     void generateReport(IResult result, String outputDirectoryName);
 
-    void sendReport(Map<String, Object> config, String project, String outputDirectoryName);
+    /**
+     * Send test reports by email.
+     * @param config email config
+     * @param message email body
+     */
+    void sendReport(Map<String, Object> config, String message);
 
 }

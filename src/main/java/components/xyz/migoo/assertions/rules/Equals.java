@@ -26,29 +26,33 @@
  *
  */
 
-package core.xyz.migoo;
 
-import xyz.migoo.simplehttp.Request;
-import xyz.migoo.simplehttp.Response;
+package components.xyz.migoo.assertions.rules;
 
-import java.util.List;
+import core.xyz.migoo.assertions.rules.Alias;
+import core.xyz.migoo.assertions.rules.IRule;
+
+import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * @author xiaomi
- * @date 2020/7/27 22:30
+ * @date 2019-08-13 22:17
  */
-public interface ITestResult {
+@Alias(aliasList = {"==", "===", "eq", "equal", "equals", "is"})
+public class Equals extends BaseRule implements IRule {
 
-    List<Validator> getValidators();
-
-    void setValidators(List<Validator> validators);
-
-    Request getRequest();
-
-    void setRequest(Request request);
-
-    Response getResponse();
-
-    void setResponse(Response response);
-
+    @Override
+    public boolean assertTrue(Map<String, Object> data) {
+        Object actual = data.get("actual");
+        Object expect = data.get("expect");
+        String str1 = objectToString(actual);
+        String str2 = objectToString(expect);
+        if (actual instanceof Number || expect instanceof Number){
+            str1 = "null".equals(str1) ? "0" : str1;
+            str2 = "null".equals(str2) ? "0" : str2;
+            return new BigDecimal(str1).compareTo(new BigDecimal(str2)) == 0;
+        }
+        return str1.equals(str2);
+    }
 }

@@ -26,29 +26,36 @@
  *
  */
 
-package core.xyz.migoo;
 
-import xyz.migoo.simplehttp.Request;
-import xyz.migoo.simplehttp.Response;
+package components.xyz.migoo.functions;
 
-import java.util.List;
+import core.xyz.migoo.functions.AbstractFunction;
+import core.xyz.migoo.functions.CompoundVariable;
+import core.xyz.migoo.functions.FunctionException;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 /**
  * @author xiaomi
- * @date 2020/7/27 22:30
+ * @date 2019/11/18 17:22
  */
-public interface ITestResult {
+public class UrlDecode extends AbstractFunction {
 
-    List<Validator> getValidators();
+    @Override
+    public String execute(CompoundVariable parameters) throws FunctionException {
+        if (parameters.isEmpty()){
+            throw new FunctionException("parameters con not be null");
+        }
+        try {
+            return URLDecoder.decode(parameters.getString("string"), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new FunctionException("url decode exception", e);
+        }
+    }
 
-    void setValidators(List<Validator> validators);
-
-    Request getRequest();
-
-    void setRequest(Request request);
-
-    Response getResponse();
-
-    void setResponse(Response response);
-
+    @Override
+    public String funcKey() {
+        return "URLDECODE";
+    }
 }

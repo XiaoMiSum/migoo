@@ -27,9 +27,9 @@ package xyz.migoo;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import components.migoo.xyz.readers.YamlReader;
-import components.migoo.xyz.readers.ReaderException;
-import components.migoo.xyz.reports.Report;
+import components.xyz.migoo.readers.YamlReader;
+import components.xyz.migoo.readers.ReaderException;
+import components.xyz.migoo.reports.Report;
 import core.xyz.migoo.*;
 import core.xyz.migoo.report.IReport;
 import core.xyz.migoo.utils.DateUtil;
@@ -50,7 +50,7 @@ public class Migoo {
         try {
             TestSuite suite = new TestSuite(processor(file));
             IResult result = suite.run();
-            this.report(suite, result);
+            this.report(suite.getReportConfig(), suite.getEmailConfig(), result);
         } catch (Exception e) {
             Report.log("run error", e);
         }
@@ -80,21 +80,19 @@ public class Migoo {
         return fileJson;
     }
 
-    private void report(TestSuite suite, IResult result) {
-        String output = suite.getReportConfig() != null && suite.getReportConfig().get("output") != null
-                && !"default".equalsIgnoreCase(suite.getReportConfig().getString("output"))?
-                suite.getReportConfig().getString("output") : "./reports/" + DateUtil.TODAY_DATE ;
-        String clazz = suite.getReportConfig() != null && suite.getReportConfig().get("class") != null
-                && !"default".equalsIgnoreCase(suite.getReportConfig().getString("class"))?
-                suite.getReportConfig().getString("class") : "components.migoo.xyz.reports.Report";
+    private void report(JSONObject reportConfig, JSONObject emailConfig, IResult result) {
+        String output = reportConfig != null && reportConfig.get("output") != null ?
+                reportConfig.getString("output") : "./out-put/" + DateUtil.TODAY_DATE ;
+        String listener = emailConfig != null && !StringUtil.isEmpty(emailConfig.getString("listener")) ?
+                emailConfig.getString("listener") : "components.migoo.xyz.reports.Report";
         IReport report;
         try {
-            report = (IReport) Class.forName(clazz).newInstance();
+            report = (IReport) Class.forName(listener).newInstance();
         } catch (Exception e) {
             report = new Report();
         }
         report.generateReport(result, output);
-        report.sendReport(suite.getEmailConfig(), suite.getTestName(), output);
+        report.sendReport(emailConfig, "");
     }
 
 }

@@ -8,8 +8,15 @@ config: # 配置信息
     headers:
       Content-Type: Application/json;charSet=utf-8
   report: # 可缺省，配置测试报告
-    class: default # 可缺省，测试报告实现类
-    output: default # 可缺省，测试报告保存地址
+    listener: # 可缺省，测试报告实现类
+    output: # 可缺省，测试报告保存地址
+#  email: # 邮件相关信息，测试完毕后邮件发送测试报告 可缺省
+#    host: # 邮件发送服务器 请使用SMTP服务 如： smtp.163.com
+#    port: # 邮件发送服务器端口 如：25
+#    user: # 发件人邮箱地址 如：xxx_yyy@163.com
+#    password: # 发件人邮箱密码
+#    tolist: # 收件人列表
+#      - mi_xiao@qq.com # 收件人列表1
 dataset: # 可空，正对当前 suite 生效
   setup: # 可空，在完成 suite 中的 vars绑定后执行
     - '__method(str=演示从用例传参调用扩展1)'
@@ -57,10 +64,10 @@ sets:
           userName: ${user}
           password: ${password}
           sign: ${sign}
-        checkers: # 检查点
-          - {checker: status, expect: 200, func: ==}
-          - {checker: $.status, expect: 200, func: ==}
-          - {checker: $.data.token, expect: '\w+\.\w+\.\w+', func: regex}
+        validators: # 检查点， 当 assertion 为JSON 时可空
+          - {assertion: response, field: status, expect: 200, rule: ==}
+          - {assertion: json, field: $.status, expect: 200, rule: ==}
+          - {field: $.data.token, expect: '\w+\.\w+\.\w+', rule: regex}
       - title: 测试用例2
         config:
           skip: true
@@ -70,6 +77,6 @@ sets:
         body:
           userName: xx1
           password: xx2
-        checkers:
-          - {checker: status, expect: 200, func: ==}
-          - {checker: $.status, expect: 0, func: ==}
+        validators:
+          - {assertion: response, field: status, expect: 200, rule: ==}
+          - {field: $.status, expect: 0, rule: ==}

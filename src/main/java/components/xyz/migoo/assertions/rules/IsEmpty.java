@@ -26,29 +26,36 @@
  *
  */
 
-package core.xyz.migoo;
 
-import xyz.migoo.simplehttp.Request;
-import xyz.migoo.simplehttp.Response;
+package components.xyz.migoo.assertions.rules;
 
-import java.util.List;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import core.xyz.migoo.assertions.rules.Alias;
+import core.xyz.migoo.assertions.rules.IRule;
+import core.xyz.migoo.utils.StringUtil;
+
+import java.util.Map;
 
 /**
  * @author xiaomi
- * @date 2020/7/27 22:30
+ * @date 2019-08-13 22:17
  */
-public interface ITestResult {
+@Alias(aliasList = {"isEmpty", "isNull", "empty", "blank"})
+public class IsEmpty extends BaseRule implements IRule {
 
-    List<Validator> getValidators();
-
-    void setValidators(List<Validator> validators);
-
-    Request getRequest();
-
-    void setRequest(Request request);
-
-    Response getResponse();
-
-    void setResponse(Response response);
-
+    @Override
+    public boolean assertTrue(Map<String, Object> data) {
+        Object actual = data.get("actual");
+        if (actual instanceof JSONObject) {
+            return ((JSONObject) actual).isEmpty();
+        }
+        if (actual instanceof JSONArray) {
+            return ((JSONArray) actual).isEmpty();
+        }
+        if (actual instanceof String) {
+            return StringUtil.isEmpty((String) actual);
+        }
+        return actual == null;
+    }
 }

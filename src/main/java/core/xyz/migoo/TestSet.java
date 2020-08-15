@@ -29,7 +29,7 @@
 package core.xyz.migoo;
 
 import com.alibaba.fastjson.JSONObject;
-import components.migoo.xyz.reports.Report;
+import components.xyz.migoo.reports.Report;
 
 /**
  * @author xiaomi

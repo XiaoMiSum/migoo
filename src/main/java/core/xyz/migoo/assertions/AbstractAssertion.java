@@ -27,9 +27,8 @@
 package core.xyz.migoo.assertions;
 
 import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.assertions.function.Alias;
-import core.xyz.migoo.assertions.function.IFunction;
-import core.xyz.migoo.functions.FunctionException;
+import core.xyz.migoo.assertions.rules.Alias;
+import core.xyz.migoo.assertions.rules.IRule;
 import core.xyz.migoo.utils.TypeUtil;
 
 import java.util.HashMap;
@@ -42,33 +41,37 @@ import java.util.ServiceLoader;
  */
 public abstract class AbstractAssertion implements Assertion {
 
-
-    private static final Map<String, IFunction> FUNCTIONS = new HashMap<>(100);
+    private static final Map<String, IRule> RULES = new HashMap<>(100);
 
     static {
-        ServiceLoader<IFunction> loaders = ServiceLoader.load(IFunction.class);
-        for (IFunction function : loaders) {
+        ServiceLoader<IRule> loaders = ServiceLoader.load(IRule.class);
+        for (IRule function : loaders) {
             for (String alias : function.getClass().getAnnotation(Alias.class).aliasList()) {
-                FUNCTIONS.put(alias, function);
+                RULES.put(alias, function);
             }
         }
     }
 
     protected Object actual;
 
+    protected String field;
+
     @Override
     public Object getActual() {
         return actual;
     }
 
+    public void setField(String field) {
+        this.field = field;
+    }
+
     @Override
-    public boolean assertThat(JSONObject data) throws FunctionException {
-        IFunction function = FUNCTIONS.get(data.getString("func"));
-        if (function == null) {
-            throw new FunctionException(String.format("assert method '%s' not found", data.get("func")));
+    public boolean assertThat(JSONObject data) throws Exception, AssertionError {
+        IRule rule = RULES.get(data.getString("rule"));
+        if (rule == null) {
+            throw new Exception(String.format("assert rule '%s' not found", data.get("rule")));
         }
         data.put("actual", actual);
-        boolean result = TypeUtil.booleanOf(function.assertTrue(data));
-        return result;
+        return TypeUtil.booleanOf(rule.assertTrue(data));
     }
 }

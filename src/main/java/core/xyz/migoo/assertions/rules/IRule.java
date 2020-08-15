@@ -24,35 +24,26 @@
  */
 
 
-package core.xyz.migoo.utils;
+package core.xyz.migoo.assertions.rules;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import core.xyz.migoo.functions.FunctionException;
+
+import java.util.Map;
 
 /**
  * @author xiaomi
+ * @date 2019-04-14 02:05
  */
-public class DateUtil {
+public interface IRule {
 
-    public static final String TODAY_DATE = format("yyyyMMdd");
-
-    public static String format(String pattern, long time) {
-        return new SimpleDateFormat(pattern).format(time);
-    }
-
-    public static String format(String pattern, Date date) {
-        return format(pattern, date.getTime());
-    }
-
-    public static String format(String pattern) {
-        return format(pattern, System.currentTimeMillis());
-    }
-
-    public static String format() {
-        return format("yyyy-MM-dd HH:mm:ss", System.currentTimeMillis());
-    }
-
-    public static String format(Date date) {
-        return format("yyyy-MM-dd HH:mm:ss", date.getTime());
-    }
+    /**
+     * Implement the interface to extend the assertion method
+     * get expected values from Map Object
+     * and the expected values can be null
+     * use:  data.get("expect")
+     *
+     * @param data Objects that hold the actual and expected values
+     * @return Boolean Object
+     */
+    boolean assertTrue(Map<String, Object> data) throws FunctionException;
 }

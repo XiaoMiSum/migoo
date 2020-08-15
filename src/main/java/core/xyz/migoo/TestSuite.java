@@ -30,7 +30,7 @@
 package core.xyz.migoo;
 
 import com.alibaba.fastjson.JSONObject;
-import components.migoo.xyz.reports.Report;
+import components.xyz.migoo.reports.Report;
 import core.xyz.migoo.functions.FunctionException;
 import core.xyz.migoo.vars.VarsHelper;
 
@@ -66,8 +66,8 @@ public class TestSuite extends AbstractTest {
     @Override
     public void initTest(JSONObject config, JSONObject dataset) {
         super.initTest(config, dataset);
-        this.reportConfig = config.getJSONObject("report");
-        this.emailConfig = config.getJSONObject("email");
+        this.reportConfig = config.get("report") == null ? config.getJSONObject("reports") : config.getJSONObject("report");
+        this.emailConfig = config.get("email") == null ? config.getJSONObject("mail") : config.getJSONObject("email");
     }
 
     @Override

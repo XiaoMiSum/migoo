@@ -26,29 +26,31 @@
  *
  */
 
-package core.xyz.migoo;
+package components.xyz.migoo.functions;
 
-import xyz.migoo.simplehttp.Request;
-import xyz.migoo.simplehttp.Response;
+import core.xyz.migoo.functions.AbstractFunction;
+import core.xyz.migoo.functions.CompoundVariable;
+import core.xyz.migoo.functions.FunctionException;
 
-import java.util.List;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * @author xiaomi
- * @date 2020/7/27 22:30
+ * @date 2020/8/1 09:44
  */
-public interface ITestResult {
+public class JdbcConn extends AbstractFunction {
+    @Override
+    public Object execute(CompoundVariable parameters) throws FunctionException {
+        try {
+            return DriverManager.getConnection(parameters.getString("url"), parameters.getString("user"), parameters.getString("password"));
+        } catch (SQLException e) {
+            throw new FunctionException("create jdbc conn error", e);
+        }
+    }
 
-    List<Validator> getValidators();
-
-    void setValidators(List<Validator> validators);
-
-    Request getRequest();
-
-    void setRequest(Request request);
-
-    Response getResponse();
-
-    void setResponse(Response response);
-
+    @Override
+    public String funcKey() {
+        return "JDBCCONN";
+    }
 }

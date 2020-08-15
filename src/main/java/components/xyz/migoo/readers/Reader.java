@@ -26,29 +26,28 @@
  *
  */
 
-package core.xyz.migoo;
 
-import xyz.migoo.simplehttp.Request;
-import xyz.migoo.simplehttp.Response;
+package components.xyz.migoo.readers;
 
-import java.util.List;
+import com.alibaba.fastjson.JSON;
 
 /**
  * @author xiaomi
- * @date 2020/7/27 22:30
  */
-public interface ITestResult {
+public interface Reader {
 
-    List<Validator> getValidators();
+    /**
+     * 读文件
+     * @throws ReaderException
+     * @return 返回 JSON 对象
+     */
+    JSON read() throws ReaderException;
 
-    void setValidators(List<Validator> validators);
-
-    Request getRequest();
-
-    void setRequest(Request request);
-
-    Response getResponse();
-
-    void setResponse(Response response);
-
+    /**
+     * 从 JSON 对象中取出 key 对应的 value
+     * @param key 指定 key
+     * @throws ReaderException
+     * @return 字符串 或 null
+     */
+    String get(String key) throws ReaderException;
 }

@@ -44,24 +44,24 @@ public class TestResult extends Result implements ITestResult {
     public void init(ITest test) {
         TestCase t = (TestCase) test;
         super.init(t);
-        setCheckers(t.checkers());
+        setValidators(t.validators());
         setRequest(t.request());
         setResponse(t.response());
     }
 
-    private List<TestChecker> checkers;
+    private List<Validator> checkers;
 
     private Request request;
 
     private Response response;
 
     @Override
-    public List<TestChecker> getCheckers() {
+    public List<Validator> getValidators() {
         return this.checkers;
     }
 
     @Override
-    public void setCheckers(List<TestChecker> checkers) {
+    public void setValidators(List<Validator> checkers) {
         this.checkers = checkers;
     }
 

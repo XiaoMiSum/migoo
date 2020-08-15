@@ -28,7 +28,7 @@ package core.xyz.migoo.utils;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.*;
-import components.migoo.xyz.reports.Report;
+import components.xyz.migoo.reports.Report;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

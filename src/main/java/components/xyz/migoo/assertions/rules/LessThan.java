@@ -26,29 +26,26 @@
  *
  */
 
-package core.xyz.migoo;
 
-import xyz.migoo.simplehttp.Request;
-import xyz.migoo.simplehttp.Response;
+package components.xyz.migoo.assertions.rules;
 
-import java.util.List;
+import core.xyz.migoo.assertions.rules.Alias;
+import core.xyz.migoo.assertions.rules.IRule;
+
+import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * @author xiaomi
- * @date 2020/7/27 22:30
+ * @date 2019-08-13 22:17
  */
-public interface ITestResult {
+@Alias(aliasList = {"<", "less", "lessThan", "lt"})
+public class LessThan extends BaseRule implements IRule {
 
-    List<Validator> getValidators();
-
-    void setValidators(List<Validator> validators);
-
-    Request getRequest();
-
-    void setRequest(Request request);
-
-    Response getResponse();
-
-    void setResponse(Response response);
-
+    @Override
+    public boolean assertTrue(Map<String, Object> data) {
+        BigDecimal b1 = new BigDecimal(objectToString(data.get("actual"), "0"));
+        BigDecimal b2 = new BigDecimal(objectToString(data.get("expect"), "0"));
+        return b1.compareTo(b2) < 0;
+    }
 }

@@ -26,29 +26,24 @@
  *
  */
 
-package core.xyz.migoo;
 
-import xyz.migoo.simplehttp.Request;
+package components.xyz.migoo.assertions;
+
+import com.alibaba.fastjson.JSONPath;
+import core.xyz.migoo.assertions.AbstractAssertion;
+import core.xyz.migoo.assertions.rules.Alias;
 import xyz.migoo.simplehttp.Response;
-
-import java.util.List;
 
 /**
  * @author xiaomi
- * @date 2020/7/27 22:30
+ * @date 2019-04-13 21:37
  */
-public interface ITestResult {
+@Alias(aliasList = {"json", "JSONAssertion", "json_assertion"})
+public class JSONAssertion extends AbstractAssertion {
 
-    List<Validator> getValidators();
-
-    void setValidators(List<Validator> validators);
-
-    Request getRequest();
-
-    void setRequest(Request request);
-
-    Response getResponse();
-
-    void setResponse(Response response);
-
+    @Override
+    public void setActual(Object actual) {
+        Response response = (Response) actual;
+        this.actual = JSONPath.read(response.text(), field);
+    }
 }

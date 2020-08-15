@@ -26,9 +26,8 @@
 
 package core.xyz.migoo.assertions;
 
-import components.migoo.xyz.assertions.JSONAssertion;
-import components.migoo.xyz.assertions.ResponseAssertion;
-import components.migoo.xyz.assertions.ResponseCodeAssertion;
+import components.xyz.migoo.assertions.JSONAssertion;
+import components.xyz.migoo.assertions.ResponseAssertion;
 import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.functions.FunctionException;
 
@@ -46,14 +45,13 @@ public interface Assertion {
      * support type list:
      * {@linkplain JSONAssertion JSONAssertion}
      * {@linkplain ResponseAssertion ResponseAssertion}
-     * {@linkplain ResponseCodeAssertion ResponseCodeAssertion}
      *
      * @param data Objects that hold expected values
      * @return assert result
      * @throws FunctionException FunctionsException
      * @throws AssertionError AssertionError
      */
-    boolean assertThat(JSONObject data) throws FunctionException, AssertionError;
+    boolean assertThat(JSONObject data) throws Exception, AssertionError;
 
     /**
      * setting actual values
@@ -62,7 +60,6 @@ public interface Assertion {
      * See the concrete implementation class for details
      * {@linkplain JSONAssertion JSONAssertion}
      * {@linkplain ResponseAssertion ResponseAssertion}
-     * {@linkplain ResponseCodeAssertion ResponseCodeAssertion}
      *
      * @param actual response or java class
      */
@@ -74,8 +71,7 @@ public interface Assertion {
      * See the concrete implementation class for details
      * {@linkplain JSONAssertion JSONAssertion}
      * {@linkplain ResponseAssertion ResponseAssertion}
-     * {@linkplain ResponseCodeAssertion ResponseCodeAssertion}
-     *
+     * @return actual values
      */
     Object getActual();
 }

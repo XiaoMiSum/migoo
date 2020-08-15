@@ -30,7 +30,7 @@ package core.xyz.migoo;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import components.migoo.xyz.reports.Report;
+import components.xyz.migoo.reports.Report;
 import core.xyz.migoo.functions.FunctionException;
 import core.xyz.migoo.functions.FunctionHelper;
 import core.xyz.migoo.vars.Vars;

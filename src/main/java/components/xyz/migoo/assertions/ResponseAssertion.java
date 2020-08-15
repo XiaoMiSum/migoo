@@ -26,29 +26,42 @@
  *
  */
 
-package core.xyz.migoo;
 
-import xyz.migoo.simplehttp.Request;
+package components.xyz.migoo.assertions;
+
+import core.xyz.migoo.assertions.AbstractAssertion;
+import core.xyz.migoo.assertions.rules.Alias;
+import org.apache.http.Header;
 import xyz.migoo.simplehttp.Response;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * @author xiaomi
- * @date 2020/7/27 22:30
+ * @date 2019-04-13 21:37
  */
-public interface ITestResult {
+@Alias(aliasList = {"response", "ResponseAssertion", "Response_Assertion"})
+public class ResponseAssertion extends AbstractAssertion {
 
-    List<Validator> getValidators();
+    @Override
+    public void setActual(Object actual) {
+        Response response = (Response) actual;
+        if (STATUS.contains(field)) {
+            this.actual = response.statusCode();
+        } else if (field.toLowerCase().startsWith("headers.") || field.toLowerCase().startsWith("header.")) {
+            String s = field.substring(field.indexOf(".")).toLowerCase();
+            for (Header header : response.headers()) {
+                if (header.getName().toLowerCase().equals(s)) {
+                    this.actual = response.headers();
+                    break;
+                }
+            }
+        } else {
+            this.actual = response.text();
+        }
+    }
 
-    void setValidators(List<Validator> validators);
-
-    Request getRequest();
-
-    void setRequest(Request request);
-
-    Response getResponse();
-
-    void setResponse(Response response);
+    private static final List<String> STATUS = Arrays.asList("line", "status", "code", "statusCode", "statusLine", "status_code", "status_line");
 
 }

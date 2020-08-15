@@ -25,15 +25,15 @@
 #  */
 #
 #
-components.migoo.xyz.functions.Digest
-components.migoo.xyz.functions.GoogleAuthCode
-components.migoo.xyz.functions.JdbcConn
-components.migoo.xyz.functions.Json
-components.migoo.xyz.functions.Random
-components.migoo.xyz.functions.RandomString
-components.migoo.xyz.functions.TimeShift
-components.migoo.xyz.functions.Timestamp
-components.migoo.xyz.functions.UrlDecode
-components.migoo.xyz.functions.UrlEncode
-components.migoo.xyz.functions.Uuid
-components.migoo.xyz.functions.Value
+components.xyz.migoo.functions.Digest
+components.xyz.migoo.functions.GoogleAuthCode
+components.xyz.migoo.functions.JdbcConn
+components.xyz.migoo.functions.Json
+components.xyz.migoo.functions.Random
+components.xyz.migoo.functions.RandomString
+components.xyz.migoo.functions.TimeShift
+components.xyz.migoo.functions.Timestamp
+components.xyz.migoo.functions.UrlDecode
+components.xyz.migoo.functions.UrlEncode
+components.xyz.migoo.functions.Uuid
+components.xyz.migoo.functions.Value

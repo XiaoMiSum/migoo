@@ -26,9 +26,8 @@
 
 package core.xyz.migoo.assertions;
 
-import components.migoo.xyz.assertions.JSONAssertion;
 import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.assertions.function.Alias;
+import core.xyz.migoo.assertions.rules.Alias;
 import core.xyz.migoo.functions.FunctionException;
 import xyz.migoo.simplehttp.Response;
 
@@ -44,66 +43,61 @@ public class AssertionFactory {
 
     private static final Map<String, Assertion> SELF_DEFINED_ASSERTION = new HashMap<>(100);
 
+    private static final Map<String, AbstractAssertion> DEFAULT_ASSERTION = new HashMap<>(2);
+
     static {
-        ServiceLoader<Assertion> loaders = ServiceLoader.load(Assertion.class);
-        for (Assertion assertion : loaders) {
+        for (AbstractAssertion assertion : ServiceLoader.load(AbstractAssertion.class)) {
+            String[] aliasList = assertion.getClass().getAnnotation(Alias.class).aliasList();
+            for (String alias : aliasList) {
+                DEFAULT_ASSERTION.put(alias.toUpperCase(), assertion);
+            }
+        }
+        for (Assertion assertion : ServiceLoader.load(Assertion.class)) {
+            Alias alias = assertion.getClass().getAnnotation(Alias.class);
+            if (alias != null) {
+                for (String aliasStr : alias.aliasList()) {
+                    SELF_DEFINED_ASSERTION.put(aliasStr.toUpperCase(), assertion);
+                }
+            }
             SELF_DEFINED_ASSERTION.put(assertion.getClass().getSimpleName().toUpperCase(), assertion);
         }
     }
 
     private static final AssertionFactory FACTORY = new AssertionFactory();
 
-    public static boolean assertThat(JSONObject checker, Response response) throws FunctionException {
-        FACTORY.setInstance(checker.getString("checker"));
-        FACTORY.setActual(response);
-        return FACTORY.assertThat(checker);
+    public static boolean assertThat(JSONObject validator, Response response) throws Exception {
+        try {
+            FACTORY.setInstance(validator);
+            FACTORY.setActual(response);
+            return FACTORY.assertThat(validator);
+        } finally {
+            FACTORY.clear();
+        }
     }
 
     private Assertion assertion;
-
-    private final Map<String, AbstractAssertion> defaultAssertion = new HashMap<>(3);
 
     public void setActual(Object actual) {
         assertion.setActual(actual);
     }
 
-    private boolean assertThat(JSONObject checker) throws FunctionException {
-        checker.put("actual", assertion.getActual());
-        boolean result = assertion.assertThat(checker);
-        this.clear();
-        return result;
+    private boolean assertThat(JSONObject validator) throws Exception {
+        validator.put("actual", assertion.getActual());
+        return assertion.assertThat(validator);
     }
 
-    private void setInstance(String check) throws FunctionException {
-        this.loadDefaultAssertion();
-        String type =  Alias.Check.isJson(check, JSONAssertion.class.getAnnotation(Alias.class).aliasList()) ?
-                JSONAssertion.class.getSimpleName().toUpperCase() : check.toUpperCase();
-        assertion = defaultAssertion.get(type) == null ? SELF_DEFINED_ASSERTION.get(type) : defaultAssertion.get(type);
-        if (assertion instanceof JSONAssertion) {
-            ((JSONAssertion)assertion).setJsonPath(check);
-        }
+    private void setInstance(JSONObject validator) throws FunctionException {
+        String type = validator.get("assertion") == null ? "JSON" : validator.getString("assertion").toUpperCase();
+        assertion = DEFAULT_ASSERTION.get(type) == null ? SELF_DEFINED_ASSERTION.get(type) : DEFAULT_ASSERTION.get(type);
         if (assertion == null) {
-            throw new FunctionException("assertion not found: " + check);
+            throw new FunctionException("assertion not found: " + validator.getString("assertion"));
+        } else if (assertion instanceof AbstractAssertion) {
+            ((AbstractAssertion) assertion).setField(validator.getString("field"));
         }
+        validator.put("assertion", assertion.getClass().getSimpleName());
     }
 
     private void clear() {
         assertion = null;
-    }
-
-    private void loadDefaultAssertion() {
-        if (defaultAssertion.isEmpty()) {
-            ServiceLoader<AbstractAssertion> loaders = ServiceLoader.load(AbstractAssertion.class);
-            for (AbstractAssertion assertion : loaders) {
-                if (assertion instanceof JSONAssertion) {
-                    defaultAssertion.put(assertion.getClass().getSimpleName().toUpperCase(), assertion);
-                } else {
-                    String[] aliasList = assertion.getClass().getAnnotation(Alias.class).aliasList();
-                    for (String alias : aliasList) {
-                        defaultAssertion.put(alias.toUpperCase(), assertion);
-                    }
-                }
-            }
-        }
     }
 }

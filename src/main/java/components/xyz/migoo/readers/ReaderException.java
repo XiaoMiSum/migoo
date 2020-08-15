@@ -26,29 +26,20 @@
  *
  */
 
-package core.xyz.migoo;
 
-import xyz.migoo.simplehttp.Request;
-import xyz.migoo.simplehttp.Response;
-
-import java.util.List;
+package components.xyz.migoo.readers;
 
 /**
  * @author xiaomi
- * @date 2020/7/27 22:30
+ * @date 2017/5/17 17:23.
  */
-public interface ITestResult {
+public class ReaderException extends Exception {
 
-    List<Validator> getValidators();
+    public ReaderException(String message) {
+        super(message);
+    }
 
-    void setValidators(List<Validator> validators);
-
-    Request getRequest();
-
-    void setRequest(Request request);
-
-    Response getResponse();
-
-    void setResponse(Response response);
-
+    public ReaderException(String message, Throwable t) {
+        super(message, t);
+    }
 }
