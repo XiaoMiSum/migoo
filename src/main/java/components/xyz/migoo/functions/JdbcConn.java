@@ -28,7 +28,7 @@
 
 package components.xyz.migoo.functions;
 
-import core.xyz.migoo.functions.AbstractFunction;
+import core.xyz.migoo.functions.InternalFunction;
 import core.xyz.migoo.functions.CompoundVariable;
 import core.xyz.migoo.functions.FunctionException;
 
@@ -39,7 +39,7 @@ import java.sql.SQLException;
  * @author xiaomi
  * @date 2020/8/1 09:44
  */
-public class JdbcConn extends AbstractFunction {
+public class JdbcConn implements InternalFunction {
     @Override
     public Object execute(CompoundVariable parameters) throws FunctionException {
         try {

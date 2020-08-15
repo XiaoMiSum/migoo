@@ -29,7 +29,7 @@
 
 package components.xyz.migoo.functions;
 
-import core.xyz.migoo.functions.AbstractFunction;
+import core.xyz.migoo.functions.InternalFunction;
 import core.xyz.migoo.functions.CompoundVariable;
 import core.xyz.migoo.functions.FunctionException;
 
@@ -37,7 +37,7 @@ import core.xyz.migoo.functions.FunctionException;
  * @author xiaomi
  * @date 2019/11/18 17:22
  */
-public class Random extends AbstractFunction {
+public class Random implements InternalFunction {
 
     @Override
     public Integer execute(CompoundVariable parameters) throws FunctionException {

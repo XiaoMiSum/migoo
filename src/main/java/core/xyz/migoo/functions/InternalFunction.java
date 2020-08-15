@@ -32,5 +32,5 @@ package core.xyz.migoo.functions;
  * @author xiaomi
  * @date 2020/7/26 15:11
  */
-public abstract class AbstractFunction implements Function {
+public interface InternalFunction extends Function {
 }

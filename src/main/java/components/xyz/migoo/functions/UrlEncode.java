@@ -29,7 +29,7 @@
 
 package components.xyz.migoo.functions;
 
-import core.xyz.migoo.functions.AbstractFunction;
+import core.xyz.migoo.functions.InternalFunction;
 import core.xyz.migoo.functions.CompoundVariable;
 import core.xyz.migoo.functions.FunctionException;
 
@@ -40,7 +40,7 @@ import java.net.URLEncoder;
  * @author xiaomi
  * @date 2019/11/18 17:22
  */
-public class UrlEncode extends AbstractFunction {
+public class UrlEncode implements InternalFunction {
 
     @Override
     public String execute(CompoundVariable parameters) throws FunctionException {

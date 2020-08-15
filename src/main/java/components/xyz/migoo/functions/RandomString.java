@@ -29,7 +29,7 @@
 
 package components.xyz.migoo.functions;
 
-import core.xyz.migoo.functions.AbstractFunction;
+import core.xyz.migoo.functions.InternalFunction;
 import core.xyz.migoo.functions.CompoundVariable;
 import core.xyz.migoo.functions.FunctionException;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -38,7 +38,7 @@ import org.apache.commons.lang3.RandomStringUtils;
  * @author xiaomi
  * @date 2019/11/18 17:22
  */
-public class RandomString extends AbstractFunction {
+public class RandomString implements InternalFunction {
 
     @Override
     public String execute(CompoundVariable parameters) throws FunctionException {

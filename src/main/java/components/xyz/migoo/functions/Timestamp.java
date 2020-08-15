@@ -29,7 +29,7 @@
 
 package components.xyz.migoo.functions;
 
-import core.xyz.migoo.functions.AbstractFunction;
+import core.xyz.migoo.functions.InternalFunction;
 import core.xyz.migoo.functions.CompoundVariable;
 import core.xyz.migoo.functions.FunctionException;
 import org.apache.commons.lang3.StringUtils;
@@ -41,7 +41,7 @@ import java.util.Date;
  * @author xiaomi
  * @date 2019/11/18 20:54
  */
-public class Timestamp extends AbstractFunction {
+public class Timestamp implements InternalFunction {
 
     @Override
     public String execute(CompoundVariable parameters) throws FunctionException {

@@ -29,7 +29,7 @@
 
 package components.xyz.migoo.functions;
 
-import core.xyz.migoo.functions.AbstractFunction;
+import core.xyz.migoo.functions.InternalFunction;
 import core.xyz.migoo.functions.CompoundVariable;
 
 import java.util.UUID;
@@ -38,7 +38,7 @@ import java.util.UUID;
  * @author xiaomi
  * @date 2019/11/18 17:22
  */
-public class Uuid extends AbstractFunction {
+public class Uuid implements InternalFunction {
 
     @Override
     public String execute(CompoundVariable parameters) {

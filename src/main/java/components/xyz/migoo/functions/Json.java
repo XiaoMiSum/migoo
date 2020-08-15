@@ -30,7 +30,7 @@
 package components.xyz.migoo.functions;
 
 import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.functions.AbstractFunction;
+import core.xyz.migoo.functions.InternalFunction;
 import core.xyz.migoo.functions.CompoundVariable;
 import core.xyz.migoo.functions.FunctionException;
 
@@ -38,7 +38,7 @@ import core.xyz.migoo.functions.FunctionException;
  * @author xiaomi
  * @date 2019/11/18 17:22
  */
-public class Json extends AbstractFunction {
+public class Json implements InternalFunction {
 
     @Override
     public JSONObject execute(CompoundVariable parameters) throws FunctionException {

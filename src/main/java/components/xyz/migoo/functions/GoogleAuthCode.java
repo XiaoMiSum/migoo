@@ -29,7 +29,7 @@
 
 package components.xyz.migoo.functions;
 
-import core.xyz.migoo.functions.AbstractFunction;
+import core.xyz.migoo.functions.InternalFunction;
 import core.xyz.migoo.functions.CompoundVariable;
 import core.xyz.migoo.functions.FunctionException;
 import org.apache.commons.codec.binary.Base32;
@@ -43,7 +43,7 @@ import java.security.NoSuchAlgorithmException;
  * @author xiaomi
  * @date 2019/11/18 17:22
  */
-public class GoogleAuthCode extends AbstractFunction {
+public class GoogleAuthCode implements InternalFunction {
 
     @Override
     public String execute(CompoundVariable parameters) throws FunctionException {

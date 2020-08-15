@@ -46,10 +46,13 @@ public class FunctionHelper {
     private final static FunctionHelper FACTORY = new FunctionHelper();
 
     private static final Map<String, Function> SELF_DEFINED_FUNCTIONS = new HashMap<>(100);
+    private static final Map<String, InternalFunction> defaultFunctions = new HashMap<>(11);
 
     static {
-        ServiceLoader<Function> loaders = ServiceLoader.load(Function.class);
-        for (Function function : loaders) {
+        for (InternalFunction function : ServiceLoader.load(InternalFunction.class)) {
+            defaultFunctions.put(function.funcKey(), function);
+        }
+        for (Function function : ServiceLoader.load(Function.class)) {
             SELF_DEFINED_FUNCTIONS.put(function.funcKey(), function);
         }
     }
@@ -68,15 +71,8 @@ public class FunctionHelper {
 
     private final CompoundVariable parameters = new CompoundVariable();
 
-    private final Map<String, AbstractFunction> defaultFunctions = new HashMap<>(11);
 
     private void initFunc(String name) throws FunctionException {
-        if (defaultFunctions.isEmpty()) {
-            ServiceLoader<AbstractFunction> loaders = ServiceLoader.load(AbstractFunction.class);
-            for (AbstractFunction function : loaders) {
-                defaultFunctions.put(function.getClass().getSimpleName().toUpperCase(), function);
-            }
-        }
         String upper = name.toUpperCase();
         function = defaultFunctions.get(upper) == null ? SELF_DEFINED_FUNCTIONS.get(upper) : defaultFunctions.get(upper);
         if (function == null) {

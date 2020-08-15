@@ -29,7 +29,7 @@
 
 package components.xyz.migoo.functions;
 
-import core.xyz.migoo.functions.AbstractFunction;
+import core.xyz.migoo.functions.InternalFunction;
 import core.xyz.migoo.functions.CompoundVariable;
 import core.xyz.migoo.functions.FunctionException;
 
@@ -43,7 +43,7 @@ import java.util.Locale;
  * @author xiaomi
  * @date 2019/11/18 20:54
  */
-public class TimeShift extends AbstractFunction {
+public class TimeShift implements InternalFunction {
 
     private final ZoneId systemDefaultZoneId = ZoneId.systemDefault();
 

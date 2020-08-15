@@ -29,7 +29,7 @@
 
 package components.xyz.migoo.functions;
 
-import core.xyz.migoo.functions.AbstractFunction;
+import core.xyz.migoo.functions.InternalFunction;
 import core.xyz.migoo.functions.CompoundVariable;
 import core.xyz.migoo.functions.FunctionException;
 import org.apache.commons.codec.binary.Hex;
@@ -43,7 +43,7 @@ import java.security.NoSuchAlgorithmException;
  * @author xiaomi
  * @date 2019/11/18 22:16
  */
-public class Digest extends AbstractFunction {
+public class Digest implements InternalFunction {
 
     @Override
     public Object execute(CompoundVariable parameters) throws FunctionException {

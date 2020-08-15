@@ -30,7 +30,7 @@
 package components.xyz.migoo.functions;
 
 import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.functions.AbstractFunction;
+import core.xyz.migoo.functions.InternalFunction;
 import core.xyz.migoo.functions.CompoundVariable;
 import core.xyz.migoo.functions.FunctionException;
 
@@ -38,7 +38,7 @@ import core.xyz.migoo.functions.FunctionException;
  * @author xiaomi
  * @date 2019/12/16 21:42
  */
-public class Value extends AbstractFunction {
+public class Value implements InternalFunction {
 
     @Override
     public Object execute(CompoundVariable parameters) throws FunctionException {
