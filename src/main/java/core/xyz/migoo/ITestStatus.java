@@ -28,17 +28,15 @@
 
 package core.xyz.migoo;
 
-import java.util.Vector;
-
 /**
  * @author xiaomi
- * @date 2020/8/10 22:56
+ * @date 2020/8/15 18:37
  */
-public interface ISuite {
-
-    void addTest(ITest subTest);
-
-    Vector<ITest> getSubTests();
-
-    ITest getSubTestByName(String testName);
+public interface ITestStatus {
+    int CREATED = -1;
+    int PASSED = 1;
+    int FAILED = 2;
+    int SKIPPED = 3;
+    int ERROR = 4;
+    int STARTED = 16;
 }

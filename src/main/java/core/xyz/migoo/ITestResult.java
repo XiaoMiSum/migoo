@@ -39,16 +39,46 @@ import java.util.List;
  */
 public interface ITestResult {
 
+    /**
+     * the validators of this result.
+     *
+     * @return the validators of this result.
+     */
     List<Validator> getValidators();
 
+    /**
+     * set the validators for this result.
+     *
+     * @param validators the validators for this result.
+     */
     void setValidators(List<Validator> validators);
 
+    /**
+     * the request of this result.
+     *
+     * @return the request of this result.
+     */
     Request getRequest();
 
+    /**
+     * set the request for this result.
+     *
+     * @param request the request for this result.
+     */
     void setRequest(Request request);
 
+    /**
+     * the response of this result.
+     *
+     * @return the response of this result.
+     */
     Response getResponse();
 
+    /**
+     * set response request for this result.
+     *
+     * @param response the response for this result.
+     */
     void setResponse(Response response);
 
 }

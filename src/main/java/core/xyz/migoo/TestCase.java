@@ -82,10 +82,10 @@ public class TestCase extends AbstractTest {
                 this.printRequestLog();
                 this.doCheck();
             }
-            this.setStatus(hasFailure ? FAILURE : SUCCESS);
+            this.setStatus(hasFailure ? FAILED : PASSED);
         } catch (Throwable t) {
             this.setThrowable(t);
-            Report.log("case run failure or assert failure", t);
+            Report.log("case run error or assert failed", t);
             this.setStatus(ERROR);
         } finally {
             super.teardown();
@@ -152,13 +152,13 @@ public class TestCase extends AbstractTest {
             VarsHelper.evalValidate(validator, this.getVars());
             try {
                 if (AssertionFactory.assertThat(validator, response)) {
-                    validator.put("result", "success");
+                    validator.put("result", "passed");
                 } else {
-                    validator.put("result", "failure");
+                    validator.put("result", "failed");
                     hasFailure = true;
                 }
             } catch (AssertionError t) {
-                validator.put("result", "failure");
+                validator.put("result", "failed");
                 validator.put("throwable", t);
                 this.hasFailure = true;
             } catch (Exception e) {

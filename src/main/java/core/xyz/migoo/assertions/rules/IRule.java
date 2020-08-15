@@ -26,8 +26,6 @@
 
 package core.xyz.migoo.assertions.rules;
 
-import core.xyz.migoo.functions.FunctionException;
-
 import java.util.Map;
 
 /**
@@ -45,5 +43,5 @@ public interface IRule {
      * @param data Objects that hold the actual and expected values
      * @return Boolean Object
      */
-    boolean assertTrue(Map<String, Object> data) throws FunctionException;
+    boolean assertTrue(Map<String, Object> data);
 }

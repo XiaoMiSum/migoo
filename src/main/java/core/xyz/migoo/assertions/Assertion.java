@@ -48,7 +48,7 @@ public interface Assertion {
      *
      * @param data Objects that hold expected values
      * @return assert result
-     * @throws FunctionException FunctionsException
+     * @throws Exception Exception
      * @throws AssertionError AssertionError
      */
     boolean assertThat(JSONObject data) throws Exception, AssertionError;

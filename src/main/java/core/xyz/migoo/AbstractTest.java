@@ -231,7 +231,7 @@ public abstract class AbstractTest implements ITest {
 
     @Override
     public int getStatus() {
-        return isSkipped ? SKIP : this.status;
+        return isSkipped ? SKIPPED : this.status;
     }
 
     @Override

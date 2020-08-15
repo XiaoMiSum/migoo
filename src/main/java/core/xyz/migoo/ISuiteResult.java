@@ -37,27 +37,77 @@ import java.util.List;
  */
 public interface ISuiteResult {
 
+    /**
+     * The test results of this result.
+     *
+     * @return test results of this result.
+     */
     List<IResult> getTestResults();
 
+    /**
+     * set test results for this result.
+     * @param results test results for this result
+     */
     void setTestResults(List<IResult> results);
 
+    /**
+     * add test result for this result.
+     * @param result test result for this result
+     */
     void addTestResult(IResult result);
 
+    /**
+     * The size of this result.
+     *
+     * @return size of this result.
+     */
     int size();
 
+    /**
+     * add success for this result.
+     */
     void addSuccess();
 
+    /**
+     * return count success of this result.
+     *
+     * @return count success of this result.
+     */
     int getSuccessCount();
 
+    /**
+     * add error for this result.
+     */
     void addError();
 
+    /**
+     * return count error of this result.
+     *
+     * @return count error of this result.
+     */
     int getErrorCount();
 
+    /**
+     * add failure for this result.
+     */
     void addFailure();
 
+    /**
+     * return count failure of this result.
+     *
+     * @return count failure of this result.
+     */
     int getFailureCount();
 
+    /**
+     * add skip for this result.
+     */
     void addSkip();
 
+    /**
+     * return count skip of this result.
+     *
+     * @return count skip of this result.
+     */
     int getSkipCount();
 }

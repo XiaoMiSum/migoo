@@ -81,13 +81,13 @@ public class TestSet extends AbstractTest {
 
     private void runTest(ITest test, ISuiteResult result){
         result.addTestResult(test.run());
-        if (test.getStatus() == SUCCESS) {
+        if (test.getStatus() == PASSED) {
             result.addSuccess();
-        } else if (test.getStatus() == FAILURE) {
+        } else if (test.getStatus() == FAILED) {
             result.addFailure();
         } else if (test.getStatus() == ERROR) {
             result.addError();
-        } else if (test.getStatus() == SKIP) {
+        } else if (test.getStatus() == SKIPPED) {
             result.addSkip();
         }
     }

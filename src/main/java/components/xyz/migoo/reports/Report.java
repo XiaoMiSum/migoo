@@ -154,6 +154,8 @@ public class Report implements IReport {
                                 : validator.getThrowable() != null ? node.fail(m).fail(validator.getThrowable())
                                 : node.fail(m);
                     }
+                } else {
+                    node.fail(testResult.getThrowable());
                 }
             }
         }

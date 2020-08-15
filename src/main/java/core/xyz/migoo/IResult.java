@@ -34,12 +34,14 @@ import java.util.Date;
  * @author xiaomi
  * @date 2020/7/27 21:41
  */
-public interface IResult {
+public interface IResult extends ITestStatus {
 
     /**
-     * @param test
+     * init this test result
+     *
+     * @param test a test
      */
-    default void init(ITest test){
+    default void init(ITest test) {
         setTestName(test.getTestName());
         setStatus(test.getStatus());
         setThrowable(test.getThrowable());
@@ -49,65 +51,107 @@ public interface IResult {
 
     /**
      * The name of this TestResult, typically identical to the name of the method.
+     *
      * @return The name of this TestResult, typically identical to the name of the method.
      */
     String getTestName();
 
     /**
-     * set name of this TestResult, typically identical to the name of the method.
+     * set name for this TestResult, typically identical to the name of the method.
+     *
      * @param name The name of this TestResult
      */
     void setTestName(String name);
 
     /**
      * The status of this result, using one of the constants above.
+     *
      * @return The status of this result, using one of the constants above.
      */
     int getStatus();
 
     /**
-     * set status of this result
+     * set status for this result
+     *
      * @param status The status of this result
      */
     void setStatus(int status);
 
 
     /**
-     * the start date for this test, in milliseconds.
+     * the start date of this test.
+     *
      * @return the start date for this test, in milliseconds.
      */
     Date getStartTime();
 
     /**
-     * set start date for this test, in milliseconds.
-     * @param startTime the start date for this test, in milliseconds.
+     * set start date for this test.
+     *
+     * @param startTime the start date for this test.
      */
     void setStartTime(Date startTime);
 
     /**
-     * the end date for this test, in milliseconds.
-     * @return the end date for this test, in milliseconds.
+     * the end date of this test.
+     *
+     * @return the end date for this test.
      */
     Date getEndTime();
 
     /**
-     * set end date for this test, in milliseconds.
-     * @param endTime the end date for this test, in milliseconds.
+     * set end date for this test.
+     *
+     * @param endTime the end date for this test.
      */
     void setEndTime(Date endTime);
 
+    /**
+     * set throwable for this test.
+     *
+     * @param throwable the throwable for this test
+     */
     void setThrowable(Throwable throwable);
 
+    /**
+     * the throwable of this test.
+     *
+     * @return the throwable for this test.
+     */
     Throwable getThrowable();
 
+    /**
+     * the throwable as string of this test.
+     *
+     * @return the throwable as string for this test.
+     */
     String getThrowableAsString();
 
-    int countTest();
-    int countFailure();
-    int countError();
-
+    /**
+     * the status is successful of this test.
+     *
+     * @return the status is successful of this test.
+     */
     boolean isSuccess();
-    boolean isSkip();
+
+    /**
+     * the status is skipped of this test.
+     *
+     * @return the status is skipped of this test.
+     */
+    boolean isSkipped();
+
+    /**
+     * the status is error of this test.
+     *
+     * @return the status is error of this test.
+     */
     boolean isError();
-    boolean isFailure();
+
+    /**
+     * the status is failed of this test.
+     *
+     * @return the status is failed of this test.
+     */
+    boolean isFailed();
 }

@@ -35,14 +35,7 @@ import java.util.Date;
  * @author xiaomi
  * @date 2019-08-10 11:02
  */
-public interface ITest {
-
-    int CREATED = -1;
-    int SUCCESS = 1;
-    int FAILURE = 2;
-    int SKIP = 3;
-    int ERROR = 4;
-    int STARTED = 16;
+public interface ITest extends ITestStatus {
 
     /**
      * The name of test instance(s).
@@ -55,31 +48,65 @@ public interface ITest {
      * Returns count of the test.
      * can return zero.
      *
-     * @return test count
+     * @return count of this test
      */
     int countTestCases();
 
     /**
      * running the test
      *
-     * @return result the test result
+     * @return the result of this test
      */
     IResult run();
 
+    /**
+     * set start date for this test.
+     */
     void start();
 
+    /**
+     * the start date of this test.
+     *
+     * @return the start date for this test.
+     */
     Date getStartTime();
 
+    /**
+     * set end date for this test.
+     */
     void end();
 
+    /**
+     * the end date of this test.
+     *
+     * @return the end date for this test.
+     */
     Date getEndTime();
 
+    /**
+     * Returns status of this test.
+     *
+     * @return the status of this test.
+     */
     int getStatus();
 
+    /**
+     * set status for this test.
+     * @param status status for this test
+     */
     void setStatus(int status);
 
+    /**
+     * Returns throwable of this test.
+     *
+     * @return the throwable of this test.
+     */
     Throwable getThrowable();
 
+    /**
+     * set throwable for this test.
+     * @param throwable throwable for this test
+     */
     void setThrowable(Throwable throwable);
 
 }

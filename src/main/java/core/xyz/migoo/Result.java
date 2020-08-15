@@ -108,37 +108,22 @@ public class Result implements IResult{
     }
 
     @Override
-    public int countTest() {
-        return 0;
-    }
-
-    @Override
-    public int countFailure() {
-        return 0;
-    }
-
-    @Override
-    public int countError() {
-        return 0;
-    }
-
-    @Override
     public boolean isSuccess() {
-        return false;
+        return this.status == PASSED;
     }
 
     @Override
-    public boolean isSkip() {
-        return false;
+    public boolean isSkipped() {
+        return this.status == SKIPPED;
     }
 
     @Override
     public boolean isError() {
-        return false;
+        return this.status == ERROR;
     }
 
     @Override
-    public boolean isFailure() {
-        return false;
+    public boolean isFailed() {
+        return this.status == FAILED;
     }
 }
