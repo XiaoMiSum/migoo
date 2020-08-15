@@ -7,7 +7,7 @@
 
     <version>3.0.0</version>
     <name>migoo</name>
-    <description>a tool for rest-api test</description>
+    <description>a test tool for rest-api</description>
     <url>https://xiaomisum.github.io/MiGoo/</url>
 
     <parent>
@@ -43,13 +43,12 @@
         <poi.version>3.17</poi.version>
         <yaml.version>1.23</yaml.version>
         <email.version>1.5</email.version>
-        <dbutil.version>1.7</dbutil.version>
         <mysql.version>8.0.16</mysql.version>
         <slf4j.version>1.7.25</slf4j.version>
         <reports.version>5.0.2</reports.version>
         <compile.version>3.5.1</compile.version>
         <ant-zip.version>1.10.5</ant-zip.version>
-        <fastjson.version>1.2.54</fastjson.version>
+        <fastjson.version>1.2.73</fastjson.version>
         <simplehttp.version>1.0.5</simplehttp.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <commons-codec.version>1.11</commons-codec.version>
@@ -106,11 +105,7 @@
             <artifactId>commons-email</artifactId>
             <version>${email.version}</version>
         </dependency>
-        <dependency>
-            <groupId>commons-dbutils</groupId>
-            <artifactId>commons-dbutils</artifactId>
-            <version>${dbutil.version}</version>
-        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.apache.ant/ant -->
         <dependency>
             <groupId>org.apache.ant</groupId>
