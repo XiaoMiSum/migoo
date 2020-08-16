@@ -99,9 +99,7 @@ public class Report implements IReport {
         extent.getReport().setEndTime(result.getEndTime());
     }
 
-    @Override
-    public void generateReport(IResult result, String outputDirectoryName) {
-        this.initReport(result, outputDirectoryName);
+    private void createExtentTest(){
         for (IResult iSuiteResult : ((ISuiteResult) result).getTestResults()) {
             ISuiteResult suiteResult = (ISuiteResult) iSuiteResult;
             ExtentTest feature = extent.createTest(iSuiteResult.getTestName(),
@@ -159,7 +157,26 @@ public class Report implements IReport {
                 }
             }
         }
+    }
+
+    private void setSystemInfo(){
+        extent.setSystemInfo("os.name", System.getProperty("os.name"));
+        extent.setSystemInfo("java.runtime.name", System.getProperty("java.runtime.name"));
+        extent.setSystemInfo("java.version", System.getProperty("java.version"));
+        extent.setSystemInfo("java.vm.name", System.getProperty("java.vm.name"));
+        extent.setSystemInfo("migoo.version", System.getProperty("migoo.version"));
+    }
+
+    private void flush(){
         extent.flush();
+    }
+
+    @Override
+    public void generateReport(IResult result, String outputDirectoryName) {
+        this.initReport(result, outputDirectoryName);
+        this.setSystemInfo();
+        this.createExtentTest();
+        this.flush();
     }
 
     @Override
