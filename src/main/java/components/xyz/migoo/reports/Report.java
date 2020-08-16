@@ -43,11 +43,9 @@ import core.xyz.migoo.report.IReport;
 import core.xyz.migoo.utils.DateUtil;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Zip;
-import org.apache.tools.ant.types.FileSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.zeroturnaround.zip.ZipUtil;
 
 import java.io.File;
 import java.util.Arrays;
@@ -206,15 +204,10 @@ public class Report implements IReport {
     }
 
     private File zipFile(String path) {
-        FileSet fileSet = new FileSet();
-        fileSet.setExcludes("*.zip");
-        fileSet.setDir(new File(path));
-        Zip zip = new Zip();
-        zip.setProject(new Project());
-        zip.setDestFile(new File(path + ".reports" + ".zip"));
-        zip.addFileset(fileSet);
-        zip.execute();
-        return new File(path + ".reports" + ".zip");
+        File file = new File(path);
+        File zip = new File(file.getParent()+ "/" + file.getName() + ".reports.zip");
+        ZipUtil.pack(file, zip);
+        return zip;
     }
 
     private String getMessage() {
