@@ -5,7 +5,7 @@
     <groupId>xyz.migoo</groupId>
     <artifactId>migoo</artifactId>
 
-    <version>3.0.0</version>
+    <version>3.0.0-alpha1</version>
     <name>migoo</name>
     <description>a test tool for rest-api</description>
     <url>https://xiaomisum.github.io/MiGoo/</url>
@@ -113,7 +113,6 @@
             <version>${zt-zip.version}</version>
         </dependency>
 
-
         <!-- https://mvnrepository.com/artifact/xyz.migoo/simplehttp -->
         <dependency>
             <groupId>xyz.migoo</groupId>
@@ -141,7 +140,6 @@
             <version>5.6.0-M1</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <distributionManagement>
