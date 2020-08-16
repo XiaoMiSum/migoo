@@ -81,33 +81,34 @@ public abstract class AbstractTest implements ITest {
         return tName;
     }
 
-    public void initTest(JSONObject config, JSONObject dataset, JSONObject requestConfig) {
-        this.requestConfig = requestConfig;
-        this.isSkipped = config != null && TypeUtil.booleanOf(config.get("skip"));
+    public void initTest(JSONObject config, JSONObject dataset) {
+        if (config != null) {
+            this.requestConfig = config.get("request") == null ? new JSONObject() :
+                    config.getJSONObject("request");
+            this.isSkipped = TypeUtil.booleanOf(config.get("skip"));
+        }
         if (dataset != null) {
             this.addVars(dataset.getJSONObject("vars"));
             // add setUp、teardown
             this.addSetup(dataset.getJSONArray("setup"));
-            // 3. add config.beforeClass to
             this.addTeardown(dataset.getJSONArray("teardown"));
         }
     }
 
-    protected void initRequest(JSONObject config) {
-        if (config != null) {
-            this.requestConfig = this.requestConfig != null ? this.requestConfig : new JSONObject();
-            if (config.get("request") != null) {
-                JSONObject requestConfig = config.getJSONObject("request");
-                JSONObject headers = this.requestConfig.get("headers") != null ?
-                        this.requestConfig.getJSONObject("headers") : new JSONObject();
-                if (requestConfig.get("headers") != null) {
-                    headers.putAll(requestConfig.getJSONObject("headers"));
-                }
-                this.requestConfig.putAll(requestConfig);
-                this.requestConfig.put("headers", headers);
+    protected void initRequest(JSONObject requestConfig) {
+        if (requestConfig != null) {
+            JSONObject headers = new JSONObject();
+            if (requestConfig.get("headers") != null) {
+                headers.putAll(requestConfig.getJSONObject("headers"));
             }
+            if (this.requestConfig.get("headers") != null) {
+                headers.putAll(this.requestConfig.getJSONObject("headers"));
+            }
+            Object url = this.requestConfig.get("api") != null ? this.requestConfig.get("api") : requestConfig.get("api");
+            this.requestConfig.putAll(requestConfig);
+            this.requestConfig.put("headers", headers);
+            this.requestConfig.put("api", url);
         }
-
     }
 
     /**
@@ -133,7 +134,6 @@ public abstract class AbstractTest implements ITest {
 
     /**
      * get the variables of test.
-     *
      */
     public Vars getVars() {
         return this.vars;

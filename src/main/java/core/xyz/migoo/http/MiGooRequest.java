@@ -69,7 +69,7 @@ public class MiGooRequest extends Request {
         return new MiGooRequest(method);
     }
 
-    private MiGooRequest(String method){
+    private MiGooRequest(String method) {
         super();
         this.method = StringUtils.isNotEmpty(method) ? method.toUpperCase() : HttpGet.METHOD_NAME;
     }
@@ -78,8 +78,8 @@ public class MiGooRequest extends Request {
         super(request);
     }
 
-    public MiGooRequest uri(String url){
-        switch (method){
+    public MiGooRequest uri(String url) {
+        switch (method) {
             case HttpPost.METHOD_NAME:
             case HttpPut.METHOD_NAME:
                 request(new EntityEnclosingHttpRequest(method, URI.create(url)));
@@ -90,8 +90,8 @@ public class MiGooRequest extends Request {
         return this;
     }
 
-    public MiGooRequest build(){
-        this.uri(String.format( "%s://%s:%s%s", protocol, host, port, api));
+    public MiGooRequest build() {
+        this.uri(String.format("%s://%s:%s%s", protocol, host, port, api));
         if (headers != null && !headers.isEmpty()) {
             headers.forEach((k, v) -> super.addHeader(k, v == null ? null : v.toString()));
         }
@@ -111,53 +111,46 @@ public class MiGooRequest extends Request {
         return this;
     }
 
-    public MiGooRequest(){
+    public MiGooRequest() {
 
     }
 
-    public MiGooRequest protocol(String protocol){
+    public MiGooRequest protocol(String protocol) {
         this.protocol = StringUtils.isBlank(protocol) ? "http" : protocol;
         return this;
     }
 
-    public MiGooRequest host(String host){
-        this.host = StringUtils.isBlank(host) ?  "127.0.0.1" : host;
+    public MiGooRequest host(String host) {
+        this.host = StringUtils.isBlank(host) ? "127.0.0.1" : host;
         return this;
     }
 
-    public MiGooRequest port(Integer port){
+    public MiGooRequest port(Integer port) {
         this.port = port == null || port <= 0 ? 80 : port;
         return this;
     }
 
-    public MiGooRequest api(String api){
-        this.api = StringUtils.isBlank(api) ?  "" : api;
+    public MiGooRequest api(String api) {
+        this.api = StringUtils.isBlank(api) ? "" : api;
         return this;
     }
 
-    public MiGooRequest body(JSONObject body) {
-        if (body != null && !body.isEmpty()){
-            this.body = body;
-        }
-        return this;
-    }
-
-    public MiGooRequest body(JSONArray body) {
-        if (body != null && !body.isEmpty()){
-            this.body = body;
+    public MiGooRequest body(Object body) {
+        if (body instanceof JSON) {
+            this.body = (JSON) body;
         }
         return this;
     }
 
     public MiGooRequest data(JSONObject data) {
-        if (data != null && !data.isEmpty()){
+        if (data != null && !data.isEmpty()) {
             this.data = data;
         }
         return this;
     }
 
     public MiGooRequest query(JSONObject query) {
-        if (query != null && !query.isEmpty()){
+        if (query != null && !query.isEmpty()) {
             this.query = query;
         }
         return this;
@@ -172,16 +165,16 @@ public class MiGooRequest extends Request {
         return (MiGooRequest) super.cookies(cookieStore);
     }
 
-    public MiGooRequest headers(JSONObject headers){
+    public MiGooRequest headers(JSONObject headers) {
         this.headers = headers;
         return this;
     }
 
-    public JSONObject jsonHeaders(){
+    public JSONObject jsonHeaders() {
         Header[] headers = headers();
-        if (headers != null){
+        if (headers != null) {
             JSONObject jsonHeaders = new JSONObject();
-            for (Header header : headers){
+            for (Header header : headers) {
                 jsonHeaders.put(header.getName(), header.getValue());
             }
             return jsonHeaders;
@@ -189,7 +182,7 @@ public class MiGooRequest extends Request {
         return null;
     }
 
-    public JSONArray cookies(){
+    public JSONArray cookies() {
         return context() != null && context().getCookieStore() != null ?
                 new JSONArray(new ArrayList<>(context().getCookieStore().getCookies())) : null;
     }

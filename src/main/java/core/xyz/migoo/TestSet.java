@@ -41,10 +41,10 @@ public class TestSet extends AbstractTest {
 
     TestSet(JSONObject set, JSONObject requestConfig) {
         super(set.getString("name"));
-        super.initTest(set.getJSONObject("config"), set.getJSONObject("dataset"), requestConfig);
+        super.initTest(set.getJSONObject("config"), set.getJSONObject("dataset"));
         super.addVars("name", super.getTestName());
         super.addToGlobals();
-        super.initRequest(set.getJSONObject("config"));
+        super.initRequest(requestConfig);
         JSONObject finalRequestConfig = this.requestConfig;
         set.getJSONArray("cases").forEach(testCase ->
                 super.addTest(new TestCase((JSONObject) testCase, finalRequestConfig))

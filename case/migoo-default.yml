@@ -6,7 +6,7 @@ config: # 配置信息
     port: 80 #可缺省，http协议默认80，https默认443
     method: post # 可缺省，默认 GET
     headers:
-      x-header: migoo
+      X-Header: migoo
   report: # 可缺省，配置测试报告
     listener: # 可缺省，测试报告实现类
     output: # 可缺省，测试报告保存地址
@@ -29,7 +29,7 @@ sets:
     config:
       request:
         headers:
-          x-t: x-t
+          X-Token: token
         api: /api/test # 可缺省
     dataset: # 可空，针对当前 caseset 生效
       setup: # 可空，在完成当前 caseset 中的 vars绑定后执行
@@ -43,7 +43,7 @@ sets:
         config:
           request:
             headers:
-              x-a: x-a
+              X-Title: title
             api: /api/login # 可缺省
         dataset: # 可空，针对当前 case 生效
           setup: # 可空，在完成当前 case 中的 vars绑定后执行
@@ -57,9 +57,9 @@ sets:
           password: ${password}
           sign: ${sign}
         validators: # 检查点， 当 assertion 为JSON 时可空
-          - {assertion: response, field: status, expect: 200, rule: ==}
-          - {assertion: json, field: $.status, expect: 200, rule: ==}
-          - {field: $.data.token, expect: '\w+\.\w+\.\w+', rule: regex}
+          - {assertion: response, field: status, expected: 200, rule: ==}
+          - {assertion: json, field: $.status, expected: 200, rule: ==}
+          - {field: $.data.token, expected: '\w+\.\w+\.\w+', rule: regex}
       - title: 测试用例2
         config:
           request:
@@ -80,6 +80,6 @@ sets:
           password: ${password}
           sign: ${sign}
         validators: # 检查点， 当 assertion 为JSON 时可空
-          - {assertion: response, field: status, expect: 200, rule: ==}
-          - {assertion: json, field: $.status, expect: 200, rule: ==}
-          - {field: $.data.token, expect: '\w+\.\w+\.\w+', rule: regex}
+          - {assertion: response, field: status, expected: 200, rule: ==}
+          - {assertion: json, field: $.status, expected: 200, rule: ==}
+          - {field: $.data.token, expected: '\w+\.\w+\.\w+', rule: regex}

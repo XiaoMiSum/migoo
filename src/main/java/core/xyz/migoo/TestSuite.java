@@ -50,9 +50,9 @@ public class TestSuite extends AbstractTest {
         this.initTest(suite.getJSONObject("config"), suite.getJSONObject("dataset"));
         super.addVars("name", this.getTestName());
         super.addToGlobals();
-        suite.getJSONArray("sets").forEach(set -> {
-            super.addTest(new TestSet((JSONObject) set, requestConfig));
-        });
+        suite.getJSONArray("sets").forEach(set ->
+                super.addTest(new TestSet((JSONObject) set, requestConfig))
+        );
     }
 
     public JSONObject getReportConfig() {
@@ -64,7 +64,7 @@ public class TestSuite extends AbstractTest {
     }
 
     public void initTest(JSONObject config, JSONObject dataset) {
-        super.initTest(config, dataset, config.getJSONObject("request"));
+        super.initTest(config, dataset);
         this.reportConfig = config.get("report") == null ? config.getJSONObject("reports") : config.getJSONObject("report");
         this.emailConfig = config.get("email") == null ? config.getJSONObject("mail") : config.getJSONObject("email");
     }

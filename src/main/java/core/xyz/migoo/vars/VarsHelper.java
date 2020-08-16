@@ -319,13 +319,14 @@ public class VarsHelper {
     }
 
     /**
-     * 执行 validate.expect 指定的方法，将值put到 validate 对象中
+     * 执行 validator.expected 指定的方法，将值put到 validator 对象中
      *
-     * @param checker 检查点
+     * @param validator 检查点
+     * @param variables 变量
      */
-    public static void evalValidate(JSONObject checker, JSONObject variables) {
+    public static void evalValidate(JSONObject validator, JSONObject variables) {
         try {
-            String value = checker.getString("expect");
+            String value = validator.getString("expected");
             if (!StringUtils.isEmpty(value)) {
                 Object result = value;
                 if (FUNC_PATTERN.matcher(value).find()) {
@@ -336,7 +337,7 @@ public class VarsHelper {
                 } else if (PARAM_PATTERN.matcher(value).find()) {
                     result = value.replace(value, variables.getString(value.substring(2, value.length() - 1)));
                 }
-                checker.put("expect", result);
+                validator.put("expected", result);
             }
         } catch (Exception e) {
             throw new VarsException(e.getMessage(), e);
