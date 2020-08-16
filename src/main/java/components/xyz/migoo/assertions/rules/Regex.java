@@ -47,7 +47,7 @@ public class Regex extends BaseRule implements IRule {
     @Override
     public boolean assertTrue(Map<String, Object> data) {
         Object actual = data.get("actual");
-        Object expect = data.get("expect");
+        Object expect = data.get("expected");
         String str = "";
         if (actual instanceof JSON) {
             str = ((JSON) actual).toJSONString();

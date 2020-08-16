@@ -1,0 +1,8 @@
+setup: # 可空，在完成 suite 中的 vars绑定后执行
+  - '__method(str=suite中定义的setup)'
+teardown: # 可空，在 suite 中的所有用例执行完成后执行
+  - '__method(str=suite中定义的teardown)'
+vars: # 可空，自定义变量，完成 suite解析后，优先进行vars绑定
+  sign: '__digest(string=migoo123456qq)'
+  password: 123456qq
+  password2: 123456qq

@@ -43,6 +43,6 @@ public class EqualsIgnoreCase extends BaseRule implements IRule {
 
     @Override
     public boolean assertTrue(Map<String, Object> data) {
-        return objectToString(data.get("actual")).equalsIgnoreCase(objectToString(data.get("expect")));
+        return objectToString(data.get("actual")).equalsIgnoreCase(objectToString(data.get("expected")));
     }
 }

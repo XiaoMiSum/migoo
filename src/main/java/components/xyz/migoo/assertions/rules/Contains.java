@@ -45,7 +45,7 @@ public class Contains extends BaseRule implements IRule {
     @Override
     public boolean assertTrue(Map<String, Object> data) {
         Object actual = data.get("actual");
-        Object expect = data.get("expect");
+        Object expect = data.get("expected");
         if (actual instanceof String) {
             return ((String) actual).contains((String) expect);
         }

@@ -50,10 +50,10 @@ public class ResponseAssertion extends AbstractAssertion {
         if (STATUS.contains(field)) {
             this.actual = response.statusCode();
         } else if (field.toLowerCase().startsWith("headers.") || field.toLowerCase().startsWith("header.")) {
-            String s = field.substring(field.indexOf(".")).toLowerCase();
+            String s = field.substring(field.indexOf(".") + 1).toLowerCase();
             for (Header header : response.headers()) {
                 if (header.getName().toLowerCase().equals(s)) {
-                    this.actual = response.headers();
+                    this.actual = header.getValue();
                     break;
                 }
             }

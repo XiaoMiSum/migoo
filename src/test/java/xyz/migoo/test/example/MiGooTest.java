@@ -12,7 +12,11 @@ public class MiGooTest {
     public Migoo runner = new Migoo();
 
     @Test
-    public void testApiCaseSet(){
+    public void testDefault(){
         runner.run("./case/migoo-default.yml");
+    }
+    @Test
+    public void testFileImport(){
+        runner.run("./case/migoo-file_import.yml");
     }
 }

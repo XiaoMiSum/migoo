@@ -38,6 +38,7 @@ import core.xyz.migoo.http.MiGooRequest;
 import components.xyz.migoo.reports.Report;
 import xyz.migoo.simplehttp.Response;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -178,6 +179,6 @@ public class TestCase extends AbstractTest {
     }
 
     public List<Validator> validators() {
-        return validators.toJavaList(Validator.class);
+        return validators != null ? validators.toJavaList(Validator.class) : new ArrayList<>();
     }
 }

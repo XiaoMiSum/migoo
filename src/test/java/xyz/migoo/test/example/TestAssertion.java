@@ -14,7 +14,7 @@ public class TestAssertion implements Assertion {
 
     @Override
     public boolean assertThat(JSONObject data) {
-        String s1 = String.valueOf(data.get("expect"));
+        String s1 = String.valueOf(data.get("expected"));
         return s1.equals(getActual());
     }
 

@@ -38,7 +38,7 @@ public interface IRule {
      * Implement the interface to extend the assertion method
      * get expected values from Map Object
      * and the expected values can be null
-     * use:  data.get("expect")
+     * use:  data.get("expected")
      *
      * @param data Objects that hold the actual and expected values
      * @return Boolean Object

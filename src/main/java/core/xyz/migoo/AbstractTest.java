@@ -55,7 +55,7 @@ public abstract class AbstractTest implements ITest {
 
     protected JSONObject requestConfig;
 
-    protected boolean isSkipped = false;
+    protected boolean isSkipped;
 
     private Date startTime;
 
@@ -82,11 +82,8 @@ public abstract class AbstractTest implements ITest {
     }
 
     public void initTest(JSONObject config, JSONObject dataset) {
-        if (config != null) {
-            this.requestConfig = config.get("request") == null ? new JSONObject() :
-                    config.getJSONObject("request");
-            this.isSkipped = TypeUtil.booleanOf(config.get("skip"));
-        }
+        requestConfig = config != null && config.get("request") != null ? config.getJSONObject("request"): new JSONObject();
+        isSkipped = config != null && TypeUtil.booleanOf(config.get("skip"));
         if (dataset != null) {
             this.addVars(dataset.getJSONObject("vars"));
             // add setUp、teardown

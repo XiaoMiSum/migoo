@@ -1,4 +1,4 @@
-name: migoo接口测试框架
+name: 内部数据定义测试用例
 config: # 配置信息
   request:
     protocol: http # 可缺省，默认http协议

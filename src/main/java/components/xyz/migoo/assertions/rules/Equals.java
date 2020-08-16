@@ -45,7 +45,7 @@ public class Equals extends BaseRule implements IRule {
     @Override
     public boolean assertTrue(Map<String, Object> data) {
         Object actual = data.get("actual");
-        Object expect = data.get("expect");
+        Object expect = data.get("expected");
         String str1 = objectToString(actual);
         String str2 = objectToString(expect);
         if (actual instanceof Number || expect instanceof Number){

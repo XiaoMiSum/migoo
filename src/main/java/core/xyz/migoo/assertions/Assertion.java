@@ -39,7 +39,7 @@ public interface Assertion {
 
 
     /**
-     * get expected values from JSONObject (data.get("expect"))
+     * get expected values from JSONObject (data.get("expected"))
      * and invoke method to assert expected values
      * <p>
      * support type list:

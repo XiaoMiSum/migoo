@@ -125,7 +125,7 @@ public class Report implements IReport {
                     if (!iTestResult.getRequest().query().isEmpty()) {
                         sb.append("<br/>").append("Query：").append(iTestResult.getRequest().query());
                     }
-                    if (!iTestResult.getRequest().body().isEmpty()) {
+                    if (iTestResult.getRequest().body() != null && !iTestResult.getRequest().body().isEmpty()) {
                         sb.append("<br/>").append("Body：").append(iTestResult.getRequest().body());
                     } else if (!iTestResult.getRequest().data().isEmpty()) {
                         sb.append("<br/>").append("Data：").append(iTestResult.getRequest().data());
@@ -202,27 +202,27 @@ public class Report implements IReport {
 
     private String getMessage() {
         String template = "<body style=\"color: #666; font-size: 14px; font-family: 'Open Sans',Helvetica,Arial,sans-serif;\">\n" +
-                        "<div class=\"box-content\" style=\"width: 80%%; margin: 5px auto;\">\n" +
-                        "    <div class=\"info-wrap\" style=\"border-bottom-left-radius: 10px;\n" +
-                        "                                  border-bottom-right-radius: 10px;\n" +
-                        "                                  border-top-left-radius: 10px;\n" +
-                        "                                  border-top-right-radius: 10px;\n" +
-                        "                                  border:1px solid #ddd;\n" +
-                        "                                  overflow: hidden;\n" +
-                        "                                  padding: 15px 15px 20px;\">\n" +
-                        "            <p style=\" list-style: 160%%; margin: 10px 0;\">Hi,\n" +
-                        "            <br/>以下为本次测试执行结果，更多内容请查阅附件.</p>\n" +
-                        "        %s" +
-                        "    </div>\n" +
-                        "    <div class=\"header-tip\" style=\"font-size: 12px;\n" +
-                        "                                   color: #aaa;\n" +
-                        "                                   text-align: right;\n" +
-                        "                                   padding-right: 25px;\n" +
-                        "                                   padding-bottom: 10px;\">\n" +
-                        "        <a href=\"https://github.com/XiaoMiSum/MiGoo\" target=\"_blank\">MiGoo - Copyright (c) 2018 mi_xiao@qq.com</a>\n" +
-                        "     </div>\n" +
-                        "</div>\n" +
-                        "</body>";
+                "<div class=\"box-content\" style=\"width: 80%%; margin: 5px auto;\">\n" +
+                "    <div class=\"info-wrap\" style=\"border-bottom-left-radius: 10px;\n" +
+                "                                  border-bottom-right-radius: 10px;\n" +
+                "                                  border-top-left-radius: 10px;\n" +
+                "                                  border-top-right-radius: 10px;\n" +
+                "                                  border:1px solid #ddd;\n" +
+                "                                  overflow: hidden;\n" +
+                "                                  padding: 15px 15px 20px;\">\n" +
+                "            <p style=\" list-style: 160%%; margin: 10px 0;\">Hi,\n" +
+                "            <br/>以下为本次测试执行结果，更多内容请查阅附件.</p>\n" +
+                "        %s" +
+                "    </div>\n" +
+                "    <div class=\"header-tip\" style=\"font-size: 12px;\n" +
+                "                                   color: #aaa;\n" +
+                "                                   text-align: right;\n" +
+                "                                   padding-right: 25px;\n" +
+                "                                   padding-bottom: 10px;\">\n" +
+                "        <a href=\"https://github.com/XiaoMiSum/MiGoo\" target=\"_blank\">MiGoo - Copyright (c) 2018 mi_xiao@qq.com</a>\n" +
+                "     </div>\n" +
+                "</div>\n" +
+                "</body>";
         StringBuilder sb = new StringBuilder()
                 .append("<table class=\"list\" style=\"width: 100%%; border-collapse: collapse; border-top:1px solid #eee; font-size:12px;\">\n")
                 .append("<thead>\n")

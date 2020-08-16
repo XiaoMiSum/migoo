@@ -58,19 +58,23 @@ public class FunctionHelper {
     }
 
     public static Object execute(String object, JSONObject variables) throws FunctionException {
-        Matcher func = FUNC_PATTERN.matcher(object);
-        if (func.find()) {
-            FACTORY.initFunc(func.group(1));
-            FACTORY.initParameter(func.group(2), variables);
-            return FACTORY.execute();
+        try {
+            Matcher func = FUNC_PATTERN.matcher(object);
+            if (func.find()) {
+                FACTORY.initFunc(func.group(1));
+                FACTORY.initParameter(func.group(2), variables);
+                return FACTORY.execute();
+            } else {
+                throw new FunctionException("not matcher function: " + object);
+            }
+        } finally {
+            FACTORY.clear();
         }
-        throw new FunctionException("not matcher function: " + object);
     }
 
     private Function function;
 
     private final CompoundVariable parameters = new CompoundVariable();
-
 
     private void initFunc(String name) throws FunctionException {
         String upper = name.toUpperCase();
@@ -95,5 +99,10 @@ public class FunctionHelper {
 
     public Object execute() throws FunctionException {
         return function.execute(parameters);
+    }
+
+    public void clear() {
+        this.function = null;
+        this.parameters.clear();
     }
 }

@@ -45,7 +45,7 @@ public class GreaterThanOrEquals extends BaseRule implements IRule {
     @Override
     public boolean assertTrue(Map<String, Object> data) {
         BigDecimal b1 = new BigDecimal(objectToString(data.get("actual"), "0"));
-        BigDecimal b2 = new BigDecimal(objectToString(data.get("expect"), "0"));
+        BigDecimal b2 = new BigDecimal(objectToString(data.get("expected"), "0"));
         return b1.compareTo(b2) >= 0;
     }
 }
