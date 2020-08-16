@@ -28,6 +28,7 @@
 
 package components.xyz.migoo.reports;
 
+import com.alibaba.fastjson.JSONObject;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.markuputils.CodeLanguage;
@@ -35,6 +36,8 @@ import com.aventstack.extentreports.markuputils.Markup;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
+import components.xyz.migoo.readers.ReaderException;
+import components.xyz.migoo.readers.YamlReader;
 import core.xyz.migoo.IResult;
 import core.xyz.migoo.ISuiteResult;
 import core.xyz.migoo.ITestResult;
@@ -97,7 +100,7 @@ public class Report implements IReport {
         extent.getReport().setEndTime(result.getEndTime());
     }
 
-    private void createExtentTest(){
+    private void createExtentTest() {
         for (IResult iSuiteResult : ((ISuiteResult) result).getTestResults()) {
             ISuiteResult suiteResult = (ISuiteResult) iSuiteResult;
             ExtentTest feature = extent.createTest(iSuiteResult.getTestName(),
@@ -157,7 +160,7 @@ public class Report implements IReport {
         }
     }
 
-    private void setSystemInfo(){
+    private void setSystemInfo() {
         extent.setSystemInfo("os.name", System.getProperty("os.name"));
         extent.setSystemInfo("java.runtime.name", System.getProperty("java.runtime.name"));
         extent.setSystemInfo("java.version", System.getProperty("java.version"));
@@ -165,7 +168,7 @@ public class Report implements IReport {
         extent.setSystemInfo("migoo.version", System.getProperty("migoo.version"));
     }
 
-    private void flush(){
+    private void flush() {
         extent.flush();
     }
 
@@ -205,7 +208,7 @@ public class Report implements IReport {
 
     private File zipFile(String path) {
         File file = new File(path);
-        File zip = new File(file.getParent()+ "/" + file.getName() + ".reports.zip");
+        File zip = new File(file.getParent() + "/" + file.getName() + ".reports.zip");
         ZipUtil.pack(file, zip);
         return zip;
     }
@@ -271,5 +274,14 @@ public class Report implements IReport {
         }
         sb.append("</tbody>\n").append("</table>\n");
         return String.format(template, sb.toString());
+    }
+
+    {
+        try {
+            JSONObject config = (JSONObject) new YamlReader("classpath://props.migoo.yml").read();
+            config.forEach((k, v) -> System.setProperty(k, String.valueOf(v)));
+        } catch (ReaderException e) {
+            e.printStackTrace();
+        }
     }
 }
