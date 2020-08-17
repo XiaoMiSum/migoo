@@ -35,22 +35,22 @@ import java.util.ServiceLoader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static core.xyz.migoo.utils.TypeUtil.FUNC_PATTERN;
+
 /**
  * @author xiaomi
  * @date 2019/11/18 17:10
  */
 public class FunctionHelper {
 
-    public static final Pattern FUNC_PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
-
     private final static FunctionHelper FACTORY = new FunctionHelper();
 
     private static final Map<String, Function> SELF_DEFINED_FUNCTIONS = new HashMap<>(100);
-    private static final Map<String, InternalFunction> defaultFunctions = new HashMap<>(11);
+    private static final Map<String, InternalFunction> DEFAULT_FUNCTIONS = new HashMap<>(11);
 
     static {
         for (InternalFunction function : ServiceLoader.load(InternalFunction.class)) {
-            defaultFunctions.put(function.funcKey(), function);
+            DEFAULT_FUNCTIONS.put(function.funcKey(), function);
         }
         for (Function function : ServiceLoader.load(Function.class)) {
             SELF_DEFINED_FUNCTIONS.put(function.funcKey(), function);
@@ -78,7 +78,7 @@ public class FunctionHelper {
 
     private void initFunc(String name) throws FunctionException {
         String upper = name.toUpperCase();
-        function = defaultFunctions.get(upper) == null ? SELF_DEFINED_FUNCTIONS.get(upper) : defaultFunctions.get(upper);
+        function = DEFAULT_FUNCTIONS.get(upper) == null ? SELF_DEFINED_FUNCTIONS.get(upper) : DEFAULT_FUNCTIONS.get(upper);
         if (function == null) {
             throw new FunctionException("function not found: " + name);
         }

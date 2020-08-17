@@ -83,8 +83,8 @@ public class Migoo {
     private void report(JSONObject reportConfig, JSONObject emailConfig, IResult result) {
         String output = reportConfig != null && reportConfig.get("output") != null ?
                 reportConfig.getString("output") : "./out-put/" + DateUtil.TODAY_DATE ;
-        String listener = emailConfig != null && !StringUtil.isEmpty(emailConfig.getString("listener")) ?
-                emailConfig.getString("listener") : "components.migoo.xyz.reports.Report";
+        String listener = reportConfig != null && !StringUtil.isEmpty(reportConfig.getString("listener")) ?
+                reportConfig.getString("listener") : "components.migoo.xyz.reports.Report";
         IReport report;
         try {
             report = (IReport) Class.forName(listener).newInstance();
@@ -94,5 +94,4 @@ public class Migoo {
         report.generateReport(result, output);
         report.sendReport(emailConfig, "");
     }
-
 }

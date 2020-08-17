@@ -33,23 +33,21 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.functions.FunctionException;
 import core.xyz.migoo.functions.FunctionHelper;
+import core.xyz.migoo.utils.TypeUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static core.xyz.migoo.functions.CompoundVariable.PARAM_PATTERN;
-import static core.xyz.migoo.functions.FunctionHelper.FUNC_PATTERN;
+import static core.xyz.migoo.utils.TypeUtil.VARS_PATTERN;
+import static core.xyz.migoo.utils.TypeUtil.MULTI_VARS_PATTERN;
 
 /**
  * @author xiaomi
  */
 public class VarsHelper {
-
-    static final Pattern PARAM_PATTERN2 = Pattern.compile("\\$\\{(\\w+)}\\$\\{(\\w+)}");
 
     private VarsHelper() {
     }
@@ -62,8 +60,8 @@ public class VarsHelper {
      * @return 绑定变量后的数据
      */
     public static String bindMultiVariable(String source, JSONObject variables) {
-        boolean isConnectedVariables = PARAM_PATTERN2.matcher(source).find();
-        Matcher matcher = PARAM_PATTERN.matcher(source);
+        boolean isConnectedVariables = MULTI_VARS_PATTERN.matcher(source).find();
+        Matcher matcher = VARS_PATTERN.matcher(source);
         while (matcher.find() && isConnectedVariables) {
             String value = matcher.group();
             if (variables.get(value.substring(2, value.length() - 1)) instanceof JSON) {
@@ -181,7 +179,7 @@ public class VarsHelper {
     private static void getUsingVarKey(String key, Object value, JSONObject usingVarKey) {
         if (value instanceof String) {
             List<String> temp = new ArrayList<>();
-            Matcher matcher = PARAM_PATTERN.matcher((String) value);
+            Matcher matcher = VARS_PATTERN.matcher((String) value);
             while (matcher.find()) {
                 temp.add(matcher.group());
             }
@@ -202,7 +200,7 @@ public class VarsHelper {
         JSONArray valueArray = new JSONArray();
         for (int i = 0; i < value.size(); i++) {
             List<String> temp = new ArrayList<>();
-            Matcher matcher = PARAM_PATTERN.matcher(value.getString(i));
+            Matcher matcher = VARS_PATTERN.matcher(value.getString(i));
             while (matcher.find()) {
                 temp.add(matcher.group());
             }
@@ -263,7 +261,7 @@ public class VarsHelper {
     private static void bind(JSONObject source, String key, JSONArray value, JSONObject variables) {
         for (int i = 0; i < value.size(); i++) {
             String k = value.getString(i).substring(2, value.getString(i).length() - 1);
-            if (!StringUtils.isEmpty(variables.getString(k)) && !FUNC_PATTERN.matcher(variables.getString(k)).find()) {
+            if (!StringUtils.isEmpty(variables.getString(k)) && !TypeUtil.isFunc(variables.getString(k))) {
                 if (source.get(key) instanceof List) {
                     source.put(key, getVarValue(source.getJSONArray(key), variables));
                 } else if (source.get(key) instanceof String && !(variables.get(k) instanceof JSON)) {
@@ -288,7 +286,7 @@ public class VarsHelper {
         StringBuilder str = new StringBuilder();
         for (int i = 0; i < value.size(); i++) {
             String k = value.getString(i).substring(2, value.getString(i).length() - 1);
-            if (!(variables.get(k) instanceof JSON) && !FUNC_PATTERN.matcher(variables.getString(k)).find()) {
+            if (!(variables.get(k) instanceof JSON) && !TypeUtil.isFunc(variables.getString(k))) {
                 str.append(variables.getString(k));
             } else if (StringUtils.isEmpty(variables.getString(k))) {
                 throw new VarsException("variables value con not be null: " + k);
@@ -310,7 +308,7 @@ public class VarsHelper {
         }
         for (String key : use.keySet()) {
             String value = use.getString(key);
-            if (!StringUtils.isEmpty(value) && FUNC_PATTERN.matcher(value).find()) {
+            if (!StringUtils.isEmpty(value) && TypeUtil.isFunc(value)) {
                 String func = VarsHelper.bindMultiVariable(value, variables);
                 Object result = FunctionHelper.execute(func, variables);
                 use.put(key, result);
@@ -329,12 +327,12 @@ public class VarsHelper {
             String value = validator.getString("expected");
             if (!StringUtils.isEmpty(value)) {
                 Object result = value;
-                if (FUNC_PATTERN.matcher(value).find()) {
+                if (TypeUtil.isFunc(value)) {
                     String func = VarsHelper.bindMultiVariable(value, variables);
                     result = FunctionHelper.execute(func, variables);
-                } else if (PARAM_PATTERN2.matcher(value).find()) {
+                } else if (TypeUtil.isMultiVars(value)) {
                     result = VarsHelper.bindMultiVariable(value, variables);
-                } else if (PARAM_PATTERN.matcher(value).find()) {
+                } else if (TypeUtil.isVars(value)) {
                     result = value.replace(value, variables.getString(value.substring(2, value.length() - 1)));
                 }
                 validator.put("expected", result);

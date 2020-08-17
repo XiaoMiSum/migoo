@@ -33,43 +33,29 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
-import static core.xyz.migoo.functions.FunctionHelper.FUNC_PATTERN;
-
 /**
  * @author xiaomi
  * @date 2019/11/18 15:47
  */
 public class CompoundVariable extends HashMap<String, Object> {
-    private static final long serialVersionUID = 362498820763181265L;
 
-    public static final Pattern PARAM_PATTERN = Pattern.compile("\\$\\{(\\w+)}");
-    private static final Pattern REGEX_INTEGER = Pattern.compile("^[-\\+]?[0-9]+$");
-    private static final Pattern REGEX_FLOAT = Pattern.compile("^[-\\+]?[0-9]+\\.[0-9]+$");
-
-    public Object put(String parameter, JSONObject variables) {
+    public Object put(String parameter, JSONObject variables) throws FunctionException {
         String[] array = parameter.split("=");
-        return this.put(array[0], this.getParameterValue(array[1], variables));
+        return super.put(array[0], this.getParameterValue(array[1], variables));
     }
 
-    @Override
-    public Object put(String key, Object value) {
-        return super.put(key, value);
-    }
-
-    private Object getParameterValue(String parameter, JSONObject variables){
-        if (REGEX_INTEGER.matcher(parameter).find() || REGEX_FLOAT.matcher(parameter).find()){
-            return  new BigDecimal(parameter);
-        } else if (Boolean.TRUE.toString().equalsIgnoreCase(parameter) ||
-                Boolean.FALSE.toString().equalsIgnoreCase(parameter)){
-            return  Boolean.valueOf(parameter);
-        } else if (PARAM_PATTERN.matcher(parameter).find()){
-            if (variables == null || variables.isEmpty()){
-                throw new RuntimeException("variables is null or empty");
+    private Object getParameterValue(String parameter, JSONObject variables) throws FunctionException {
+        if (TypeUtil.isNumber(parameter)) {
+            return new BigDecimal(parameter);
+        } else if (TypeUtil.isBoolean(parameter)) {
+            return Boolean.valueOf(parameter);
+        } else if (TypeUtil.isVars(parameter)) {
+            if (variables == null || variables.isEmpty()) {
+                throw new FunctionException("variables is null or empty");
             }
-            Object object = variables.get(parameter.substring(2, parameter.length() -1));
-            if (FUNC_PATTERN.matcher(String.valueOf(object)).find()
-                    || PARAM_PATTERN.matcher(String.valueOf(object)).find()){
-                throw new RuntimeException(String.format("%s need eval!", parameter));
+            Object object = variables.get(parameter.substring(2, parameter.length() - 1));
+            if (TypeUtil.isVarsOrFunc(String.valueOf(object))) {
+                throw new FunctionException(String.format("%s need eval!", parameter));
             }
             return object;
         } else {
@@ -77,39 +63,39 @@ public class CompoundVariable extends HashMap<String, Object> {
         }
     }
 
-    public String getString(String key){
+    public String getString(String key) {
         return super.get(key) == null ? "" : super.get(key).toString();
     }
 
-    public Long getLong(String key){
+    public Long getLong(String key) {
         return super.get(key) == null ? null : Long.valueOf(getString(key));
     }
 
-    public Integer getInteger(String key){
+    public Integer getInteger(String key) {
         return super.get(key) == null ? null : Integer.valueOf(getString(key));
     }
 
-    public Double getDouble(String key){
+    public Double getDouble(String key) {
         return super.get(key) == null ? null : Double.valueOf(getString(key));
     }
 
-    public Float getFloat(String key){
+    public Float getFloat(String key) {
         return super.get(key) == null ? null : Float.valueOf(getString(key));
     }
 
-    public BigDecimal getBigDecimal(String key){
+    public BigDecimal getBigDecimal(String key) {
         return super.get(key) == null ? null : new BigDecimal(getString(key));
     }
 
-    public Boolean getBoolean(String key){
+    public Boolean getBoolean(String key) {
         return TypeUtil.booleanOf(get(key));
     }
 
-    public JSONObject getJSONObject(String key){
-        return (JSONObject)get(key);
+    public JSONObject getJSONObject(String key) {
+        return (JSONObject) get(key);
     }
 
-    public JSONArray getJSONArray(String key){
-        return (JSONArray)get(key);
+    public JSONArray getJSONArray(String key) {
+        return (JSONArray) get(key);
     }
 }

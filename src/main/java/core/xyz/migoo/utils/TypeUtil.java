@@ -25,6 +25,8 @@
 
 package core.xyz.migoo.utils;
 
+import java.util.regex.Pattern;
+
 /**
  * @author xiaomi
  * @date 2018/10/10 19:49
@@ -33,14 +35,14 @@ public class TypeUtil {
 
     private static final String TRUE = "TRUE";
     private static final String ONE = "1";
-    private static final String FALSE = "FALSE";
-    private static final String ZERO = "0";
     private static final String Y = "Y";
     private static final String T = "T";
     private static final String YES = "YES";
-    private static final String F = "F";
-    private static final String N = "N";
-    private static final String NO = "NO";
+    private static final Pattern REGEX_NUMBER = Pattern.compile("^[-+]?[0-9]+(\\.[0-9]+)?$");
+    public static final Pattern VARS_PATTERN = Pattern.compile("\\$\\{(\\w+)}");
+    public static final Pattern MULTI_VARS_PATTERN = Pattern.compile("\\$\\{(\\w+)}\\$\\{(\\w+)}");
+    public static final Pattern FUNC_PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
+
 
     public static boolean booleanOf(Object value) {
         if (value == null) {
@@ -54,13 +56,32 @@ public class TypeUtil {
             if (StringUtil.isEmpty(StringUtil.toEmpty(strVal))) {
                 return false;
             }
-            if (TRUE.equals(strVal) || ONE.equals(strVal) || Y.equals(strVal) || T.equals(strVal) || YES.equals(strVal)) {
-                return true;
-            }
-            if (FALSE.equals(strVal) || ZERO.equals(strVal) || F.equals(strVal) || N.equals(strVal) || NO.equals(strVal)) {
-                return false;
-            }
+            return TRUE.equals(strVal) || ONE.equals(strVal) || Y.equals(strVal) || T.equals(strVal) || YES.equals(strVal);
         }
         return false;
+    }
+
+    public static boolean isNumber(String str){
+        return REGEX_NUMBER.matcher(str).find();
+    }
+
+    public static boolean isBoolean(String str){
+        return Boolean.TRUE.toString().equalsIgnoreCase(str) || Boolean.FALSE.toString().equalsIgnoreCase(str);
+    }
+
+    public static boolean isVars(String str){
+        return VARS_PATTERN.matcher(str).find();
+    }
+
+    public static boolean isMultiVars(String str){
+        return MULTI_VARS_PATTERN.matcher(str).find();
+    }
+
+    public static boolean isFunc(String str){
+        return FUNC_PATTERN.matcher(str).find();
+    }
+
+    public static boolean isVarsOrFunc(String str){
+        return FUNC_PATTERN.matcher(str).find() || VARS_PATTERN.matcher(str).find();
     }
 }

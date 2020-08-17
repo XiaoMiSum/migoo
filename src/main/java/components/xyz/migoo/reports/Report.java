@@ -104,7 +104,7 @@ public class Report implements IReport {
         for (IResult iSuiteResult : ((ISuiteResult) result).getTestResults()) {
             ISuiteResult suiteResult = (ISuiteResult) iSuiteResult;
             ExtentTest feature = extent.createTest(iSuiteResult.getTestName(),
-                    String.format("用例总数：%s，成功：%s，失败：%s，错误：%s，跳过：%s", suiteResult.size(),
+                    String.format("Total Case：%s，Passed：%s，Failed：%s，Error：%s，Skipped：%s", suiteResult.size(),
                             suiteResult.getSuccessCount(), suiteResult.getFailureCount(), suiteResult.getErrorCount(),
                             suiteResult.getSkipCount()));
             feature.getModel().setStartTime(iSuiteResult.getStartTime());
@@ -192,9 +192,7 @@ public class Report implements IReport {
             File zip = zipFile(outputDirectoryName);
             try {
                 email.setFrom((String) config.get("user"));
-                for (String to : (List<String>) config.get("tolist")) {
-                    email.addTo(to);
-                }
+                email.addTo((String[]) ((List) config.get("tolist")).toArray());
                 email.setSubject("测试执行完毕通知");
                 email.setMsg(message);
                 email.attach(zip);
@@ -243,13 +241,13 @@ public class Report implements IReport {
                 .append("<td style=\"padding:6px 10px; line-height: 150%%;\">\n")
                 .append("TITLE").append("</td>\n")
                 .append("<td style=\"padding:6px 10px; line-height: 150%%;\">\n")
-                .append("COUNT").append("</td>\n")
+                .append("TOTAL").append("</td>\n")
                 .append("<td style=\"padding:6px 10px; line-height: 150%%;\">\n")
                 .append("PASSED").append("</td>\n")
                 .append("<td style=\"padding:6px 10px; line-height: 150%%;\">\n")
                 .append("FAILED").append("</td>\n")
                 .append("<td style=\"padding:6px 10px; line-height: 150%%;\">\n")
-                .append("ERRORED").append("</td>\n")
+                .append("ERROR").append("</td>\n")
                 .append("<td style=\"padding:6px 10px; line-height: 150%%;\">\n")
                 .append("SKIPPED").append("</td>\n")
                 .append("</tr>\n")
@@ -276,7 +274,7 @@ public class Report implements IReport {
         return String.format(template, sb.toString());
     }
 
-    {
+    static {
         try {
             JSONObject config = (JSONObject) new YamlReader("classpath://props.migoo.yml").read();
             config.forEach((k, v) -> System.setProperty(k, String.valueOf(v)));

@@ -162,6 +162,7 @@ public class MiGooRequest extends Request {
         BasicClientCookie clientCookie = new BasicClientCookie(cookie.getString("name"), cookie.getString("value"));
         clientCookie.setPath(cookie.getString("path"));
         clientCookie.setDomain(cookie.getString("domain"));
+        cookieStore.addCookie(clientCookie);
         return (MiGooRequest) super.cookies(cookieStore);
     }
 
