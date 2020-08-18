@@ -99,12 +99,15 @@ public class TestCase extends AbstractTest {
 
     private void buildRequest() throws FunctionException {
         this.bindRequestVariable();
-        request = MiGooRequest.create(requestConfig.getString("method"))
+        request = new MiGooRequest.Builder()
+                .method(requestConfig.getString("method"))
                 .protocol(requestConfig.getString("protocol"))
                 .host(requestConfig.getString("host"))
                 .port(requestConfig.getInteger("port"))
                 .api(requestConfig.getString("api"))
                 .headers(requestConfig.getJSONObject("headers"))
+                .cookies(requestConfig.get("cookies") == null ?
+                        requestConfig.get("cookie") : requestConfig.get("cookies"))
                 .query(testCase.getJSONObject("query"))
                 .data(testCase.getJSONObject("data"))
                 .body(testCase.get("body"))

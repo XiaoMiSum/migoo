@@ -36,7 +36,7 @@ import java.util.Date;
  * @author xiaomi
  * @date 2020/7/31 09:54
  */
-public class Result implements IResult{
+public class Result implements IResult {
 
     private String testName;
 

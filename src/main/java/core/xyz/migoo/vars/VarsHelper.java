@@ -64,10 +64,9 @@ public class VarsHelper {
         Matcher matcher = VARS_PATTERN.matcher(source);
         while (matcher.find() && isConnectedVariables) {
             String value = matcher.group();
-            if (variables.get(value.substring(2, value.length() - 1)) instanceof JSON) {
-                continue;
+            if (!(variables.get(value.substring(2, value.length() - 1)) instanceof JSON)) {
+                source = source.replace(value, variables.getString(value.substring(2, value.length() - 1)));
             }
-            source = source.replace(value, variables.getString(value.substring(2, value.length() - 1)));
         }
         return source;
     }

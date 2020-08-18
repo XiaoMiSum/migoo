@@ -43,7 +43,6 @@ public class TypeUtil {
     public static final Pattern MULTI_VARS_PATTERN = Pattern.compile("\\$\\{(\\w+)}\\$\\{(\\w+)}");
     public static final Pattern FUNC_PATTERN = Pattern.compile("^__(\\w+)\\((.*)\\)");
 
-
     public static boolean booleanOf(Object value) {
         if (value == null) {
             return false;
