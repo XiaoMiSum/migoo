@@ -115,17 +115,17 @@ public class TestCase extends AbstractTest {
     }
 
     private void bindRequestVariable() throws FunctionException {
-        VarsHelper.bindAndEval(requestConfig, super.getVars());
+        VarsHelper.convertVariables(requestConfig, super.getVars());
         if (testCase.get("data") != null) {
-            VarsHelper.bindVariable(testCase.getJSONObject("data"), super.getVars());
+            VarsHelper.convertVariables(testCase.getJSONObject("data"), super.getVars());
             super.addVars("data", testCase.get("data"));
         }
         if (testCase.get("body") != null) {
-            VarsHelper.bindVariable(testCase.getJSONObject("body"), super.getVars());
+            VarsHelper.convertVariables(testCase.getJSONObject("body"), super.getVars());
             super.addVars("body", testCase.get("body"));
         }
         if (testCase.get("query") != null) {
-            VarsHelper.bindVariable(testCase.getJSONObject("query"), super.getVars());
+            VarsHelper.convertVariables(testCase.getJSONObject("query"), super.getVars());
             super.addVars("query", testCase.get("query"));
         }
     }
@@ -150,10 +150,10 @@ public class TestCase extends AbstractTest {
         Report.log("response body: {}", response.text());
     }
 
-    public void doCheck() {
+    public void doCheck() throws FunctionException {
         for (int i = 0; i < validators.size(); i++) {
             JSONObject validator = validators.getJSONObject(i);
-            VarsHelper.evalValidate(validator, this.getVars());
+            VarsHelper.convertVariables(validator, this.getVars());
             try {
                 if (AssertionFactory.assertThat(validator, response)) {
                     validator.put("result", "passed");

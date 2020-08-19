@@ -21,7 +21,7 @@ public class ExtenderHelperTest {
         JSONObject vars = new JSONObject();
         vars.put("user", "MiGoo");
         vars.put("pwd", "abb");
-        VarsHelper.bindAndEval(source, vars);
+        VarsHelper.convertVariables(source, vars);
         Assertions.assertEquals(source, vars);
     }
 
@@ -39,7 +39,7 @@ public class ExtenderHelperTest {
         vars.put("user", "MiGoo");
         vars.put("pwd", "abb");
         vars.put("sign", "better");
-        VarsHelper.bindAndEval(source, vars);
+        VarsHelper.convertVariables(source, vars);
         Assertions.assertEquals(source.getJSONObject("data").get("sign"), vars.getString("sign") + vars.get("user"));
     }
     @Test
@@ -55,7 +55,7 @@ public class ExtenderHelperTest {
         vars.put("user", "MiGoo");
         vars.put("pwd", "abb");
         vars.put("sign", "better");
-        VarsHelper.bindAndEval(source, vars);
+        VarsHelper.convertVariables(source, vars);
         Assertions.assertEquals(source.getJSONArray("data").get(0), vars.getString("sign"));
     }
     @Test
@@ -72,8 +72,7 @@ public class ExtenderHelperTest {
         vars.put("pwd", "abb");
         vars.put("sign", "better");
         vars.put("func", "__random()");
-        VarsHelper.bindAndEval(vars, vars);
-        VarsHelper.bindAndEval(source, vars);
+        VarsHelper.convertVariables(source, vars);
         Assertions.assertEquals(source.getJSONArray("data").get(0), vars.getString("sign"));
         Assertions.assertNotEquals("${func}", source.getJSONArray("data").get(1));
     }

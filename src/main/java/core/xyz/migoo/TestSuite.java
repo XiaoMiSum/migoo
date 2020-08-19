@@ -98,7 +98,7 @@ public class TestSuite extends AbstractTest {
     @Override
     public void processVariable() throws FunctionException {
         super.processVariable();
-        VarsHelper.bindAndEval(reportConfig, super.getVars());
-        VarsHelper.bindAndEval(emailConfig, super.getVars());
+        VarsHelper.convertVariables(reportConfig, super.getVars());
+        VarsHelper.convertVariables(emailConfig, super.getVars());
     }
 }

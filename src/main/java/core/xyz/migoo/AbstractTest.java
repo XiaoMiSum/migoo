@@ -141,8 +141,7 @@ public abstract class AbstractTest implements ITest {
     }
 
     public void processVariable() throws FunctionException {
-        VarsHelper.bindAndEval(vars, vars);
-        VarsHelper.bindAndEval(requestConfig, vars);
+        VarsHelper.convertVariables(requestConfig, vars);
     }
 
     /**
@@ -162,10 +161,8 @@ public abstract class AbstractTest implements ITest {
      * @throws FunctionException e
      */
     public void setup() throws FunctionException {
-        // bind variable to setUp (this.variables -> this.setUp)
         for (int i = 0; i < setup.size(); i++) {
-            String func = VarsHelper.bindMultiVariable(setup.getString(i), vars);
-            FunctionHelper.execute(func, vars);
+            FunctionHelper.execute(setup.getString(i), vars);
         }
     }
 
@@ -184,11 +181,9 @@ public abstract class AbstractTest implements ITest {
      * invoke the teardown of the test.
      */
     void teardown() {
-        // bind variable to setUp (this.variables -> this.teardown)
         for (int i = 0; i < teardown.size(); i++) {
             try {
-                String func = VarsHelper.bindMultiVariable(teardown.getString(i), vars);
-                FunctionHelper.execute(func, vars);
+                FunctionHelper.execute(teardown.getString(i), vars);
             } catch (FunctionException e) {
                 Report.log(teardown.getString(i) + " error", e);
             }

@@ -28,20 +28,26 @@ package core.xyz.migoo.functions;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.utils.TypeUtil;
+import core.xyz.migoo.vars.VarsHelper;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.regex.Pattern;
 
 /**
  * @author xiaomi
  * @date 2019/11/18 15:47
  */
 public class CompoundVariable extends HashMap<String, Object> {
+    private static final long serialVersionUID = 362498820763181265L;
 
     public Object put(String parameter, JSONObject variables) throws FunctionException {
         String[] array = parameter.split("=");
-        return super.put(array[0], this.getParameterValue(array[1], variables));
+        return this.put(array[0], this.getParameterValue(array[1], variables));
+    }
+
+    @Override
+    public Object put(String key, Object value) {
+        return super.put(key, value);
     }
 
     private Object getParameterValue(String parameter, JSONObject variables) throws FunctionException {
@@ -49,17 +55,8 @@ public class CompoundVariable extends HashMap<String, Object> {
             return new BigDecimal(parameter);
         } else if (TypeUtil.isBoolean(parameter)) {
             return Boolean.valueOf(parameter);
-        } else if (TypeUtil.isVars(parameter)) {
-            if (variables == null || variables.isEmpty()) {
-                throw new FunctionException("variables is null or empty");
-            }
-            Object object = variables.get(parameter.substring(2, parameter.length() - 1));
-            if (TypeUtil.isVarsOrFunc(String.valueOf(object))) {
-                throw new FunctionException(String.format("%s need eval!", parameter));
-            }
-            return object;
         } else {
-            return parameter;
+            return VarsHelper.extractVariables(parameter, variables);
         }
     }
 

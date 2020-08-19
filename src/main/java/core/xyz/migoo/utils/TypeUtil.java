@@ -25,6 +25,8 @@
 
 package core.xyz.migoo.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.regex.Pattern;
 
 /**
@@ -77,7 +79,7 @@ public class TypeUtil {
     }
 
     public static boolean isFunc(String str){
-        return FUNC_PATTERN.matcher(str).find();
+        return !StringUtils.isEmpty(str) && FUNC_PATTERN.matcher(str).find();
     }
 
     public static boolean isVarsOrFunc(String str){
