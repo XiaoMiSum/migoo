@@ -1,0 +1,203 @@
+name: 验证相关测试用例
+config:
+  request:
+    api: /api/login
+dataset:
+  vars:
+    user: migoo
+    expected: 200
+    key1: '\w+\.\w+\.'
+    key2: '\w+'
+cases:
+  - title: expected 使用变量
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+      - {assertion: json, field: $.status, expected: '${expected}', rule: ==}
+  - title: expected 使用复合变量
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+      - {field: $.data.token, expected: '${key1}${key2}', rule: regex}
+  - title: expected 使用扩展函数
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {field: $.data.token, expected: '__json(a=a,b=b)', rule: ==}
+  - title: response_status 验证
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+  - title: response_body 验证
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: body, expected: 200, rule: ==}
+  - title: response_header 验证1
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: header.Server, expected: 'nginx/1.14.0', rule: ==}
+  - title: response_header 验证2
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: headers.Server, expected: 'nginx/1.14.0', rule: ==}
+  - title: json验证 验证1
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {field: $.status, expected: 200, rule: ==}
+  - title: json验证 验证2
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: json, field: $.status, expected: 200, rule: ==}
+  - title: 验证成功
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: json, field: $.status, expected: 200, rule: ==}
+  - title: 验证失败
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: json, field: $.status, expected: 2009, rule: ==}
+  - title: '验证规则：=='
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: json, field: $.status, expected: 200, rule: ==}
+  - title: '验证规则：>='
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: json, field: $.status, expected: 200, rule: '>='}
+  - title: '验证规则：<='
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: json, field: $.status, expected: 200, rule: '<='}
+  - title: '验证规则：<'
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: json, field: $.status, expected: 200, rule: '<'}
+  - title: '验证规则：>'
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: json, field: $.status, expected: 200, rule: '>'}
+  - title: '验证规则：== 字符串区分大小写'
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: headers.Server, expected: 'Nginx/1.14.0', rule: '=='}
+  - title: '验证规则： 字符串不区分大小写'
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: headers.Server, expected: 'Nginx/1.14.0', rule: equalsIgnoreCase}
+  - title: '验证规则： contains 字符串'
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: headers.Server, expected: 'nginx', rule: contains}
+  - title: '验证规则： contains json key'
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: body, expected: 'status', rule: contains}
+  - title: '验证规则： contains json value'
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: body, expected: '200', rule: contains}
+  - title: '验证规则： notContains json key'
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: body, expected: 'status', rule: notContains}
+  - title: '验证规则： notContains json value'
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: body, expected: '200', rule: notContains}
+  - title: '验证规则： != json value'
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: body, expected: '200', rule: "!="}
+  - title: '验证规则： isEmpty json value'
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: json, field: $.status, expected: '200', rule: "isEmpty"}
+  - title: '验证规则： isEmpty json value'
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: json, field: $.status, expected: '200', rule: "isNotEmpty"}
+  - title: '验证规则： regex'
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+      - {field: $.data.token, expected: '${key1}${key2}', rule: regex}

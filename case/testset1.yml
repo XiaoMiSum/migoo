@@ -1,0 +1,72 @@
+name: 变量相关测试用例
+config:
+  request:
+    api: /api/login
+dataset:
+  vars:
+    user: migoo
+    password2: migoo
+    date: __timestamp()
+cases:
+  - title: 使用suite中定义的变量
+    body:
+      userName: migoo
+      password: ${password}
+      sign: 9b2d97edd26a81d9ea598f05bf13b5c3
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+      - {assertion: json, field: $.status, expected: 200, rule: ==}
+  - title: 使用set中定义的变量
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: 9b2d97edd26a81d9ea598f05bf13b5c3
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+      - {assertion: json, field: $.status, expected: 200, rule: ==}
+  - title: 使用case中定义的变量
+    dataset:
+      vars:
+        sign1: 9b2d97edd26a81d9ea598f05bf13b5c3
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign1}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+      - {assertion: json, field: $.status, expected: 200, rule: ==}
+  - title: set覆盖suite中定义的变量
+    body:
+      userName: ${user}
+      password: ${password2}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+      - {assertion: json, field: $.status, expected: 200, rule: ==}
+  - title: suite中的变量，且由扩展函数生成
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+      - {assertion: json, field: $.status, expected: 200, rule: ==}
+  - title: set中的变量，且由扩展函数生成
+    body:
+      userName: ${user}
+      password: ${date}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+      - {assertion: json, field: $.status, expected: 200, rule: ==}
+  - title: case中的变量，且由扩展函数生成
+    dataset:
+      vars:
+        uuid: __uuid()
+    body:
+      userName: ${user}
+      password: ${uuid}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+      - {assertion: json, field: $.status, expected: 200, rule: ==}

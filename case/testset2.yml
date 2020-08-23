@@ -1,0 +1,91 @@
+name: REQUEST相关测试用例
+config:
+  request:
+    headers:
+      X-Token: token
+    api: /api/login
+dataset:
+  vars:
+    user: migoo
+cases:
+  - title: Headers 为所有总数
+    config:
+      request:
+        headers:
+          X-Title: title
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+  - title: 覆盖上层的同名Header
+    config:
+      request:
+        headers:
+          X-Token: 覆盖上层的同名Header
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+  - title: API路径以最下层为准
+    config:
+      request:
+        api: /api/test
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+  - title: case 中可以不配置request相关信息，以set中配置的为准
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+  - title: query 与 body 可以并存
+    query:
+      test1: 1
+      test2: 2
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+  - title: query 与 data 可以并存
+    query:
+      test1: 1
+      test2: 2
+    data:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+  - title: body 与 data 互斥，以先配置的为准（body）
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    data:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+  - title: body 与 data 互斥，以先配置的为准(data)
+    data:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}

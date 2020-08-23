@@ -1,0 +1,10 @@
+name: 数据文件导入测试用例
+config: # 配置信息
+  file: './case/config.yml'
+dataset: # 可空，正对当前 suite 生效
+  file: './case/dataset.yml'
+files:
+  - './case/testset1.yml'
+  - './case/testset2.yml'
+  - './case/testset3.yml'
+  - './case/testset4.yml'

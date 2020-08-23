@@ -5,9 +5,9 @@
     <groupId>xyz.migoo</groupId>
     <artifactId>migoo</artifactId>
 
-    <version>2.0.5</version>
+    <version>3.0.0</version>
     <name>migoo</name>
-    <description>a tool for rest-api test</description>
+    <description>a test tool for rest-api</description>
     <url>https://xiaomisum.github.io/MiGoo/</url>
 
     <parent>
@@ -40,20 +40,18 @@
 
     <properties>
         <jdk.version>1.8</jdk.version>
-        <poi.version>3.17</poi.version>
-        <yaml.version>1.23</yaml.version>
+        <poi.version>4.1.2</poi.version>
+        <yaml.version>1.26</yaml.version>
         <email.version>1.5</email.version>
-        <dbutil.version>1.7</dbutil.version>
         <mysql.version>8.0.16</mysql.version>
-        <slf4j.version>1.7.25</slf4j.version>
-        <compile.version>3.5.1</compile.version>
-        <ant-zip.version>1.10.5</ant-zip.version>
-        <fastjson.version>1.2.54</fastjson.version>
+        <slf4j.version>1.7.30</slf4j.version>
+        <zt-zip.version>1.14</zt-zip.version>
+        <reports.version>5.0.2</reports.version>
+        <compile.version>3.6.1</compile.version>
+        <fastjson.version>1.2.73</fastjson.version>
         <simplehttp.version>1.0.5</simplehttp.version>
-        <reflections.version>0.9.10</reflections.version>
-        <commons-lang3.version>3.9</commons-lang3.version>
-        <commons-codec.version>1.11</commons-codec.version>
-        <thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
+        <commons-lang3.version>3.11</commons-lang3.version>
+        <commons-codec.version>1.14</commons-codec.version>
     </properties>
 
     <dependencies>
@@ -107,16 +105,12 @@
             <artifactId>commons-email</artifactId>
             <version>${email.version}</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.zeroturnaround/zt-zip -->
         <dependency>
-            <groupId>commons-dbutils</groupId>
-            <artifactId>commons-dbutils</artifactId>
-            <version>${dbutil.version}</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.ant/ant -->
-        <dependency>
-            <groupId>org.apache.ant</groupId>
-            <artifactId>ant</artifactId>
-            <version>${ant-zip.version}</version>
+            <groupId>org.zeroturnaround</groupId>
+            <artifactId>zt-zip</artifactId>
+            <version>${zt-zip.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/xyz.migoo/simplehttp -->
@@ -126,13 +120,6 @@
             <version>${simplehttp.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.thymeleaf/thymeleaf -->
-        <dependency>
-            <groupId>org.thymeleaf</groupId>
-            <artifactId>thymeleaf</artifactId>
-            <version>${thymeleaf.version}</version>
-        </dependency>
-
         <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <dependency>
             <groupId>mysql</groupId>
@@ -140,11 +127,11 @@
             <version>${mysql.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.reflections/reflections -->
+        <!-- https://mvnrepository.com/artifact/com.aventstack/extentreports -->
         <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>${reflections.version}</version>
+            <groupId>com.aventstack</groupId>
+            <artifactId>extentreports</artifactId>
+            <version>${reports.version}</version>
         </dependency>
 
         <dependency>
@@ -153,7 +140,6 @@
             <version>5.6.0-M1</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <distributionManagement>

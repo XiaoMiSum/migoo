@@ -1,0 +1,73 @@
+name: 扩展函数相关测试用例
+config:
+  request:
+    api: /api/login
+dataset:
+  setup:
+    - '__method(str=set中定义的setup)'
+  teardown:
+    - '__method(str=set中定义的teardown)'
+  vars:
+    user: migoo
+cases:
+  - title: 执行suite、set中定义的setup、teardown
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+      - {assertion: json, field: $.status, expected: 200, rule: ==}
+  - title: 执行suite、set、case中定义的setup、teardown
+    dataset:
+      setup:
+        - '__method(str=case中定义的setup)'
+      teardown:
+        - '__method(str=case中定义的teardown)'
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+      - {assertion: json, field: $.status, expected: 200, rule: ==}
+  - title: 多个setup、teardown执行
+    dataset:
+      setup:
+        - '__method(str=多个setup、teardown执行1)'
+        - '__method(str=多个setup、teardown执行2)'
+      teardown:
+        - '__method(str=多个setup、teardown执行3)'
+        - '__method(str=多个setup、teardown执行4)'
+      vars:
+        password: __timestamp()
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+      - {assertion: json, field: $.status, expected: 200, rule: ==}
+  - title: 扩展函数生成变量值
+    dataset:
+      vars:
+        password: __timestamp()
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+      - {assertion: json, field: $.status, expected: 200, rule: ==}
+  - title: 有参数的扩展函数
+    dataset:
+      vars:
+        params: {key: 123456qq}
+        password: '__value(object=${params},key=key)'
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+      - {assertion: json, field: $.status, expected: 200, rule: ==}

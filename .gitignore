@@ -2,5 +2,6 @@
 /.idea/
 *.iml
 /reports/
+/out-put/
 /target
 /doc
