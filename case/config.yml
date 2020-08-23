@@ -5,9 +5,9 @@ request:
   method: post # 可缺省，默认 GET
   headers:
     X-Header: migoo
-report: # 可缺省，配置测试报告
-  listener: # 可缺省，测试报告实现类
-  output: # 可缺省，测试报告保存地址
+#report: # 可缺省，配置测试报告
+#  listener: # 可缺省，测试报告实现类
+#  output: # 可缺省，测试报告保存地址
 #email: # 邮件相关信息，测试完毕后邮件发送测试报告 可缺省
 #  host: # 邮件发送服务器 请使用SMTP服务 如： smtp.163.com
 #  port: # 邮件发送服务器端口 如：25
