@@ -43,8 +43,8 @@ import static core.xyz.migoo.utils.TypeUtil.VARS_PATTERN;
 
 
 /**
- * @author yacheng.xiao
- * @date 2020/8/19 10:35
+ * @author xiaomi
+ * @date 2020/8/19 20:35
  **/
 public class VarsHelper {
 
@@ -52,8 +52,8 @@ public class VarsHelper {
      * bind variable to data mapping
      * may be variable that might not have been initialized, the first convert variables
      *
-     * @param dataMapping        use of variables in data mapping
-     * @param variablesMapping   variables mapping
+     * @param dataMapping      use of variables in data mapping
+     * @param variablesMapping variables mapping
      */
     public static void convertVariables(JSONObject dataMapping, JSONObject variablesMapping) throws FunctionException {
         if (dataMapping != null && variablesMapping != null) {
@@ -78,20 +78,22 @@ public class VarsHelper {
      * convert variables
      * may be variable that might not have been initialized
      *
-     * @param variables   variables mapping
+     * @param variables variables mapping
      */
     public static void convertVariables(JSONObject variables) throws FunctionException {
-        Set<Map.Entry<String, Object>> entries = variables.entrySet();
-        for (Map.Entry<String, Object> entry : entries) {
-            Object v = entry.getValue();
-            if (v instanceof String) {
-                variables.put(entry.getKey(), extractVariables((String) v, variables));
-            } else if (v instanceof JSONObject) {
-                convertVariables((JSONObject) v);
-                variables.put(entry.getKey(), v);
-            } else if (v instanceof JSONArray) {
-                convertVariables((JSONArray) v, variables);
-                variables.put(entry.getKey(), v);
+        if (variables != null) {
+            Set<Map.Entry<String, Object>> entries = variables.entrySet();
+            for (Map.Entry<String, Object> entry : entries) {
+                Object v = entry.getValue();
+                if (v instanceof String) {
+                    variables.put(entry.getKey(), extractVariables((String) v, variables));
+                } else if (v instanceof JSONObject) {
+                    convertVariables((JSONObject) v);
+                    variables.put(entry.getKey(), v);
+                } else if (v instanceof JSONArray) {
+                    convertVariables((JSONArray) v, variables);
+                    variables.put(entry.getKey(), v);
+                }
             }
         }
     }
@@ -105,10 +107,10 @@ public class VarsHelper {
     }
 
     public static Object extractVariables(String value, JSONObject variables) throws FunctionException {
-        if (TypeUtil.isMultiVars(value)) {
-            return extractVariable4MultiVars(value, variables);
-        } else if (TypeUtil.isFunc(value)) {
+        if (TypeUtil.isFunc(value)) {
             return FunctionHelper.execute(value, variables);
+        } else if (TypeUtil.isMultiVars(value)) {
+            return extractVariable4MultiVars(value, variables);
         } else if (TypeUtil.isVars(value)) {
             return extractVariable(value.substring(2, value.length() - 1), variables);
         }

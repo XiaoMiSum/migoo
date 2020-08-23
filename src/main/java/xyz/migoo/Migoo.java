@@ -69,10 +69,10 @@ public class Migoo {
         if (dataset != null && dataset.get("file") != null) {
             fileJson.put("dataset", new YamlReader(dataset.getString("file")).read());
         }
-        JSONArray sets = files != null ? new JSONArray() : fileJson.getJSONArray("sets");
+        JSONArray sets = fileJson.get("sets") != null ? fileJson.getJSONArray("sets") : new JSONArray();
         if (files != null) {
             for (Object filePath : files) {
-                sets.add(new YamlReader(filePath.toString()).read());
+                sets.add(new YamlReader((String) filePath).read());
             }
             fileJson.remove("files");
         }

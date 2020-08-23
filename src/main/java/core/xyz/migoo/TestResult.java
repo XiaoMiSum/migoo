@@ -49,7 +49,7 @@ public class TestResult extends Result implements ITestResult {
         setResponse(t.response());
     }
 
-    private List<Validator> checkers;
+    private List<Validator> validators;
 
     private Request request;
 
@@ -57,12 +57,12 @@ public class TestResult extends Result implements ITestResult {
 
     @Override
     public List<Validator> getValidators() {
-        return this.checkers;
+        return this.validators;
     }
 
     @Override
-    public void setValidators(List<Validator> checkers) {
-        this.checkers = checkers;
+    public void setValidators(List<Validator> validators) {
+        this.validators = validators;
     }
 
     @Override

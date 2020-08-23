@@ -25,9 +25,9 @@
 #  */
 #
 #
+
 components.xyz.migoo.functions.Digest
 components.xyz.migoo.functions.GoogleAuthCode
-components.xyz.migoo.functions.JdbcConn
 components.xyz.migoo.functions.Json
 components.xyz.migoo.functions.Random
 components.xyz.migoo.functions.RandomString

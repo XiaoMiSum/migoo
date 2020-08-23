@@ -1,4 +1,4 @@
-package xyz.migoo.test.extender;
+package xyz.migoo.test.vars;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
  * @author xiaomi
  * @date 2019/9/1 18:51
  */
-public class ExtenderHelperTest {
+public class VarsHelperTest {
 
     @Test
     public void testBind1() throws FunctionException {
@@ -29,7 +29,7 @@ public class ExtenderHelperTest {
     public void testBind2() throws FunctionException {
         JSONObject source = new JSONObject();
         source.put("user", "${sign}${user}");
-        source.put("pwd", "__RandomString(length=10,string=${sign}${user})");
+        source.put("pwd", "__RandomString(length=10,string=${sign}hahaha${user})");
         JSONObject data = new JSONObject();
         data.put("sign", "${sign}${user}");
         data.put("test", "123");
