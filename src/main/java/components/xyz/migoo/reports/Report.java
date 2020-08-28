@@ -108,13 +108,10 @@ public class Report implements IReport {
                             suiteResult.getSuccessCount(), suiteResult.getFailureCount(), suiteResult.getErrorCount(),
                             suiteResult.getSkipCount()));
             feature.getModel().setStartTime(iSuiteResult.getStartTime());
-            feature.getModel().setEndTime(iSuiteResult.getEndTime());
             for (IResult testResult : suiteResult.getTestResults()) {
                 ITestResult iTestResult = (ITestResult) testResult;
-                String title = "" + testResult.getTestName() + String.format("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
-                                "Started:&nbsp;&nbsp;%s&nbsp;&nbsp;-&nbsp;&nbsp;Ended:&nbsp;&nbsp;%s",
-                        DateUtil.format(testResult.getStartTime()), DateUtil.format(testResult.getEndTime()));
-                ExtentTest node = feature.createNode(title);
+                ExtentTest node = feature.createNode(testResult.getTestName());
+                node.getModel().setStartTime(testResult.getStartTime());
                 if (iTestResult.getRequest() != null) {
                     node.info(iTestResult.getRequest().uriNotContainsParam());
                     StringBuilder sb = new StringBuilder();
@@ -156,7 +153,9 @@ public class Report implements IReport {
                 } else {
                     node.fail(testResult.getThrowable());
                 }
+                node.getModel().setEndTime(testResult.getEndTime());
             }
+            feature.getModel().setEndTime(iSuiteResult.getEndTime());
         }
     }
 
