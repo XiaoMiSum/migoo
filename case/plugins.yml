@@ -1,0 +1,10 @@
+mybatis: # 使用类名作为 key
+  package: components.xyz.migoo.plugins.mybatis # 内置插件时，可以省略
+  default: env1 # 默认数据源
+  envs: # 环境配置，支持多数据源
+    env1:
+      url: url
+      username: username
+      password: password
+    env2:
+      {url: url2, username: username2, password: password2}

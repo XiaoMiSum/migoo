@@ -26,50 +26,40 @@
  *
  */
 
-
-package components.xyz.migoo.readers;
+package core.xyz.migoo.plugin;
 
 import com.alibaba.fastjson.JSONObject;
 import components.xyz.migoo.reports.Report;
+import core.xyz.migoo.utils.StringUtil;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author xiaomi
+ * @date 2020/8/30 12:53
  */
-public class PropertiesReader extends AbstractReader implements Reader {
+public class PluginFactory {
 
+    private static final Map<String, IPlugin> PLUGINS = new HashMap<>(16);
 
-    private JSONObject json;
-
-    public PropertiesReader(String path) throws ReaderException {
-        super.stream(path);
-    }
-
-    public PropertiesReader(File file) throws ReaderException {
-        super.stream(file);
-    }
-
-    @Override
-    public JSONObject read() throws ReaderException {
-        Properties props = new Properties();
-        try {
-            props.load(inputStream);
-        } catch (IOException e) {
-            Report.log(e.getMessage(), e);
-            throw new ReaderException("file read exception: " + e.getMessage());
+    public static void create(JSONObject plugins) {
+        for (Map.Entry<String, Object> entry : plugins.entrySet()) {
+            try {
+                JSONObject value = (JSONObject) entry.getValue();
+                String clazz = value.get("package") != null ? value.get("package") + "." + StringUtil.initialToUpperCase(entry.getKey())
+                        : String.format("components.xyz.migoo.plugins.%s.%s",
+                        entry.getKey().toLowerCase(), StringUtil.initialToUpperCase(entry.getKey()));
+                IPlugin plugin = (IPlugin) Class.forName(clazz).newInstance();
+                plugin.init(value);
+                PLUGINS.put(plugin.getClass().getSimpleName().toUpperCase(), plugin);
+            } catch (Exception e) {
+                Report.log("plugin init error: {}, {}", entry.getKey(), e.getMessage());
+            }
         }
-        json = (JSONObject)JSONObject.toJSON(props);
-        return json;
     }
 
-    @Override
-    public String get(String key) throws ReaderException {
-        if (json == null){
-            read();
-        }
-        return json.getString(key);
+    public static IPlugin get(String pluginName){
+        return PLUGINS.get(pluginName.toUpperCase());
     }
 }

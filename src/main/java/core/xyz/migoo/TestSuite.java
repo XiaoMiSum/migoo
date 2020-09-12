@@ -32,7 +32,10 @@ package core.xyz.migoo;
 import com.alibaba.fastjson.JSONObject;
 import components.xyz.migoo.reports.Report;
 import core.xyz.migoo.functions.FunctionException;
+import core.xyz.migoo.plugin.PluginFactory;
 import core.xyz.migoo.vars.VarsHelper;
+
+import java.util.Date;
 
 /**
  * @author xiaomi
@@ -44,10 +47,11 @@ public class TestSuite extends AbstractTest {
 
     private JSONObject reportConfig;
     private JSONObject emailConfig;
+    private JSONObject plugins;
 
     public TestSuite(JSONObject suite) {
         super(suite.getString("name"));
-        this.initTest(suite.getJSONObject("config"), suite.getJSONObject("dataset"));
+        this.initTest(suite.getJSONObject("config"), suite.getJSONObject("dataset"), suite.getJSONObject("plugins"));
         super.addVars("name", this.getTestName());
         super.addToGlobals();
         suite.getJSONArray("sets").forEach(set ->
@@ -63,10 +67,11 @@ public class TestSuite extends AbstractTest {
         return emailConfig;
     }
 
-    public void initTest(JSONObject config, JSONObject dataset) {
+    public void initTest(JSONObject config, JSONObject dataset, JSONObject plugins) {
         super.initTest(config, dataset);
         this.reportConfig = config.get("report") == null ? config.getJSONObject("reports") : config.getJSONObject("report");
         this.emailConfig = config.get("email") == null ? config.getJSONObject("mail") : config.getJSONObject("email");
+        this.plugins = plugins;
     }
 
     @Override
@@ -74,22 +79,19 @@ public class TestSuite extends AbstractTest {
         IResult result = new SuiteResult();
         try {
             Report.log("{} begin: {}", TYPE, this.getTestName());
-            this.start();
+            this.setup();
             if (!this.isSkipped) {
-                this.processVariable();
-                this.setup();
                 this.getRunTests().forEach(test -> {
                     test.addVars(getVars());
                     ((ISuiteResult) result).addTestResult(test.run());
                 });
             }
         } catch (Throwable t) {
+            this.throwable(t);
             Report.log(TYPE + " run error. ", t);
-            this.setThrowable(t);
         } finally {
-            this.end();
             this.teardown();
-            result.init(this);
+            this.setResult(result);
             Report.log("{} end: {}", TYPE, this.getTestName());
         }
         return result;
@@ -100,5 +102,16 @@ public class TestSuite extends AbstractTest {
         super.processVariable();
         VarsHelper.convertVariables(reportConfig, super.getVars());
         VarsHelper.convertVariables(emailConfig, super.getVars());
+        VarsHelper.convertVariables(plugins, super.getVars());
+    }
+
+    @Override
+    public void setup() throws FunctionException {
+        this.startTime = new Date();
+        if (!this.isSkipped) {
+            this.processVariable();
+            super.setup();
+            PluginFactory.create(plugins);
+        }
     }
 }

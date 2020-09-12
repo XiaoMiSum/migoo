@@ -30,6 +30,9 @@ package core.xyz.migoo;
 
 import com.alibaba.fastjson.JSONObject;
 import components.xyz.migoo.reports.Report;
+import core.xyz.migoo.functions.FunctionException;
+
+import java.util.Date;
 
 /**
  * @author xiaomi
@@ -57,23 +60,20 @@ public class TestSet extends AbstractTest {
         IResult result = new SuiteResult();
         try {
             Report.log("{} begin: {}", TYPE, this.getTestName());
-            this.start();
+            this.setup();
             if (!this.isSkipped) {
-                this.processVariable();
-                this.setup();
                 for (AbstractTest test : this.getRunTests()) {
                     test.addVars(getVars());
                     this.runTest(test, (ISuiteResult) result);
                 }
-                this.teardown();
             }
         } catch (Throwable t) {
+            this.throwable(t);
+            this.status(ERROR);
             Report.log(TYPE + " run error. ", t);
-            this.setThrowable(t);
-            this.setStatus(ERROR);
         } finally {
-            this.end();
-            result.init(this);
+            this.teardown();
+            this.setResult(result);
             Report.log("{} end: {}", TYPE, this.getTestName());
         }
         return result;
@@ -89,6 +89,15 @@ public class TestSet extends AbstractTest {
             result.addError();
         } else if (test.getStatus() == SKIPPED) {
             result.addSkip();
+        }
+    }
+
+    @Override
+    public void setup() throws FunctionException {
+        this.startTime = new Date();
+        if (!this.isSkipped) {
+            this.processVariable();
+            super.setup();
         }
     }
 }

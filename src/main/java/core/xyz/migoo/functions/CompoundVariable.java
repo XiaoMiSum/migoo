@@ -60,28 +60,32 @@ public class CompoundVariable extends HashMap<String, Object> {
         }
     }
 
+    public boolean isNullKey(String key) {
+        return super.get(key) == null;
+    }
+
     public String getString(String key) {
-        return super.get(key) == null ? "" : super.get(key).toString();
+        return isNullKey(key) ? "" : super.get(key).toString();
     }
 
     public Long getLong(String key) {
-        return super.get(key) == null ? null : Long.valueOf(getString(key));
+        return isNullKey(key) ? null : Long.valueOf(getString(key));
     }
 
     public Integer getInteger(String key) {
-        return super.get(key) == null ? null : Integer.valueOf(getString(key));
+        return isNullKey(key) ? null : Integer.valueOf(getString(key));
     }
 
     public Double getDouble(String key) {
-        return super.get(key) == null ? null : Double.valueOf(getString(key));
+        return isNullKey(key) ? null : Double.valueOf(getString(key));
     }
 
     public Float getFloat(String key) {
-        return super.get(key) == null ? null : Float.valueOf(getString(key));
+        return isNullKey(key) ? null : Float.valueOf(getString(key));
     }
 
     public BigDecimal getBigDecimal(String key) {
-        return super.get(key) == null ? null : new BigDecimal(getString(key));
+        return isNullKey(key) ? null : new BigDecimal(getString(key));
     }
 
     public Boolean getBoolean(String key) {

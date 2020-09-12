@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static core.xyz.migoo.utils.TypeUtil.FUNC_PATTERN;
 

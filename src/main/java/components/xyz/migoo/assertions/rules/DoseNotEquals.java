@@ -41,8 +41,10 @@ import java.util.Map;
 @Alias(aliasList = {"!==", "not", "<>", "!="})
 public class DoseNotEquals extends BaseRule implements IRule {
 
+    private final Equals equals = new Equals();
+
     @Override
     public boolean assertTrue(Map<String, Object> data) {
-        return ! new Equals().assertTrue(data);
+        return !equals.assertTrue(data);
     }
 }

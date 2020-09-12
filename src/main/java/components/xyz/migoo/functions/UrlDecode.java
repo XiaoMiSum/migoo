@@ -48,7 +48,9 @@ public class UrlDecode implements InternalFunction {
             throw new FunctionException("parameters con not be null");
         }
         try {
-            return URLDecoder.decode(parameters.getString("string"), "utf-8");
+            String content = parameters.isNullKey("content") ?
+                    parameters.getString("string") : parameters.getString("content");
+            return URLDecoder.decode(content, "utf-8");
         } catch (UnsupportedEncodingException e) {
             throw new FunctionException("url decode exception", e);
         }

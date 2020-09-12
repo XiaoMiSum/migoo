@@ -45,14 +45,13 @@ public class JSONReader extends AbstractReader implements Reader {
 
     private JSON json;
     private String path;
-    private File file;
 
     public JSONReader(String path) throws ReaderException {
-        super.stream(ReaderFactory.JSON_SUFFIX, path);
+        super.stream(path);
     }
 
     public JSONReader(File file) throws ReaderException {
-        super.stream(ReaderFactory.JSON_SUFFIX, file);
+        super.stream(file);
     }
 
     @Override

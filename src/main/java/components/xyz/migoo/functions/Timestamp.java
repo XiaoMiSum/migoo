@@ -45,7 +45,7 @@ public class Timestamp implements InternalFunction {
 
     @Override
     public String execute(CompoundVariable parameters) throws FunctionException {
-        String pattern = parameters.getString("format") == null ?
+        String pattern = parameters.isNullKey("format") ?
                 parameters.getString("pattern") : parameters.getString("format");
         if (!StringUtils.isEmpty(pattern)) {
             SimpleDateFormat s = new SimpleDateFormat(pattern);

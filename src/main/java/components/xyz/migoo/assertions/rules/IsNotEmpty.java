@@ -41,8 +41,10 @@ import java.util.Map;
 @Alias(aliasList = {"isNotEmpty", "isNotNull", "isNotBlank", "notEmpty", "notNull", "notBlank"})
 public class IsNotEmpty extends BaseRule implements IRule {
 
+    private final IsEmpty isEmpty = new IsEmpty();
+
     @Override
     public boolean assertTrue(Map<String, Object> data) {
-        return !new IsEmpty().assertTrue(data);
+        return !isEmpty.assertTrue(data);
     }
 }

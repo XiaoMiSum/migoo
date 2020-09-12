@@ -183,6 +183,18 @@ public class MiGooRequest extends Request {
             return this;
         }
 
+        private void setCookie(JSONObject cookie, CookieStore cookieStore) {
+            BasicClientCookie clientCookie = new BasicClientCookie(cookie.getString("name"), cookie.getString("value"));
+            clientCookie.setPath(cookie.getString("path"));
+            clientCookie.setDomain(cookie.getString("domain"));
+            cookieStore.addCookie(clientCookie);
+        }
+
+        private void setCookie(JSONArray cookies, CookieStore cookieStore) {
+            for (int i = 0; i < cookies.size(); i++) {
+                setCookie(cookies.getJSONObject(i), cookieStore);
+            }
+        }
 
         public MiGooRequest build() {
             String url = String.format("%s://%s%s%s", protocol, host, port != null ? ":" + port : "", api);
@@ -221,19 +233,6 @@ public class MiGooRequest extends Request {
                 request.cookies(cookieStore);
             }
             return request;
-        }
-
-        private void setCookie(JSONObject cookie, CookieStore cookieStore) {
-            BasicClientCookie clientCookie = new BasicClientCookie(cookie.getString("name"), cookie.getString("value"));
-            clientCookie.setPath(cookie.getString("path"));
-            clientCookie.setDomain(cookie.getString("domain"));
-            cookieStore.addCookie(clientCookie);
-        }
-
-        private void setCookie(JSONArray cookies, CookieStore cookieStore) {
-            for (int i = 0; i < cookies.size(); i++) {
-                setCookie(cookies.getJSONObject(i), cookieStore);
-            }
         }
     }
 }

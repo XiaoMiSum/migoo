@@ -57,9 +57,9 @@ public abstract class AbstractTest implements ITest {
 
     protected boolean isSkipped;
 
-    private Date startTime;
+    protected Date startTime;
 
-    private Date endTime;
+    protected Date endTime;
 
     private int status = CREATED;
 
@@ -160,6 +160,7 @@ public abstract class AbstractTest implements ITest {
      *
      * @throws FunctionException e
      */
+    @Override
     public void setup() throws FunctionException {
         for (int i = 0; i < setup.size(); i++) {
             FunctionHelper.execute(setup.getString(i), vars);
@@ -180,7 +181,9 @@ public abstract class AbstractTest implements ITest {
     /**
      * invoke the teardown of the test.
      */
-    void teardown() {
+    @Override
+    public void teardown() {
+        this.endTime = new Date();
         for (int i = 0; i < teardown.size(); i++) {
             try {
                 FunctionHelper.execute(teardown.getString(i), vars);
@@ -199,47 +202,25 @@ public abstract class AbstractTest implements ITest {
     }
 
     @Override
-    public int countTestCases() {
-        return rTests.size();
-    }
-
-    @Override
-    public void start() {
-        this.startTime = new Date();
-    }
-
-    @Override
-    public Date getStartTime() {
-        return this.startTime;
-    }
-
-    @Override
-    public void end() {
-        this.endTime = new Date();
-    }
-
-    @Override
-    public Date getEndTime() {
-        return this.endTime;
-    }
-
-    @Override
     public int getStatus() {
         return isSkipped ? SKIPPED : this.status;
     }
 
     @Override
-    public void setStatus(int status) {
+    public void status(int status) {
         this.status = status;
     }
 
     @Override
-    public Throwable getThrowable() {
-        return this.throwable;
+    public void throwable(Throwable throwable) {
+        this.throwable = throwable;
     }
 
-    @Override
-    public void setThrowable(Throwable throwable) {
-        this.throwable = throwable;
+    protected void setResult(IResult result) {
+        result.setStartTime(startTime);
+        result.setEndTime(endTime);
+        result.setStatus(isSkipped ? SKIPPED : this.status);
+        result.setTestName(tName);
+        result.setThrowable(throwable);
     }
 }
