@@ -47,7 +47,7 @@ public class Mybatis implements IPlugin {
     private InputStream resource;
 
     @Override
-    public void init(JSONObject config) {
+    public void init(JSONObject config) throws Exception {
         if (resource == null) {
             JSONObject envs = config.getJSONObject("envs");
             StringBuilder envStr = new StringBuilder();

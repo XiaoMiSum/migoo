@@ -36,5 +36,5 @@ import com.alibaba.fastjson.JSONObject;
  */
 public interface IPlugin {
 
-    void init(JSONObject config);
+    void init(JSONObject config) throws Exception;
 }
