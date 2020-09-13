@@ -31,6 +31,7 @@ package components.xyz.migoo.reports;
 import com.alibaba.fastjson.JSONObject;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.CodeLanguage;
 import com.aventstack.extentreports.markuputils.Markup;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
@@ -116,8 +117,8 @@ public class Report implements IReport {
                 node.getModel().setStartTime(testResult.getStartTime());
                 if (iTestResult.getRequest() != null) {
                     Request request = iTestResult.getRequest();
-                    StringBuilder sb = new StringBuilder("<span class=\"badge badge-primary\">REQUEST INFO</span>");
-                    sb.append("<br/>").append("URL：").append(request.uriNotContainsParam());
+                    StringBuilder sb = new StringBuilder("<span class=\"badge badge-primary\">REQUEST INFO</span>")
+                            .append("<br/>").append("URL：").append(request.uriNotContainsParam());
                     if (request.headers() != null && request.headers().length > 0) {
                         sb.append("<br/>").append("Headers：").append(Arrays.toString(request.headers()));
                     }
@@ -142,15 +143,17 @@ public class Report implements IReport {
                     }
                     node.info(sb.toString());
                 }
-                if (!testResult.isError()) {
+                if (testResult.isSkipped()) {
+                    node.getModel().setStatus(Status.SKIP);
+                } else if (testResult.isError()){
+                    node.fail(testResult.getThrowable());
+                } else {
                     for (Validator validator : iTestResult.getValidators()) {
                         Markup m = MarkupHelper.createCodeBlock(validator.toString(), CodeLanguage.JSON);
                         node = validator.isSuccess() ? node.pass(m) : validator.isSkipped() ? node.skip(m)
                                 : validator.getThrowable() != null ? node.fail(m).fail(validator.getThrowable())
                                 : node.fail(m);
                     }
-                } else {
-                    node.fail(testResult.getThrowable());
                 }
                 node.getModel().setEndTime(testResult.getEndTime());
             }
