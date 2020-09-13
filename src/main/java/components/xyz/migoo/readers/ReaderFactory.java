@@ -40,16 +40,18 @@ import java.util.List;
 public class ReaderFactory {
 
     final static String JSON_SUFFIX = ".json";
-    final static String YAML_SUFFIX = ".yml";
+    final static String YML_SUFFIX = ".yml";
+    final static String YAML_SUFFIX = ".yaml";
     final static String PROS_SUFFIX = ".properties";
     static final String XLS_SUFFIX = ".xls";
     static final String XLSX_SUFFIX = ".xlsx";
     private static final List<String> LIST = new ArrayList<>();
 
     public static Reader getReader(File path) throws ReaderException {
-        switch (suffix(path.getName())){
+        switch (suffix(path.getName())) {
             case JSON_SUFFIX:
                 return new JSONReader(path);
+            case YML_SUFFIX:
             case YAML_SUFFIX:
                 return new YamlReader(path);
             case PROS_SUFFIX:
@@ -64,17 +66,17 @@ public class ReaderFactory {
 
     private static String suffix(String file) throws ReaderException {
         String suffix = file.substring(file.lastIndexOf("."));
-        if (LIST.contains(suffix)){
+        if (LIST.contains(suffix)) {
             return suffix;
         }
         throw new ReaderException("file reader error");
     }
 
-    static{
+    static {
         Field[] fields = ReaderFactory.class.getDeclaredFields();
-        for (Field field:fields){
+        for (Field field : fields) {
             try {
-                if ("LIST".equals(field.getName())){
+                if ("LIST".equals(field.getName())) {
                     continue;
                 }
                 LIST.add(field.get(ReaderFactory.class).toString());

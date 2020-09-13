@@ -1,6 +1,8 @@
 name: 数据文件导入测试用例
 config: # 配置信息
   file: './case/config.yml'
+plugins: # 配置信息
+  file: './case/plugins.yml'
 dataset: # 可空，正对当前 suite 生效
   file: './case/dataset.yml'
 files:

@@ -45,10 +45,13 @@ public class Value implements InternalFunction {
         if (parameters.isEmpty()){
             throw new FunctionException("parameters con not be null");
         }
-        JSONObject object = parameters.getJSONObject("object") != null ?
+        if (parameters.getString("key").isEmpty()) {
+            throw new FunctionException("key con not be null");
+        }
+        JSONObject object = parameters.isNullKey("json")?
                 parameters.getJSONObject("object") : parameters.getJSONObject("json");
         if (object == null){
-            throw new FunctionException("object con not be null");
+            throw new FunctionException("json con not be null");
         }
         return object.get(parameters.getString("key"));
     }

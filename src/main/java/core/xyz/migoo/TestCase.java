@@ -39,6 +39,7 @@ import components.xyz.migoo.reports.Report;
 import xyz.migoo.simplehttp.Response;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -64,35 +65,26 @@ public class TestCase extends AbstractTest {
     }
 
     @Override
-    public int countTestCases() {
-        return 1;
-    }
-
-    @Override
     public IResult run() {
         IResult result = new TestResult();
         try {
             Report.log("--------------------------------------------------------------------");
             Report.log("test case begin: {}", this.getTestName());
-            this.start();
+            this.setup();
             if (!super.isSkipped) {
-                this.processVariable();
-                super.setup();
-                this.buildRequest();
                 this.response = request.execute();
                 this.printRequestLog();
                 this.doCheck();
+                this.status(hasFailure ? FAILED : PASSED);
             }
-            this.setStatus(hasFailure ? FAILED : PASSED);
         } catch (Throwable t) {
-            this.setThrowable(t);
+            this.throwable(t);
+            this.status(ERROR);
             Report.log("case run error or assert failed", t);
-            this.setStatus(ERROR);
         } finally {
             super.teardown();
-            this.end();
+            this.setResult(result);
             Report.log("test case end: {}", this.getTestName());
-            result.init(this);
         }
         return result;
     }
@@ -106,7 +98,7 @@ public class TestCase extends AbstractTest {
                 .port(requestConfig.getInteger("port"))
                 .api(requestConfig.getString("api"))
                 .headers(requestConfig.getJSONObject("headers"))
-                .cookies(requestConfig.get("cookies") == null ?
+                .cookies(requestConfig.get("cookies") != null ?
                         requestConfig.get("cookie") : requestConfig.get("cookies"))
                 .query(testCase.getJSONObject("query"))
                 .data(testCase.getJSONObject("data"))
@@ -131,7 +123,7 @@ public class TestCase extends AbstractTest {
     }
 
     private void printRequestLog() {
-        Report.log("request api: {}", request.uri());
+        Report.log("request api: {}", request.uriNotContainsParam());
         if (request.jsonHeaders() != null && !request.jsonHeaders().isEmpty()) {
             Report.log("request header: {}", request.jsonHeaders());
         }
@@ -168,20 +160,31 @@ public class TestCase extends AbstractTest {
             } catch (Exception e) {
                 validator.put("throwable", e);
                 validator.put("result", "error");
-                this.setStatus(ERROR);
+                this.status(ERROR);
             }
         }
     }
 
-    public MiGooRequest request() {
-        return request;
-    }
-
-    public Response response() {
-        return response;
-    }
-
-    public List<Validator> validators() {
+    private List<Validator> validators() {
         return validators != null ? validators.toJavaList(Validator.class) : new ArrayList<>();
+    }
+
+    @Override
+    public void setup() throws Exception {
+        this.startTime = new Date();
+        if (!this.isSkipped) {
+            this.processVariable();
+            super.setup();
+            this.buildRequest();
+        }
+    }
+
+    @Override
+    protected void setResult(IResult result) {
+        TestResult r = (TestResult) result;
+        super.setResult(result);
+        r.setValidators(this.validators());
+        r.setRequest(request);
+        r.setResponse(response);
     }
 }

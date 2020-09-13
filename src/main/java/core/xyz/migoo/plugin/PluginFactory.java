@@ -26,38 +26,37 @@
  *
  */
 
+package core.xyz.migoo.plugin;
 
-package components.xyz.migoo.functions;
+import com.alibaba.fastjson.JSONObject;
+import core.xyz.migoo.utils.StringUtil;
 
-import core.xyz.migoo.functions.InternalFunction;
-import core.xyz.migoo.functions.CompoundVariable;
-import core.xyz.migoo.functions.FunctionException;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author xiaomi
- * @date 2019/11/18 17:22
+ * @date 2020/8/30 12:53
  */
-public class UrlEncode implements InternalFunction {
+public class PluginFactory {
 
-    @Override
-    public String execute(CompoundVariable parameters) throws FunctionException {
-        if (parameters.isEmpty()){
-            throw new FunctionException("parameters con not be null");
-        }
-        try {
-            String content = parameters.isNullKey("content") ?
-                    parameters.getString("string") : parameters.getString("content");
-            return URLEncoder.encode(content, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new FunctionException("url encode exception", e);
+    private static final Map<String, IPlugin> PLUGINS = new HashMap<>(16);
+
+    public static void create(JSONObject plugins) throws Exception {
+        if (plugins != null && !plugins.isEmpty()) {
+            for (Map.Entry<String, Object> entry : plugins.entrySet()) {
+                JSONObject value = (JSONObject) entry.getValue();
+                String clazz = value.get("package") != null ? value.get("package") + "." + StringUtil.initialToUpperCase(entry.getKey())
+                        : String.format("components.xyz.migoo.plugins.%s.%s",
+                        entry.getKey().toLowerCase(), StringUtil.initialToUpperCase(entry.getKey()));
+                IPlugin plugin = (IPlugin) Class.forName(clazz).newInstance();
+                plugin.init(value);
+                PLUGINS.put(plugin.getClass().getSimpleName().toUpperCase(), plugin);
+            }
         }
     }
 
-    @Override
-    public String funcKey() {
-        return "URLENCODE";
+    public static IPlugin get(String pluginName) {
+        return PLUGINS.get(pluginName.toUpperCase());
     }
 }

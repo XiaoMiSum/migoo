@@ -9,6 +9,16 @@ dataset:
     key1: '\w+\.\w+\.'
     key2: '\w+'
 cases:
+  - title: 跳过执行
+    config:
+      skip: true
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - {assertion: response, field: status, expected: 200, rule: ==}
+      - {assertion: json, field: $.status, expected: '${expected}', rule: ==}
   - title: expected 使用变量
     body:
       userName: ${user}

@@ -31,6 +31,7 @@ package components.xyz.migoo.reports;
 import com.alibaba.fastjson.JSONObject;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.CodeLanguage;
 import com.aventstack.extentreports.markuputils.Markup;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
@@ -42,6 +43,7 @@ import core.xyz.migoo.IResult;
 import core.xyz.migoo.ISuiteResult;
 import core.xyz.migoo.ITestResult;
 import core.xyz.migoo.Validator;
+import core.xyz.migoo.http.MiGooRequest;
 import core.xyz.migoo.report.IReport;
 import core.xyz.migoo.utils.DateUtil;
 import org.apache.commons.mail.EmailException;
@@ -49,6 +51,8 @@ import org.apache.commons.mail.HtmlEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zeroturnaround.zip.ZipUtil;
+import xyz.migoo.simplehttp.Request;
+import xyz.migoo.simplehttp.Response;
 
 import java.io.File;
 import java.util.Arrays;
@@ -86,8 +90,7 @@ public class Report implements IReport {
         this.result = result;
         ExtentSparkReporter reporter = new ExtentSparkReporter(outputDirectoryName + "/index.html");
         reporter.config().setDocumentTitle(result.getTestName() + " Reports - Created by MiGoo");
-        reporter.config().setReportName(result.getTestName() + " Reports"
-                + "</span></a></li>\n" +
+        reporter.config().setReportName(result.getTestName() + " Reports</span></a></li>\n" +
                 "<li><a href='https://github.com/XiaoMiSum/MiGoo' target=\"_blank\"><span>" +
                 "<img src=\"https://img.shields.io/badge/MiGoo-By Mi.xiao-yellow.svg?style=social&amp;logo=github\">");
         reporter.config().setTimeStampFormat("yyyy-MM-dd HH:mm:ss");
@@ -113,45 +116,44 @@ public class Report implements IReport {
                 ExtentTest node = feature.createNode(testResult.getTestName());
                 node.getModel().setStartTime(testResult.getStartTime());
                 if (iTestResult.getRequest() != null) {
-                    node.info(iTestResult.getRequest().uriNotContainsParam());
-                    StringBuilder sb = new StringBuilder();
-                    if (iTestResult.getRequest().headers() != null && iTestResult.getRequest().headers().length > 0) {
-                        sb.append("<br/>").append("Headers：").append(Arrays.toString(iTestResult.getRequest().headers()));
+                    Request request = iTestResult.getRequest();
+                    StringBuilder sb = new StringBuilder("<span class=\"badge badge-primary\">REQUEST INFO</span>")
+                            .append("<br/>").append("URL：").append(request.uriNotContainsParam());
+                    if (request.headers() != null && request.headers().length > 0) {
+                        sb.append("<br/>").append("Headers：").append(Arrays.toString(request.headers()));
                     }
-                    if (!iTestResult.getRequest().query().isEmpty()) {
-                        sb.append("<br/>").append("Query：").append(iTestResult.getRequest().query());
+                    if (!request.query().isEmpty()) {
+                        sb.append("<br/>").append("Query：").append(request.query());
                     }
-                    if (iTestResult.getRequest().body() != null && !iTestResult.getRequest().body().isEmpty()) {
-                        sb.append("<br/>").append("Body：").append(iTestResult.getRequest().body());
-                    } else if (!iTestResult.getRequest().data().isEmpty()) {
-                        sb.append("<br/>").append("Data：").append(iTestResult.getRequest().data());
+                    if (request.body() != null && !request.body().isEmpty()) {
+                        sb.append("<br/>").append("Body：").append(request.body());
+                    } else if (!request.data().isEmpty()) {
+                        sb.append("<br/>").append("Data：").append(request.data());
                     }
-                    if (sb.length() > 0) {
-                        node.info("<span class=\"badge badge-primary\">REQUEST INFO</span>" + sb.toString());
+                    if (iTestResult.getResponse() != null) {
+                        sb.append("<br/><span class=\"badge badge-primary\">RESPONSE INFO</span>");
+                        Response response = iTestResult.getResponse();
+                        if (response.headers() != null && response.headers().length > 0) {
+                            sb.append("<br/>").append("Headers：").append(Arrays.toString(response.headers()));
+                        }
+                        if (!response.text().isEmpty()) {
+                            sb.append("<br/>").append("Body：").append(response.text());
+                        }
+                        sb.append(String.format("<br/>Duration：%s ms", response.duration()));
                     }
+                    node.info(sb.toString());
                 }
-                if (iTestResult.getResponse() != null) {
-                    StringBuilder sb = new StringBuilder();
-                    if (iTestResult.getResponse().headers() != null && iTestResult.getResponse().headers().length > 0) {
-                        sb.append("<br/>").append("Headers：").append(Arrays.toString(iTestResult.getResponse().headers()));
-                    }
-                    if (!iTestResult.getResponse().text().isEmpty()) {
-                        sb.append("<br/>").append("Body：").append(iTestResult.getResponse().text());
-                    }
-                    if (sb.length() > 0) {
-                        node.info("<span class=\"badge badge-primary\">RESPONSE INFO</span>" + sb.toString());
-                    }
-                    node.info(String.format("Duration：%s ms", iTestResult.getResponse().duration()));
-                }
-                if (!testResult.isError()) {
+                if (testResult.isSkipped()) {
+                    node.getModel().setStatus(Status.SKIP);
+                } else if (testResult.isError()){
+                    node.fail(testResult.getThrowable());
+                } else {
                     for (Validator validator : iTestResult.getValidators()) {
                         Markup m = MarkupHelper.createCodeBlock(validator.toString(), CodeLanguage.JSON);
                         node = validator.isSuccess() ? node.pass(m) : validator.isSkipped() ? node.skip(m)
                                 : validator.getThrowable() != null ? node.fail(m).fail(validator.getThrowable())
                                 : node.fail(m);
                     }
-                } else {
-                    node.fail(testResult.getThrowable());
                 }
                 node.getModel().setEndTime(testResult.getEndTime());
             }

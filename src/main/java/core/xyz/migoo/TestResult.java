@@ -40,15 +40,6 @@ import java.util.List;
  */
 public class TestResult extends Result implements ITestResult {
 
-    @Override
-    public void init(ITest test) {
-        TestCase t = (TestCase) test;
-        super.init(t);
-        setValidators(t.validators());
-        setRequest(t.request());
-        setResponse(t.response());
-    }
-
     private List<Validator> validators;
 
     private Request request;

@@ -52,9 +52,10 @@ public class Digest implements InternalFunction {
         }
         String algorithm = parameters.getString("algorithm").trim().isEmpty() ? "md5"
                 : parameters.getString("algorithm").trim();
-        String stringToEncode = parameters.getString("string");
+        String stringToEncode = parameters.isNullKey("content") ?
+                parameters.getString("string") : parameters.getString("content");
         if (StringUtil.isEmpty(stringToEncode)) {
-            throw new FunctionException("string is null or empty");
+            throw new FunctionException("content is null or empty");
         }
         try {
             MessageDigest md = MessageDigest.getInstance(algorithm);
@@ -64,7 +65,8 @@ public class Digest implements InternalFunction {
                 md.update(salt.getBytes(StandardCharsets.UTF_8));
             }
             byte[] bytes = md.digest();
-            return uppercase(new String(Hex.encodeHex(bytes)), parameters.getString("upper"));
+            return parameters.getBoolean("upper") ? new String(Hex.encodeHex(bytes)).toUpperCase()
+                    : new String(Hex.encodeHex(bytes));
         } catch (NoSuchAlgorithmException e) {
             throw new FunctionException(e.getMessage(), e);
         }
@@ -75,7 +77,4 @@ public class Digest implements InternalFunction {
         return "DIGEST";
     }
 
-    private String uppercase(String encodedString, String shouldUpperCase) {
-        return Boolean.TRUE.toString().equalsIgnoreCase(shouldUpperCase) ? encodedString.toUpperCase() : encodedString;
-    }
 }

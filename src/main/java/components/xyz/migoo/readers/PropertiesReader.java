@@ -45,11 +45,11 @@ public class PropertiesReader extends AbstractReader implements Reader {
     private JSONObject json;
 
     public PropertiesReader(String path) throws ReaderException {
-        super.stream(ReaderFactory.PROS_SUFFIX, path);
+        super.stream(path);
     }
 
     public PropertiesReader(File file) throws ReaderException {
-        super.stream(ReaderFactory.PROS_SUFFIX, file);
+        super.stream(file);
     }
 
     @Override

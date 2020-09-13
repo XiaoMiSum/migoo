@@ -37,19 +37,6 @@ import java.util.Date;
 public interface IResult extends ITestStatus {
 
     /**
-     * init this test result
-     *
-     * @param test a test
-     */
-    default void init(ITest test) {
-        setTestName(test.getTestName());
-        setStatus(test.getStatus());
-        setThrowable(test.getThrowable());
-        setStartTime(test.getStartTime());
-        setEndTime(test.getEndTime());
-    }
-
-    /**
      * The name of this TestResult, typically identical to the name of the method.
      *
      * @return The name of this TestResult, typically identical to the name of the method.
