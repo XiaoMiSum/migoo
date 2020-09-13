@@ -161,7 +161,7 @@ public abstract class AbstractTest implements ITest {
      * @throws FunctionException e
      */
     @Override
-    public void setup() throws FunctionException {
+    public void setup() throws Exception {
         for (int i = 0; i < setup.size(); i++) {
             FunctionHelper.execute(setup.getString(i), vars);
         }

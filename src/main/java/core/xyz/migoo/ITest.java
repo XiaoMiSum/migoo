@@ -51,7 +51,7 @@ public interface ITest extends ITestStatus {
      */
     IResult run();
 
-    void setup() throws FunctionException;
+    void setup() throws Exception;
 
     void teardown();
 

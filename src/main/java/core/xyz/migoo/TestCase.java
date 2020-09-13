@@ -170,7 +170,7 @@ public class TestCase extends AbstractTest {
     }
 
     @Override
-    public void setup() throws FunctionException {
+    public void setup() throws Exception {
         this.startTime = new Date();
         if (!this.isSkipped) {
             this.processVariable();

@@ -29,7 +29,6 @@
 package core.xyz.migoo.plugin;
 
 import com.alibaba.fastjson.JSONObject;
-import components.xyz.migoo.reports.Report;
 import core.xyz.migoo.utils.StringUtil;
 
 import java.util.HashMap;
@@ -43,9 +42,9 @@ public class PluginFactory {
 
     private static final Map<String, IPlugin> PLUGINS = new HashMap<>(16);
 
-    public static void create(JSONObject plugins) {
-        for (Map.Entry<String, Object> entry : plugins.entrySet()) {
-            try {
+    public static void create(JSONObject plugins) throws Exception {
+        if (plugins != null && !plugins.isEmpty()) {
+            for (Map.Entry<String, Object> entry : plugins.entrySet()) {
                 JSONObject value = (JSONObject) entry.getValue();
                 String clazz = value.get("package") != null ? value.get("package") + "." + StringUtil.initialToUpperCase(entry.getKey())
                         : String.format("components.xyz.migoo.plugins.%s.%s",
@@ -53,13 +52,11 @@ public class PluginFactory {
                 IPlugin plugin = (IPlugin) Class.forName(clazz).newInstance();
                 plugin.init(value);
                 PLUGINS.put(plugin.getClass().getSimpleName().toUpperCase(), plugin);
-            } catch (Exception e) {
-                Report.log("plugin init error: {}, {}", entry.getKey(), e.getMessage());
             }
         }
     }
 
-    public static IPlugin get(String pluginName){
+    public static IPlugin get(String pluginName) {
         return PLUGINS.get(pluginName.toUpperCase());
     }
 }
