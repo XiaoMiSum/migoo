@@ -48,8 +48,8 @@ public class Vars extends JSONObject {
         }
     }
 
-    public static Vars getVars(String key) {
-        return VARS.get(key);
+    public static Vars getVars(Object key) {
+        return VARS.get(String.valueOf(key));
     }
 
     public Vars(boolean ordered) {

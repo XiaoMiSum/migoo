@@ -39,7 +39,7 @@ import java.lang.reflect.Proxy;
  */
 public final class MybatisFactory {
 
-    public static <T> T mapper(Class<? extends Mapper> clazz, String environment) {
+    public static <T> T mapper(Class<? extends Mapper> clazz, Object environment) {
         try {
             SqlSessionFactory sqlSessionFactory = ((Mybatis) PluginFactory.get("Mybatis")).getSqlSession(environment);
             SqlSession sqlSession = sqlSessionFactory.openSession();

@@ -70,11 +70,12 @@ public class Mybatis implements IPlugin {
 
     private final Map<String, SqlSessionFactory> SQL_SESSION_FACTORY = new HashMap<>();
 
-    public SqlSessionFactory getSqlSession(String environment) {
-        SqlSessionFactory sqlSessionFactory = SQL_SESSION_FACTORY.get(environment);
+    public SqlSessionFactory getSqlSession(Object environment) {
+        String env = String.valueOf(environment);
+        SqlSessionFactory sqlSessionFactory = SQL_SESSION_FACTORY.get(env);
         if (sqlSessionFactory == null) {
-            sqlSessionFactory = new SqlSessionFactoryBuilder().build(resource, environment);
-            SQL_SESSION_FACTORY.put(environment, sqlSessionFactory);
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(resource, env);
+            SQL_SESSION_FACTORY.put(env, sqlSessionFactory);
         }
         return sqlSessionFactory;
     }
