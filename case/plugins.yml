@@ -8,3 +8,5 @@ mybatis: # 使用类名作为 key
       password: password
     env2:
       {url: url2, username: username2, password: password2}
+  mappers:
+    - mapper/ms.xml
