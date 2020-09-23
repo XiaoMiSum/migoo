@@ -1,4 +1,4 @@
-# MiGoo
+# MiGoo (米果)
 
 [![License](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/XiaoMiSum/MiGoo/blob/master/LICENSE)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/xyz.migoo/migoo/badge.svg)](https://maven-badges.herokuapp.com/maven-central/xyz.migoo/migoo)
