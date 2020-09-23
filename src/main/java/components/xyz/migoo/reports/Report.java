@@ -183,7 +183,7 @@ public class Report implements IReport {
 
     @Override
     public void sendReport(Map<String, Object> config, String message) {
-        if (config != null) {
+        if (config != null && !config.isEmpty()) {
             message = getMessage();
             HtmlEmail email = new HtmlEmail();
             email.setAuthentication((String) config.get("user"), (String) config.get("password"));
@@ -193,15 +193,18 @@ public class Report implements IReport {
             File zip = zipFile(outputDirectoryName);
             try {
                 email.setFrom((String) config.get("user"));
-                email.addTo((String[]) ((List) config.get("tolist")).toArray());
+                for (Object to : ((List) config.get("tolist")).toArray()) {
+                    email.addTo(String.valueOf(to));
+                }
                 email.setSubject("测试执行完毕通知");
                 email.setMsg(message);
                 email.attach(zip);
                 email.send();
-            } catch (EmailException e) {
+            } catch (Exception e) {
                 Report.log("email send error.", e);
+            } finally {
+                zip.delete();
             }
-            zip.delete();
         }
     }
 

@@ -57,7 +57,6 @@ public class VarsHelper {
      */
     public static void convertVariables(JSONObject dataMapping, JSONObject variablesMapping) throws FunctionException {
         if (dataMapping != null && variablesMapping != null) {
-            convertVariables(variablesMapping);
             Set<Map.Entry<String, Object>> entries = dataMapping.entrySet();
             for (Map.Entry<String, Object> entry : entries) {
                 Object v = entry.getValue();
@@ -82,19 +81,7 @@ public class VarsHelper {
      */
     public static void convertVariables(JSONObject variables) throws FunctionException {
         if (variables != null) {
-            Set<Map.Entry<String, Object>> entries = variables.entrySet();
-            for (Map.Entry<String, Object> entry : entries) {
-                Object v = entry.getValue();
-                if (v instanceof String) {
-                    variables.put(entry.getKey(), extractVariables((String) v, variables));
-                } else if (v instanceof JSONObject) {
-                    convertVariables((JSONObject) v);
-                    variables.put(entry.getKey(), v);
-                } else if (v instanceof JSONArray) {
-                    convertVariables((JSONArray) v, variables);
-                    variables.put(entry.getKey(), v);
-                }
-            }
+            convertVariables(variables, variables);
         }
     }
 

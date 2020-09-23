@@ -141,6 +141,7 @@ public abstract class AbstractTest implements ITest {
     }
 
     public void processVariable() throws FunctionException {
+        VarsHelper.convertVariables(vars);
         VarsHelper.convertVariables(requestConfig, vars);
     }
 

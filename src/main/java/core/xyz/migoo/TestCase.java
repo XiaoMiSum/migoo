@@ -109,16 +109,16 @@ public class TestCase extends AbstractTest {
     private void bindRequestVariable() throws FunctionException {
         VarsHelper.convertVariables(requestConfig, super.getVars());
         if (testCase.get("data") != null) {
-            VarsHelper.convertVariables(testCase.getJSONObject("data"), super.getVars());
             super.addVars("data", testCase.get("data"));
+            VarsHelper.convertVariables(testCase.getJSONObject("data"), super.getVars());
         }
         if (testCase.get("body") != null) {
-            VarsHelper.convertVariables(testCase.getJSONObject("body"), super.getVars());
             super.addVars("body", testCase.get("body"));
+            VarsHelper.convertVariables(testCase.getJSONObject("body"), super.getVars());
         }
         if (testCase.get("query") != null) {
-            VarsHelper.convertVariables(testCase.getJSONObject("query"), super.getVars());
             super.addVars("query", testCase.get("query"));
+            VarsHelper.convertVariables(testCase.getJSONObject("query"), super.getVars());
         }
     }
 

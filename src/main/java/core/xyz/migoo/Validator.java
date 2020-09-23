@@ -31,6 +31,7 @@ package core.xyz.migoo;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import core.xyz.migoo.utils.StringUtil;
 import lombok.Data;
 
@@ -86,6 +87,7 @@ public class Validator {
 
     @Override
     public String toString() {
-        return JSON.toJSONString(this);
+        return JSON.toJSONString(this, SerializerFeature.WriteMapNullValue);
     }
+
 }
