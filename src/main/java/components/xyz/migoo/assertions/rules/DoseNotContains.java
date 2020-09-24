@@ -41,8 +41,10 @@ import java.util.Map;
 @Alias(aliasList = {"notContain", "notContains", "nc", "doesNotContains", "doesNotContain", "⊈"})
 public class DoseNotContains extends BaseRule implements IRule {
 
+    private final Contains contains = new Contains();
+
     @Override
     public boolean assertTrue(Map<String, Object> data) {
-        return ! new Contains().assertTrue(data);
+        return !contains.assertTrue(data);
     }
 }

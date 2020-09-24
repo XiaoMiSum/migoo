@@ -69,11 +69,11 @@ public class ExcelReader extends AbstractReader implements Reader {
     private void init(File file) throws ReaderException {
         try {
             if (file.getName().endsWith(ReaderFactory.XLS_SUFFIX)) {
-                super.stream(ReaderFactory.XLS_SUFFIX, file);
+                super.stream(file);
                 workbook = new HSSFWorkbook(inputStream);
             }
             if (file.getName().endsWith(ReaderFactory.XLSX_SUFFIX)) {
-                super.stream(ReaderFactory.XLSX_SUFFIX, file);
+                super.stream(file);
                 workbook = new XSSFWorkbook(inputStream);
             }
         } catch (IOException e) {
@@ -84,11 +84,11 @@ public class ExcelReader extends AbstractReader implements Reader {
     private void init(String path) throws ReaderException {
         try {
             if (path.trim().toLowerCase().endsWith(ReaderFactory.XLS_SUFFIX)) {
-                super.stream(ReaderFactory.XLS_SUFFIX, path);
+                super.stream(path);
                 workbook = new HSSFWorkbook(inputStream);
             }
             if (path.trim().toLowerCase().endsWith(ReaderFactory.XLSX_SUFFIX)) {
-                super.stream(ReaderFactory.XLSX_SUFFIX, path);
+                super.stream(path);
                 workbook = new XSSFWorkbook(inputStream);
             }
         } catch (IOException e) {

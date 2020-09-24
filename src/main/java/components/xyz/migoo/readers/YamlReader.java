@@ -44,11 +44,11 @@ public class YamlReader extends AbstractReader implements Reader{
     private JSON json;
 
     public YamlReader(String path) throws ReaderException {
-        stream(ReaderFactory.YAML_SUFFIX, path);
+        stream(path);
     }
 
     public YamlReader(File file) throws ReaderException {
-        stream(ReaderFactory.YAML_SUFFIX, file);
+        stream(file);
     }
 
     @Override

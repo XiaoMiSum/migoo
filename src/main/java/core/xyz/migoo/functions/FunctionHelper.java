@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static core.xyz.migoo.utils.TypeUtil.FUNC_PATTERN;
 
@@ -50,10 +49,10 @@ public class FunctionHelper {
 
     static {
         for (InternalFunction function : ServiceLoader.load(InternalFunction.class)) {
-            DEFAULT_FUNCTIONS.put(function.funcKey(), function);
+            DEFAULT_FUNCTIONS.put(function.funcKey().toUpperCase(), function);
         }
         for (Function function : ServiceLoader.load(Function.class)) {
-            SELF_DEFINED_FUNCTIONS.put(function.funcKey(), function);
+            SELF_DEFINED_FUNCTIONS.put(function.funcKey().toUpperCase(), function);
         }
     }
 

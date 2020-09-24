@@ -26,38 +26,15 @@
  *
  */
 
+package core.xyz.migoo.plugin;
 
-package components.xyz.migoo.functions;
-
-import core.xyz.migoo.functions.InternalFunction;
-import core.xyz.migoo.functions.CompoundVariable;
-import core.xyz.migoo.functions.FunctionException;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * @author xiaomi
- * @date 2019/11/18 17:22
+ * @date 2020/8/30 12:48
  */
-public class UrlEncode implements InternalFunction {
+public interface IPlugin {
 
-    @Override
-    public String execute(CompoundVariable parameters) throws FunctionException {
-        if (parameters.isEmpty()){
-            throw new FunctionException("parameters con not be null");
-        }
-        try {
-            String content = parameters.isNullKey("content") ?
-                    parameters.getString("string") : parameters.getString("content");
-            return URLEncoder.encode(content, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new FunctionException("url encode exception", e);
-        }
-    }
-
-    @Override
-    public String funcKey() {
-        return "URLENCODE";
-    }
+    void init(JSONObject config) throws Exception;
 }

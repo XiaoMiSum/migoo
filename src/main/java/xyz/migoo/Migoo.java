@@ -27,13 +27,15 @@ package xyz.migoo;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import components.xyz.migoo.readers.YamlReader;
+import components.xyz.migoo.readers.ReaderFactory;
 import components.xyz.migoo.readers.ReaderException;
 import components.xyz.migoo.reports.Report;
 import core.xyz.migoo.*;
 import core.xyz.migoo.report.IReport;
 import core.xyz.migoo.utils.DateUtil;
 import core.xyz.migoo.utils.StringUtil;
+
+import java.io.File;
 
 /**
  * @author xiaomi
@@ -58,26 +60,34 @@ public class Migoo {
 
     public JSONObject processor(String file) throws ReaderException {
         // 1. 解析文件 获取解析到的 json 对象
-        JSONObject fileJson = (JSONObject) new YamlReader(file).read();
-        JSONObject config = fileJson.getJSONObject("config");
-        JSONObject dataset = fileJson.getJSONObject("dataset");
+        JSONObject fileJson = (JSONObject) ReaderFactory.getReader(new File(file)).read();
+        this.metadata(fileJson);
         JSONArray files = fileJson.getJSONArray("files");
-        // 判断是否为导入文件
-        if (config != null && config.get("file") != null) {
-            fileJson.put("config", new YamlReader(config.getString("file")).read());
-        }
-        if (dataset != null && dataset.get("file") != null) {
-            fileJson.put("dataset", new YamlReader(dataset.getString("file")).read());
-        }
         JSONArray sets = fileJson.get("sets") != null ? fileJson.getJSONArray("sets") : new JSONArray();
         if (files != null) {
             for (Object filePath : files) {
-                sets.add(new YamlReader((String) filePath).read());
+                sets.add(ReaderFactory.getReader(new File((String) filePath)).read());
             }
             fileJson.remove("files");
         }
         fileJson.put("sets", sets);
         return fileJson;
+    }
+
+    private void metadata(JSONObject fileJson) throws ReaderException {
+        JSONObject config = fileJson.getJSONObject("config");
+        JSONObject plugins = fileJson.getJSONObject("plugins");
+        JSONObject dataset = fileJson.getJSONObject("dataset");
+        // 判断是否为导入文件
+        if (config != null && config.get("file") != null) {
+            fileJson.put("config", ReaderFactory.getReader(new File(config.getString("file"))).read());
+        }
+        if (plugins != null && plugins.get("file") != null) {
+            fileJson.put("plugins", ReaderFactory.getReader(new File(plugins.getString("file"))).read());
+        }
+        if (dataset != null && dataset.get("file") != null) {
+            fileJson.put("dataset", ReaderFactory.getReader(new File(dataset.getString("file"))).read());
+        }
     }
 
     private void report(JSONObject reportConfig, JSONObject emailConfig, IResult result) {

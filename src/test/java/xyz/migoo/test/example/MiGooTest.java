@@ -8,7 +8,7 @@ import xyz.migoo.Migoo;
  * @date 2018/7/25 15:10
  */
 public class MiGooTest {
-    // todo
+
     public Migoo runner = new Migoo();
 
     @Test

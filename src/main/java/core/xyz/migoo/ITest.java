@@ -29,7 +29,7 @@
 
 package core.xyz.migoo;
 
-import java.util.Date;
+import core.xyz.migoo.functions.FunctionException;
 
 /**
  * @author xiaomi
@@ -45,43 +45,15 @@ public interface ITest extends ITestStatus {
     String getTestName();
 
     /**
-     * Returns count of the test.
-     * can return zero.
-     *
-     * @return count of this test
-     */
-    int countTestCases();
-
-    /**
      * running the test
      *
      * @return the result of this test
      */
     IResult run();
 
-    /**
-     * set start date for this test.
-     */
-    void start();
+    void setup() throws Exception;
 
-    /**
-     * the start date of this test.
-     *
-     * @return the start date for this test.
-     */
-    Date getStartTime();
-
-    /**
-     * set end date for this test.
-     */
-    void end();
-
-    /**
-     * the end date of this test.
-     *
-     * @return the end date for this test.
-     */
-    Date getEndTime();
+    void teardown();
 
     /**
      * Returns status of this test.
@@ -94,19 +66,12 @@ public interface ITest extends ITestStatus {
      * set status for this test.
      * @param status status for this test
      */
-    void setStatus(int status);
-
-    /**
-     * Returns throwable of this test.
-     *
-     * @return the throwable of this test.
-     */
-    Throwable getThrowable();
+    void status(int status);
 
     /**
      * set throwable for this test.
      * @param throwable throwable for this test
      */
-    void setThrowable(Throwable throwable);
+    void throwable(Throwable throwable);
 
 }

@@ -86,11 +86,11 @@ public class AssertionFactory {
         return assertion.assertThat(validator);
     }
 
-    private void setInstance(JSONObject validator) throws FunctionException {
+    private void setInstance(JSONObject validator) throws Exception {
         String type = validator.get("assertion") == null ? "JSON" : validator.getString("assertion").toUpperCase();
         assertion = DEFAULT_ASSERTION.get(type) == null ? SELF_DEFINED_ASSERTION.get(type) : DEFAULT_ASSERTION.get(type);
         if (assertion == null) {
-            throw new FunctionException("assertion not found: " + validator.getString("assertion"));
+            throw new Exception("assertion not found: " + validator.getString("assertion"));
         } else if (assertion instanceof AbstractAssertion) {
             ((AbstractAssertion) assertion).setField(validator.getString("field"));
         }

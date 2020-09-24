@@ -50,11 +50,12 @@ public class GoogleAuthCode implements InternalFunction {
         if (parameters.isEmpty()){
             throw new FunctionException("parameters con not be null");
         }
-        String secretKey = parameters.getString("secretKey");
-        if (secretKey == null){
+        String secretKey = parameters.isNullKey("secretKey") ?
+                parameters.getString("secret") : parameters.getString("secretKey");
+        if (secretKey.isEmpty()){
             throw new FunctionException("secretKey con not be null");
         }
-        return GoogleAuthenticator.generateVerifyCode(parameters.getString("secretKey"));
+        return GoogleAuthenticator.generateVerifyCode(secretKey);
     }
 
     @Override

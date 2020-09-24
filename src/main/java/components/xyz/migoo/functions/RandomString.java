@@ -50,10 +50,9 @@ public class RandomString implements InternalFunction {
             throw new FunctionException("length con not be null");
         }
         String charsToUse = parameters.getString("string").trim();
-        if (charsToUse.isEmpty()){
-            return RandomStringUtils.randomAlphabetic(length);
-        }
-        return RandomStringUtils.random(length, charsToUse);
+        String str = charsToUse.isEmpty() ? RandomStringUtils.randomAlphabetic(length)
+                : RandomStringUtils.random(length, charsToUse);
+        return parameters.getBoolean("upper") ? str.toUpperCase() : str;
     }
 
     @Override
