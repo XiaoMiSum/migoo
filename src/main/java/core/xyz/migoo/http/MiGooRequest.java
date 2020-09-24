@@ -212,12 +212,12 @@ public class MiGooRequest extends Request {
             }
             if (query != null && !query.isEmpty()) {
                 Form form = new Form();
-                query.forEach((k, v) -> form.add(k, v == "" ? null : v.toString()));
+                query.forEach((k, v) -> form.add(k, v == null || v == "" ? null : v.toString()));
                 request.query(form);
             }
             if (data != null && !data.isEmpty()) {
                 Form form = new Form();
-                data.forEach((k, v) -> form.add(k, v == "" ? null : v.toString()));
+                data.forEach((k, v) -> form.add(k, v == null || v == "" ? null : v.toString()));
                 request.data(form);
             }
             if (body != null) {
