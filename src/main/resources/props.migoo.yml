@@ -1,1 +1,2 @@
 migoo.version: ${project.version}
+log.enable: true
