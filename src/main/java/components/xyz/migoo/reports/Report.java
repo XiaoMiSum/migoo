@@ -65,9 +65,9 @@ import java.util.Map;
  */
 public class Report implements IReport {
 
-    private static final Logger logger;
-    
-    private static final boolean isEnableLog;
+    private static Logger logger;
+
+    private static boolean isEnableLog;
 
     public static void log(String msg) {
         if (isEnableLog) {
