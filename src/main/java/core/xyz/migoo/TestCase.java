@@ -55,7 +55,7 @@ public class TestCase extends AbstractTest {
     private boolean hasFailure = false;
 
     TestCase(JSONObject testCase, JSONObject requestConfig) {
-        super(testCase.getString("title"));
+        super(testCase.getString("title"), testCase.getInteger("id"));
         super.initTest(testCase.getJSONObject("config"), testCase.getJSONObject("dataset"));
         super.addVars("title", super.getTestName());
         super.addToGlobals();

@@ -65,18 +65,26 @@ import java.util.Map;
  */
 public class Report implements IReport {
 
-    private static final Logger logger = LoggerFactory.getLogger("migoo");
+    private static Logger logger;
+
+    private static boolean isEnableLog;
 
     public static void log(String msg) {
-        logger.info(msg);
+        if (isEnableLog) {
+            logger.info(msg);
+        }
     }
 
     public static void log(String msg, Object... args) {
-        logger.info(msg, args);
+        if (isEnableLog) {
+            logger.info(msg, args);
+        }
     }
 
     public static void log(String msg, Throwable t) {
-        logger.info(msg, t);
+        if (isEnableLog) {
+            logger.info(msg, t);
+        }
     }
 
     private ExtentReports extent;
@@ -282,6 +290,10 @@ public class Report implements IReport {
         try {
             JSONObject config = (JSONObject) new YamlReader("classpath://props.migoo.yml").read();
             config.forEach((k, v) -> System.setProperty(k, String.valueOf(v)));
+            isEnableLog = config.getBooleanValue("log.enable");
+            if (isEnableLog) {
+                logger = LoggerFactory.getLogger("migoo");
+            }
         } catch (ReaderException e) {
             e.printStackTrace();
         }

@@ -65,8 +65,11 @@ public abstract class AbstractTest implements ITest {
 
     private Throwable throwable;
 
-    AbstractTest(String name) {
+    private final Integer id;
+
+    AbstractTest(String name, Integer id) {
         this.tName = name;
+        this.id = id;
     }
 
     /**
@@ -218,6 +221,7 @@ public abstract class AbstractTest implements ITest {
     }
 
     protected void setResult(IResult result) {
+        result.setId(id);
         result.setStartTime(startTime);
         result.setEndTime(endTime);
         result.setStatus(isSkipped ? SKIPPED : this.status);

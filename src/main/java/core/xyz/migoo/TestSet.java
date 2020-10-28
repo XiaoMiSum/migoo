@@ -43,7 +43,7 @@ public class TestSet extends AbstractTest {
     private static final String TYPE = TestSet.class.getSimpleName();
 
     TestSet(JSONObject set, JSONObject requestConfig) {
-        super(set.getString("name"));
+        super(set.getString("name"), set.getInteger("id"));
         super.initTest(set.getJSONObject("config"), set.getJSONObject("dataset"));
         super.addVars("name", super.getTestName());
         super.addToGlobals();
