@@ -42,6 +42,8 @@ public class Result implements IResult {
 
     private int status;
 
+    private Integer id;
+
     private Date startTime;
 
     private Date endTime;
@@ -56,6 +58,16 @@ public class Result implements IResult {
     @Override
     public void setTestName(String name) {
         this.testName = name;
+    }
+
+    @Override
+    public Integer getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     @Override
