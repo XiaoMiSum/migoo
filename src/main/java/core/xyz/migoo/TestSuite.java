@@ -50,7 +50,7 @@ public class TestSuite extends AbstractTest {
     private JSONObject plugins;
 
     public TestSuite(JSONObject suite) {
-        super(suite.getString("name"));
+        super(suite.getString("name"), suite.getInteger("id"));
         this.initTest(suite.getJSONObject("config"), suite.getJSONObject("dataset"), suite.getJSONObject("plugins"));
         super.addVars("name", this.getTestName());
         super.addToGlobals();

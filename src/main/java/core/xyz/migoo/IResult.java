@@ -50,6 +50,10 @@ public interface IResult extends ITestStatus {
      */
     void setTestName(String name);
 
+    Integer getId();
+
+    void setId(Integer id);
+
     /**
      * The status of this result, using one of the constants above.
      *
