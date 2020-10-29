@@ -41,7 +41,6 @@ import java.util.Properties;
  */
 public class PropertiesReader extends AbstractReader implements Reader {
 
-
     private JSONObject json;
 
     public PropertiesReader(String path) throws ReaderException {

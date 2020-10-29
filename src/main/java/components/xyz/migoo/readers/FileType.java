@@ -26,40 +26,21 @@
  *
  */
 
-
 package components.xyz.migoo.readers;
-
-import java.io.File;
 
 /**
  * @author xiaomi
+ * @date 2020/10/29 21:23
  */
-public class ReaderFactory {
+public enum FileType {
 
-    public static Reader getReader(File path) throws ReaderException {
-        FileType type = suffix(path.getName());
-        switch (type) {
-            case JSON:
-                return new JSONReader(path);
-            case YML:
-            case YAML:
-                return new YamlReader(path);
-            case PROPERTIES:
-                return new PropertiesReader(path);
-            case XLS:
-            case XLSX:
-                return new ExcelReader(path, type);
-            default:
-                throw new ReaderException("file reader error");
-        }
-    }
+    XLS,
+    XLSX,
+    YML,
+    YAML,
+    JSON,
+    PROPERTIES;
 
-    private static FileType suffix(String file) throws ReaderException {
-        String suffix = file.substring(file.lastIndexOf("."));
-        try {
-            return FileType.valueOf(suffix.toUpperCase());
-        } catch (Exception e) {
-            throw new ReaderException("unsupported file types: " + file);
-        }
+    FileType(){
     }
 }
