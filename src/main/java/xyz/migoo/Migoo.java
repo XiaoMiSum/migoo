@@ -101,7 +101,7 @@ public class Migoo {
         } catch (Exception e) {
             report = new Report();
         }
-        report.generateReport(result, output);
+        report.generateReport(result, output, false);
         report.sendReport(emailConfig, "");
     }
 }

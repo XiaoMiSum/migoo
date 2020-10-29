@@ -40,8 +40,9 @@ public interface IReport {
      * the specified test suites.
      * @param result Data about the test runs.
      * @param outputDirectoryName The directory in which to create the report.
+     * @param isPackage  package file by zip
      */
-    void generateReport(IResult result, String outputDirectoryName);
+    void generateReport(IResult result, String outputDirectoryName, boolean isPackage);
 
     /**
      * Send test reports by email.

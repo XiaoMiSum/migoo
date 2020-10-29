@@ -44,6 +44,7 @@ import core.xyz.migoo.ISuiteResult;
 import core.xyz.migoo.ITestResult;
 import core.xyz.migoo.Validator;
 import core.xyz.migoo.report.IReport;
+import core.xyz.migoo.utils.FileUtils;
 import org.apache.commons.mail.HtmlEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +90,8 @@ public class Report implements IReport {
     private String outputDirectoryName;
 
     private IResult result;
+
+    private boolean isPackage;
 
     private void initReport(IResult result, String outputDirectoryName) {
         this.outputDirectoryName = outputDirectoryName;
@@ -139,7 +142,7 @@ public class Report implements IReport {
         }
     }
 
-    private void setRequestInfo(StringBuilder sb, Request request){
+    private void setRequestInfo(StringBuilder sb, Request request) {
         if (request.headers() != null && request.headers().length > 0) {
             sb.append("<br/>").append("Headers：").append(Arrays.toString(request.headers()));
         }
@@ -164,13 +167,13 @@ public class Report implements IReport {
         sb.append(String.format("<br/>Duration：%s ms", response.duration()));
     }
 
-    private void setNodeStatus(ExtentTest node, IResult testResult){
+    private void setNodeStatus(ExtentTest node, IResult testResult) {
         if (testResult.isSkipped()) {
             node.getModel().setStatus(Status.SKIP);
         } else if (testResult.isError()) {
             node.fail(testResult.getThrowable());
         } else {
-            for (Validator validator : ((ITestResult)testResult).getValidators()) {
+            for (Validator validator : ((ITestResult) testResult).getValidators()) {
                 Markup m = MarkupHelper.createCodeBlock(validator.toString(), CodeLanguage.JSON);
                 node = validator.isSuccess() ? node.pass(m) : validator.isSkipped() ? node.skip(m)
                         : validator.getThrowable() != null ? node.fail(m).fail(validator.getThrowable())
@@ -189,10 +192,16 @@ public class Report implements IReport {
 
     private void flush() {
         extent.flush();
+        if (isPackage) {
+            File file = new File(this.outputDirectoryName);
+            this.zipFile(file);
+            FileUtils.delete(file);
+        }
     }
 
     @Override
-    public void generateReport(IResult result, String outputDirectoryName) {
+    public void generateReport(IResult result, String outputDirectoryName, boolean isPackage) {
+        this.isPackage = isPackage;
         this.initReport(result, outputDirectoryName);
         this.setSystemInfo();
         this.createExtentTest();
@@ -208,7 +217,7 @@ public class Report implements IReport {
             email.setHostName((String) config.get("host"));
             email.setSmtpPort(Integer.parseInt(config.get("port").toString()));
             email.setCharset("UTF-8");
-            File zip = zipFile(outputDirectoryName);
+            File zip = isPackage ? new File(outputDirectoryName) : zipFile(new File(outputDirectoryName));
             try {
                 email.setFrom((String) config.get("user"));
                 for (Object to : ((List) config.get("tolist")).toArray()) {
@@ -226,9 +235,9 @@ public class Report implements IReport {
         }
     }
 
-    private File zipFile(String path) {
-        File file = new File(path);
-        File zip = new File(file.getParent() + "/" + file.getName() + ".reports.zip");
+    private File zipFile(File file) {
+        outputDirectoryName = isPackage ? file.getParent() + "/reports" + file.getName() + ".zip" : outputDirectoryName;
+        File zip = new File(outputDirectoryName);
         ZipUtil.pack(file, zip);
         return zip;
     }
