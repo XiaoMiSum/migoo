@@ -53,26 +53,25 @@ public class ExcelReader extends AbstractReader implements Reader {
     private int rowCount;
     private int columnCount;
 
-    public ExcelReader(File file) throws ReaderException {
-        init(file);
+    public ExcelReader(File file, FileType type) throws ReaderException {
+        init(file, type);
     }
 
-    public ExcelReader(String path) throws ReaderException {
-        init(path);
+    public ExcelReader(String path, FileType type) throws ReaderException {
+        init(path, type);
     }
 
-    public ExcelReader(File file, String sheet)throws ReaderException {
-        init(file);
+    public ExcelReader(File file, FileType type, String sheet) throws ReaderException {
+        init(file, type);
         parse(sheet);
     }
 
-    private void init(File file) throws ReaderException {
+    private void init(File file, FileType type) throws ReaderException {
         try {
-            if (file.getName().endsWith(ReaderFactory.XLS_SUFFIX)) {
+            if (type == FileType.XLS) {
                 super.stream(file);
                 workbook = new HSSFWorkbook(inputStream);
-            }
-            if (file.getName().endsWith(ReaderFactory.XLSX_SUFFIX)) {
+            } else if (type == FileType.XLSX) {
                 super.stream(file);
                 workbook = new XSSFWorkbook(inputStream);
             }
@@ -81,13 +80,12 @@ public class ExcelReader extends AbstractReader implements Reader {
         }
     }
 
-    private void init(String path) throws ReaderException {
+    private void init(String path, FileType type) throws ReaderException {
         try {
-            if (path.trim().toLowerCase().endsWith(ReaderFactory.XLS_SUFFIX)) {
+            if (type == FileType.XLS) {
                 super.stream(path);
                 workbook = new HSSFWorkbook(inputStream);
-            }
-            if (path.trim().toLowerCase().endsWith(ReaderFactory.XLSX_SUFFIX)) {
+            } else if (type == FileType.XLSX) {
                 super.stream(path);
                 workbook = new XSSFWorkbook(inputStream);
             }

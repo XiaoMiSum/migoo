@@ -43,10 +43,8 @@ import core.xyz.migoo.IResult;
 import core.xyz.migoo.ISuiteResult;
 import core.xyz.migoo.ITestResult;
 import core.xyz.migoo.Validator;
-import core.xyz.migoo.http.MiGooRequest;
 import core.xyz.migoo.report.IReport;
-import core.xyz.migoo.utils.DateUtil;
-import org.apache.commons.mail.EmailException;
+import core.xyz.migoo.utils.FileUtils;
 import org.apache.commons.mail.HtmlEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,6 +91,8 @@ public class Report implements IReport {
 
     private IResult result;
 
+    private boolean isPackage;
+
     private void initReport(IResult result, String outputDirectoryName) {
         this.outputDirectoryName = outputDirectoryName;
         this.result = result;
@@ -112,60 +112,73 @@ public class Report implements IReport {
     }
 
     private void createExtentTest() {
-        for (IResult iSuiteResult : ((ISuiteResult) result).getTestResults()) {
-            ISuiteResult suiteResult = (ISuiteResult) iSuiteResult;
-            ExtentTest feature = extent.createTest(iSuiteResult.getTestName(),
-                    String.format("Total Case：%s，Passed：%s，Failed：%s，Error：%s，Skipped：%s", suiteResult.size(),
-                            suiteResult.getSuccessCount(), suiteResult.getFailureCount(), suiteResult.getErrorCount(),
-                            suiteResult.getSkipCount()));
-            feature.getModel().setStartTime(iSuiteResult.getStartTime());
-            for (IResult testResult : suiteResult.getTestResults()) {
-                ITestResult iTestResult = (ITestResult) testResult;
-                ExtentTest node = feature.createNode(testResult.getTestName());
-                node.getModel().setStartTime(testResult.getStartTime());
-                if (iTestResult.getRequest() != null) {
-                    Request request = iTestResult.getRequest();
-                    StringBuilder sb = new StringBuilder("<span class=\"badge badge-primary\">REQUEST INFO</span>")
-                            .append("<br/>").append("URL：").append(request.uriNotContainsParam());
-                    if (request.headers() != null && request.headers().length > 0) {
-                        sb.append("<br/>").append("Headers：").append(Arrays.toString(request.headers()));
-                    }
-                    if (!request.query().isEmpty()) {
-                        sb.append("<br/>").append("Query：").append(request.query());
-                    }
-                    if (request.body() != null && !request.body().isEmpty()) {
-                        sb.append("<br/>").append("Body：").append(request.body());
-                    } else if (!request.data().isEmpty()) {
-                        sb.append("<br/>").append("Data：").append(request.data());
-                    }
-                    if (iTestResult.getResponse() != null) {
-                        sb.append("<br/><span class=\"badge badge-primary\">RESPONSE INFO</span>");
-                        Response response = iTestResult.getResponse();
-                        if (response.headers() != null && response.headers().length > 0) {
-                            sb.append("<br/>").append("Headers：").append(Arrays.toString(response.headers()));
+        if (((ISuiteResult) result).getTestResults() != null) {
+            for (IResult iSuiteResult : ((ISuiteResult) result).getTestResults()) {
+                ISuiteResult suiteResult = (ISuiteResult) iSuiteResult;
+                ExtentTest feature = extent.createTest(iSuiteResult.getTestName(),
+                        String.format("Total Case：%s，Passed：%s，Failed：%s，Error：%s，Skipped：%s", suiteResult.size(),
+                                suiteResult.getSuccessCount(), suiteResult.getFailureCount(), suiteResult.getErrorCount(),
+                                suiteResult.getSkipCount()));
+                feature.getModel().setStartTime(iSuiteResult.getStartTime());
+                for (IResult testResult : suiteResult.getTestResults()) {
+                    ITestResult iTestResult = (ITestResult) testResult;
+                    ExtentTest node = feature.createNode(testResult.getTestName());
+                    node.getModel().setStartTime(testResult.getStartTime());
+                    if (iTestResult.getRequest() != null) {
+                        Request request = iTestResult.getRequest();
+                        StringBuilder sb = new StringBuilder("<span class=\"badge badge-primary\">REQUEST INFO</span>")
+                                .append("<br/>").append("URL：").append(request.uriNotContainsParam());
+                        this.setRequestInfo(sb, request);
+                        if (iTestResult.getResponse() != null) {
+                            this.setResponseInfo(sb, iTestResult.getResponse());
                         }
-                        if (!response.text().isEmpty()) {
-                            sb.append("<br/>").append("Body：").append(response.text());
-                        }
-                        sb.append(String.format("<br/>Duration：%s ms", response.duration()));
+                        node.info(sb.toString());
                     }
-                    node.info(sb.toString());
+                    this.setNodeStatus(node, testResult);
+                    node.getModel().setEndTime(testResult.getEndTime());
                 }
-                if (testResult.isSkipped()) {
-                    node.getModel().setStatus(Status.SKIP);
-                } else if (testResult.isError()){
-                    node.fail(testResult.getThrowable());
-                } else {
-                    for (Validator validator : iTestResult.getValidators()) {
-                        Markup m = MarkupHelper.createCodeBlock(validator.toString(), CodeLanguage.JSON);
-                        node = validator.isSuccess() ? node.pass(m) : validator.isSkipped() ? node.skip(m)
-                                : validator.getThrowable() != null ? node.fail(m).fail(validator.getThrowable())
-                                : node.fail(m);
-                    }
-                }
-                node.getModel().setEndTime(testResult.getEndTime());
+                feature.getModel().setEndTime(iSuiteResult.getEndTime());
             }
-            feature.getModel().setEndTime(iSuiteResult.getEndTime());
+        }
+    }
+
+    private void setRequestInfo(StringBuilder sb, Request request) {
+        if (request.headers() != null && request.headers().length > 0) {
+            sb.append("<br/>").append("Headers：").append(Arrays.toString(request.headers()));
+        }
+        if (!request.query().isEmpty()) {
+            sb.append("<br/>").append("Query：").append(request.query());
+        }
+        if (request.body() != null && !request.body().isEmpty()) {
+            sb.append("<br/>").append("Body：").append(request.body());
+        } else if (!request.data().isEmpty()) {
+            sb.append("<br/>").append("Data：").append(request.data());
+        }
+    }
+
+    private void setResponseInfo(StringBuilder sb, Response response) {
+        sb.append("<br/><span class=\"badge badge-primary\">RESPONSE INFO</span>");
+        if (response.headers() != null && response.headers().length > 0) {
+            sb.append("<br/>").append("Headers：").append(Arrays.toString(response.headers()));
+        }
+        if (!response.text().isEmpty()) {
+            sb.append("<br/>").append("Body：").append(response.text());
+        }
+        sb.append(String.format("<br/>Duration：%s ms", response.duration()));
+    }
+
+    private void setNodeStatus(ExtentTest node, IResult testResult) {
+        if (testResult.isSkipped()) {
+            node.getModel().setStatus(Status.SKIP);
+        } else if (testResult.isError()) {
+            node.fail(testResult.getThrowable());
+        } else {
+            for (Validator validator : ((ITestResult) testResult).getValidators()) {
+                Markup m = MarkupHelper.createCodeBlock(validator.toString(), CodeLanguage.JSON);
+                node = validator.isSuccess() ? node.pass(m) : validator.isSkipped() ? node.skip(m)
+                        : validator.getThrowable() != null ? node.fail(m).fail(validator.getThrowable())
+                        : node.fail(m);
+            }
         }
     }
 
@@ -179,10 +192,16 @@ public class Report implements IReport {
 
     private void flush() {
         extent.flush();
+        if (isPackage) {
+            File file = new File(this.outputDirectoryName);
+            this.zipFile(file);
+            FileUtils.delete(file);
+        }
     }
 
     @Override
-    public void generateReport(IResult result, String outputDirectoryName) {
+    public void generateReport(IResult result, String outputDirectoryName, boolean isPackage) {
+        this.isPackage = isPackage;
         this.initReport(result, outputDirectoryName);
         this.setSystemInfo();
         this.createExtentTest();
@@ -198,7 +217,7 @@ public class Report implements IReport {
             email.setHostName((String) config.get("host"));
             email.setSmtpPort(Integer.parseInt(config.get("port").toString()));
             email.setCharset("UTF-8");
-            File zip = zipFile(outputDirectoryName);
+            File zip = isPackage ? new File(outputDirectoryName) : zipFile(new File(outputDirectoryName));
             try {
                 email.setFrom((String) config.get("user"));
                 for (Object to : ((List) config.get("tolist")).toArray()) {
@@ -216,9 +235,9 @@ public class Report implements IReport {
         }
     }
 
-    private File zipFile(String path) {
-        File file = new File(path);
-        File zip = new File(file.getParent() + "/" + file.getName() + ".reports.zip");
+    private File zipFile(File file) {
+        outputDirectoryName = isPackage ? file.getParent() + "/reports" + file.getName() + ".zip" : outputDirectoryName;
+        File zip = new File(outputDirectoryName);
         ZipUtil.pack(file, zip);
         return zip;
     }

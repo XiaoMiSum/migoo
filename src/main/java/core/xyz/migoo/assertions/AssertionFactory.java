@@ -28,7 +28,6 @@ package core.xyz.migoo.assertions;
 
 import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.assertions.rules.Alias;
-import core.xyz.migoo.functions.FunctionException;
 import xyz.migoo.simplehttp.Response;
 
 import java.util.HashMap;
@@ -89,7 +88,10 @@ public class AssertionFactory {
     private void setInstance(JSONObject validator) throws Exception {
         String type = validator.get("assertion") == null ? "JSON" : validator.getString("assertion").toUpperCase();
         assertion = DEFAULT_ASSERTION.get(type) == null ? SELF_DEFINED_ASSERTION.get(type) : DEFAULT_ASSERTION.get(type);
-        if (assertion == null) {
+        if (assertion == null && validator.get("package") != null) {
+            assertion = (Assertion) Class.forName(validator.get("package") + "." + validator.get("assertion")).newInstance();
+            SELF_DEFINED_ASSERTION.put(type, assertion);
+        } else if (assertion == null) {
             throw new Exception("assertion not found: " + validator.getString("assertion"));
         } else if (assertion instanceof AbstractAssertion) {
             ((AbstractAssertion) assertion).setField(validator.getString("field"));

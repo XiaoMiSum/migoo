@@ -30,59 +30,36 @@
 package components.xyz.migoo.readers;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author xiaomi
  */
 public class ReaderFactory {
 
-    final static String JSON_SUFFIX = ".json";
-    final static String YML_SUFFIX = ".yml";
-    final static String YAML_SUFFIX = ".yaml";
-    final static String PROS_SUFFIX = ".properties";
-    static final String XLS_SUFFIX = ".xls";
-    static final String XLSX_SUFFIX = ".xlsx";
-    private static final List<String> LIST = new ArrayList<>();
-
     public static Reader getReader(File path) throws ReaderException {
-        switch (suffix(path.getName())) {
-            case JSON_SUFFIX:
+        FileType type = suffix(path.getName());
+        switch (type) {
+            case JSON:
                 return new JSONReader(path);
-            case YML_SUFFIX:
-            case YAML_SUFFIX:
+            case YML:
+            case YAML:
                 return new YamlReader(path);
-            case PROS_SUFFIX:
+            case PROPERTIES:
                 return new PropertiesReader(path);
-            case XLS_SUFFIX:
-            case XLSX_SUFFIX:
-                return new ExcelReader(path);
+            case XLS:
+            case XLSX:
+                return new ExcelReader(path, type);
             default:
                 throw new ReaderException("file reader error");
         }
     }
 
-    private static String suffix(String file) throws ReaderException {
-        String suffix = file.substring(file.lastIndexOf("."));
-        if (LIST.contains(suffix)) {
-            return suffix;
-        }
-        throw new ReaderException("file reader error");
-    }
-
-    static {
-        Field[] fields = ReaderFactory.class.getDeclaredFields();
-        for (Field field : fields) {
-            try {
-                if ("LIST".equals(field.getName())) {
-                    continue;
-                }
-                LIST.add(field.get(ReaderFactory.class).toString());
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+    private static FileType suffix(String file) throws ReaderException {
+        String suffix = file.substring(file.lastIndexOf(".") + 1);
+        try {
+            return FileType.valueOf(suffix.toUpperCase());
+        } catch (Exception e) {
+            throw new ReaderException("unsupported file types: " + file);
         }
     }
 }

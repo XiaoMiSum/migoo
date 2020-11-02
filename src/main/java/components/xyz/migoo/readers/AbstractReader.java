@@ -45,7 +45,6 @@ public abstract class AbstractReader {
     /**
      * 文件合法性检查，传入的文件路径不能为 null "" 文件夹
      * @param file 文件
-     * @param suffix 指定的文件后缀
      */
     protected void validation(File file) throws ReaderException {
         if (!file.exists()){

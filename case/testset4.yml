@@ -8,6 +8,7 @@ dataset:
     expected: 200
     key1: '\w+\.\w+\.'
     key2: '\w+'
+    package: 'xyz.migoo.test.example'
 cases:
   - title: 跳过执行
     config:
@@ -211,3 +212,17 @@ cases:
     validators:
       - {assertion: response, field: status, expected: 200, rule: ==}
       - {field: $.data.token, expected: '${key1}${key2}', rule: regex}
+  - title: '自定义验证器： SPI'
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - { assertion: TestAssertion, expected: 200, rule: == }
+  - title: '自定义验证器： Class.forName()'
+    body:
+      userName: ${user}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - { assertion: PackageAssertion, package: '${package}', expected: 200, rule: == }

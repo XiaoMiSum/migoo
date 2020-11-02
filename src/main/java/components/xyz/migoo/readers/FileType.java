@@ -26,49 +26,21 @@
  *
  */
 
-
 package components.xyz.migoo.readers;
-
-import com.alibaba.fastjson.JSONObject;
-import components.xyz.migoo.reports.Report;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Properties;
 
 /**
  * @author xiaomi
+ * @date 2020/10/29 21:23
  */
-public class PropertiesReader extends AbstractReader implements Reader {
+public enum FileType {
 
-    private JSONObject json;
+    XLS,
+    XLSX,
+    YML,
+    YAML,
+    JSON,
+    PROPERTIES;
 
-    public PropertiesReader(String path) throws ReaderException {
-        super.stream(path);
-    }
-
-    public PropertiesReader(File file) throws ReaderException {
-        super.stream(file);
-    }
-
-    @Override
-    public JSONObject read() throws ReaderException {
-        Properties props = new Properties();
-        try {
-            props.load(inputStream);
-        } catch (IOException e) {
-            Report.log(e.getMessage(), e);
-            throw new ReaderException("file read exception: " + e.getMessage());
-        }
-        json = (JSONObject)JSONObject.toJSON(props);
-        return json;
-    }
-
-    @Override
-    public String get(String key) throws ReaderException {
-        if (json == null){
-            read();
-        }
-        return json.getString(key);
+    FileType(){
     }
 }
