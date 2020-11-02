@@ -92,10 +92,10 @@ public class AssertionFactory {
         if (assertion == null && validator.get("package") != null) {
             assertion = (Assertion) Class.forName(validator.get("package") + "." + validator.get("assertion")).newInstance();
             SELF_DEFINED_ASSERTION.put(type, assertion);
-        } else if (assertion instanceof AbstractAssertion) {
-            ((AbstractAssertion) assertion).setField(validator.getString("field"));
         } else if (assertion == null) {
             throw new Exception("assertion not found: " + validator.getString("assertion"));
+        } else if (assertion instanceof AbstractAssertion) {
+            ((AbstractAssertion) assertion).setField(validator.getString("field"));
         }
         validator.put("assertion", assertion.getClass().getSimpleName());
     }
