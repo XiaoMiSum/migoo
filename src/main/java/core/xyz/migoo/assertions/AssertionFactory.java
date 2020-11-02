@@ -28,7 +28,6 @@ package core.xyz.migoo.assertions;
 
 import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.assertions.rules.Alias;
-import core.xyz.migoo.functions.FunctionException;
 import xyz.migoo.simplehttp.Response;
 
 import java.util.HashMap;
