@@ -55,7 +55,7 @@ public class ReaderFactory {
     }
 
     private static FileType suffix(String file) throws ReaderException {
-        String suffix = file.substring(file.lastIndexOf("."));
+        String suffix = file.substring(file.lastIndexOf(".") + 1);
         try {
             return FileType.valueOf(suffix.toUpperCase());
         } catch (Exception e) {
