@@ -66,7 +66,15 @@ public class Migoo {
         JSONArray sets = fileJson.get("sets") != null ? fileJson.getJSONArray("sets") : new JSONArray();
         if (files != null) {
             for (Object filePath : files) {
-                sets.add(ReaderFactory.getReader(new File((String) filePath)).read());
+                JSONObject set = (JSONObject) ReaderFactory.getReader(new File((String) filePath)).read();
+                JSONArray cases = set.getJSONArray("cases");
+                for (int i = 0; i < cases.size(); i++) {
+                    Object steps = cases.getJSONObject(i).get("steps");
+                    if (steps instanceof String) {
+                        cases.getJSONObject(i).put("steps", ReaderFactory.getReader(new File((String) steps)).read());
+                    }
+                }
+                sets.add(set);
             }
             fileJson.remove("files");
         }

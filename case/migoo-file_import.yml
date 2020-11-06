@@ -6,7 +6,4 @@ plugins: # 配置信息
 dataset: # 可空，正对当前 suite 生效
   file: './case/dataset.yml'
 files:
-  - './case/testset1.yml'
-  - './case/testset2.yml'
-  - './case/testset3.yml'
-  - './case/testset4.yml'
+  - './case/testset5.yml'

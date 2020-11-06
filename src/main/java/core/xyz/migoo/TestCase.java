@@ -52,11 +52,12 @@ public class TestCase extends AbstractTest {
     private final JSONObject testCase;
     private MiGooRequest request;
     private Response response;
+    private List<TestStep> steps;
     private boolean hasFailure = false;
 
     TestCase(JSONObject testCase, JSONObject requestConfig) {
         super(testCase.getString("title"), testCase.getInteger("id"));
-        super.initTest(testCase.getJSONObject("config"), testCase.getJSONObject("dataset"));
+        this.initTest(testCase.getJSONObject("config"), testCase.getJSONObject("dataset"), testCase.getJSONArray("steps"));
         super.addVars("title", super.getTestName());
         super.addToGlobals();
         super.initRequest(requestConfig);
@@ -87,6 +88,13 @@ public class TestCase extends AbstractTest {
             Report.log("test case end: {}", this.getTestName());
         }
         return result;
+    }
+
+    public void initTest(JSONObject config, JSONObject dataset, JSONArray steps) {
+        this.initTest(config, dataset);
+        if (steps != null) {
+            this.steps = steps.toJavaList(TestStep.class);
+        }
     }
 
     private void buildRequest() throws FunctionException {
@@ -175,6 +183,11 @@ public class TestCase extends AbstractTest {
         if (!this.isSkipped) {
             this.processVariable();
             super.setup();
+            if (steps != null) {
+                for (TestStep step : steps) {
+                    step.execute(getVars(), requestConfig);
+                }
+            }
             this.buildRequest();
         }
     }

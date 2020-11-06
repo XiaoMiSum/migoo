@@ -1,0 +1,32 @@
+name: 测试步骤
+config:
+  request:
+    api: /api/login
+dataset:
+  vars:
+    user: migoo
+cases:
+  - title: 单个测试步骤
+    steps:
+      - url: /api/login
+        method: post
+        body:
+          userName: ${user}
+          password: ${password}
+          sign: ${sign}
+        extract:
+          status: '$.status'
+    body:
+      userName: ${status}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - { assertion: response, field: status, expected: 200, rule: == }
+  - title: 多个测试步骤
+    steps: './case/teststep.yml'
+    body:
+      userName: ${token}
+      password: ${status}
+      sign: ${sign}
+    validators:
+      - { assertion: response, field: status, expected: 200, rule: == }
