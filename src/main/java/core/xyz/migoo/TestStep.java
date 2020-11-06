@@ -33,6 +33,7 @@ import com.alibaba.fastjson.JSONPath;
 import core.xyz.migoo.functions.FunctionException;
 import core.xyz.migoo.http.MiGooRequest;
 import core.xyz.migoo.vars.Vars;
+import core.xyz.migoo.vars.VarsException;
 import core.xyz.migoo.vars.VarsHelper;
 import lombok.Data;
 import xyz.migoo.simplehttp.HttpException;
@@ -70,13 +71,11 @@ public class TestStep {
 
     private JSONObject extract;
 
-    public void execute(Vars vars, JSONObject config) throws FunctionException, IOException, HttpException {
+    public void execute(Vars vars, JSONObject config) throws Exception {
         this.bindRequestVariable(vars);
         this.buildRequest(config);
         response = request.execute();
-        if (extract != null) {
-            extract.forEach((k, v) -> vars.put(k, JSONPath.read(response.text(), v.toString())));
-        }
+        this.extractToVars(vars);
     }
 
     private void bindRequestVariable(Vars vars) throws FunctionException {
@@ -109,5 +108,18 @@ public class TestStep {
         request = builder.headers(headers == null ? config.getJSONObject("headers") : headers)
                 .cookies(config.get("cookies") != null ? config.get("cookie") : config.get("cookies"))
                 .build();
+    }
+
+    private void extractToVars(Vars vars){
+        if (extract != null && !extract.isEmpty()) {
+            for (String key : extract.keySet()) {
+                String path = extract.getString(key);
+                Object object = JSONPath.read(response.text(), path);
+                if (object == null || "".equals(object)) {
+                    throw new VarsException("value con not be null, path: " + path);
+                }
+                vars.put(key, object);
+            }
+        }
     }
 }
