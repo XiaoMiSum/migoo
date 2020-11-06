@@ -91,22 +91,13 @@ public class TestStep {
 
     private void buildRequest(JSONObject config) {
         MiGooRequest.Builder builder = new MiGooRequest.Builder()
-                .method(method).query(query).data(data).body(body);
+                .method(method).query(query).data(data).body(body)
+                .headers(headers == null ? config.getJSONObject("headers") : headers);
         Matcher matcher = pattern.matcher(url);
-        if (matcher.find()) {
-            builder.protocol(matcher.group(1))
-                    .host(matcher.group(2))
-                    .port(matcher.group(3) == null ? null : Integer.parseInt(matcher.group(3)))
-                    .api(matcher.group(4));
-        } else {
-            builder.protocol(config.getString("protocol"))
-                    .host(config.getString("host"))
-                    .port(config.getInteger("port"))
-                    .api(config.getString("api"));
-        }
-        request = builder.headers(headers == null ? config.getJSONObject("headers") : headers)
-                .cookies(config.get("cookies") != null ? config.get("cookie") : config.get("cookies"))
-                .build();
+        request = matcher.find() ? builder.port(matcher.group(3) == null ? null : Integer.parseInt(matcher.group(3)))
+            .protocol(matcher.group(1)).host(matcher.group(2)).api(matcher.group(4)).build()
+                : builder.host(config.getString("host")).protocol(config.getString("protocol"))
+            .port(config.getInteger("port")).api(config.getString("api")).build();
     }
 
     private void extractToVars(Vars vars){

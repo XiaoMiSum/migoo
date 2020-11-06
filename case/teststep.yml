@@ -6,7 +6,7 @@
     sign: ${sign}
   extract:
     status: '$.status'
-- url: /api/login
+- url: http://migoo.xyz/api/login
   method: post
   body:
     userName: ${user}
