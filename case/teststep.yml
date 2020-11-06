@@ -14,3 +14,4 @@
     sign: ${sign}
   extract:
     token: '$.data.token'
+    code: '$.status'

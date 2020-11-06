@@ -30,17 +30,15 @@ package core.xyz.migoo;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
+import components.xyz.migoo.reports.Report;
 import core.xyz.migoo.functions.FunctionException;
 import core.xyz.migoo.http.MiGooRequest;
 import core.xyz.migoo.vars.Vars;
 import core.xyz.migoo.vars.VarsException;
 import core.xyz.migoo.vars.VarsHelper;
 import lombok.Data;
-import xyz.migoo.simplehttp.HttpException;
-import xyz.migoo.simplehttp.Request;
 import xyz.migoo.simplehttp.Response;
 
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -65,7 +63,7 @@ public class TestStep {
 
     private JSONObject body;
 
-    private Request request;
+    private MiGooRequest request;
 
     private Response response;
 
@@ -76,6 +74,7 @@ public class TestStep {
         this.buildRequest(config);
         response = request.execute();
         this.extractToVars(vars);
+        this.printRequestLog();
     }
 
     private void bindRequestVariable(Vars vars) throws FunctionException {
@@ -118,8 +117,15 @@ public class TestStep {
                 if (object == null || "".equals(object)) {
                     throw new VarsException("value con not be null, path: " + path);
                 }
+                extract.put(key, object);
                 vars.put(key, object);
             }
         }
     }
+
+    private void printRequestLog() {
+        request.printRequestLog();
+        Report.log("extract vars: {}", extract.toJSONString());
+    }
+
 }

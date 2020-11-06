@@ -131,22 +131,7 @@ public class TestCase extends AbstractTest {
     }
 
     private void printRequestLog() {
-        Report.log("request api: {}", request.uriNotContainsParam());
-        if (request.jsonHeaders() != null && !request.jsonHeaders().isEmpty()) {
-            Report.log("request header: {}", request.jsonHeaders());
-        }
-        if (request.cookies() != null && !request.cookies().isEmpty()) {
-            Report.log("request cookies: {}", request.cookies());
-        }
-        if (StringUtils.isNotEmpty(request.query())) {
-            Report.log("request query: {}", request.query());
-        }
-        if (StringUtils.isNotEmpty(request.data())) {
-            Report.log("request data: {}", request.data());
-        }
-        if (StringUtils.isNotEmpty(request.body())) {
-            Report.log("request body: {}", request.body());
-        }
+        request.printRequestLog();
         Report.log("response body: {}", response.text());
     }
 

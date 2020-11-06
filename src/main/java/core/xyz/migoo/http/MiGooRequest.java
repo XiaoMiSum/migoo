@@ -29,6 +29,7 @@ package core.xyz.migoo.http;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import components.xyz.migoo.reports.Report;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.client.CookieStore;
@@ -101,6 +102,25 @@ public class MiGooRequest extends Request {
     public JSONArray cookies() {
         return context() != null && context().getCookieStore() != null ?
                 new JSONArray(new ArrayList<>(context().getCookieStore().getCookies())) : null;
+    }
+
+    public void printRequestLog() {
+        Report.log("request api: {}", this.uriNotContainsParam());
+        if (this.jsonHeaders() != null && !this.jsonHeaders().isEmpty()) {
+            Report.log("request header: {}", this.jsonHeaders());
+        }
+        if (this.cookies() != null && !this.cookies().isEmpty()) {
+            Report.log("request cookies: {}", this.cookies());
+        }
+        if (StringUtils.isNotEmpty(this.query())) {
+            Report.log("request query: {}", this.query());
+        }
+        if (StringUtils.isNotEmpty(this.data())) {
+            Report.log("request data: {}", this.data());
+        }
+        if (StringUtils.isNotEmpty(this.body())) {
+            Report.log("request body: {}", this.body());
+        }
     }
 
     public static class Builder {
