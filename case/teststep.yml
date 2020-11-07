@@ -1,0 +1,17 @@
+- url: /api/login
+  method: post
+  body:
+    userName: ${user}
+    password: ${password}
+    sign: ${sign}
+  extract:
+    status: '$.status'
+- url: http://migoo.xyz/api/login
+  method: post
+  body:
+    userName: ${user}
+    password: ${password}
+    sign: ${sign}
+  extract:
+    token: '$.data.token'
+    code: '$.status'
