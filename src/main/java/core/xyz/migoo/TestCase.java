@@ -162,6 +162,10 @@ public class TestCase extends AbstractTest {
         return validators != null ? validators.toJavaList(Validator.class) : new ArrayList<>();
     }
 
+    private List<TestStep> steps() {
+        return steps != null ? steps : new ArrayList<>();
+    }
+
     @Override
     public void setup() throws Exception {
         this.startTime = new Date();
@@ -182,6 +186,7 @@ public class TestCase extends AbstractTest {
         TestResult r = (TestResult) result;
         super.setResult(result);
         r.setValidators(this.validators());
+        r.setSteps(this.steps());
         r.setRequest(request);
         r.setResponse(response);
     }

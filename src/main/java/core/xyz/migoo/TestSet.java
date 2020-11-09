@@ -30,7 +30,6 @@ package core.xyz.migoo;
 
 import com.alibaba.fastjson.JSONObject;
 import components.xyz.migoo.reports.Report;
-import core.xyz.migoo.functions.FunctionException;
 
 import java.util.Date;
 
@@ -61,11 +60,13 @@ public class TestSet extends AbstractTest {
         try {
             Report.log("{} begin: {}", TYPE, this.getTestName());
             this.setup();
+            ISuiteResult suiteResult = (ISuiteResult) result;
             if (!this.isSkipped) {
                 for (AbstractTest test : this.getRunTests()) {
                     test.addVars(getVars());
-                    this.runTest(test, (ISuiteResult) result);
+                    this.runTest(test, suiteResult);
                 }
+                this.status(suiteResult.getErrorCount() > 0 ? ERROR : suiteResult.getFailureCount() > 0 ? FAILED : PASSED);
             }
         } catch (Throwable t) {
             this.throwable(t);

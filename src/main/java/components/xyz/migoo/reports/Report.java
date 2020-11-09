@@ -39,10 +39,7 @@ import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 import components.xyz.migoo.readers.ReaderException;
 import components.xyz.migoo.readers.YamlReader;
-import core.xyz.migoo.IResult;
-import core.xyz.migoo.ISuiteResult;
-import core.xyz.migoo.ITestResult;
-import core.xyz.migoo.Validator;
+import core.xyz.migoo.*;
 import core.xyz.migoo.report.IReport;
 import core.xyz.migoo.utils.FileUtils;
 import org.apache.commons.mail.HtmlEmail;
@@ -113,32 +110,46 @@ public class Report implements IReport {
 
     private void createExtentTest() {
         if (((ISuiteResult) result).getTestResults() != null) {
-            for (IResult iSuiteResult : ((ISuiteResult) result).getTestResults()) {
-                ISuiteResult suiteResult = (ISuiteResult) iSuiteResult;
-                ExtentTest feature = extent.createTest(iSuiteResult.getTestName(),
+            for (IResult iResult : ((ISuiteResult) result).getTestResults()) {
+                ISuiteResult suiteResult = (ISuiteResult) iResult;
+                ExtentTest feature = extent.createTest(iResult.getTestName(),
                         String.format("Total Case：%s，Passed：%s，Failed：%s，Error：%s，Skipped：%s", suiteResult.size(),
                                 suiteResult.getSuccessCount(), suiteResult.getFailureCount(), suiteResult.getErrorCount(),
                                 suiteResult.getSkipCount()));
-                feature.getModel().setStartTime(iSuiteResult.getStartTime());
-                for (IResult testResult : suiteResult.getTestResults()) {
-                    ITestResult iTestResult = (ITestResult) testResult;
-                    ExtentTest node = feature.createNode(testResult.getTestName());
-                    node.getModel().setStartTime(testResult.getStartTime());
-                    if (iTestResult.getRequest() != null) {
-                        Request request = iTestResult.getRequest();
-                        StringBuilder sb = new StringBuilder("<span class=\"badge badge-primary\">REQUEST INFO</span>")
-                                .append("<br/>").append("URL：").append(request.uriNotContainsParam());
-                        this.setRequestInfo(sb, request);
-                        if (iTestResult.getResponse() != null) {
-                            this.setResponseInfo(sb, iTestResult.getResponse());
-                        }
-                        node.info(sb.toString());
+                feature.getModel().setStartTime(iResult.getStartTime());
+                if (suiteResult.getTestResults() != null) {
+                    for (IResult testResult : suiteResult.getTestResults()) {
+                        ExtentTest node = feature.createNode(testResult.getTestName());
+                        node.getModel().setStartTime(testResult.getStartTime());
+                        this.setNodeRequestAndResponse(node, (ITestResult) testResult);
+                        this.setNodeSteps(node, ((ITestResult) testResult).getSteps());
+                        this.setNodeStatus(node, testResult);
+                        node.getModel().setEndTime(testResult.getEndTime());
                     }
-                    this.setNodeStatus(node, testResult);
-                    node.getModel().setEndTime(testResult.getEndTime());
+                } else if (iResult.getThrowable() != null) {
+                    feature.fail(iResult.getThrowable());
                 }
-                feature.getModel().setEndTime(iSuiteResult.getEndTime());
+                feature.getModel().setEndTime(iResult.getEndTime());
             }
+        }
+    }
+
+    public void setNodeSteps(ExtentTest node, List<TestStep> steps) {
+        if (steps != null && !steps.isEmpty()) {
+            node.info(MarkupHelper.createCodeBlock(steps.toString(), CodeLanguage.JSON));
+        }
+    }
+
+    private void setNodeRequestAndResponse(ExtentTest node, ITestResult iTestResult){
+        if (iTestResult.getRequest() != null) {
+            Request request = iTestResult.getRequest();
+            StringBuilder sb = new StringBuilder("<span class=\"badge badge-primary\">REQUEST INFO</span>")
+                    .append("<br/>").append("URL：").append(request.uriNotContainsParam());
+            this.setRequestInfo(sb, request);
+            if (iTestResult.getResponse() != null) {
+                this.setResponseInfo(sb, iTestResult.getResponse());
+            }
+            node.info(sb.toString());
         }
     }
 

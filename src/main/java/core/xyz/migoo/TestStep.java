@@ -28,8 +28,10 @@
 
 package core.xyz.migoo;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
+import com.alibaba.fastjson.annotation.JSONField;
 import components.xyz.migoo.reports.Report;
 import core.xyz.migoo.functions.FunctionException;
 import core.xyz.migoo.http.MiGooRequest;
@@ -63,8 +65,10 @@ public class TestStep {
 
     private JSONObject body;
 
+    @JSONField(serialize = false)
     private MiGooRequest request;
 
+    @JSONField(serialize = false)
     private Response response;
 
     private JSONObject extract;
@@ -95,9 +99,9 @@ public class TestStep {
                 .headers(headers == null ? config.getJSONObject("headers") : headers);
         Matcher matcher = pattern.matcher(url);
         request = matcher.find() ? builder.port(matcher.group(3) == null ? null : Integer.parseInt(matcher.group(3)))
-            .protocol(matcher.group(1)).host(matcher.group(2)).api(matcher.group(4)).build()
+                .protocol(matcher.group(1)).host(matcher.group(2)).api(matcher.group(4)).build()
                 : builder.host(config.getString("host")).protocol(config.getString("protocol"))
-            .port(config.getInteger("port")).api(config.getString("api")).build();
+                .port(config.getInteger("port")).api(config.getString("api")).build();
     }
 
     private void extractToVars(Vars vars){
@@ -117,6 +121,11 @@ public class TestStep {
     private void printRequestLog() {
         request.printRequestLog();
         Report.log("extract vars: {}", extract.toJSONString());
+    }
+
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
     }
 
 }

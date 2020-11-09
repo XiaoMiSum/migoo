@@ -42,6 +42,8 @@ public class TestResult extends Result implements ITestResult {
 
     private List<Validator> validators;
 
+    private List<TestStep> steps;
+
     private Request request;
 
     private Response response;
@@ -54,6 +56,16 @@ public class TestResult extends Result implements ITestResult {
     @Override
     public void setValidators(List<Validator> validators) {
         this.validators = validators;
+    }
+
+    @Override
+    public List<TestStep> getSteps() {
+        return this.steps;
+    }
+
+    @Override
+    public void setSteps(List<TestStep> steps) {
+        this.steps = steps;
     }
 
     @Override

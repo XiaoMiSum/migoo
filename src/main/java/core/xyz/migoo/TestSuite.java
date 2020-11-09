@@ -80,14 +80,17 @@ public class TestSuite extends AbstractTest {
         try {
             Report.log("{} begin: {}", TYPE, this.getTestName());
             this.setup();
+            ISuiteResult suiteResult = (ISuiteResult) result;
             if (!this.isSkipped) {
                 this.getRunTests().forEach(test -> {
                     test.addVars(getVars());
-                    ((ISuiteResult) result).addTestResult(test.run());
+                    this.runTest(test, suiteResult);
                 });
+                this.status(suiteResult.getErrorCount() > 0 ? ERROR : suiteResult.getFailureCount() > 0 ? FAILED : PASSED);
             }
         } catch (Throwable t) {
             this.throwable(t);
+            this.status(ERROR);
             Report.log(TYPE + " run error. ", t);
         } finally {
             this.teardown();
@@ -112,6 +115,19 @@ public class TestSuite extends AbstractTest {
             this.processVariable();
             super.setup();
             PluginFactory.create(plugins);
+        }
+    }
+
+    private void runTest(ITest test, ISuiteResult result){
+        result.addTestResult(test.run());
+        if (test.getStatus() == PASSED) {
+            result.addSuccess();
+        } else if (test.getStatus() == FAILED) {
+            result.addFailure();
+        } else if (test.getStatus() == ERROR) {
+            result.addError();
+        } else if (test.getStatus() == SKIPPED) {
+            result.addSkip();
         }
     }
 }
