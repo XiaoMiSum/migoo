@@ -19,8 +19,8 @@ public class PackageAssertion implements Assertion {
     }
 
     @Override
-    public void setActual(Object actual) {
-        this.actual = ((Response) actual).text();
+    public void setActual(Response actual) {
+        this.actual = actual.text();
     }
 
     @Override

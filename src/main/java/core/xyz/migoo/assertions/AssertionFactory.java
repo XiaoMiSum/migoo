@@ -64,6 +64,10 @@ public class AssertionFactory {
 
     private static final AssertionFactory FACTORY = new AssertionFactory();
 
+    public static void put(Class<? extends Assertion> clz) throws Exception {
+        SELF_DEFINED_ASSERTION.put(clz.getSimpleName().toUpperCase(), clz.newInstance());
+    }
+
     public static boolean assertThat(JSONObject validator, Response response) throws Exception {
         try {
             FACTORY.setInstance(validator);
@@ -76,7 +80,7 @@ public class AssertionFactory {
 
     private Assertion assertion;
 
-    public void setActual(Object actual) {
+    public void setActual(Response actual) {
         assertion.setActual(actual);
     }
 

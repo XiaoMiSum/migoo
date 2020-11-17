@@ -53,6 +53,10 @@ public interface ITestResult {
      */
     void setValidators(List<Validator> validators);
 
+    List<TestStep> getSteps();
+
+    void setSteps(List<TestStep> steps);
+
     /**
      * the request of this result.
      *
