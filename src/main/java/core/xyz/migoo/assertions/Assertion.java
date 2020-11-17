@@ -30,6 +30,7 @@ import components.xyz.migoo.assertions.JSONAssertion;
 import components.xyz.migoo.assertions.ResponseAssertion;
 import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.functions.FunctionException;
+import xyz.migoo.simplehttp.Response;
 
 /**
  * @author xiaomi
@@ -61,9 +62,9 @@ public interface Assertion {
      * {@linkplain JSONAssertion JSONAssertion}
      * {@linkplain ResponseAssertion ResponseAssertion}
      *
-     * @param actual response or java class
+     * @param actual xyz.migoo.simplehttp.Response
      */
-    void setActual(Object actual);
+    void setActual(Response actual);
 
     /**
      * getting actual values

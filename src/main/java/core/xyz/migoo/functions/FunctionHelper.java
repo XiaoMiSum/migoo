@@ -45,6 +45,7 @@ public class FunctionHelper {
     private final static FunctionHelper FACTORY = new FunctionHelper();
 
     private static final Map<String, Function> SELF_DEFINED_FUNCTIONS = new HashMap<>(100);
+
     private static final Map<String, InternalFunction> DEFAULT_FUNCTIONS = new HashMap<>(11);
 
     static {
@@ -56,16 +57,19 @@ public class FunctionHelper {
         }
     }
 
+    public static void put(Class<? extends Function> clz) throws Exception {
+        SELF_DEFINED_FUNCTIONS.put(clz.getSimpleName().toUpperCase(), clz.newInstance());
+    }
+
     public static Object execute(String object, JSONObject variables) throws FunctionException {
         try {
             Matcher func = FUNC_PATTERN.matcher(object);
-            if (func.find()) {
-                FACTORY.initFunc(func.group(1));
-                FACTORY.initParameter(func.group(2), variables);
-                return FACTORY.execute();
-            } else {
+            if (!func.find()) {
                 throw new FunctionException("not matcher function: " + object);
             }
+            FACTORY.initFunc(func.group(1));
+            FACTORY.initParameter(func.group(2), variables);
+            return FACTORY.execute();
         } finally {
             FACTORY.clear();
         }

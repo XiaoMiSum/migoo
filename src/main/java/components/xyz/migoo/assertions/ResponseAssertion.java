@@ -45,20 +45,19 @@ import java.util.List;
 public class ResponseAssertion extends AbstractAssertion {
 
     @Override
-    public void setActual(Object actual) {
-        Response response = (Response) actual;
+    public void setActual(Response actual) {
         if (STATUS.contains(field)) {
-            this.actual = response.statusCode();
+            this.actual = actual.statusCode();
         } else if (field.toLowerCase().startsWith("headers.") || field.toLowerCase().startsWith("header.")) {
             String s = field.substring(field.indexOf(".") + 1).toLowerCase();
-            for (Header header : response.headers()) {
+            for (Header header : actual.headers()) {
                 if (header.getName().toLowerCase().equals(s)) {
                     this.actual = header.getValue();
                     break;
                 }
             }
         } else {
-            this.actual = response.text();
+            this.actual = actual.text();
         }
     }
 

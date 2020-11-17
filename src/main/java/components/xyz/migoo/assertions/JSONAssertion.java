@@ -42,8 +42,7 @@ import xyz.migoo.simplehttp.Response;
 public class JSONAssertion extends AbstractAssertion {
 
     @Override
-    public void setActual(Object actual) {
-        Response response = (Response) actual;
-        this.actual = JSONPath.read(response.text(), field);
+    public void setActual(Response actual) {
+        this.actual = JSONPath.read(actual.text(), field);
     }
 }
