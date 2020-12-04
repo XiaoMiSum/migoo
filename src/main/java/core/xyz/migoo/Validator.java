@@ -26,7 +26,6 @@
  *
  */
 
-
 package core.xyz.migoo;
 
 import com.alibaba.fastjson.JSON;
@@ -66,12 +65,12 @@ public class Validator {
     }
 
     @JSONField(serialize = false)
-    public boolean isSuccess() {
+    public boolean isPassed() {
         return "passed".equals(getResult());
     }
 
     @JSONField(serialize = false)
-    public boolean isFailure() {
+    public boolean isFailed() {
         return "failed".equals(getResult());
     }
 

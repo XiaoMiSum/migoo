@@ -36,13 +36,13 @@ import java.util.Date;
  * @author xiaomi
  * @date 2020/7/31 09:54
  */
-public class Result implements IResult {
+public abstract class Result implements IResult {
 
     private String testName;
 
     private int status;
 
-    private Integer id;
+    private Object id;
 
     private Date startTime;
 
@@ -61,12 +61,12 @@ public class Result implements IResult {
     }
 
     @Override
-    public Integer getId() {
+    public Object getTestId() {
         return id;
     }
 
     @Override
-    public void setId(Integer id) {
+    public void setTestId(Object id) {
         this.id = id;
     }
 
@@ -112,6 +112,9 @@ public class Result implements IResult {
 
     @Override
     public String getThrowableAsString() {
+        if (throwable == null) {
+            return "";
+        }
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
         throwable.printStackTrace(writer);
@@ -120,7 +123,7 @@ public class Result implements IResult {
     }
 
     @Override
-    public boolean isSuccess() {
+    public boolean isPassed() {
         return this.status == PASSED;
     }
 

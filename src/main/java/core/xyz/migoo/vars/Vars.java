@@ -31,26 +31,11 @@ package core.xyz.migoo.vars;
 
 import com.alibaba.fastjson.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author xiaomi
  * @date 2019-11-22 23:48
  */
 public class Vars extends JSONObject {
-
-    private static final Map<String, Vars> VARS = new HashMap<>(16);
-
-    public static void addToGlobals(String key, Vars vars) {
-        if (vars != null) {
-            VARS.put(key, vars);
-        }
-    }
-
-    public static Vars getVars(Object key) {
-        return VARS.get(String.valueOf(key));
-    }
 
     public Vars(boolean ordered) {
         super(ordered);
@@ -58,5 +43,17 @@ public class Vars extends JSONObject {
 
     public Vars(int initialCapacity) {
         super(initialCapacity, true);
+    }
+
+    public JSONObject getRequestBody(){
+        return this.getJSONObject("body");
+    }
+
+    public JSONObject getRequestQuery(){
+        return this.getJSONObject("query");
+    }
+
+    public JSONObject getRequestData(){
+        return this.getJSONObject("data");
     }
 }

@@ -33,7 +33,6 @@ import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.assertions.AssertionFactory;
 import core.xyz.migoo.functions.FunctionException;
 import core.xyz.migoo.vars.VarsHelper;
-import org.apache.commons.lang3.StringUtils;
 import core.xyz.migoo.http.MiGooRequest;
 import components.xyz.migoo.reports.Report;
 import xyz.migoo.simplehttp.Response;
@@ -56,10 +55,8 @@ public class TestCase extends AbstractTest {
     private boolean hasFailure = false;
 
     TestCase(JSONObject testCase, JSONObject requestConfig) {
-        super(testCase.getString("title"), testCase.getInteger("id"));
+        super(testCase.getString("title"), testCase.get("id"));
         this.initTest(testCase.getJSONObject("config"), testCase.getJSONObject("dataset"), testCase.getJSONArray("steps"));
-        super.addVars("title", super.getTestName());
-        super.addToGlobals();
         super.initRequest(requestConfig);
         this.validators = testCase.getJSONArray("validators");
         this.testCase = testCase;
@@ -76,7 +73,7 @@ public class TestCase extends AbstractTest {
                 this.response = request.execute();
                 this.printRequestLog();
                 this.doCheck();
-                this.status(hasFailure ? FAILED : PASSED);
+                this.status(this.getStatus() != CREATED ? this.getStatus() : hasFailure ? FAILED : PASSED);
             }
         } catch (Throwable t) {
             this.throwable(t);
@@ -139,21 +136,17 @@ public class TestCase extends AbstractTest {
         for (int i = 0; i < validators.size(); i++) {
             JSONObject validator = validators.getJSONObject(i);
             VarsHelper.convertVariables(validator, this.getVars());
+            validator.put("migoo.vars", this.getVars());
             try {
-                if (AssertionFactory.assertThat(validator, response)) {
-                    validator.put("result", "passed");
-                } else {
-                    validator.put("result", "failed");
+                boolean result = AssertionFactory.assertThat(validator, response);
+                validator.put("result", result ? "passed" : "failed");
+                if (!result) {
                     hasFailure = true;
                 }
-            } catch (AssertionError t) {
-                validator.put("result", "failed");
-                validator.put("throwable", t);
-                this.hasFailure = true;
-            } catch (Exception e) {
+            }  catch (Exception | AssertionError e) {
                 validator.put("throwable", e);
-                validator.put("result", "error");
-                this.status(ERROR);
+                validator.put("result", e instanceof AssertionError ? "failed" : "error");
+                this.status(e instanceof AssertionError ? FAILED : ERROR);
             }
         }
     }

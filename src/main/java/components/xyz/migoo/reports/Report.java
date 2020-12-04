@@ -28,6 +28,7 @@
 
 package components.xyz.migoo.reports;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
@@ -39,6 +40,7 @@ import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 import components.xyz.migoo.readers.ReaderException;
 import components.xyz.migoo.readers.YamlReader;
+import components.xyz.migoo.reports.common.CharSequenceTranslator;
 import core.xyz.migoo.*;
 import core.xyz.migoo.report.IReport;
 import core.xyz.migoo.utils.FileUtils;
@@ -52,7 +54,6 @@ import xyz.migoo.simplehttp.Response;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author xiaomi
@@ -86,13 +87,8 @@ public class Report implements IReport {
 
     private String outputDirectoryName;
 
-    private IResult result;
-
-    private boolean isPackage;
-
-    private void initReport(IResult result, String outputDirectoryName) {
+    private void initReport(IResult result, String outputDirectoryName, boolean enableOfflineMode) {
         this.outputDirectoryName = outputDirectoryName;
-        this.result = result;
         ExtentSparkReporter reporter = new ExtentSparkReporter(outputDirectoryName + "/index.html");
         reporter.config().setDocumentTitle(result.getTestName() + " Reports - Created by MiGoo");
         reporter.config().setReportName(result.getTestName() + " Reports</span></a></li>\n" +
@@ -100,7 +96,7 @@ public class Report implements IReport {
                 "<img src=\"https://img.shields.io/badge/MiGoo-By Mi.xiao-yellow.svg?style=social&amp;logo=github\">");
         reporter.config().setTimeStampFormat("yyyy-MM-dd HH:mm:ss");
         reporter.config().setTheme(Theme.DARK);
-        reporter.config().enableOfflineMode(true);
+        reporter.config().enableOfflineMode(enableOfflineMode);
         reporter.config().setTimelineEnabled(false);
         extent = new ExtentReports();
         extent.attachReporter(reporter);
@@ -108,14 +104,14 @@ public class Report implements IReport {
         extent.getReport().setEndTime(result.getEndTime());
     }
 
-    private void createExtentTest() {
+    private void createExtentTest(IResult result) {
         if (((ISuiteResult) result).getTestResults() != null) {
             for (IResult iResult : ((ISuiteResult) result).getTestResults()) {
                 ISuiteResult suiteResult = (ISuiteResult) iResult;
                 ExtentTest feature = extent.createTest(iResult.getTestName(),
                         String.format("Total Case：%s，Passed：%s，Failed：%s，Error：%s，Skipped：%s", suiteResult.size(),
-                                suiteResult.getSuccessCount(), suiteResult.getFailureCount(), suiteResult.getErrorCount(),
-                                suiteResult.getSkipCount()));
+                                suiteResult.getPassedCount(), suiteResult.getFailedCount(), suiteResult.getErrorCount(),
+                                suiteResult.getSkippedCount()));
                 feature.getModel().setStartTime(iResult.getStartTime());
                 if (suiteResult.getTestResults() != null) {
                     for (IResult testResult : suiteResult.getTestResults()) {
@@ -140,7 +136,7 @@ public class Report implements IReport {
         }
     }
 
-    private void setNodeRequestAndResponse(ExtentTest node, ITestResult iTestResult){
+    private void setNodeRequestAndResponse(ExtentTest node, ITestResult iTestResult) {
         if (iTestResult.getRequest() != null) {
             Request request = iTestResult.getRequest();
             StringBuilder sb = new StringBuilder("<span class=\"badge badge-primary\">REQUEST INFO</span>")
@@ -173,9 +169,16 @@ public class Report implements IReport {
             sb.append("<br/>").append("Headers：").append(Arrays.toString(response.headers()));
         }
         if (!response.text().isEmpty()) {
-            sb.append("<br/>").append("Body：").append(response.text());
+            sb.append("<br/>").append("Body：").append(this.getResponseString(response.text()));
         }
         sb.append(String.format("<br/>Duration：%s ms", response.duration()));
+    }
+
+    private String getResponseString(String text) {
+        if (text.startsWith("<") && text.endsWith(">")) {
+            return CharSequenceTranslator.escapeHtml4(text);
+        }
+        return text;
     }
 
     private void setNodeStatus(ExtentTest node, IResult testResult) {
@@ -186,7 +189,7 @@ public class Report implements IReport {
         } else {
             for (Validator validator : ((ITestResult) testResult).getValidators()) {
                 Markup m = MarkupHelper.createCodeBlock(validator.toString(), CodeLanguage.JSON);
-                node = validator.isSuccess() ? node.pass(m) : validator.isSkipped() ? node.skip(m)
+                node = validator.isPassed() ? node.pass(m) : validator.isSkipped() ? node.skip(m)
                         : validator.getThrowable() != null ? node.fail(m).fail(validator.getThrowable())
                         : node.fail(m);
             }
@@ -203,39 +206,33 @@ public class Report implements IReport {
 
     private void flush() {
         extent.flush();
-        if (isPackage) {
-            File file = new File(this.outputDirectoryName);
-            this.zipFile(file);
-            FileUtils.delete(file);
-        }
     }
 
     @Override
-    public void generateReport(IResult result, String outputDirectoryName, boolean isPackage) {
-        this.isPackage = isPackage;
-        this.initReport(result, outputDirectoryName);
+    public void generateReport(JSONObject config, IResult result) {
+        this.initReport(result, config.getString("output"), config.getBooleanValue("enableOfflineMode"));
         this.setSystemInfo();
-        this.createExtentTest();
+        this.createExtentTest(result);
         this.flush();
     }
 
     @Override
-    public void sendReport(Map<String, Object> config, String message) {
+    public void sendReport(JSONObject config, IResult result) {
         if (config != null && !config.isEmpty()) {
-            message = getMessage();
             HtmlEmail email = new HtmlEmail();
             email.setAuthentication((String) config.get("user"), (String) config.get("password"));
             email.setHostName((String) config.get("host"));
             email.setSmtpPort(Integer.parseInt(config.get("port").toString()));
             email.setCharset("UTF-8");
-            File zip = isPackage ? new File(outputDirectoryName) : zipFile(new File(outputDirectoryName));
+            File zip = zipFile(new File(outputDirectoryName));
             try {
                 email.setFrom((String) config.get("user"));
-                for (Object to : ((List) config.get("tolist")).toArray()) {
-                    email.addTo(String.valueOf(to));
+                JSONArray toList = config.getJSONArray("tolist");
+                for (int i = 0; i < toList.size(); i++) {
+                    email.addTo(toList.getString(i));
                 }
                 email.setSubject("测试执行完毕通知");
-                email.setMsg(message);
+                email.setMsg(this.getMessage(result));
                 email.attach(zip);
                 email.send();
             } catch (Exception e) {
@@ -247,35 +244,13 @@ public class Report implements IReport {
     }
 
     private File zipFile(File file) {
-        outputDirectoryName = isPackage ? file.getParent() + "/reports" + file.getName() + ".zip" : outputDirectoryName;
-        File zip = new File(outputDirectoryName);
+        File zip = new File(outputDirectoryName + "-reports.zip");
         ZipUtil.pack(file, zip);
+        FileUtils.delete(file);
         return zip;
     }
 
-    private String getMessage() {
-        String template = "<body style=\"color: #666; font-size: 14px; font-family: 'Open Sans',Helvetica,Arial,sans-serif;\">\n" +
-                "<div class=\"box-content\" style=\"width: 80%%; margin: 5px auto;\">\n" +
-                "    <div class=\"info-wrap\" style=\"border-bottom-left-radius: 10px;\n" +
-                "                                  border-bottom-right-radius: 10px;\n" +
-                "                                  border-top-left-radius: 10px;\n" +
-                "                                  border-top-right-radius: 10px;\n" +
-                "                                  border:1px solid #ddd;\n" +
-                "                                  overflow: hidden;\n" +
-                "                                  padding: 15px 15px 20px;\">\n" +
-                "            <p style=\" list-style: 160%%; margin: 10px 0;\">Hi,\n" +
-                "            <br/>以下为本次测试执行结果，更多内容请查阅附件.</p>\n" +
-                "        %s" +
-                "    </div>\n" +
-                "    <div class=\"header-tip\" style=\"font-size: 12px;\n" +
-                "                                   color: #aaa;\n" +
-                "                                   text-align: right;\n" +
-                "                                   padding-right: 25px;\n" +
-                "                                   padding-bottom: 10px;\">\n" +
-                "        <a href=\"https://github.com/XiaoMiSum/MiGoo\" target=\"_blank\">MiGoo - Copyright (c) 2018 mi_xiao@qq.com</a>\n" +
-                "     </div>\n" +
-                "</div>\n" +
-                "</body>";
+    private String getMessage(IResult result) {
         StringBuilder sb = new StringBuilder()
                 .append("<table class=\"list\" style=\"width: 100%%; border-collapse: collapse; border-top:1px solid #eee; font-size:12px;\">\n")
                 .append("<thead>\n")
@@ -303,17 +278,17 @@ public class Report implements IReport {
                     .append("<td style=\"padding:6px 10px; line-height: 150%%;\">\n")
                     .append(suiteResult.size()).append("</td>\n")
                     .append("<td style=\"padding:6px 10px; line-height: 150%%;\">\n")
-                    .append(suiteResult.getSuccessCount()).append("</td>\n")
+                    .append(suiteResult.getPassedCount()).append("</td>\n")
                     .append("<td style=\"padding:6px 10px; line-height: 150%%;\">\n")
-                    .append(suiteResult.getFailureCount()).append("</td>\n")
+                    .append(suiteResult.getFailedCount()).append("</td>\n")
                     .append("<td style=\"padding:6px 10px; line-height: 150%%;\">\n")
                     .append(suiteResult.getErrorCount()).append("</td>\n")
                     .append("<td style=\"padding:6px 10px; line-height: 150%%;\">\n")
-                    .append(suiteResult.getSkipCount()).append("</td>\n")
+                    .append(suiteResult.getSkippedCount()).append("</td>\n")
                     .append("</tr>\n");
         }
         sb.append("</tbody>\n").append("</table>\n");
-        return String.format(template, sb.toString());
+        return String.format(TEMPLATE, sb.toString());
     }
 
     static {
@@ -328,4 +303,27 @@ public class Report implements IReport {
             e.printStackTrace();
         }
     }
+
+    private final static String TEMPLATE = "<body style=\"color: #666; font-size: 14px; font-family: 'Open Sans',Helvetica,Arial,sans-serif;\">\n" +
+            "<div class=\"box-content\" style=\"width: 80%%; margin: 5px auto;\">\n" +
+            "    <div class=\"info-wrap\" style=\"border-bottom-left-radius: 10px;\n" +
+            "                                  border-bottom-right-radius: 10px;\n" +
+            "                                  border-top-left-radius: 10px;\n" +
+            "                                  border-top-right-radius: 10px;\n" +
+            "                                  border:1px solid #ddd;\n" +
+            "                                  overflow: hidden;\n" +
+            "                                  padding: 15px 15px 20px;\">\n" +
+            "            <p style=\" list-style: 160%%; margin: 10px 0;\">Hi,\n" +
+            "            <br/>以下为本次测试执行结果，更多内容请查阅附件.</p>\n" +
+            "        %s" +
+            "    </div>\n" +
+            "    <div class=\"header-tip\" style=\"font-size: 12px;\n" +
+            "                                   color: #aaa;\n" +
+            "                                   text-align: right;\n" +
+            "                                   padding-right: 25px;\n" +
+            "                                   padding-bottom: 10px;\">\n" +
+            "        <a href=\"https://github.com/XiaoMiSum/MiGoo\" target=\"_blank\">MiGoo - Copyright (c) 2018 mi_xiao@qq.com</a>\n" +
+            "     </div>\n" +
+            "</div>\n" +
+            "</body>";
 }

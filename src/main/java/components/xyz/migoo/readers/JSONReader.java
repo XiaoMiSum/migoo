@@ -67,11 +67,13 @@ public class JSONReader extends AbstractReader implements Reader {
             }catch (Exception e){
                 json = JSONObject.parseObject(stringBuilder.toString(), Feature.OrderedField);
             }
+            return json;
         } catch (Exception e) {
             Report.log(e.getMessage(), e);
             throw new ReaderException(e.getMessage() + ". file path : " + this.path);
+        } finally {
+            super.close();
         }
-        return json;
     }
 
     @Override
@@ -80,7 +82,7 @@ public class JSONReader extends AbstractReader implements Reader {
             read();
         }
         if (json instanceof JSONObject){
-           return ((JSONObject) json).getString(key);
+            return ((JSONObject) json).getString(key);
         }
         return null;
     }

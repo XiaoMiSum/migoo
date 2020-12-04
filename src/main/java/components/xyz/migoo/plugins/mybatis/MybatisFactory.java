@@ -26,6 +26,7 @@
 package components.xyz.migoo.plugins.mybatis;
 
 import core.xyz.migoo.plugin.PluginFactory;
+import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -40,11 +41,18 @@ import java.lang.reflect.Proxy;
 public final class MybatisFactory {
 
     public static <T> T mapper(Class<? extends Mapper> clazz, Object environment) {
+        SqlSessionFactory sqlSessionFactory = ((Mybatis) PluginFactory.get("Mybatis")).getSqlSession(environment);
+        SqlSession sqlSession = sqlSessionFactory.openSession();
         try {
-            SqlSessionFactory sqlSessionFactory = ((Mybatis) PluginFactory.get("Mybatis")).getSqlSession(environment);
-            SqlSession sqlSession = sqlSessionFactory.openSession();
             Mapper mapper = sqlSession.getMapper(clazz);
             return (T) MapperProxy.bind(mapper);
+        } catch (BindingException e) {
+            if (e.getMessage().contains("is not known to the MapperRegistry")) {
+                sqlSession.getConfiguration().addMapper(clazz);
+                Mapper mapper = sqlSession.getMapper(clazz);
+                return (T) MapperProxy.bind(mapper);
+            }
+            throw new RuntimeException("init mapper exception. ", e);
         } catch (Exception e) {
             throw new RuntimeException("init mapper exception. ", e);
         }

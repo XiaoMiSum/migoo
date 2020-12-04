@@ -95,6 +95,7 @@ public class FunctionHelper {
                     parameters.put(str, variables);
                 }
             }
+            parameters.put("migoo.vars", (Object) variables);
         } catch (Exception e) {
             throw new FunctionException("init parameter exception", e);
         }

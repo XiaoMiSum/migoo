@@ -29,10 +29,7 @@
 
 package components.xyz.migoo.readers;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 
 /**
  * @author xiaomi
@@ -41,6 +38,7 @@ public abstract class AbstractReader {
 
     protected static final String CLASSPATH = "classpath://";
     protected InputStream inputStream = null;
+    private FileInputStream fis = null;
 
     /**
      * 文件合法性检查，传入的文件路径不能为 null "" 文件夹
@@ -76,7 +74,8 @@ public abstract class AbstractReader {
     protected void stream(File file) throws ReaderException {
         try {
             validation(file);
-            inputStream = new BufferedInputStream(new FileInputStream(file));
+            fis = new FileInputStream(file);
+            inputStream = new BufferedInputStream(fis);
         }catch (Exception e){
             throw new ReaderException("file read exception: ", e);
         }
@@ -84,5 +83,18 @@ public abstract class AbstractReader {
 
     public boolean isNull(){
         return inputStream == null;
+    }
+
+    protected void close(){
+        try {
+            if (fis != null) {
+                fis.close();
+            }
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

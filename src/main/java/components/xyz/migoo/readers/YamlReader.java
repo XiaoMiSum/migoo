@@ -53,10 +53,14 @@ public class YamlReader extends AbstractReader implements Reader{
 
     @Override
     public JSON read(){
-        Yaml yaml = new Yaml();
-        Object object = yaml.load(inputStream);
-        json = (JSON) JSON.toJSON(object);
-        return json;
+        try {
+            Yaml yaml = new Yaml();
+            Object object = yaml.load(inputStream);
+            json = (JSON) JSON.toJSON(object);
+            return json;
+        } finally {
+            super.close();
+        }
     }
 
     @Override

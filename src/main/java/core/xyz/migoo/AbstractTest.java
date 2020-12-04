@@ -65,9 +65,9 @@ public abstract class AbstractTest implements ITest {
 
     private Throwable throwable;
 
-    private final Integer id;
+    private final Object id;
 
-    AbstractTest(String name, Integer id) {
+    AbstractTest(String name, Object id) {
         this.tName = name;
         this.id = id;
     }
@@ -137,10 +137,6 @@ public abstract class AbstractTest implements ITest {
      */
     public Vars getVars() {
         return this.vars;
-    }
-
-    public void addToGlobals() {
-        Vars.addToGlobals(tName, vars);
     }
 
     public void processVariable() throws FunctionException {
@@ -221,10 +217,10 @@ public abstract class AbstractTest implements ITest {
     }
 
     protected void setResult(IResult result) {
-        result.setId(id);
+        result.setTestId(id);
         result.setStartTime(startTime);
         result.setEndTime(endTime);
-        result.setStatus(isSkipped ? SKIPPED : this.status);
+        result.setStatus(this.getStatus());
         result.setTestName(tName);
         result.setThrowable(throwable);
     }

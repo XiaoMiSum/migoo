@@ -29,8 +29,6 @@
 
 package core.xyz.migoo;
 
-import core.xyz.migoo.functions.FunctionException;
-
 /**
  * @author xiaomi
  * @date 2019-08-10 11:02

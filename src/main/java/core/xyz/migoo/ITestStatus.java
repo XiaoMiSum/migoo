@@ -33,10 +33,9 @@ package core.xyz.migoo;
  * @date 2020/8/15 18:37
  */
 public interface ITestStatus {
-    int CREATED = -1;
+    int CREATED = 0;
     int PASSED = 1;
     int FAILED = 2;
     int SKIPPED = 3;
     int ERROR = 4;
-    int STARTED = 16;
 }

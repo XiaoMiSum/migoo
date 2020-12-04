@@ -50,10 +50,8 @@ public class TestSuite extends AbstractTest {
     private JSONObject plugins;
 
     public TestSuite(JSONObject suite) {
-        super(suite.getString("name"), suite.getInteger("id"));
+        super(suite.getString("name"), suite.get("id"));
         this.initTest(suite.getJSONObject("config"), suite.getJSONObject("dataset"), suite.getJSONObject("plugins"));
-        super.addVars("name", this.getTestName());
-        super.addToGlobals();
         suite.getJSONArray("sets").forEach(set ->
                 super.addTest(new TestSet((JSONObject) set, requestConfig))
         );
@@ -84,9 +82,9 @@ public class TestSuite extends AbstractTest {
             if (!this.isSkipped) {
                 this.getRunTests().forEach(test -> {
                     test.addVars(getVars());
-                    this.runTest(test, suiteResult);
+                    suiteResult.addTestResult(test.run());
                 });
-                this.status(suiteResult.getErrorCount() > 0 ? ERROR : suiteResult.getFailureCount() > 0 ? FAILED : PASSED);
+                this.status(suiteResult.getErrorCount() > 0 ? ERROR : suiteResult.getFailedCount() > 0 ? FAILED : PASSED);
             }
         } catch (Throwable t) {
             this.throwable(t);
@@ -113,21 +111,13 @@ public class TestSuite extends AbstractTest {
         this.startTime = new Date();
         if (!this.isSkipped) {
             this.processVariable();
-            super.setup();
             PluginFactory.create(plugins);
+            super.setup();
         }
     }
-
-    private void runTest(ITest test, ISuiteResult result){
-        result.addTestResult(test.run());
-        if (test.getStatus() == PASSED) {
-            result.addSuccess();
-        } else if (test.getStatus() == FAILED) {
-            result.addFailure();
-        } else if (test.getStatus() == ERROR) {
-            result.addError();
-        } else if (test.getStatus() == SKIPPED) {
-            result.addSkip();
-        }
+    @Override
+    public void teardown() {
+        PluginFactory.close();
+        super.teardown();
     }
 }

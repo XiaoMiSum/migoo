@@ -64,21 +64,11 @@ public interface ISuiteResult {
     int size();
 
     /**
-     * add success for this result.
-     */
-    void addSuccess();
-
-    /**
-     * return count success of this result.
+     * return count passed of this result.
      *
-     * @return count success of this result.
+     * @return count passed of this result.
      */
-    int getSuccessCount();
-
-    /**
-     * add error for this result.
-     */
-    void addError();
+    int getPassedCount();
 
     /**
      * return count error of this result.
@@ -88,26 +78,16 @@ public interface ISuiteResult {
     int getErrorCount();
 
     /**
-     * add failure for this result.
-     */
-    void addFailure();
-
-    /**
      * return count failure of this result.
      *
      * @return count failure of this result.
      */
-    int getFailureCount();
-
-    /**
-     * add skip for this result.
-     */
-    void addSkip();
+    int getFailedCount();
 
     /**
      * return count skip of this result.
      *
      * @return count skip of this result.
      */
-    int getSkipCount();
+    int getSkippedCount();
 }
