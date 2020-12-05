@@ -53,15 +53,17 @@ public class PropertiesReader extends AbstractReader implements Reader {
 
     @Override
     public JSONObject read() throws ReaderException {
-        Properties props = new Properties();
         try {
+            Properties props = new Properties();
             props.load(inputStream);
+            json = (JSONObject)JSONObject.toJSON(props);
+            return json;
         } catch (IOException e) {
             Report.log(e.getMessage(), e);
             throw new ReaderException("file read exception: " + e.getMessage());
+        }  finally {
+            super.close();
         }
-        json = (JSONObject)JSONObject.toJSON(props);
-        return json;
     }
 
     @Override

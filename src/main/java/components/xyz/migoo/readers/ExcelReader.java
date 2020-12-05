@@ -76,7 +76,9 @@ public class ExcelReader extends AbstractReader implements Reader {
                 workbook = new XSSFWorkbook(inputStream);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ReaderException("ExcelReader init error", e);
+        } finally {
+            super.close();
         }
     }
 
@@ -90,7 +92,9 @@ public class ExcelReader extends AbstractReader implements Reader {
                 workbook = new XSSFWorkbook(inputStream);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ReaderException("ExcelReader init error", e);
+        }  finally {
+            super.close();
         }
     }
 
@@ -157,7 +161,7 @@ public class ExcelReader extends AbstractReader implements Reader {
         if (null == cell) {
             return "";
         }
-        switch (cell.getCellTypeEnum()) {
+        switch (cell.getCellType()) {
             case NUMERIC: {
                 if (DateUtil.isCellDateFormatted(cell)) {
                     return cell.getDateCellValue().toString();

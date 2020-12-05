@@ -28,6 +28,7 @@ package core.xyz.migoo.functions;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.utils.TypeUtil;
+import core.xyz.migoo.vars.Vars;
 import core.xyz.migoo.vars.VarsHelper;
 
 import java.math.BigDecimal;
@@ -69,23 +70,23 @@ public class CompoundVariable extends HashMap<String, Object> {
     }
 
     public Long getLong(String key) {
-        return isNullKey(key) ? null : Long.valueOf(getString(key));
+        return isNullKey(key) ? null : getBigDecimal(key).longValue();
     }
 
     public Integer getInteger(String key) {
-        return isNullKey(key) ? null : Integer.valueOf(getString(key));
+        return isNullKey(key) ? null : getBigDecimal(key).intValue();
     }
 
     public Double getDouble(String key) {
-        return isNullKey(key) ? null : Double.valueOf(getString(key));
+        return isNullKey(key) ? null : getBigDecimal(key).doubleValue();
     }
 
     public Float getFloat(String key) {
-        return isNullKey(key) ? null : Float.valueOf(getString(key));
+        return isNullKey(key) ? null : getBigDecimal(key).floatValue();
     }
 
     public BigDecimal getBigDecimal(String key) {
-        return isNullKey(key) ? null : new BigDecimal(getString(key));
+        return isNullKey(key) ? null : (BigDecimal) get(key);
     }
 
     public Boolean getBoolean(String key) {
@@ -98,5 +99,9 @@ public class CompoundVariable extends HashMap<String, Object> {
 
     public JSONArray getJSONArray(String key) {
         return (JSONArray) get(key);
+    }
+
+    public Vars getVars() {
+        return (Vars) get("migoo.vars");
     }
 }

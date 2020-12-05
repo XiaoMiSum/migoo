@@ -34,7 +34,9 @@ import com.alibaba.fastjson.JSONObject;
  * @author xiaomi
  * @date 2020/8/30 12:48
  */
-public interface IPlugin {
+public interface Plugin {
 
-    void init(JSONObject config) throws Exception;
+    void initialize(JSONObject config) throws Exception;
+
+    void close();
 }

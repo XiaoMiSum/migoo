@@ -29,7 +29,6 @@ package core.xyz.migoo.assertions;
 import components.xyz.migoo.assertions.JSONAssertion;
 import components.xyz.migoo.assertions.ResponseAssertion;
 import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.functions.FunctionException;
 import xyz.migoo.simplehttp.Response;
 
 /**

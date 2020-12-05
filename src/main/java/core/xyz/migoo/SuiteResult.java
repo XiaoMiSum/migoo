@@ -40,7 +40,7 @@ public class SuiteResult extends Result implements ISuiteResult {
 
     private List<IResult> results;
 
-    private int successCount;
+    private int passedCount;
 
     private int failureCount;
 
@@ -65,6 +65,15 @@ public class SuiteResult extends Result implements ISuiteResult {
                 this.results = new ArrayList<>();
             }
             this.results.add(result);
+            if (result.isPassed()) {
+                passedCount += 1;
+            }else if (result.isError()) {
+                errorCount += 1;
+            } else if (result.isFailed()) {
+                failureCount += 1;
+            } else if (result.isSkipped()) {
+                skipCount += 1;
+            }
         }
     }
 
@@ -74,18 +83,8 @@ public class SuiteResult extends Result implements ISuiteResult {
     }
 
     @Override
-    public void addSuccess() {
-        successCount = successCount + 1;
-    }
-
-    @Override
-    public int getSuccessCount() {
-        return successCount;
-    }
-
-    @Override
-    public void addError() {
-        errorCount = errorCount + 1;
+    public int getPassedCount() {
+        return passedCount;
     }
 
     @Override
@@ -94,22 +93,12 @@ public class SuiteResult extends Result implements ISuiteResult {
     }
 
     @Override
-    public void addFailure() {
-        failureCount = failureCount + 1;
-    }
-
-    @Override
-    public int getFailureCount() {
+    public int getFailedCount() {
         return failureCount;
     }
 
     @Override
-    public void addSkip() {
-        skipCount = skipCount + 1;
-    }
-
-    @Override
-    public int getSkipCount() {
+    public int getSkippedCount() {
         return skipCount;
     }
 }

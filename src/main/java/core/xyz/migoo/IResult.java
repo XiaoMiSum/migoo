@@ -50,9 +50,9 @@ public interface IResult extends ITestStatus {
      */
     void setTestName(String name);
 
-    Integer getId();
+    Object getTestId();
 
-    void setId(Integer id);
+    void setTestId(Object id);
 
     /**
      * The status of this result, using one of the constants above.
@@ -119,11 +119,11 @@ public interface IResult extends ITestStatus {
     String getThrowableAsString();
 
     /**
-     * the status is successful of this test.
+     * the status is passed of this test.
      *
      * @return the status is successful of this test.
      */
-    boolean isSuccess();
+    boolean isPassed();
 
     /**
      * the status is skipped of this test.

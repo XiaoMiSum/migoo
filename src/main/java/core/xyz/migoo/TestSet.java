@@ -42,10 +42,8 @@ public class TestSet extends AbstractTest {
     private static final String TYPE = TestSet.class.getSimpleName();
 
     TestSet(JSONObject set, JSONObject requestConfig) {
-        super(set.getString("name"), set.getInteger("id"));
+        super(set.getString("name"), set.get("id"));
         super.initTest(set.getJSONObject("config"), set.getJSONObject("dataset"));
-        super.addVars("name", super.getTestName());
-        super.addToGlobals();
         super.initRequest(requestConfig);
         JSONObject finalRequestConfig = this.requestConfig;
         set.getJSONArray("cases").forEach(testCase ->
@@ -64,9 +62,9 @@ public class TestSet extends AbstractTest {
             if (!this.isSkipped) {
                 for (AbstractTest test : this.getRunTests()) {
                     test.addVars(getVars());
-                    this.runTest(test, suiteResult);
+                    suiteResult.addTestResult(test.run());
                 }
-                this.status(suiteResult.getErrorCount() > 0 ? ERROR : suiteResult.getFailureCount() > 0 ? FAILED : PASSED);
+                this.status(suiteResult.getErrorCount() > 0 ? ERROR : suiteResult.getFailedCount() > 0 ? FAILED : PASSED);
             }
         } catch (Throwable t) {
             this.throwable(t);
@@ -78,19 +76,6 @@ public class TestSet extends AbstractTest {
             Report.log("{} end: {}", TYPE, this.getTestName());
         }
         return result;
-    }
-
-    private void runTest(ITest test, ISuiteResult result){
-        result.addTestResult(test.run());
-        if (test.getStatus() == PASSED) {
-            result.addSuccess();
-        } else if (test.getStatus() == FAILED) {
-            result.addFailure();
-        } else if (test.getStatus() == ERROR) {
-            result.addError();
-        } else if (test.getStatus() == SKIPPED) {
-            result.addSkip();
-        }
     }
 
     @Override

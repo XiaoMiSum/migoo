@@ -30,7 +30,7 @@ package components.xyz.migoo.plugins.mybatis;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.plugin.IPlugin;
+import core.xyz.migoo.plugin.Plugin;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
@@ -42,31 +42,41 @@ import java.util.Map;
  * @author xiaomi
  * @date 2020/8/30 13:27
  */
-public class Mybatis implements IPlugin {
+public class Mybatis implements Plugin {
 
     private String resource;
 
     @Override
-    public void init(JSONObject config) throws Exception {
-        StringBuilder envStr = new StringBuilder();
-        for (Map.Entry<String, Object> entry : config.getJSONObject("envs").entrySet()) {
-            JSONObject env = (JSONObject) entry.getValue();
-            envStr.append("<environment id=\"").append(entry.getKey()).append("\">")
-                    .append("<transactionManager type=\"JDBC\"/>")
-                    .append("<dataSource type=\"POOLED\">")
-                    .append("<property name=\"driver\" value=\"com.mysql.cj.jdbc.Driver\"/>")
-                    .append("<property name=\"url\" value=\"").append(env.get("url")).append("\"/>")
-                    .append("<property name=\"username\" value=\"").append(env.get("username")).append("\"/>")
-                    .append("<property name=\"password\" value=\"").append(env.get("password")).append("\"/>")
-                    .append("</dataSource>")
-                    .append("</environment>");
+    public void initialize(JSONObject config) throws Exception {
+        if (config != null && !config.isEmpty()) {
+            StringBuilder envStr = new StringBuilder();
+            for (Map.Entry<String, Object> entry : config.getJSONObject("envs").entrySet()) {
+                JSONObject env = (JSONObject) entry.getValue();
+                envStr.append("<environment id=\"").append(entry.getKey()).append("\">")
+                        .append("<transactionManager type=\"JDBC\"/>")
+                        .append("<dataSource type=\"POOLED\">")
+                        .append("<property name=\"driver\" value=\"com.mysql.cj.jdbc.Driver\"/>")
+                        .append("<property name=\"url\" value=\"").append(env.get("url")).append("\"/>")
+                        .append("<property name=\"username\" value=\"").append(env.get("username")).append("\"/>")
+                        .append("<property name=\"password\" value=\"").append(env.get("password")).append("\"/>")
+                        .append("</dataSource>")
+                        .append("</environment>");
+            }
+            JSONArray mappers = config.getJSONArray("mappers");
+            StringBuilder mapperStr = new StringBuilder();
+            for (Object mapper : mappers) {
+                mapperStr.append("<mapper url=\"").append(mapper).append("\" /> \n");
+            }
+            resource = String.format(TEMPLATE, config.getString("default"), envStr, mapperStr);
         }
-        JSONArray mappers = config.getJSONArray("mappers");
-        StringBuilder mapperStr = new StringBuilder();
-        for (Object mapper : mappers) {
-            mapperStr.append("<mapper resource=\"").append(mapper).append("\" /> \n");
+    }
+
+    @Override
+    public void close() {
+        for (Map.Entry<String, SqlSessionFactory> entry : SQL_SESSION_FACTORY.entrySet()) {
+            entry.getValue().openSession().close();
         }
-        resource = String.format(TEMPLATE, config.getString("default"), envStr, mapperStr);
+        SQL_SESSION_FACTORY.clear();
     }
 
     private final Map<String, SqlSessionFactory> SQL_SESSION_FACTORY = new HashMap<>();

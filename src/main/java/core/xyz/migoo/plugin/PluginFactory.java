@@ -40,7 +40,7 @@ import java.util.Map;
  */
 public class PluginFactory {
 
-    private static final Map<String, IPlugin> PLUGINS = new HashMap<>(16);
+    private static final Map<String, Plugin> PLUGINS = new HashMap<>(16);
 
     public static void create(JSONObject plugins) throws Exception {
         if (plugins != null && !plugins.isEmpty()) {
@@ -49,14 +49,21 @@ public class PluginFactory {
                 String clazz = value.get("package") != null ? value.get("package") + "." + StringUtil.initialToUpperCase(entry.getKey())
                         : String.format("components.xyz.migoo.plugins.%s.%s",
                         entry.getKey().toLowerCase(), StringUtil.initialToUpperCase(entry.getKey()));
-                IPlugin plugin = (IPlugin) Class.forName(clazz).newInstance();
-                plugin.init(value);
+                Plugin plugin = (Plugin) Class.forName(clazz).newInstance();
+                plugin.initialize(value);
                 PLUGINS.put(plugin.getClass().getSimpleName().toUpperCase(), plugin);
             }
         }
     }
 
-    public static IPlugin get(String pluginName) {
+    public static Plugin get(String pluginName) {
         return PLUGINS.get(pluginName.toUpperCase());
+    }
+
+    public static void close() {
+        for (Map.Entry<String, Plugin> entry : PLUGINS.entrySet()) {
+            entry.getValue().close();
+        }
+        PLUGINS.clear();
     }
 }

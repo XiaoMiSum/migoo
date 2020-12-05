@@ -25,9 +25,8 @@
 
 package core.xyz.migoo.report;
 
+import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.IResult;
-
-import java.util.Map;
 
 /**
  * @author xiaomi
@@ -38,17 +37,16 @@ public interface IReport {
     /**
      * Generates a report files that contain data about the outcome of
      * the specified test suites.
+     * @param config report config.
      * @param result Data about the test runs.
-     * @param outputDirectoryName The directory in which to create the report.
-     * @param isPackage  package file by zip
      */
-    void generateReport(IResult result, String outputDirectoryName, boolean isPackage);
+    void generateReport(JSONObject config, IResult result);
 
     /**
      * Send test reports by email.
      * @param config email config
-     * @param message email body
+     * @param result Data about the test runs.
      */
-    void sendReport(Map<String, Object> config, String message);
+    void sendReport(JSONObject config, IResult result);
 
 }
