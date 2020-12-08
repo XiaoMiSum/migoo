@@ -26,38 +26,15 @@
  *
  */
 
-package core.xyz.migoo.vars;
+package xyz.migoo.test.example;
 
-import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.plugin.Plugin;
+import components.xyz.migoo.plugins.mybatis.Mapper;
 
 /**
  * @author xiaomi
- * @date 2019-11-22 23:48
+ * @date 2020/12/8 19:41
  */
-public class Vars extends JSONObject {
+public interface TestMapper extends Mapper {
 
-    public Vars(boolean ordered) {
-        super(ordered);
-    }
-
-    public Vars(int initialCapacity) {
-        super(initialCapacity, true);
-    }
-
-    public JSONObject getRequestBody(){
-        return this.getJSONObject("body");
-    }
-
-    public JSONObject getRequestQuery(){
-        return this.getJSONObject("query");
-    }
-
-    public JSONObject getRequestData(){
-        return this.getJSONObject("data");
-    }
-
-    public <T> T getPlugin(Class<? extends Plugin> clazz){
-        return (T) this.getJSONObject("migoo.plugins").get(clazz.getSimpleName().toUpperCase());
-    }
+    Integer count();
 }

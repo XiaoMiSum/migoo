@@ -32,10 +32,12 @@ package core.xyz.migoo;
 import com.alibaba.fastjson.JSONObject;
 import components.xyz.migoo.reports.Report;
 import core.xyz.migoo.functions.FunctionException;
-import core.xyz.migoo.plugin.PluginFactory;
+import core.xyz.migoo.plugin.Plugin;
+import core.xyz.migoo.utils.StringUtil;
 import core.xyz.migoo.vars.VarsHelper;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @author xiaomi
@@ -111,13 +113,37 @@ public class TestSuite extends AbstractTest {
         this.startTime = new Date();
         if (!this.isSkipped) {
             this.processVariable();
-            PluginFactory.create(plugins);
+            this.initializePlugins();
             super.setup();
         }
     }
+
     @Override
     public void teardown() {
-        PluginFactory.close();
         super.teardown();
+        this.closePlugins();
+    }
+
+    private void initializePlugins() throws Exception {
+        JSONObject plugins = new JSONObject();
+        if (this.plugins != null && !this.plugins.isEmpty()) {
+            for (Map.Entry<String, Object> entry : this.plugins.entrySet()) {
+                JSONObject value = (JSONObject) entry.getValue();
+                String clazz = value.get("package") != null ? value.get("package") + "." + StringUtil.initialToUpperCase(entry.getKey())
+                        : String.format("components.xyz.migoo.plugins.%s.%s",
+                        entry.getKey().toLowerCase(), StringUtil.initialToUpperCase(entry.getKey()));
+                Plugin plugin = (Plugin) Class.forName(clazz).newInstance();
+                plugin.initialize(value);
+                plugins.put(plugin.getClass().getSimpleName().toUpperCase(), plugin);
+            }
+        }
+        super.getVars().put("migoo.plugins", plugins);
+    }
+
+    private void closePlugins() {
+        JSONObject plugins = super.getVars().getJSONObject("migoo.plugins");
+        for (Map.Entry<String, Object> entry : plugins.entrySet()) {
+            ((Plugin) entry.getValue()).close();
+        }
     }
 }

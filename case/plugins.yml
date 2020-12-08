@@ -9,4 +9,4 @@ mybatis: # 使用类名作为 key
     env2:
       {url: url2, username: username2, password: password2}
   mappers:
-    - mapper/ms.xml
+    - file:./mapper/TestMapper.xml

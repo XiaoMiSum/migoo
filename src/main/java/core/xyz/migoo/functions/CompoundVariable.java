@@ -101,7 +101,7 @@ public class CompoundVariable extends HashMap<String, Object> {
         return (JSONArray) get(key);
     }
 
-    public Vars getVars() {
+    public Vars getCurrentVars() {
         return (Vars) get("migoo.vars");
     }
 }
