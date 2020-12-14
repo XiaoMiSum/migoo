@@ -47,18 +47,16 @@ import java.util.List;
  */
 public class TestCase extends AbstractTest {
 
-    private final JSONArray validators;
+    private final List<Validator> validators = new ArrayList<>();
     private final JSONObject testCase;
     private MiGooRequest request;
     private Response response;
     private List<TestStep> steps;
-    private boolean hasFailure = false;
 
     TestCase(JSONObject testCase, JSONObject requestConfig) {
         super(testCase.getString("title"), testCase.get("id"));
         this.initTest(testCase.getJSONObject("config"), testCase.getJSONObject("dataset"), testCase.getJSONArray("steps"));
         super.initRequest(requestConfig);
-        this.validators = testCase.getJSONArray("validators");
         this.testCase = testCase;
     }
 
@@ -71,9 +69,8 @@ public class TestCase extends AbstractTest {
             this.setup();
             if (!super.isSkipped) {
                 this.response = request.execute();
-                this.printRequestLog();
                 this.doCheck();
-                this.status(this.getStatus() != CREATED ? this.getStatus() : hasFailure ? FAILED : PASSED);
+                this.printRequestLog();
             }
         } catch (Throwable t) {
             this.throwable(t);
@@ -133,30 +130,21 @@ public class TestCase extends AbstractTest {
     }
 
     public void doCheck() throws FunctionException {
-        for (int i = 0; i < validators.size(); i++) {
-            JSONObject validator = validators.getJSONObject(i);
-            VarsHelper.convertVariables(validator, this.getVars());
-            validator.put("migoo.vars", this.getVars());
-            try {
-                boolean result = AssertionFactory.assertThat(validator, response);
-                validator.put("result", result ? "passed" : "failed");
-                if (!result) {
-                    hasFailure = true;
-                }
-            }  catch (Exception | AssertionError e) {
-                validator.put("throwable", e);
-                validator.put("result", e instanceof AssertionError ? "failed" : "error");
-                this.status(e instanceof AssertionError ? FAILED : ERROR);
+        JSONArray validators = testCase.getJSONArray("validators");
+        if (validators == null) {
+            this.status(PASSED);
+        } else {
+            for (int i = 0; i < validators.size(); i++) {
+                JSONObject data = validators.getJSONObject(i);
+                VarsHelper.convertVariables(data, this.getVars());
+                data.put("migoo.vars", this.getVars());
+                Validator validator = AssertionFactory.assertThat(data, response);
+                this.status(validator.isPassed() && getStatus() <= 1 ? PASSED :
+                        validator.isFailed() && getStatus() != ERROR ? FAILED :
+                                validator.isError() ? ERROR : SKIPPED);
+                this.validators.add(validator);
             }
         }
-    }
-
-    private List<Validator> validators() {
-        return validators != null ? validators.toJavaList(Validator.class) : new ArrayList<>();
-    }
-
-    private List<TestStep> steps() {
-        return steps != null ? steps : new ArrayList<>();
     }
 
     @Override
@@ -178,8 +166,8 @@ public class TestCase extends AbstractTest {
     protected void setResult(IResult result) {
         TestResult r = (TestResult) result;
         super.setResult(result);
-        r.setValidators(this.validators());
-        r.setSteps(this.steps());
+        r.setValidators(validators);
+        r.setSteps(steps);
         r.setRequest(request);
         r.setResponse(response);
     }

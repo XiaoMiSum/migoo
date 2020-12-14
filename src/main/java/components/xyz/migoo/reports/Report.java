@@ -169,7 +169,7 @@ public class Report implements IReport {
             sb.append("<br/>").append("Headers：").append(Arrays.toString(response.headers()));
         }
         if (!response.text().isEmpty()) {
-            sb.append("<br/>").append("Body：").append(this.getResponseString(response.text()));
+            sb.append("<br/>").append("Body：").append(this.getResponseString(response.text().trim()));
         }
         sb.append(String.format("<br/>Duration：%s ms", response.duration()));
     }

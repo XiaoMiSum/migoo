@@ -61,7 +61,7 @@ public class TestSet extends AbstractTest {
             ISuiteResult suiteResult = (ISuiteResult) result;
             if (!this.isSkipped) {
                 for (AbstractTest test : this.getRunTests()) {
-                    test.addVars(getVars());
+                    test.mergeVars(this.getVars());
                     suiteResult.addTestResult(test.run());
                 }
                 this.status(suiteResult.getErrorCount() > 0 ? ERROR : suiteResult.getFailedCount() > 0 ? FAILED : PASSED);

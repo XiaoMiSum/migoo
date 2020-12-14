@@ -29,9 +29,11 @@
 package core.xyz.migoo;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.annotation.JSONType;
 import components.xyz.migoo.reports.Report;
 import core.xyz.migoo.functions.FunctionException;
 import core.xyz.migoo.http.MiGooRequest;
@@ -49,6 +51,7 @@ import java.util.regex.Pattern;
  * @date 2020/11/6 20:49
  */
 @Data
+@JSONType(orders = { "url", "method", "headers", "query", "data", "body", "extract"})
 public class TestStep {
 
     private static Pattern pattern = Pattern.compile("^(http[s]?)+://([0-9a-zA-Z][.\\w]*[0-9a-zA-Z])*[:]?([0-9]+)?((/\\w*)*)?");
@@ -71,7 +74,7 @@ public class TestStep {
     @JSONField(serialize = false)
     private Response response;
 
-    private JSONObject extract;
+    private Object extract;
 
     public void execute(Vars vars, JSONObject config) throws Exception {
         this.bindRequestVariable(vars);
@@ -104,26 +107,54 @@ public class TestStep {
                 .port(config.getInteger("port")).api(config.getString("api")).build();
     }
 
-    private void extractToVars(Vars vars){
-        if (extract != null && !extract.isEmpty()) {
-            for (String key : extract.keySet()) {
-                String path = extract.getString(key);
-                Object object = JSONPath.read(response.text(), path);
-                if (object == null || "".equals(object)) {
-                    throw new VarsException("value con not be null, path: " + path);
+    private void extractToVars(Vars vars) {
+        if (this.extract instanceof JSONObject) {
+            extractByJson((JSONObject)extract, vars);
+        } else if (extract instanceof JSONArray) {
+            JSONArray extract = (JSONArray) this.extract;
+            if (!extract.isEmpty()) {
+                for (int i = 0; i < extract.size(); i++) {
+                    JSONObject extractor = extract.getJSONObject(i);
+                    extractor.forEach((key, value) -> {
+                        if ("regular".equalsIgnoreCase(key) || "regex".equalsIgnoreCase(key)) {
+                            extractByRegex((JSONObject) value, vars);
+                        } else if ("json".equalsIgnoreCase(key)) {
+                            extractByJson((JSONObject) value, vars);
+                        }
+                    });
                 }
-                extract.put(key, object);
-                vars.put(key, object);
             }
         }
     }
 
+    private void extractByRegex(JSONObject extract, JSONObject vars) {
+        extract.forEach((k, path) -> {
+            Pattern pattern = Pattern.compile((String) path);
+            Matcher matcher = pattern.matcher(response.text());
+            if (!matcher.find()) {
+                throw new VarsException("extract value con not be null, path: " + path);
+            }
+            vars.put(k, matcher.group(1));
+        });
+    }
+
+    private void extractByJson(JSONObject extract, JSONObject vars) {
+        extract.forEach((k, path) -> {
+            Object extractValue = JSONPath.read(response.text(), (String) path);
+            if (extractValue == null || "".equals(extractValue)) {
+                throw new VarsException("extract value con not be null, path: " + path);
+            }
+            vars.put(k, extractValue);
+        });
+    }
+
     private void printRequestLog() {
         request.printRequestLog();
-        Report.log("extract vars: {}", extract.toJSONString());
+        Report.log("extract vars: {}", JSON.toJSONString(extract));
     }
 
     @Override
+    @JSONField(serialize = false)
     public String toString() {
         return JSON.toJSONString(this);
     }

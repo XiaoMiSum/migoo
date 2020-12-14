@@ -26,13 +26,10 @@
  *
  */
 
-
 package components.xyz.migoo.assertions.rules;
 
 import core.xyz.migoo.assertions.rules.Alias;
 import core.xyz.migoo.assertions.rules.IRule;
-
-import java.util.Map;
 
 /**
  * @author xiaomi
@@ -44,7 +41,7 @@ public class IsNotEmpty extends BaseRule implements IRule {
     private final IsEmpty isEmpty = new IsEmpty();
 
     @Override
-    public boolean assertTrue(Map<String, Object> data) {
-        return !isEmpty.assertTrue(data);
+    public boolean assertTrue(Object actual, Object expected) {
+        return !isEmpty.assertTrue(actual, expected);
     }
 }

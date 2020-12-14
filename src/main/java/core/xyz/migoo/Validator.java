@@ -29,9 +29,11 @@
 package core.xyz.migoo;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import core.xyz.migoo.utils.StringUtil;
+import core.xyz.migoo.vars.Vars;
 import lombok.Data;
 
 /**
@@ -53,15 +55,32 @@ public class Validator {
 
     private String result;
 
+    private String message;
+
+    @JSONField(serialize = false, name = "package")
+    private String packName;
+
     @JSONField(serialize = false)
     private Throwable throwable;
+
+    @JSONField(serialize = false)
+    private Vars vars;
 
     public String getAssertion() {
         return StringUtil.isEmpty(assertion) ? "JSONAssertion" : assertion;
     }
 
     public String getResult() {
-        return result == null ? "skipped" : result;
+        return throwable != null ? "error" : result;
+    }
+
+    public void setResult(boolean result) {
+        this.result = result ? "passed" : "failed";
+    }
+
+    @JSONField(serialize = false)
+    public Vars getCurrentVars(){
+        return vars;
     }
 
     @JSONField(serialize = false)
@@ -76,17 +95,16 @@ public class Validator {
 
     @JSONField(serialize = false)
     public boolean isSkipped() {
-        return "skipped".equals(getResult());
+        return result == null;
     }
 
     @JSONField(serialize = false)
     public boolean isError() {
-        return "error".equals(getResult());
+        return throwable != null;
     }
 
     @Override
     public String toString() {
         return JSON.toJSONString(this, SerializerFeature.WriteMapNullValue);
     }
-
 }

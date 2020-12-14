@@ -4,7 +4,7 @@ config:
     api: /api/login
 dataset:
   vars:
-    user: migoo
+    password: migoo
 cases:
   - title: 测试使用mybatis
     body:

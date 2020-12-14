@@ -26,7 +26,6 @@
  *
  */
 
-
 package components.xyz.migoo.assertions.rules;
 
 import com.alibaba.fastjson.JSONArray;
@@ -34,8 +33,6 @@ import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.assertions.rules.Alias;
 import core.xyz.migoo.assertions.rules.IRule;
 import core.xyz.migoo.utils.StringUtil;
-
-import java.util.Map;
 
 /**
  * @author xiaomi
@@ -45,8 +42,7 @@ import java.util.Map;
 public class IsEmpty extends BaseRule implements IRule {
 
     @Override
-    public boolean assertTrue(Map<String, Object> data) {
-        Object actual = data.get("actual");
+    public boolean assertTrue(Object actual, Object expected) {
         if (actual instanceof JSONObject) {
             return ((JSONObject) actual).isEmpty();
         }

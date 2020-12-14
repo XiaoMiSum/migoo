@@ -26,13 +26,10 @@
  *
  */
 
-
 package components.xyz.migoo.assertions.rules;
 
 import core.xyz.migoo.assertions.rules.Alias;
 import core.xyz.migoo.assertions.rules.IRule;
-
-import java.util.Map;
 
 /**
  * @author xiaomi
@@ -42,7 +39,7 @@ import java.util.Map;
 public class EqualsIgnoreCase extends BaseRule implements IRule {
 
     @Override
-    public boolean assertTrue(Map<String, Object> data) {
-        return objectToString(data.get("actual")).equalsIgnoreCase(objectToString(data.get("expected")));
+    public boolean assertTrue(Object actual, Object expected) {
+        return objectToString(actual).equalsIgnoreCase(objectToString(expected));
     }
 }

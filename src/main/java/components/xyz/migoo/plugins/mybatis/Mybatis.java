@@ -31,7 +31,6 @@ package components.xyz.migoo.plugins.mybatis;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.plugin.Plugin;
-import core.xyz.migoo.vars.Vars;
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -134,7 +133,6 @@ public class Mybatis implements Plugin {
             "        %s" +
             "    </mappers> " +
             "</configuration>";
-
 
     private static class MapperProxy implements InvocationHandler {
         private final Mapper mapper;

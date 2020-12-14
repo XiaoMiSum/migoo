@@ -27,6 +27,7 @@
 package core.xyz.migoo.functions;
 
 import com.alibaba.fastjson.JSONObject;
+import core.xyz.migoo.utils.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
@@ -53,7 +54,8 @@ public class FunctionHelper {
             DEFAULT_FUNCTIONS.put(function.funcKey().toUpperCase(), function);
         }
         for (Function function : ServiceLoader.load(Function.class)) {
-            SELF_DEFINED_FUNCTIONS.put(function.funcKey().toUpperCase(), function);
+            String key = StringUtil.isEmpty(function.funcKey()) ? function.getClass().getSimpleName() : function.funcKey();
+            SELF_DEFINED_FUNCTIONS.put(key.toUpperCase(), function);
         }
     }
 

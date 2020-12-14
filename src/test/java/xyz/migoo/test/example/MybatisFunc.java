@@ -40,11 +40,11 @@ import core.xyz.migoo.functions.FunctionException;
 public class MybatisFunc implements Function {
     @Override
     public Object execute(CompoundVariable parameters) throws FunctionException {
-        Mybatis mybatis = parameters.getCurrentVars().getPlugin(Mybatis.class);
-        TestMapper mapper = mybatis.mapper(TestMapper.class);
-        Integer total = mapper.count();
-        System.out.println("mybatis: " + total);
-        return total;
+        //Mybatis mybatis = parameters.getCurrentVars().getPlugin(Mybatis.class);
+        //TestMapper mapper = mybatis.mapper(TestMapper.class);
+        //Integer total = mapper.count();
+        //System.out.println("mybatis: " + total);
+        return 1;
     }
 
     @Override

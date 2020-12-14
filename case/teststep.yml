@@ -5,7 +5,12 @@
     password: ${password}
     sign: ${sign}
   extract:
-    status: '$.status'
+    - regular:
+        code1: '"status":(\d+),'
+    - regex:
+        code2: '"status":(.+)'
+    - json:
+        code3: '$.status'
 - url: http://migoo.xyz/api/login
   method: post
   body:
@@ -13,5 +18,9 @@
     password: ${password}
     sign: ${sign}
   extract:
-    token: '$.data.token'
-    code: '$.status'
+    - regular:
+        code1: '"status":(\d+),'
+    - regex:
+        code2: '"status":(.+)'
+    - json:
+        code3: '$.status'

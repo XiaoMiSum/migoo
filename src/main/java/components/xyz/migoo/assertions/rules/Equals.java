@@ -43,12 +43,10 @@ import java.util.Map;
 public class Equals extends BaseRule implements IRule {
 
     @Override
-    public boolean assertTrue(Map<String, Object> data) {
-        Object actual = data.get("actual");
-        Object expect = data.get("expected");
+    public boolean assertTrue(Object actual, Object expected) {
         String str1 = objectToString(actual);
-        String str2 = objectToString(expect);
-        if (actual instanceof Number || expect instanceof Number){
+        String str2 = objectToString(expected);
+        if (actual instanceof Number || expected instanceof Number){
             str1 = "null".equals(str1) ? "0" : str1;
             str2 = "null".equals(str2) ? "0" : str2;
             return new BigDecimal(str1).compareTo(new BigDecimal(str2)) == 0;

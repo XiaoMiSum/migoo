@@ -48,7 +48,7 @@ public abstract class AbstractTest implements ITest {
 
     private final JSONArray setup = new JSONArray();
     private final JSONArray teardown = new JSONArray();
-    private final Vars vars = new Vars(100);
+    private Vars vars = new Vars(100);
 
     private final String tName;
     private final Vector<AbstractTest> rTests = new Vector<>(10);
@@ -84,8 +84,8 @@ public abstract class AbstractTest implements ITest {
         return tName;
     }
 
-    public void initTest(JSONObject config, JSONObject dataset) {
-        requestConfig = config != null && config.get("request") != null ? config.getJSONObject("request"): new JSONObject();
+    protected void initTest(JSONObject config, JSONObject dataset) {
+        requestConfig = config != null && config.get("request") != null ? config.getJSONObject("request") : new JSONObject();
         isSkipped = config != null && TypeUtil.booleanOf(config.get("skip"));
         if (dataset != null) {
             this.addVars(dataset.getJSONObject("vars"));
@@ -116,7 +116,7 @@ public abstract class AbstractTest implements ITest {
      *
      * @param vars the variables to set
      */
-    public void addVars(JSONObject vars) {
+    protected void addVars(JSONObject vars) {
         if (vars != null) {
             this.vars.putAll(vars);
         }
@@ -128,18 +128,25 @@ public abstract class AbstractTest implements ITest {
      * @param key   the variable key
      * @param value the variable value
      */
-    public void addVars(String key, Object value) {
+    protected void addVars(String key, Object value) {
         this.vars.put(key, value);
+    }
+
+    protected void mergeVars(Vars vars) {
+        Vars temp = new Vars(100);
+        temp.putAll(vars);
+        temp.putAll(this.vars);
+        this.vars = temp;
     }
 
     /**
      * get the variables of test.
      */
-    public Vars getVars() {
+    protected Vars getVars() {
         return this.vars;
     }
 
-    public void processVariable() throws FunctionException {
+    protected void processVariable() throws FunctionException {
         VarsHelper.convertVariables(vars);
         VarsHelper.convertVariables(requestConfig, vars);
     }
@@ -197,7 +204,7 @@ public abstract class AbstractTest implements ITest {
         rTests.add(test);
     }
 
-    public Vector<AbstractTest> getRunTests() {
+    protected Vector<AbstractTest> getRunTests() {
         return this.rTests;
     }
 

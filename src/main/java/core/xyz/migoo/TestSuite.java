@@ -83,7 +83,7 @@ public class TestSuite extends AbstractTest {
             ISuiteResult suiteResult = (ISuiteResult) result;
             if (!this.isSkipped) {
                 this.getRunTests().forEach(test -> {
-                    test.addVars(getVars());
+                    test.mergeVars(this.getVars());
                     suiteResult.addTestResult(test.run());
                 });
                 this.status(suiteResult.getErrorCount() > 0 ? ERROR : suiteResult.getFailedCount() > 0 ? FAILED : PASSED);
@@ -113,7 +113,7 @@ public class TestSuite extends AbstractTest {
         this.startTime = new Date();
         if (!this.isSkipped) {
             this.processVariable();
-            this.initializePlugins();
+            //this.initializePlugins();
             super.setup();
         }
     }
@@ -142,8 +142,10 @@ public class TestSuite extends AbstractTest {
 
     private void closePlugins() {
         JSONObject plugins = super.getVars().getJSONObject("migoo.plugins");
-        for (Map.Entry<String, Object> entry : plugins.entrySet()) {
-            ((Plugin) entry.getValue()).close();
+        if (plugins != null && !plugins.isEmpty()) {
+            for (Map.Entry<String, Object> entry : plugins.entrySet()) {
+                ((Plugin) entry.getValue()).close();
+            }
         }
     }
 }

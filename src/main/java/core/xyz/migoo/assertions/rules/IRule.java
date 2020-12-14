@@ -23,10 +23,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 package core.xyz.migoo.assertions.rules;
-
-import java.util.Map;
 
 /**
  * @author xiaomi
@@ -40,8 +37,9 @@ public interface IRule {
      * and the expected values can be null
      * use:  data.get("expected")
      *
-     * @param data Objects that hold the actual and expected values
+     * @param actual actual value
+     * @param expected expected value
      * @return Boolean Object
      */
-    boolean assertTrue(Map<String, Object> data);
+    boolean assertTrue(Object actual, Object expected);
 }

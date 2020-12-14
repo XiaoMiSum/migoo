@@ -25,8 +25,8 @@ cases:
   - title: 多个测试步骤
     steps: './case/teststep.yml'
     body:
-      userName: ${token}
-      password: ${status}
+      userName: ${code1}
+      password: ${code2}
       sign: ${sign}
     validators:
       - { assertion: response, field: status, expected: 200, rule: == }
