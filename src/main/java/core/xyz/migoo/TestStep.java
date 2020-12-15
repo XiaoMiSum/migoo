@@ -29,7 +29,6 @@
 package core.xyz.migoo;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -51,10 +50,12 @@ import java.util.regex.Pattern;
  * @date 2020/11/6 20:49
  */
 @Data
-@JSONType(orders = { "url", "method", "headers", "query", "data", "body", "extract"})
+@JSONType(orders = {"url", "method", "headers", "query", "data", "body", "extract"})
 public class TestStep {
 
     private static Pattern pattern = Pattern.compile("^(http[s]?)+://([0-9a-zA-Z][.\\w]*[0-9a-zA-Z])*[:]?([0-9]+)?((/\\w*)*)?");
+
+    private String desc;
 
     private String url;
 
@@ -74,7 +75,7 @@ public class TestStep {
     @JSONField(serialize = false)
     private Response response;
 
-    private Object extract;
+    private JSONObject extract;
 
     public void execute(Vars vars, JSONObject config) throws Exception {
         this.bindRequestVariable(vars);
@@ -108,22 +109,14 @@ public class TestStep {
     }
 
     private void extractToVars(Vars vars) {
-        if (this.extract instanceof JSONObject) {
-            extractByJson((JSONObject)extract, vars);
-        } else if (extract instanceof JSONArray) {
-            JSONArray extract = (JSONArray) this.extract;
-            if (!extract.isEmpty()) {
-                for (int i = 0; i < extract.size(); i++) {
-                    JSONObject extractor = extract.getJSONObject(i);
-                    extractor.forEach((key, value) -> {
-                        if ("regular".equalsIgnoreCase(key) || "regex".equalsIgnoreCase(key)) {
-                            extractByRegex((JSONObject) value, vars);
-                        } else if ("json".equalsIgnoreCase(key)) {
-                            extractByJson((JSONObject) value, vars);
-                        }
-                    });
+        if (extract != null && !extract.isEmpty()) {
+            extract.forEach((key, value) -> {
+                if ("regular".equalsIgnoreCase(key) || "regex".equalsIgnoreCase(key)) {
+                    extractByRegex((JSONObject) value, vars);
+                } else if ("json".equalsIgnoreCase(key)) {
+                    extractByJson((JSONObject) value, vars);
                 }
-            }
+            });
         }
     }
 
@@ -134,6 +127,7 @@ public class TestStep {
             if (!matcher.find()) {
                 throw new VarsException("extract value con not be null, path: " + path);
             }
+            extract.put("value", matcher.group(1));
             vars.put(k, matcher.group(1));
         });
     }
@@ -144,11 +138,13 @@ public class TestStep {
             if (extractValue == null || "".equals(extractValue)) {
                 throw new VarsException("extract value con not be null, path: " + path);
             }
+            extract.put("value", extractValue);
             vars.put(k, extractValue);
         });
     }
 
     private void printRequestLog() {
+        Report.log("execute step: {}", desc == null ? "无描述信息" : desc);
         request.printRequestLog();
         Report.log("extract vars: {}", JSON.toJSONString(extract));
     }

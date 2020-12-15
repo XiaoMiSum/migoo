@@ -15,7 +15,8 @@ cases:
           password: ${password}
           sign: ${sign}
         extract:
-          status: '$.status'
+          json:
+            status: '$.status'
     body:
       userName: ${status}
       password: ${password}
