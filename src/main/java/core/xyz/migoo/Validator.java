@@ -95,7 +95,7 @@ public class Validator {
 
     @JSONField(serialize = false)
     public boolean isSkipped() {
-        return result == null;
+        return getResult() == null;
     }
 
     @JSONField(serialize = false)

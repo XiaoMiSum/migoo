@@ -38,7 +38,7 @@ public interface Assertion {
 
 
     /**
-     * support type list:
+     *
      * {@linkplain JSONAssertion JSONAssertion}
      * {@linkplain ResponseAssertion ResponseAssertion}
      *
