@@ -1,0 +1,8 @@
+name: 从外部文件导入用例
+config:
+  request:
+    api: /api/login
+dataset:
+  vars:
+    password: migoo
+cases: './case/case.yml'

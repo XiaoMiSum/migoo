@@ -50,7 +50,8 @@ public class Migoo {
 
     public void run(String file) {
         try {
-            TestSuite suite = new TestSuite(processor(file));
+            JSONObject data = this.processor(file);
+            TestSuite suite = new TestSuite(data);
             IResult result = suite.run();
             this.report(suite.getReportConfig(), suite.getEmailConfig(), result);
         } catch (Exception e) {
@@ -60,48 +61,60 @@ public class Migoo {
 
     public JSONObject processor(String file) throws ReaderException {
         // 1. 解析文件 获取解析到的 json 对象
-        JSONObject fileJson = (JSONObject) ReaderFactory.getReader(new File(file)).read();
-        this.metadata(fileJson);
-        JSONArray files = fileJson.getJSONArray("files");
-        JSONArray sets = fileJson.get("sets") != null ? fileJson.getJSONArray("sets") : new JSONArray();
-        if (files != null) {
-            for (Object filePath : files) {
-                JSONObject set = (JSONObject) ReaderFactory.getReader(new File((String) filePath)).read();
-                JSONArray cases = set.getJSONArray("cases");
-                for (int i = 0; i < cases.size(); i++) {
-                    Object steps = cases.getJSONObject(i).get("steps");
-                    if (steps instanceof String) {
-                        cases.getJSONObject(i).put("steps", ReaderFactory.getReader(new File((String) steps)).read());
-                    }
-                }
+        JSONObject data = this.importFileData(file);
+        JSONArray sets = new JSONArray();
+        for (Object testSet : data.getJSONArray("sets")) {
+            if (testSet instanceof String) {
+                JSONObject set = this.readFileToObject((String) testSet);
+                set.put("cases",  this.processor(set.get("cases")));
                 sets.add(set);
             }
-            fileJson.remove("files");
         }
-        fileJson.put("sets", sets);
-        return fileJson;
+        data.put("sets", sets);
+        return data;
     }
 
-    private void metadata(JSONObject fileJson) throws ReaderException {
-        JSONObject config = fileJson.getJSONObject("config");
-        JSONObject plugins = fileJson.getJSONObject("plugins");
-        JSONObject dataset = fileJson.getJSONObject("dataset");
+    private JSONObject importFileData(String file) throws ReaderException {
+        JSONObject data = this.readFileToObject(file);
         // 判断是否为导入文件
-        if (config != null && config.get("file") != null) {
-            fileJson.put("config", ReaderFactory.getReader(new File(config.getString("file"))).read());
+        if (data.get("config") instanceof String) {
+            data.put("config", this.readFileToObject(data.getString("dataset")));
         }
-        if (plugins != null && plugins.get("file") != null) {
-            fileJson.put("plugins", ReaderFactory.getReader(new File(plugins.getString("file"))).read());
+        if (data.get("plugins") instanceof String) {
+            data.put("plugins", this.readFileToObject(data.getString("plugins")));
         }
-        if (dataset != null && dataset.get("file") != null) {
-            fileJson.put("dataset", ReaderFactory.getReader(new File(dataset.getString("file"))).read());
+        if (data.get("dataset") instanceof String) {
+            data.put("dataset", this.readFileToObject(data.getString("dataset")));
         }
+        return data;
+    }
+
+    private JSONArray processor(Object caseObj) throws ReaderException {
+        JSONArray cases = (caseObj instanceof String) ? this.readFileToArray((String) caseObj) : (JSONArray) caseObj;
+        for (int i = 0; i < cases.size(); i++) {
+            JSONObject testCase = cases.getJSONObject(i);
+            Object steps = testCase.get("steps");
+            if (steps instanceof String) {
+                cases.getJSONObject(i).put("steps", this.readFileToObject((String) steps));
+            }
+            cases.remove(i);
+            cases.add(i, testCase);
+        }
+        return cases;
+    }
+
+    private JSONObject readFileToObject(String file) throws ReaderException {
+        return (JSONObject) ReaderFactory.getReader(new File(file)).read();
+    }
+
+    private JSONArray readFileToArray(String file) throws ReaderException {
+        return (JSONArray) ReaderFactory.getReader(new File(file)).read();
     }
 
     private void report(JSONObject reportConfig, JSONObject emailConfig, IResult result) {
         reportConfig = reportConfig == null ? new JSONObject() : reportConfig;
         String output = !StringUtil.isEmpty(reportConfig.getString("output")) ?
-                reportConfig.getString("output") : "./out-put/" + DateUtil.TODAY_DATE ;
+                reportConfig.getString("output") : "./out-put/" + DateUtil.TODAY_DATE;
         reportConfig.put("output", output);
         String listener = !StringUtil.isEmpty(reportConfig.getString("listener")) ?
                 reportConfig.getString("listener") : "components.migoo.xyz.reports.Report";

@@ -77,7 +77,7 @@ public abstract class AbstractReader {
             fis = new FileInputStream(file);
             inputStream = new BufferedInputStream(fis);
         }catch (Exception e){
-            throw new ReaderException("file read exception: ", e);
+            throw new ReaderException("file read exception: " + e.getMessage(), e);
         }
     }
 

@@ -63,7 +63,7 @@ public class Validator {
     @JSONField(serialize = false)
     private Throwable throwable;
 
-    @JSONField(serialize = false)
+    @JSONField(serialize = false, name = "migoo.vars")
     private Vars vars;
 
     public String getAssertion() {

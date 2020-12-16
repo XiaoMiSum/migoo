@@ -26,7 +26,6 @@
  *
  */
 
-
 package core.xyz.migoo;
 
 import java.util.ArrayList;
@@ -42,11 +41,11 @@ public class SuiteResult extends Result implements ISuiteResult {
 
     private int passedCount;
 
-    private int failureCount;
+    private int notPassedCount;
 
     private int errorCount;
 
-    private int skipCount;
+    private int skippedCount;
 
     @Override
     public List<IResult> getTestResults() {
@@ -70,9 +69,9 @@ public class SuiteResult extends Result implements ISuiteResult {
             }else if (result.isError()) {
                 errorCount += 1;
             } else if (result.isFailed()) {
-                failureCount += 1;
+                notPassedCount += 1;
             } else if (result.isSkipped()) {
-                skipCount += 1;
+                skippedCount += 1;
             }
         }
     }
@@ -93,12 +92,12 @@ public class SuiteResult extends Result implements ISuiteResult {
     }
 
     @Override
-    public int getFailedCount() {
-        return failureCount;
+    public int getNotPassedCount() {
+        return notPassedCount;
     }
 
     @Override
     public int getSkippedCount() {
-        return skipCount;
+        return skippedCount;
     }
 }

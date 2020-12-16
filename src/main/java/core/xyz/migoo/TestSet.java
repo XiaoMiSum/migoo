@@ -39,8 +39,6 @@ import java.util.Date;
  */
 public class TestSet extends AbstractTest {
 
-    private static final String TYPE = TestSet.class.getSimpleName();
-
     TestSet(JSONObject set, JSONObject requestConfig) {
         super(set.getString("name"), set.get("id"));
         super.initTest(set.getJSONObject("config"), set.getJSONObject("dataset"));
@@ -56,7 +54,7 @@ public class TestSet extends AbstractTest {
         Report.log("===================================================================");
         IResult result = new SuiteResult();
         try {
-            Report.log("{} begin: {}", TYPE, this.getTestName());
+            Report.log("Beginning of the test，api：{}", this.getTestName());
             this.setup();
             ISuiteResult suiteResult = (ISuiteResult) result;
             if (!this.isSkipped) {
@@ -64,16 +62,16 @@ public class TestSet extends AbstractTest {
                     test.mergeVars(this.getVars());
                     suiteResult.addTestResult(test.run());
                 }
-                this.status(suiteResult.getErrorCount() > 0 ? ERROR : suiteResult.getFailedCount() > 0 ? FAILED : PASSED);
+                this.status(suiteResult.getErrorCount() > 0 ? ERROR : suiteResult.getNotPassedCount() > 0 ? FAILED : PASSED);
             }
         } catch (Throwable t) {
             this.throwable(t);
             this.status(ERROR);
-            Report.log(TYPE + " run error. ", t);
+            Report.log( "An error occurred in the api test . ", t);
         } finally {
             this.teardown();
             this.setResult(result);
-            Report.log("{} end: {}", TYPE, this.getTestName());
+            Report.log("End of the test");
         }
         return result;
     }

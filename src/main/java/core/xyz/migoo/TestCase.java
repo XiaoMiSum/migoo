@@ -55,7 +55,7 @@ public class TestCase extends AbstractTest {
 
     TestCase(JSONObject testCase, JSONObject requestConfig) {
         super(testCase.getString("title"), testCase.get("id"));
-        this.initTest(testCase.getJSONObject("config"), testCase.getJSONObject("dataset"), testCase.getJSONArray("steps"));
+        this.initTest(testCase.get("config"), testCase.get("dataset"), testCase.get("steps"));
         super.initRequest(requestConfig);
         this.testCase = testCase;
     }
@@ -65,7 +65,7 @@ public class TestCase extends AbstractTest {
         IResult result = new TestResult();
         try {
             Report.log("--------------------------------------------------------------------");
-            Report.log("test case begin: {}", this.getTestName());
+            Report.log("Beginning of the test，case：{}", this.getTestName());
             this.setup();
             if (!super.isSkipped) {
                 this.response = request.execute();
@@ -75,24 +75,24 @@ public class TestCase extends AbstractTest {
         } catch (Throwable t) {
             this.throwable(t);
             this.status(ERROR);
-            Report.log("case run error or assert failed", t);
+            Report.log("An error occurred in the test case. ", t);
         } finally {
             super.teardown();
             this.setResult(result);
-            Report.log("test case end: {}", this.getTestName());
+            Report.log("End of the test case");
         }
         return result;
     }
 
-    public void initTest(JSONObject config, JSONObject dataset, JSONArray steps) {
-        this.initTest(config, dataset);
+    public void initTest(Object config, Object dataset, Object steps) {
+        this.initTest((JSONObject) config, (JSONObject) dataset);
         if (steps != null) {
-            this.steps = steps.toJavaList(TestStep.class);
+            this.steps = ((JSONArray) steps).toJavaList(TestStep.class);
         }
     }
 
     private void buildRequest() throws FunctionException {
-        this.bindRequestVariable();
+        this.convertRequestVariable();
         request = new MiGooRequest.Builder()
                 .method(requestConfig.getString("method"))
                 .protocol(requestConfig.getString("protocol"))
@@ -108,19 +108,22 @@ public class TestCase extends AbstractTest {
                 .build();
     }
 
-    private void bindRequestVariable() throws FunctionException {
+    private void convertRequestVariable() throws FunctionException {
         VarsHelper.convertVariables(requestConfig, super.getVars());
         if (testCase.get("data") != null) {
-            super.addVars("data", testCase.get("data"));
-            VarsHelper.convertVariables(testCase.getJSONObject("data"), super.getVars());
+            JSONObject data = testCase.getJSONObject("data");
+            VarsHelper.convertVariables(data, super.getVars());
+            super.addVars("migoo.request.data", data);
         }
-        if (testCase.get("body") != null) {
-            super.addVars("body", testCase.get("body"));
-            VarsHelper.convertVariables(testCase.getJSONObject("body"), super.getVars());
+        if (testCase.get("migoo.request.body") != null) {
+            JSONObject body = testCase.getJSONObject("body");
+            VarsHelper.convertVariables(body, super.getVars());
+            super.addVars("migoo.request.body", body);
         }
         if (testCase.get("query") != null) {
-            super.addVars("query", testCase.get("query"));
-            VarsHelper.convertVariables(testCase.getJSONObject("query"), super.getVars());
+            JSONObject query = testCase.getJSONObject("query");
+            VarsHelper.convertVariables(query, super.getVars());
+            super.addVars("migoo.request.query", query);
         }
     }
 
@@ -131,9 +134,7 @@ public class TestCase extends AbstractTest {
 
     public void doCheck() throws FunctionException {
         JSONArray validators = testCase.getJSONArray("validators");
-        if (validators == null) {
-            this.status(PASSED);
-        } else {
+        if (validators != null) {
             for (int i = 0; i < validators.size(); i++) {
                 JSONObject data = validators.getJSONObject(i);
                 VarsHelper.convertVariables(data, this.getVars());
@@ -144,6 +145,8 @@ public class TestCase extends AbstractTest {
                                 validator.isError() ? ERROR : SKIPPED);
                 this.validators.add(validator);
             }
+        } else {
+            this.status(PASSED);
         }
     }
 

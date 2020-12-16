@@ -26,7 +26,6 @@
  *
  */
 
-
 package core.xyz.migoo;
 
 import com.alibaba.fastjson.JSONObject;
@@ -44,8 +43,6 @@ import java.util.Map;
  * @date 2019-08-10 11:07
  */
 public class TestSuite extends AbstractTest {
-
-    private static final String TYPE = TestSuite.class.getSimpleName();
 
     private JSONObject reportConfig;
     private JSONObject emailConfig;
@@ -78,7 +75,7 @@ public class TestSuite extends AbstractTest {
     public IResult run() {
         IResult result = new SuiteResult();
         try {
-            Report.log("{} begin: {}", TYPE, this.getTestName());
+            Report.log("Beginning of the test，ID：{}，name：{}", this.getTestId(), this.getTestName());
             this.setup();
             ISuiteResult suiteResult = (ISuiteResult) result;
             if (!this.isSkipped) {
@@ -86,16 +83,16 @@ public class TestSuite extends AbstractTest {
                     test.mergeVars(this.getVars());
                     suiteResult.addTestResult(test.run());
                 });
-                this.status(suiteResult.getErrorCount() > 0 ? ERROR : suiteResult.getFailedCount() > 0 ? FAILED : PASSED);
+                this.status(suiteResult.getErrorCount() > 0 ? ERROR : suiteResult.getNotPassedCount() > 0 ? FAILED : PASSED);
             }
         } catch (Throwable t) {
             this.throwable(t);
             this.status(ERROR);
-            Report.log(TYPE + " run error. ", t);
+            Report.log("An error occurred in the test . ", t);
         } finally {
             this.teardown();
             this.setResult(result);
-            Report.log("{} end: {}", TYPE, this.getTestName());
+            Report.log("End of the test");
         }
         return result;
     }
@@ -113,7 +110,7 @@ public class TestSuite extends AbstractTest {
         this.startTime = new Date();
         if (!this.isSkipped) {
             this.processVariable();
-            //this.initializePlugins();
+            this.initializePlugins();
             super.setup();
         }
     }

@@ -38,6 +38,7 @@ import core.xyz.migoo.utils.TypeUtil;
 import core.xyz.migoo.vars.VarsHelper;
 
 import java.util.Date;
+import java.util.UUID;
 import java.util.Vector;
 
 /**
@@ -69,7 +70,7 @@ public abstract class AbstractTest implements ITest {
 
     AbstractTest(String name, Object id) {
         this.tName = name;
-        this.id = id;
+        this.id = id == null ? UUID.randomUUID().toString() : id;
     }
 
     /**
@@ -82,6 +83,10 @@ public abstract class AbstractTest implements ITest {
     @Override
     public String getTestName() {
         return tName;
+    }
+
+    public Object getTestId() {
+        return id;
     }
 
     protected void initTest(JSONObject config, JSONObject dataset) {

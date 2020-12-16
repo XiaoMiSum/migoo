@@ -82,7 +82,7 @@ public interface ISuiteResult {
      *
      * @return count failure of this result.
      */
-    int getFailedCount();
+    int getNotPassedCount();
 
     /**
      * return count skip of this result.

@@ -1,14 +1,12 @@
 name: 数据文件导入测试用例
-config: # 配置信息
-  file: './case/config.yml'
-plugins: # 配置信息
-  file: './case/plugins.yml'
-dataset: # 可空，正对当前 suite 生效
-  file: './case/dataset.yml'
-files:
-  - './case/testset1.yml'
-  - './case/testset2.yml'
-  - './case/testset3.yml'
+config: './case/config.yml' # 配置信息
+plugins: './case/plugins.yml' # 配置信息
+dataset: './case/dataset.yml' # 可空，正对当前 suite 生效
+sets:
+#  - './case/testset1.yml'
+#  - './case/testset2.yml'
+#  - './case/testset3.yml'
   - './case/testset4.yml'
-  - './case/testset5.yml'
+#  - './case/testset5.yml'
 #  - './case/testset6.yml'
+#  - './case/testset7.yml'
