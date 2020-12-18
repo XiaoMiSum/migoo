@@ -138,7 +138,7 @@ public abstract class Result implements IResult {
     }
 
     @Override
-    public boolean isFailed() {
-        return this.status == FAILED;
+    public boolean isNotPassed() {
+        return this.status == NOT_PASSED;
     }
 }

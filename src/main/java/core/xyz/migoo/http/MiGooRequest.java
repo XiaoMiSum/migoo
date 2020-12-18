@@ -23,14 +23,13 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 package core.xyz.migoo.http;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import components.xyz.migoo.reports.Report;
-import org.apache.commons.lang3.StringUtils;
+import core.xyz.migoo.utils.StringUtil;
 import org.apache.http.Header;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.*;
@@ -112,13 +111,13 @@ public class MiGooRequest extends Request {
         if (this.cookies() != null && !this.cookies().isEmpty()) {
             Report.log("request cookies: {}", this.cookies());
         }
-        if (StringUtils.isNotEmpty(this.query())) {
+        if (StringUtil.isNotEmpty(this.query())) {
             Report.log("request query: {}", this.query());
         }
-        if (StringUtils.isNotEmpty(this.data())) {
+        if (StringUtil.isNotEmpty(this.data())) {
             Report.log("request data: {}", this.data());
         }
-        if (StringUtils.isNotEmpty(this.body())) {
+        if (StringUtil.isNotEmpty(this.body())) {
             Report.log("request body: {}", this.body());
         }
     }
@@ -146,17 +145,17 @@ public class MiGooRequest extends Request {
         private JSONObject query;
 
         public Builder protocol(String protocol) {
-            this.protocol = StringUtils.isBlank(protocol) ? "http" : protocol;
+            this.protocol = StringUtil.isEmpty(protocol) ? "http" : protocol;
             return this;
         }
 
         public Builder method(String method) {
-            this.method = StringUtils.isBlank(method) ? "GET" : method.toUpperCase();
+            this.method = StringUtil.isEmpty(method) ? "GET" : method.toUpperCase();
             return this;
         }
 
         public Builder host(String host) {
-            this.host = StringUtils.isBlank(host) ? "127.0.0.1" : host;
+            this.host = StringUtil.isEmpty(host) ? "127.0.0.1" : host;
             return this;
         }
 
@@ -166,7 +165,7 @@ public class MiGooRequest extends Request {
         }
 
         public Builder api(String api) {
-            this.api = StringUtils.isBlank(api) ? "" : api.startsWith("/") ? api : "/" + api;
+            this.api = StringUtil.isEmpty(api) ? "" : api.startsWith("/") ? api : "/" + api;
             return this;
         }
 

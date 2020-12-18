@@ -68,7 +68,7 @@ public class SuiteResult extends Result implements ISuiteResult {
                 passedCount += 1;
             }else if (result.isError()) {
                 errorCount += 1;
-            } else if (result.isFailed()) {
+            } else if (result.isNotPassed()) {
                 notPassedCount += 1;
             } else if (result.isSkipped()) {
                 skippedCount += 1;

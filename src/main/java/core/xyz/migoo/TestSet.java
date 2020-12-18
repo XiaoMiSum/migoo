@@ -28,7 +28,6 @@
 
 package core.xyz.migoo;
 
-import com.alibaba.fastjson.JSONObject;
 import components.xyz.migoo.reports.Report;
 
 import java.util.Date;
@@ -37,49 +36,27 @@ import java.util.Date;
  * @author xiaomi
  * @date 2020/7/26 16:24
  */
-public class TestSet extends AbstractTest {
+public class TestSet extends Test {
 
-    TestSet(JSONObject set, JSONObject requestConfig) {
-        super(set.getString("name"), set.get("id"));
-        super.initTest(set.getJSONObject("config"), set.getJSONObject("dataset"));
-        super.initRequest(requestConfig);
-        JSONObject finalRequestConfig = this.requestConfig;
-        set.getJSONArray("cases").forEach(testCase ->
-                super.addTest(new TestCase((JSONObject) testCase, finalRequestConfig))
+    TestSet(TestContext context, TestContext superSuite) {
+        super(context);
+        super.mergeRequest(superSuite);
+        context.getCases().forEach(testCase ->
+                super.addTest(new TestCase(testCase, context))
         );
     }
 
     @Override
     public IResult run() {
         Report.log("===================================================================");
-        IResult result = new SuiteResult();
-        try {
-            Report.log("Beginning of the test，api：{}", this.getTestName());
-            this.setup();
-            ISuiteResult suiteResult = (ISuiteResult) result;
-            if (!this.isSkipped) {
-                for (AbstractTest test : this.getRunTests()) {
-                    test.mergeVars(this.getVars());
-                    suiteResult.addTestResult(test.run());
-                }
-                this.status(suiteResult.getErrorCount() > 0 ? ERROR : suiteResult.getNotPassedCount() > 0 ? FAILED : PASSED);
-            }
-        } catch (Throwable t) {
-            this.throwable(t);
-            this.status(ERROR);
-            Report.log( "An error occurred in the api test . ", t);
-        } finally {
-            this.teardown();
-            this.setResult(result);
-            Report.log("End of the test");
-        }
-        return result;
+        Report.log("Beginning of the test，api：{}", this.getTestName());
+        return super.run();
     }
 
     @Override
     public void setup() throws Exception {
         this.startTime = new Date();
-        if (!this.isSkipped) {
+        if (!isSkipped()) {
             this.processVariable();
             super.setup();
         }

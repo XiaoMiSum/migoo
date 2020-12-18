@@ -42,73 +42,33 @@ import java.util.Map;
  * @author xiaomi
  * @date 2019-08-10 11:07
  */
-public class TestSuite extends AbstractTest {
+public class TestSuite extends Test {
 
-    private JSONObject reportConfig;
-    private JSONObject emailConfig;
-    private JSONObject plugins;
-
-    public TestSuite(JSONObject suite) {
-        super(suite.getString("name"), suite.get("id"));
-        this.initTest(suite.getJSONObject("config"), suite.getJSONObject("dataset"), suite.getJSONObject("plugins"));
-        suite.getJSONArray("sets").forEach(set ->
-                super.addTest(new TestSet((JSONObject) set, requestConfig))
+    public TestSuite(TestContext context) {
+        super(context);
+        context.getSets().forEach(set ->
+                super.addTest(new TestSet(set, context))
         );
-    }
-
-    public JSONObject getReportConfig() {
-        return reportConfig;
-    }
-
-    public JSONObject getEmailConfig() {
-        return emailConfig;
-    }
-
-    public void initTest(JSONObject config, JSONObject dataset, JSONObject plugins) {
-        super.initTest(config, dataset);
-        this.reportConfig = config.get("report") == null ? config.getJSONObject("reports") : config.getJSONObject("report");
-        this.emailConfig = config.get("email") == null ? config.getJSONObject("mail") : config.getJSONObject("email");
-        this.plugins = plugins;
     }
 
     @Override
     public IResult run() {
-        IResult result = new SuiteResult();
-        try {
-            Report.log("Beginning of the test，ID：{}，name：{}", this.getTestId(), this.getTestName());
-            this.setup();
-            ISuiteResult suiteResult = (ISuiteResult) result;
-            if (!this.isSkipped) {
-                this.getRunTests().forEach(test -> {
-                    test.mergeVars(this.getVars());
-                    suiteResult.addTestResult(test.run());
-                });
-                this.status(suiteResult.getErrorCount() > 0 ? ERROR : suiteResult.getNotPassedCount() > 0 ? FAILED : PASSED);
-            }
-        } catch (Throwable t) {
-            this.throwable(t);
-            this.status(ERROR);
-            Report.log("An error occurred in the test . ", t);
-        } finally {
-            this.teardown();
-            this.setResult(result);
-            Report.log("End of the test");
-        }
-        return result;
+        Report.log("Beginning of the test，ID：{}，name：{}", this.getTestId(), this.getTestName());
+        return super.run();
     }
 
     @Override
     public void processVariable() throws FunctionException {
         super.processVariable();
-        VarsHelper.convertVariables(reportConfig, super.getVars());
-        VarsHelper.convertVariables(emailConfig, super.getVars());
-        VarsHelper.convertVariables(plugins, super.getVars());
+        VarsHelper.convertVariables(context.getReportConfig(), super.getVars());
+        VarsHelper.convertVariables(context.getMailConfig(), super.getVars());
+        VarsHelper.convertVariables(context.getPlugins(), super.getVars());
     }
 
     @Override
     public void setup() throws Exception {
         this.startTime = new Date();
-        if (!this.isSkipped) {
+        if (!isSkipped()) {
             this.processVariable();
             this.initializePlugins();
             super.setup();
@@ -123,8 +83,8 @@ public class TestSuite extends AbstractTest {
 
     private void initializePlugins() throws Exception {
         JSONObject plugins = new JSONObject();
-        if (this.plugins != null && !this.plugins.isEmpty()) {
-            for (Map.Entry<String, Object> entry : this.plugins.entrySet()) {
+        if (context.getPlugins() != null && !context.getPlugins().isEmpty()) {
+            for (Map.Entry<String, Object> entry : context.getPlugins().entrySet()) {
                 JSONObject value = (JSONObject) entry.getValue();
                 String clazz = value.get("package") != null ? value.get("package") + "." + StringUtil.initialToUpperCase(entry.getKey())
                         : String.format("components.xyz.migoo.plugins.%s.%s",

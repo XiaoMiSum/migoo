@@ -28,7 +28,6 @@
 
 package core.xyz.migoo;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.assertions.AssertionFactory;
 import core.xyz.migoo.functions.FunctionException;
@@ -45,29 +44,25 @@ import java.util.List;
  * @author xiaomi
  * @date 2019-08-10 14:50
  */
-public class TestCase extends AbstractTest {
+public class TestCase extends Test {
 
     private final List<Validator> validators = new ArrayList<>();
-    private final JSONObject testCase;
     private MiGooRequest request;
     private Response response;
-    private List<TestStep> steps;
 
-    TestCase(JSONObject testCase, JSONObject requestConfig) {
-        super(testCase.getString("title"), testCase.get("id"));
-        this.initTest(testCase.get("config"), testCase.get("dataset"), testCase.get("steps"));
-        super.initRequest(requestConfig);
-        this.testCase = testCase;
+    TestCase(TestContext context, TestContext superContext) {
+        super(context);
+        super.mergeRequest(superContext);
     }
 
     @Override
     public IResult run() {
+        Report.log("--------------------------------------------------------------------");
         IResult result = new TestResult();
         try {
-            Report.log("--------------------------------------------------------------------");
             Report.log("Beginning of the test，case：{}", this.getTestName());
             this.setup();
-            if (!super.isSkipped) {
+            if (!isSkipped()) {
                 this.response = request.execute();
                 this.doCheck();
                 this.printRequestLog();
@@ -79,52 +74,34 @@ public class TestCase extends AbstractTest {
         } finally {
             super.teardown();
             this.setResult(result);
-            Report.log("End of the test case");
         }
         return result;
-    }
-
-    public void initTest(Object config, Object dataset, Object steps) {
-        this.initTest((JSONObject) config, (JSONObject) dataset);
-        if (steps != null) {
-            this.steps = ((JSONArray) steps).toJavaList(TestStep.class);
-        }
     }
 
     private void buildRequest() throws FunctionException {
         this.convertRequestVariable();
         request = new MiGooRequest.Builder()
-                .method(requestConfig.getString("method"))
-                .protocol(requestConfig.getString("protocol"))
-                .host(requestConfig.getString("host"))
-                .port(requestConfig.getInteger("port"))
-                .api(requestConfig.getString("api"))
-                .headers(requestConfig.getJSONObject("headers"))
-                .cookies(requestConfig.get("cookies") != null ?
-                        requestConfig.get("cookie") : requestConfig.get("cookies"))
-                .query(testCase.getJSONObject("query"))
-                .data(testCase.getJSONObject("data"))
-                .body(testCase.get("body"))
+                .method(context.getRequestMethod())
+                .protocol(context.getRequestProtocol())
+                .host(context.getRequestHost())
+                .port(context.getRequestPort())
+                .api(context.getRequestApi())
+                .headers(context.getRequestHeaders())
+                .cookies(context.getRequestCookies())
+                .query(context.getQuery())
+                .data(context.getData())
+                .body(context.getBody())
                 .build();
     }
 
     private void convertRequestVariable() throws FunctionException {
-        VarsHelper.convertVariables(requestConfig, super.getVars());
-        if (testCase.get("data") != null) {
-            JSONObject data = testCase.getJSONObject("data");
-            VarsHelper.convertVariables(data, super.getVars());
-            super.addVars("migoo.request.data", data);
-        }
-        if (testCase.get("migoo.request.body") != null) {
-            JSONObject body = testCase.getJSONObject("body");
-            VarsHelper.convertVariables(body, super.getVars());
-            super.addVars("migoo.request.body", body);
-        }
-        if (testCase.get("query") != null) {
-            JSONObject query = testCase.getJSONObject("query");
-            VarsHelper.convertVariables(query, super.getVars());
-            super.addVars("migoo.request.query", query);
-        }
+        VarsHelper.convertVariables(context.getRequest(), super.getVars());
+        VarsHelper.convertVariables(context.getQuery(), super.getVars());
+        VarsHelper.convertVariables(context.getData(), super.getVars());
+        VarsHelper.convertVariables(context.getBody(), super.getVars());
+        super.addVars("migoo.request.query", context.getQuery());
+        super.addVars("migoo.request.data", context.getData());
+        super.addVars("migoo.request.body", context.getBody());
     }
 
     private void printRequestLog() {
@@ -133,32 +110,31 @@ public class TestCase extends AbstractTest {
     }
 
     public void doCheck() throws FunctionException {
-        JSONArray validators = testCase.getJSONArray("validators");
-        if (validators != null) {
-            for (int i = 0; i < validators.size(); i++) {
-                JSONObject data = validators.getJSONObject(i);
-                VarsHelper.convertVariables(data, this.getVars());
-                data.put("migoo.vars", this.getVars());
-                Validator validator = AssertionFactory.assertThat(data, response);
-                this.status(validator.isPassed() && getStatus() <= 1 ? PASSED :
-                        validator.isFailed() && getStatus() != ERROR ? FAILED :
-                                validator.isError() ? ERROR : SKIPPED);
-                this.validators.add(validator);
-            }
-        } else {
+        if (context.getValidators().isEmpty()) {
             this.status(PASSED);
+            return;
+        }
+        for (int i = 0; i < context.getValidators().size(); i++) {
+            JSONObject data = context.getValidators().get(i);
+            VarsHelper.convertVariables(data, this.getVars());
+            data.put("migoo.vars", this.getVars());
+            Validator validator = AssertionFactory.assertThat(data, response);
+            this.status(validator.isPassed() && getStatus() <= 1 ? PASSED :
+                    validator.isFailed() && getStatus() != ERROR ? NOT_PASSED :
+                            validator.isError() ? ERROR : SKIPPED);
+            this.validators.add(validator);
         }
     }
 
     @Override
     public void setup() throws Exception {
         this.startTime = new Date();
-        if (!this.isSkipped) {
+        if (!isSkipped()) {
             this.processVariable();
             super.setup();
-            if (steps != null) {
-                for (TestStep step : steps) {
-                    step.execute(getVars(), requestConfig);
+            if (context.getSteps() != null) {
+                for (TestStep step : context.getSteps()) {
+                    step.execute(getVars(), context.getRequest());
                 }
             }
             this.buildRequest();
@@ -170,7 +146,7 @@ public class TestCase extends AbstractTest {
         TestResult r = (TestResult) result;
         super.setResult(result);
         r.setValidators(validators);
-        r.setSteps(steps);
+        r.setSteps(context.getSteps());
         r.setRequest(request);
         r.setResponse(response);
     }

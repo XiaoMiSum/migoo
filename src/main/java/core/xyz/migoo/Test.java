@@ -28,35 +28,25 @@
 
 package core.xyz.migoo;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import components.xyz.migoo.reports.Report;
 import core.xyz.migoo.functions.FunctionException;
 import core.xyz.migoo.functions.FunctionHelper;
 import core.xyz.migoo.vars.Vars;
-import core.xyz.migoo.utils.TypeUtil;
 import core.xyz.migoo.vars.VarsHelper;
 
 import java.util.Date;
-import java.util.UUID;
 import java.util.Vector;
 
 /**
  * @author xiaomi
  * @date 2019-08-10 14:50
  */
-public abstract class AbstractTest implements ITest {
+public abstract class Test implements ITest {
 
-    private final JSONArray setup = new JSONArray();
-    private final JSONArray teardown = new JSONArray();
-    private Vars vars = new Vars(100);
+    private final Vars vars = new Vars(100);
 
-    private final String tName;
-    private final Vector<AbstractTest> rTests = new Vector<>(10);
-
-    protected JSONObject requestConfig;
-
-    protected boolean isSkipped;
+    private final Vector<Test> rTests = new Vector<>(10);
 
     protected Date startTime;
 
@@ -66,11 +56,11 @@ public abstract class AbstractTest implements ITest {
 
     private Throwable throwable;
 
-    private final Object id;
+    protected final TestContext context;
 
-    AbstractTest(String name, Object id) {
-        this.tName = name;
-        this.id = id == null ? UUID.randomUUID().toString() : id;
+    Test(TestContext suite) {
+        this.context = suite;
+        this.vars.putAll(suite.getVariables());
     }
 
     /**
@@ -82,49 +72,26 @@ public abstract class AbstractTest implements ITest {
      */
     @Override
     public String getTestName() {
-        return tName;
+        return context.getName();
     }
 
     public Object getTestId() {
-        return id;
+        return context.getId();
     }
 
-    protected void initTest(JSONObject config, JSONObject dataset) {
-        requestConfig = config != null && config.get("request") != null ? config.getJSONObject("request") : new JSONObject();
-        isSkipped = config != null && TypeUtil.booleanOf(config.get("skip"));
-        if (dataset != null) {
-            this.addVars(dataset.getJSONObject("vars"));
-            // add setUp、teardown
-            this.addSetup(dataset.getJSONArray("setup"));
-            this.addTeardown(dataset.getJSONArray("teardown"));
-        }
+    protected boolean isSkipped() {
+        return this.context.isSkipped();
     }
 
-    protected void initRequest(JSONObject requestConfig) {
-        if (requestConfig != null) {
-            JSONObject headers = new JSONObject();
-            if (requestConfig.get("headers") != null) {
-                headers.putAll(requestConfig.getJSONObject("headers"));
-            }
-            if (this.requestConfig.get("headers") != null) {
-                headers.putAll(this.requestConfig.getJSONObject("headers"));
-            }
-            Object url = this.requestConfig.get("api") != null ? this.requestConfig.get("api") : requestConfig.get("api");
-            this.requestConfig.putAll(requestConfig);
-            this.requestConfig.put("headers", headers);
-            this.requestConfig.put("api", url);
-        }
-    }
-
-    /**
-     * add the variables of test.
-     *
-     * @param vars the variables to set
-     */
-    protected void addVars(JSONObject vars) {
-        if (vars != null) {
-            this.vars.putAll(vars);
-        }
+    protected void mergeRequest(TestContext superContext) {
+        // headers 同名 key 总用于小的覆盖作用域大的
+        JSONObject headers = new JSONObject();
+        headers.putAll(superContext.getRequestHeaders());
+        headers.putAll(context.getRequestHeaders());
+        context.getRequest().putAll(superContext.getRequest());
+        context.setRequestHeaders(headers);
+        // api 如果当前层级的suite 没有设置api地址，则使用上层的api地址
+        context.setRequestApi(superContext.getRequestApi());
     }
 
     /**
@@ -134,14 +101,16 @@ public abstract class AbstractTest implements ITest {
      * @param value the variable value
      */
     protected void addVars(String key, Object value) {
-        this.vars.put(key, value);
+        if (key != null || value != null) {
+            this.vars.put(key, value);
+        }
     }
 
     protected void mergeVars(Vars vars) {
         Vars temp = new Vars(100);
-        temp.putAll(vars);
         temp.putAll(this.vars);
-        this.vars = temp;
+        this.vars.putAll(vars);
+        this.vars.putAll(temp);
     }
 
     /**
@@ -153,18 +122,7 @@ public abstract class AbstractTest implements ITest {
 
     protected void processVariable() throws FunctionException {
         VarsHelper.convertVariables(vars);
-        VarsHelper.convertVariables(requestConfig, vars);
-    }
-
-    /**
-     * add the setup of the suite or case.
-     *
-     * @param setup the setUp to set
-     */
-    void addSetup(JSONArray setup) {
-        if (setup != null) {
-            this.setup.addAll(setup);
-        }
+        VarsHelper.convertVariables(context.getRequest(), vars);
     }
 
     /**
@@ -174,19 +132,8 @@ public abstract class AbstractTest implements ITest {
      */
     @Override
     public void setup() throws Exception {
-        for (int i = 0; i < setup.size(); i++) {
-            FunctionHelper.execute(setup.getString(i), vars);
-        }
-    }
-
-    /**
-     * add the teardown of the test.
-     *
-     * @param teardown the teardown to set
-     */
-    void addTeardown(JSONArray teardown) {
-        if (teardown != null) {
-            this.teardown.addAll(teardown);
+        for (int i = 0; i < context.getSetupHook().size(); i++) {
+            FunctionHelper.execute(context.getSetupHook().getString(i), vars);
         }
     }
 
@@ -195,27 +142,27 @@ public abstract class AbstractTest implements ITest {
      */
     @Override
     public void teardown() {
-        this.endTime = new Date();
-        for (int i = 0; i < teardown.size(); i++) {
+        for (int i = 0; i < context.getTeardownHook().size(); i++) {
             try {
-                FunctionHelper.execute(teardown.getString(i), vars);
+                FunctionHelper.execute(context.getTeardownHook().getString(i), vars);
             } catch (FunctionException e) {
-                Report.log(teardown.getString(i) + " error", e);
+                Report.log(context.getTeardownHook().getString(i) + " error", e);
             }
         }
+        this.endTime = new Date();
     }
 
-    void addTest(AbstractTest test) {
+    void addTest(Test test) {
         rTests.add(test);
     }
 
-    protected Vector<AbstractTest> getRunTests() {
+    protected Vector<Test> getRunTests() {
         return this.rTests;
     }
 
     @Override
     public int getStatus() {
-        return isSkipped ? SKIPPED : this.status;
+        return isSkipped() ? SKIPPED : this.status;
     }
 
     @Override
@@ -223,17 +170,40 @@ public abstract class AbstractTest implements ITest {
         this.status = status;
     }
 
-    @Override
-    public void throwable(Throwable throwable) {
+    void throwable(Throwable throwable) {
         this.throwable = throwable;
     }
 
     protected void setResult(IResult result) {
-        result.setTestId(id);
+        result.setTestId(context.getId());
         result.setStartTime(startTime);
         result.setEndTime(endTime);
         result.setStatus(this.getStatus());
-        result.setTestName(tName);
+        result.setTestName(context.getName());
         result.setThrowable(throwable);
+    }
+
+    @Override
+    public IResult run() {
+        IResult result = new SuiteResult();
+        try {
+            this.setup();
+            ISuiteResult suiteResult = (ISuiteResult) result;
+            if (!isSkipped()) {
+                for (Test test : this.getRunTests()) {
+                    test.mergeVars(this.getVars());
+                    suiteResult.addTestResult(test.run());
+                }
+                this.status(suiteResult.getErrorCount() > 0 ? ERROR : suiteResult.getNotPassedCount() > 0 ? NOT_PASSED : PASSED);
+            }
+        } catch (Throwable t) {
+            this.throwable(t);
+            this.status(ERROR);
+            Report.log( "An error occurred in the api test . ", t);
+        } finally {
+            this.teardown();
+            this.setResult(result);
+        }
+        return result;
     }
 }

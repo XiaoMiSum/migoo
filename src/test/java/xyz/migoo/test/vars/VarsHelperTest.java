@@ -42,6 +42,7 @@ public class VarsHelperTest {
         VarsHelper.convertVariables(source, vars);
         Assertions.assertEquals(source.getJSONObject("data").get("sign"), vars.getString("sign") + vars.get("user"));
     }
+
     @Test
     public void testBind3() throws FunctionException {
         JSONObject source = new JSONObject();
@@ -58,6 +59,7 @@ public class VarsHelperTest {
         VarsHelper.convertVariables(source, vars);
         Assertions.assertEquals(source.getJSONArray("data").get(0), vars.getString("sign"));
     }
+
     @Test
     public void testBind4() throws FunctionException {
         JSONObject source = new JSONObject();
@@ -75,5 +77,20 @@ public class VarsHelperTest {
         VarsHelper.convertVariables(source, vars);
         Assertions.assertEquals(source.getJSONArray("data").get(0), vars.getString("sign"));
         Assertions.assertNotEquals("${func}", source.getJSONArray("data").get(1));
+    }
+
+    @Test
+    public void testBind5() throws FunctionException {
+        JSONObject source = new JSONObject();
+        source.put("user", "${user}");
+        source.put("pwd", "${pwd}----${sign}");
+        JSONObject vars = new JSONObject();
+        vars.put("user", "MiGoo");
+        vars.put("pwd", "abb");
+        vars.put("sign", "better");
+        vars.put("func", "__random()");
+        VarsHelper.convertVariables(source, vars);
+        Assertions.assertEquals(source.get("user"), vars.get("user"));
+        Assertions.assertEquals("abb----better", source.get("pwd"));
     }
 }

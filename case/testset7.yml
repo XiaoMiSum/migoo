@@ -5,4 +5,8 @@ config:
 dataset:
   vars:
     password: migoo
+    user: haha
+    expected: 200
+    key1: key111
+    key2: key222
 cases: './case/case.yml'

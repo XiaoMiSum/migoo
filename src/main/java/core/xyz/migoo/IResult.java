@@ -144,5 +144,5 @@ public interface IResult extends ITestStatus {
      *
      * @return the status is failed of this test.
      */
-    boolean isFailed();
+    boolean isNotPassed();
 }

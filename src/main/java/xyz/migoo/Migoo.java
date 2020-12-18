@@ -50,16 +50,16 @@ public class Migoo {
 
     public void run(String file) {
         try {
-            JSONObject data = this.processor(file);
-            TestSuite suite = new TestSuite(data);
-            IResult result = suite.run();
-            this.report(suite.getReportConfig(), suite.getEmailConfig(), result);
+            TestContext context = this.processor(file);
+            ITest test = new TestSuite(context);
+            IResult result = test.run();
+            this.report(context.getReportConfig(), context.getMailConfig(), result);
         } catch (Exception e) {
             Report.log("run error", e);
         }
     }
 
-    public JSONObject processor(String file) throws ReaderException {
+    public TestContext processor(String file) throws ReaderException {
         // 1. 解析文件 获取解析到的 json 对象
         JSONObject data = this.importFileData(file);
         JSONArray sets = new JSONArray();
@@ -68,17 +68,19 @@ public class Migoo {
                 JSONObject set = this.readFileToObject((String) testSet);
                 set.put("cases",  this.processor(set.get("cases")));
                 sets.add(set);
+            } else if (testSet instanceof JSONObject) {
+                sets.add(testSet);
             }
         }
         data.put("sets", sets);
-        return data;
+        return data.toJavaObject(TestContext.class);
     }
 
     private JSONObject importFileData(String file) throws ReaderException {
         JSONObject data = this.readFileToObject(file);
         // 判断是否为导入文件
         if (data.get("config") instanceof String) {
-            data.put("config", this.readFileToObject(data.getString("dataset")));
+            data.put("config", this.readFileToObject(data.getString("config")));
         }
         if (data.get("plugins") instanceof String) {
             data.put("plugins", this.readFileToObject(data.getString("plugins")));
@@ -95,7 +97,7 @@ public class Migoo {
             JSONObject testCase = cases.getJSONObject(i);
             Object steps = testCase.get("steps");
             if (steps instanceof String) {
-                cases.getJSONObject(i).put("steps", this.readFileToObject((String) steps));
+                cases.getJSONObject(i).put("steps", this.readFileToArray((String) steps));
             }
             cases.remove(i);
             cases.add(i, testCase);
