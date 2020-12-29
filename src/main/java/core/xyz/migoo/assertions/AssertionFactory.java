@@ -23,10 +23,10 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 package core.xyz.migoo.assertions;
 
 import com.alibaba.fastjson.JSONObject;
+import core.xyz.migoo.Validator;
 import core.xyz.migoo.assertions.rules.Alias;
 import xyz.migoo.simplehttp.Response;
 
@@ -68,14 +68,18 @@ public class AssertionFactory {
         SELF_DEFINED_ASSERTION.put(clz.getSimpleName().toUpperCase(), clz.newInstance());
     }
 
-    public static boolean assertThat(JSONObject validator, Response response) throws Exception {
+    public static Validator assertThat(JSONObject data, Response response) {
+        Validator validator = data.toJavaObject(Validator.class);
         try {
             FACTORY.setInstance(validator);
             FACTORY.setActual(response);
-            return FACTORY.assertThat(validator);
+            FACTORY.assertThat(validator);
+        } catch (Exception e) {
+            validator.setThrowable(e);
         } finally {
             FACTORY.clear();
         }
+        return validator;
     }
 
     private Assertion assertion;
@@ -84,23 +88,23 @@ public class AssertionFactory {
         assertion.setActual(actual);
     }
 
-    private boolean assertThat(JSONObject validator) throws Exception {
-        validator.put("actual", assertion.getActual());
-        return assertion.assertThat(validator);
+    private void assertThat(Validator validator) throws Exception {
+        validator.setActual(assertion.getActual());
+        assertion.assertThat(validator);
     }
 
-    private void setInstance(JSONObject validator) throws Exception {
-        String type = validator.get("assertion") == null ? "JSON" : validator.getString("assertion").toUpperCase();
+    private void setInstance(Validator validator) throws Exception {
+        String type = validator.getAssertion() == null ? "JSON" : validator.getAssertion().toUpperCase();
         assertion = DEFAULT_ASSERTION.get(type) == null ? SELF_DEFINED_ASSERTION.get(type) : DEFAULT_ASSERTION.get(type);
-        if (assertion == null && validator.get("package") != null) {
-            assertion = (Assertion) Class.forName(validator.get("package") + "." + validator.get("assertion")).newInstance();
+        if (assertion == null && validator.getPackName() != null) {
+            assertion = (Assertion) Class.forName(validator.getPackName() + "." + validator.getAssertion()).newInstance();
             SELF_DEFINED_ASSERTION.put(type, assertion);
         } else if (assertion == null) {
-            throw new Exception("assertion not found: " + validator.getString("assertion"));
+            throw new Exception("assertion not found: " + validator.getAssertion());
         } else if (assertion instanceof AbstractAssertion) {
-            ((AbstractAssertion) assertion).setField(validator.getString("field"));
+            ((AbstractAssertion) assertion).setField(validator.getField());
         }
-        validator.put("assertion", assertion.getClass().getSimpleName());
+        validator.setAssertion(assertion.getClass().getSimpleName());
     }
 
     private void clear() {

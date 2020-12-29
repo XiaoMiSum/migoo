@@ -43,18 +43,16 @@ import java.util.Map;
 public class Contains extends BaseRule implements IRule {
 
     @Override
-    public boolean assertTrue(Map<String, Object> data) {
-        Object actual = data.get("actual");
-        Object expect = data.get("expected");
+    public boolean assertTrue(Object actual, Object expected) {
         if (actual instanceof String) {
-            return ((String) actual).contains((String) expect);
+            return ((String) actual).contains((String) expected);
         }
         if (actual instanceof Map) {
             Map json = (Map) actual;
-            return json.containsValue(expect) || json.containsKey(expect);
+            return json.containsValue(expected) || json.containsKey(expected);
         }
         if (actual instanceof List) {
-            return ((List) actual).contains(expect);
+            return ((List) actual).contains(expected);
         }
         return false;
     }

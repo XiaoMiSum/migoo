@@ -23,7 +23,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 package core.xyz.migoo.utils;
 
 /**
@@ -55,6 +54,10 @@ public class StringUtil {
 
     public static boolean isEmpty(String cs) {
         return cs == null || trimAny(cs).length() == 0;
+    }
+
+    public static boolean isNotEmpty(String cs) {
+        return !isEmpty(cs);
     }
 
     public static String valueOf(Object obj){

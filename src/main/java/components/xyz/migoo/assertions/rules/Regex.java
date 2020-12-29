@@ -26,13 +26,11 @@
  *
  */
 
-
 package components.xyz.migoo.assertions.rules;
 
 import core.xyz.migoo.assertions.rules.Alias;
 import core.xyz.migoo.assertions.rules.IRule;
 
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,9 +42,9 @@ import java.util.regex.Pattern;
 public class Regex extends BaseRule implements IRule {
 
     @Override
-    public boolean assertTrue(Map<String, Object> data) {
-        Pattern pattern = Pattern.compile(objectToString(data.get("expected")));
-        Matcher matcher = pattern.matcher(objectToString(data.get("actual")));
+    public boolean assertTrue(Object actual, Object expected) {
+        Pattern pattern = Pattern.compile(objectToString(expected));
+        Matcher matcher = pattern.matcher(objectToString(actual));
         return matcher.find();
     }
 }

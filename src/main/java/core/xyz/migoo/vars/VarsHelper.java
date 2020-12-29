@@ -85,6 +85,19 @@ public class VarsHelper {
         }
     }
 
+    /**
+     * convert variables
+     * may be variable that might not have been initialized
+     *
+     * @param variables variables mapping
+     */
+    public static String convertVariables(String mapping, JSONObject variables) throws FunctionException {
+        if (variables != null) {
+            mapping = extractVariable(mapping, variables);
+        }
+        return mapping;
+    }
+
     private static void convertVariables(JSONArray temp, JSONObject variables) throws FunctionException {
         for (int i = 0; i < temp.size(); i++) {
             String item = temp.getString(i);
@@ -93,34 +106,29 @@ public class VarsHelper {
         }
     }
 
-    public static Object extractVariables(String value, JSONObject variables) throws FunctionException {
+    private static Object extractVariables(String value, JSONObject variables) throws FunctionException {
         if (TypeUtil.isFunc(value)) {
             return FunctionHelper.execute(value, variables);
-        } else if (TypeUtil.isMultiVars(value)) {
-            return extractVariable4MultiVars(value, variables);
         } else if (TypeUtil.isVars(value)) {
-            return extractVariable(value.substring(2, value.length() - 1), variables);
+            return extractVariable(value, variables);
         }
         return value;
     }
 
-    private static String extractVariable4MultiVars(String value, JSONObject variables) throws FunctionException {
+    private static String extractVariable(String value, JSONObject variables) throws FunctionException {
         Matcher matcher = VARS_PATTERN.matcher(value);
         while (matcher.find()) {
             String temp = matcher.group();
-            value = value.replace(temp, extractVariable(temp.substring(2, temp.length() - 1), variables).toString());
+            String key = temp.substring(2, temp.length() - 1);
+            Object v = variables.get(key);
+            if (v == null || StringUtil.isEmpty(v.toString())) {
+                throw new VarsException("The variable value cannot be null: " + key);
+            }
+            if (v instanceof String && TypeUtil.isFunc((String) v)) {
+                v=  FunctionHelper.execute((String) v, variables);
+            }
+            value = value.replace(temp, v.toString());
         }
         return value;
-    }
-
-    private static Object extractVariable(String key, JSONObject variables) throws FunctionException {
-        Object v = variables.get(key);
-        if (v == null || StringUtil.isEmpty(v.toString())) {
-            throw new VarsException("The variable value cannot be null: " + key);
-        }
-        if (v instanceof String && TypeUtil.isFunc((String) v)) {
-            return FunctionHelper.execute((String) v, variables);
-        }
-        return v;
     }
 }

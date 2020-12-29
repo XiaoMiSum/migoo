@@ -1,6 +1,6 @@
 package xyz.migoo.test.example;
 
-import com.alibaba.fastjson.JSONObject;
+import core.xyz.migoo.Validator;
 import core.xyz.migoo.assertions.Assertion;
 import xyz.migoo.simplehttp.Response;
 
@@ -13,9 +13,11 @@ public class PackageAssertion implements Assertion {
     private Object actual;
 
     @Override
-    public boolean assertThat(JSONObject data) {
-        String s1 = String.valueOf(data.get("expected"));
-        return s1.equals(getActual());
+    public void assertThat(Validator validator) {
+        String s1 = String.valueOf(validator.getExpected());
+        boolean result = s1.equals(getActual());
+        validator.setResult(result);
+        validator.setMessage(String.format("actual: %s != expected: %s", getActual(), validator.getExpected()));
     }
 
     @Override

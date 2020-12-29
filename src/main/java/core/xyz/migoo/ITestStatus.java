@@ -35,7 +35,7 @@ package core.xyz.migoo;
 public interface ITestStatus {
     int CREATED = 0;
     int PASSED = 1;
-    int FAILED = 2;
+    int NOT_PASSED = 2;
     int SKIPPED = 3;
     int ERROR = 4;
 }

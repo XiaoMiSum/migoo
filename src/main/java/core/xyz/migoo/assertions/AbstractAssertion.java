@@ -23,10 +23,9 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 package core.xyz.migoo.assertions;
 
-import com.alibaba.fastjson.JSONObject;
+import core.xyz.migoo.Validator;
 import core.xyz.migoo.assertions.rules.Alias;
 import core.xyz.migoo.assertions.rules.IRule;
 import core.xyz.migoo.utils.TypeUtil;
@@ -66,12 +65,12 @@ public abstract class AbstractAssertion implements Assertion {
     }
 
     @Override
-    public boolean assertThat(JSONObject data) throws Exception, AssertionError {
-        IRule rule = RULES.get(data.getString("rule"));
+    public void assertThat(Validator validator) throws Exception, AssertionError {
+        IRule rule = RULES.get(validator.getRule());
         if (rule == null) {
-            throw new Exception(String.format("assert rule '%s' not found", data.get("rule")));
+            throw new Exception(String.format("assert rule '%s' not found", validator.getRule()));
         }
-        data.put("actual", actual);
-        return TypeUtil.booleanOf(rule.assertTrue(data));
+        boolean result = TypeUtil.booleanOf(rule.assertTrue(actual, validator.getExpected()));
+        validator.setResult(result);
     }
 }

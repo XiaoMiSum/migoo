@@ -26,32 +26,15 @@
  *
  */
 
-package components.xyz.migoo.assertions.rules;
+package xyz.migoo.test.example;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.assertions.rules.Alias;
-import core.xyz.migoo.assertions.rules.IRule;
-import core.xyz.migoo.utils.StringUtil;
+import components.xyz.migoo.plugins.mybatis.Mapper;
 
 /**
  * @author xiaomi
- * @date 2019-08-13 22:17
+ * @date 2020/12/8 19:41
  */
-@Alias(aliasList = {"isEmpty", "isNull", "empty", "blank"})
-public class IsEmpty extends BaseRule implements IRule {
+public interface TestMapper extends Mapper {
 
-    @Override
-    public boolean assertTrue(Object actual, Object expected) {
-        if (actual instanceof JSONObject) {
-            return ((JSONObject) actual).isEmpty();
-        }
-        if (actual instanceof JSONArray) {
-            return ((JSONArray) actual).isEmpty();
-        }
-        if (actual instanceof String) {
-            return StringUtil.isEmpty((String) actual);
-        }
-        return actual == null;
-    }
+    Integer count();
 }

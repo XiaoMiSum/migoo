@@ -26,7 +26,6 @@
  *
  */
 
-
 package core.xyz.migoo;
 
 /**
@@ -65,11 +64,5 @@ public interface ITest extends ITestStatus {
      * @param status status for this test
      */
     void status(int status);
-
-    /**
-     * set throwable for this test.
-     * @param throwable throwable for this test
-     */
-    void throwable(Throwable throwable);
 
 }

@@ -110,7 +110,7 @@ public class Report implements IReport {
                 ISuiteResult suiteResult = (ISuiteResult) iResult;
                 ExtentTest feature = extent.createTest(iResult.getTestName(),
                         String.format("Total Case：%s，Passed：%s，Failed：%s，Error：%s，Skipped：%s", suiteResult.size(),
-                                suiteResult.getPassedCount(), suiteResult.getFailedCount(), suiteResult.getErrorCount(),
+                                suiteResult.getPassedCount(), suiteResult.getNotPassedCount(), suiteResult.getErrorCount(),
                                 suiteResult.getSkippedCount()));
                 feature.getModel().setStartTime(iResult.getStartTime());
                 if (suiteResult.getTestResults() != null) {
@@ -169,7 +169,7 @@ public class Report implements IReport {
             sb.append("<br/>").append("Headers：").append(Arrays.toString(response.headers()));
         }
         if (!response.text().isEmpty()) {
-            sb.append("<br/>").append("Body：").append(this.getResponseString(response.text()));
+            sb.append("<br/>").append("Body：").append(this.getResponseString(response.text().trim()));
         }
         sb.append(String.format("<br/>Duration：%s ms", response.duration()));
     }
@@ -280,7 +280,7 @@ public class Report implements IReport {
                     .append("<td style=\"padding:6px 10px; line-height: 150%%;\">\n")
                     .append(suiteResult.getPassedCount()).append("</td>\n")
                     .append("<td style=\"padding:6px 10px; line-height: 150%%;\">\n")
-                    .append(suiteResult.getFailedCount()).append("</td>\n")
+                    .append(suiteResult.getNotPassedCount()).append("</td>\n")
                     .append("<td style=\"padding:6px 10px; line-height: 150%%;\">\n")
                     .append(suiteResult.getErrorCount()).append("</td>\n")
                     .append("<td style=\"padding:6px 10px; line-height: 150%%;\">\n")

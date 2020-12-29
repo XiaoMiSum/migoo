@@ -57,7 +57,7 @@ public class CompoundVariable extends HashMap<String, Object> {
         } else if (TypeUtil.isBoolean(parameter)) {
             return Boolean.valueOf(parameter);
         } else {
-            return VarsHelper.extractVariables(parameter, variables);
+            return VarsHelper.convertVariables(parameter, variables);
         }
     }
 
@@ -94,14 +94,14 @@ public class CompoundVariable extends HashMap<String, Object> {
     }
 
     public JSONObject getJSONObject(String key) {
-        return (JSONObject) get(key);
+        return JSONObject.parseObject(getString(key));
     }
 
     public JSONArray getJSONArray(String key) {
-        return (JSONArray) get(key);
+        return JSONArray.parseArray(getString(key));
     }
 
-    public Vars getVars() {
+    public Vars getCurrentVars() {
         return (Vars) get("migoo.vars");
     }
 }

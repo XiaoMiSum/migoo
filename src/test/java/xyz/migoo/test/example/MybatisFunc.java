@@ -26,32 +26,29 @@
  *
  */
 
-package components.xyz.migoo.assertions.rules;
+package xyz.migoo.test.example;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.assertions.rules.Alias;
-import core.xyz.migoo.assertions.rules.IRule;
-import core.xyz.migoo.utils.StringUtil;
+import components.xyz.migoo.plugins.mybatis.Mybatis;
+import core.xyz.migoo.functions.CompoundVariable;
+import core.xyz.migoo.functions.Function;
+import core.xyz.migoo.functions.FunctionException;
 
 /**
  * @author xiaomi
- * @date 2019-08-13 22:17
+ * @date 2020/12/8 19:40
  */
-@Alias(aliasList = {"isEmpty", "isNull", "empty", "blank"})
-public class IsEmpty extends BaseRule implements IRule {
+public class MybatisFunc implements Function {
+    @Override
+    public Object execute(CompoundVariable parameters) throws FunctionException {
+        //Mybatis mybatis = parameters.getCurrentVars().getPlugin(Mybatis.class);
+        //TestMapper mapper = mybatis.mapper(TestMapper.class);
+        //Integer total = mapper.count();
+        //System.out.println("mybatis: " + total);
+        return 1;
+    }
 
     @Override
-    public boolean assertTrue(Object actual, Object expected) {
-        if (actual instanceof JSONObject) {
-            return ((JSONObject) actual).isEmpty();
-        }
-        if (actual instanceof JSONArray) {
-            return ((JSONArray) actual).isEmpty();
-        }
-        if (actual instanceof String) {
-            return StringUtil.isEmpty((String) actual);
-        }
-        return actual == null;
+    public String funcKey() {
+        return "MybatisFunc";
     }
 }

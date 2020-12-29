@@ -31,10 +31,15 @@ package components.xyz.migoo.plugins.mybatis;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.plugin.Plugin;
+import org.apache.ibatis.binding.BindingException;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import java.io.ByteArrayInputStream;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +50,8 @@ import java.util.Map;
 public class Mybatis implements Plugin {
 
     private String resource;
+
+    private String defaultEnv;
 
     @Override
     public void initialize(JSONObject config) throws Exception {
@@ -67,7 +74,8 @@ public class Mybatis implements Plugin {
             for (Object mapper : mappers) {
                 mapperStr.append("<mapper url=\"").append(mapper).append("\" /> \n");
             }
-            resource = String.format(TEMPLATE, config.getString("default"), envStr, mapperStr);
+            this.defaultEnv = config.getString("default");
+            resource = String.format(TEMPLATE, this.defaultEnv, envStr, mapperStr);
         }
     }
 
@@ -81,14 +89,36 @@ public class Mybatis implements Plugin {
 
     private final Map<String, SqlSessionFactory> SQL_SESSION_FACTORY = new HashMap<>();
 
-    public SqlSessionFactory getSqlSession(Object environment) {
-        String env = String.valueOf(environment);
+    private SqlSessionFactory getSqlSession(Object environment) {
+        String env =  environment == null || "".equals(environment) ? this.defaultEnv : String.valueOf(environment);
         SqlSessionFactory sqlSessionFactory = SQL_SESSION_FACTORY.get(env);
         if (sqlSessionFactory == null) {
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(new ByteArrayInputStream(resource.getBytes()), env);
             SQL_SESSION_FACTORY.put(env, sqlSessionFactory);
         }
         return sqlSessionFactory;
+    }
+
+    public <T> T mapper(Class<? extends Mapper> clazz) {
+        return mapper(clazz, null);
+    }
+
+    public <T> T mapper(Class<? extends Mapper> clazz, Object environment) {
+        SqlSessionFactory sqlSessionFactory = this.getSqlSession(environment);
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        try {
+            Mapper mapper = sqlSession.getMapper(clazz);
+            return (T) MapperProxy.bind(mapper);
+        } catch (BindingException e) {
+            if (e.getMessage().contains("is not known to the MapperRegistry")) {
+                sqlSession.getConfiguration().addMapper(clazz);
+                Mapper mapper = sqlSession.getMapper(clazz);
+                return (T) MapperProxy.bind(mapper);
+            }
+            throw new RuntimeException("init mapper exception. ", e);
+        } catch (Exception e) {
+            throw new RuntimeException("init mapper exception. ", e);
+        }
     }
 
     private static final String TEMPLATE = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
@@ -103,4 +133,22 @@ public class Mybatis implements Plugin {
             "        %s" +
             "    </mappers> " +
             "</configuration>";
+
+    private static class MapperProxy implements InvocationHandler {
+        private final Mapper mapper;
+
+        private MapperProxy(Mapper mapper) {
+            this.mapper = mapper;
+        }
+
+        private static Mapper bind(Mapper mapper) {
+            return (Mapper) Proxy.newProxyInstance(mapper.getClass().getClassLoader(),
+                    mapper.getClass().getInterfaces(), new MapperProxy(mapper));
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            return method.invoke(mapper, args);
+        }
+    }
 }

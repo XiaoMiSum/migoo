@@ -23,12 +23,11 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 package core.xyz.migoo.assertions;
 
 import components.xyz.migoo.assertions.JSONAssertion;
 import components.xyz.migoo.assertions.ResponseAssertion;
-import com.alibaba.fastjson.JSONObject;
+import core.xyz.migoo.Validator;
 import xyz.migoo.simplehttp.Response;
 
 /**
@@ -39,19 +38,14 @@ public interface Assertion {
 
 
     /**
-     * get expected values from JSONObject (data.get("expected"))
-     * and invoke method to assert expected values
-     * <p>
-     * support type list:
+     *
      * {@linkplain JSONAssertion JSONAssertion}
      * {@linkplain ResponseAssertion ResponseAssertion}
      *
-     * @param data Objects that hold expected values
-     * @return assert result
+     * @param validator Objects that hold expected values
      * @throws Exception Exception
-     * @throws AssertionError AssertionError
      */
-    boolean assertThat(JSONObject data) throws Exception, AssertionError;
+    void assertThat(Validator validator) throws Exception;
 
     /**
      * setting actual values

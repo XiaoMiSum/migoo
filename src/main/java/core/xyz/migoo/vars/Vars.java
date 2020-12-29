@@ -26,10 +26,10 @@
  *
  */
 
-
 package core.xyz.migoo.vars;
 
 import com.alibaba.fastjson.JSONObject;
+import core.xyz.migoo.plugin.Plugin;
 
 /**
  * @author xiaomi
@@ -46,14 +46,18 @@ public class Vars extends JSONObject {
     }
 
     public JSONObject getRequestBody(){
-        return this.getJSONObject("body");
+        return this.getJSONObject("migoo.request.body");
     }
 
     public JSONObject getRequestQuery(){
-        return this.getJSONObject("query");
+        return this.getJSONObject("migoo.request.query");
     }
 
     public JSONObject getRequestData(){
-        return this.getJSONObject("data");
+        return this.getJSONObject("migoo.request.data");
+    }
+
+    public <T> T getPlugin(Class<? extends Plugin> clazz){
+        return (T) this.getJSONObject("migoo.plugins").get(clazz.getSimpleName().toUpperCase());
     }
 }
