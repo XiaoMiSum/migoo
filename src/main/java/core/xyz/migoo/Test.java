@@ -88,10 +88,10 @@ public abstract class Test implements ITest {
         JSONObject headers = new JSONObject();
         headers.putAll(superContext.getRequestHeaders());
         headers.putAll(context.getRequestHeaders());
-        context.getRequest().putAll(superContext.getRequest());
-        context.setRequestHeaders(headers);
         // api 如果当前层级的suite 没有设置api地址，则使用上层的api地址
         context.setRequestApi(superContext.getRequestApi());
+        context.getRequest().putAll(superContext.getRequest());
+        context.setRequestHeaders(headers);
     }
 
     /**
@@ -122,7 +122,12 @@ public abstract class Test implements ITest {
 
     protected void processVariable() throws FunctionException {
         VarsHelper.convertVariables(vars);
+        Object api = null;
+        if (this instanceof TestSet) {
+            api = context.removeRequestApi();
+        }
         VarsHelper.convertVariables(context.getRequest(), vars);
+        context.setRequestApi(api);
     }
 
     /**

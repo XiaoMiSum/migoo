@@ -120,8 +120,11 @@ public class TestContext {
         String api = getRequest().getString("api");
         return StringUtil.isEmpty(api) ? "" : api.startsWith("/") ? api : "/" + api;
     }
+    public Object removeRequestApi() {
+        return getRequest().remove("api");
+    }
 
-    public void setRequestApi(String api) {
+    public void setRequestApi(Object api) {
         if ("".equals(getRequestApi())) {
             getRequest().put("api", api);
         }
