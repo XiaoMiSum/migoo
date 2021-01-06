@@ -120,26 +120,31 @@ public class TestContext {
         String api = getRequest().getString("api");
         return StringUtil.isEmpty(api) ? "" : api.startsWith("/") ? api : "/" + api;
     }
-    public Object removeRequestApi() {
-        return getRequest().remove("api");
-    }
 
-    public void setRequestApi(Object api) {
+    public void setRequestApi(String api) {
         if ("".equals(getRequestApi())) {
             getRequest().put("api", api);
         }
     }
 
     public JSONObject getRequestHeaders() {
-        return getRequest().get("headers") != null ? getRequest().getJSONObject("headers") : new JSONObject();
+        if (getRequest().get("headers") == null) {
+            getRequest().put("headers",  new JSONObject());
+        }
+        return getRequest().getJSONObject("headers");
     }
 
-    public void setRequestHeaders(JSONObject headers) {
-        getRequest().put("headers", headers);
+    public void addRequestHeaders(String key, Object value) {
+        if (!getRequestHeaders().containsKey(key) && value != null) {
+            getRequestHeaders().put(key, value);
+        }
     }
 
     public Object getRequestCookies() {
-        return getRequest().get("cookies") == null ? getRequest().get("cookie") : getRequest().get("cookies");
+        if (getRequest().get("cookies") == null) {
+            getRequest().put("cookies",  new JSONObject());
+        }
+        return getRequest().getJSONObject("cookies");
     }
 
     public void setRequestCookies(Object cookies) {
