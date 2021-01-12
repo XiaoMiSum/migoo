@@ -122,7 +122,7 @@ public class TestContext {
     }
 
     public void setRequestApi(String api) {
-        if ("".equals(getRequestApi())) {
+        if (getRequestApi().isEmpty() && !api.isEmpty()) {
             getRequest().put("api", api);
         }
     }
