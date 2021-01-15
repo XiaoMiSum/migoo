@@ -90,7 +90,7 @@ public class Mybatis implements Plugin {
     private final Map<String, SqlSessionFactory> SQL_SESSION_FACTORY = new HashMap<>();
 
     private SqlSessionFactory getSqlSession(Object environment) {
-        String env =  environment == null || "".equals(environment) ? this.defaultEnv : String.valueOf(environment);
+        String env = environment == null || "".equals(environment) ? this.defaultEnv : String.valueOf(environment);
         SqlSessionFactory sqlSessionFactory = SQL_SESSION_FACTORY.get(env);
         if (sqlSessionFactory == null) {
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(new ByteArrayInputStream(resource.getBytes()), env);

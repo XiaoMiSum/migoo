@@ -91,7 +91,8 @@ public class TestSuite extends Test {
                         entry.getKey().toLowerCase(), StringUtil.initialToUpperCase(entry.getKey()));
                 Plugin plugin = (Plugin) Class.forName(clazz).newInstance();
                 plugin.initialize(value);
-                plugins.put(plugin.getClass().getSimpleName().toUpperCase(), plugin);
+                String key = value.get("name") != null ? value.getString("name") : plugin.getClass().getSimpleName().toUpperCase();
+                plugins.put(key, plugin);
             }
         }
         super.getVars().put("migoo.plugins", plugins);
