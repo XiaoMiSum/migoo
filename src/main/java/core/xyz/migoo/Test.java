@@ -28,7 +28,6 @@
 
 package core.xyz.migoo;
 
-import com.alibaba.fastjson.JSONObject;
 import components.xyz.migoo.reports.Report;
 import core.xyz.migoo.functions.FunctionException;
 import core.xyz.migoo.functions.FunctionHelper;
@@ -58,9 +57,9 @@ public abstract class Test implements ITest {
 
     protected final TestContext context;
 
-    Test(TestContext suite) {
-        this.context = suite;
-        this.vars.putAll(suite.getVariables());
+    Test(TestContext context) {
+        this.context = context;
+        this.vars.putAll(context.getVariables());
     }
 
     /**
@@ -80,18 +79,20 @@ public abstract class Test implements ITest {
     }
 
     protected boolean isSkipped() {
-        return this.context.isSkipped();
+        return context.isSkipped();
     }
 
     protected void mergeRequest(TestContext superContext) {
-        // headers 同名 key 总用于小的覆盖作用域大的
-        JSONObject headers = new JSONObject();
-        headers.putAll(superContext.getRequestHeaders());
-        headers.putAll(context.getRequestHeaders());
-        context.getRequest().putAll(superContext.getRequest());
-        context.setRequestHeaders(headers);
-        // api 如果当前层级的suite 没有设置api地址，则使用上层的api地址
-        context.setRequestApi(superContext.getRequestApi());
+        // 将上一级request存在，且当前request中不存在的添加到当前request中，headers\api例外
+        superContext.getRequest().forEach((key, value) -> {
+            if ("headers".equalsIgnoreCase(key)) {
+                superContext.getRequestHeaders().forEach(context::addRequestHeaders);
+            } else if ("api".equalsIgnoreCase(key)) {
+                context.setRequestApi((String) value);
+            } else if (!context.getRequest().containsKey(key) && value != null) {
+                context.getRequest().put(key, value);
+            }
+        });
     }
 
     /**
@@ -102,11 +103,17 @@ public abstract class Test implements ITest {
      */
     protected void addVars(String key, Object value) {
         if (key != null || value != null) {
-            this.vars.put(key, value);
+            vars.put(key, value);
         }
     }
 
+    /**
+     * 合并变量
+     * 合并逻辑：同名key时，当前作用域下的变量优先
+     * @param vars 上一层变量
+     */
     protected void mergeVars(Vars vars) {
+        // 将当前作用域下的变量装到临时变量中，然后putAll上一层变量，再putAll临时变量覆盖同名key
         Vars temp = new Vars(100);
         temp.putAll(this.vars);
         this.vars.putAll(vars);
@@ -117,7 +124,7 @@ public abstract class Test implements ITest {
      * get the variables of test.
      */
     protected Vars getVars() {
-        return this.vars;
+        return vars;
     }
 
     protected void processVariable() throws FunctionException {
@@ -149,7 +156,7 @@ public abstract class Test implements ITest {
                 Report.log(context.getTeardownHook().getString(i) + " error", e);
             }
         }
-        this.endTime = new Date();
+        endTime = new Date();
     }
 
     void addTest(Test test) {
@@ -157,12 +164,12 @@ public abstract class Test implements ITest {
     }
 
     protected Vector<Test> getRunTests() {
-        return this.rTests;
+        return rTests;
     }
 
     @Override
     public int getStatus() {
-        return isSkipped() ? SKIPPED : this.status;
+        return isSkipped() ? SKIPPED : status;
     }
 
     @Override
@@ -178,7 +185,7 @@ public abstract class Test implements ITest {
         result.setTestId(context.getId());
         result.setStartTime(startTime);
         result.setEndTime(endTime);
-        result.setStatus(this.getStatus());
+        result.setStatus(getStatus());
         result.setTestName(context.getName());
         result.setThrowable(throwable);
     }
@@ -187,22 +194,22 @@ public abstract class Test implements ITest {
     public IResult run() {
         IResult result = new SuiteResult();
         try {
-            this.setup();
+            setup();
             ISuiteResult suiteResult = (ISuiteResult) result;
             if (!isSkipped()) {
-                for (Test test : this.getRunTests()) {
-                    test.mergeVars(this.getVars());
+                for (Test test : getRunTests()) {
+                    test.mergeVars(getVars());
                     suiteResult.addTestResult(test.run());
                 }
-                this.status(suiteResult.getErrorCount() > 0 ? ERROR : suiteResult.getNotPassedCount() > 0 ? NOT_PASSED : PASSED);
+                status(suiteResult.getErrorCount() > 0 ? ERROR : suiteResult.getNotPassedCount() > 0 ? NOT_PASSED : PASSED);
             }
         } catch (Throwable t) {
-            this.throwable(t);
-            this.status(ERROR);
-            Report.log( "An error occurred in the api test . ", t);
+            throwable(t);
+            status(ERROR);
+            Report.log("An error occurred in the api test . ", t);
         } finally {
-            this.teardown();
-            this.setResult(result);
+            teardown();
+            setResult(result);
         }
         return result;
     }

@@ -203,10 +203,12 @@ public class MiGooRequest extends Request {
         }
 
         private void setCookie(JSONObject cookie, CookieStore cookieStore) {
-            BasicClientCookie clientCookie = new BasicClientCookie(cookie.getString("name"), cookie.getString("value"));
-            clientCookie.setPath(cookie.getString("path"));
-            clientCookie.setDomain(cookie.getString("domain"));
-            cookieStore.addCookie(clientCookie);
+            if (!cookie.isEmpty()) {
+                BasicClientCookie clientCookie = new BasicClientCookie(cookie.getString("name"), cookie.getString("value"));
+                clientCookie.setPath(cookie.getString("path"));
+                clientCookie.setDomain(cookie.getString("domain"));
+                cookieStore.addCookie(clientCookie);
+            }
         }
 
         private void setCookie(JSONArray cookies, CookieStore cookieStore) {

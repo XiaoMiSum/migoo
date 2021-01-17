@@ -41,9 +41,7 @@ public class TestSet extends Test {
     TestSet(TestContext context, TestContext superSuite) {
         super(context);
         super.mergeRequest(superSuite);
-        context.getCases().forEach(testCase ->
-                super.addTest(new TestCase(testCase, context))
-        );
+        context.getCases().forEach(testCase -> super.addTest(new TestCase(testCase, context)));
     }
 
     @Override

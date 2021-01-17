@@ -3,16 +3,18 @@ config:
   request:
     headers:
       X-Token: token
-    api: /api/login
+    api: '/api/${login}'
 dataset:
   vars:
     user: migoo
 cases:
   - title: Headers 为所有总数
-    config:
-      request:
-        headers:
-          X-Title: title
+    request:
+      headers:
+        X-Title: title
+    dataset:
+      vars:
+        login: login
     body:
       userName: ${user}
       password: ${password}
@@ -20,10 +22,12 @@ cases:
     validators:
       - {assertion: response, field: status, expected: 200, rule: ==}
   - title: 覆盖上层的同名Header
-    config:
-      request:
-        headers:
-          X-Token: 覆盖上层的同名Header
+    request:
+      headers:
+        X-Token: 覆盖上层的同名Header
+    dataset:
+      vars:
+        login: login
     body:
       userName: ${user}
       password: ${password}
@@ -31,9 +35,11 @@ cases:
     validators:
       - {assertion: response, field: status, expected: 200, rule: ==}
   - title: API路径以最下层为准
-    config:
-      request:
-        api: /api/test
+    request:
+      api: /api/test
+    dataset:
+      vars:
+        login: login
     body:
       userName: ${user}
       password: ${password}
@@ -41,6 +47,9 @@ cases:
     validators:
       - {assertion: response, field: status, expected: 200, rule: ==}
   - title: case 中可以不配置request相关信息，以set中配置的为准
+    dataset:
+      vars:
+        login: login
     body:
       userName: ${user}
       password: ${password}
@@ -48,6 +57,9 @@ cases:
     validators:
       - {assertion: response, field: status, expected: 200, rule: ==}
   - title: query 与 body 可以并存
+    dataset:
+      vars:
+        login: login
     query:
       test1: 1
       test2: 2
@@ -58,6 +70,9 @@ cases:
     validators:
       - {assertion: response, field: status, expected: 200, rule: ==}
   - title: query 与 data 可以并存
+    dataset:
+      vars:
+        login: login
     query:
       test1: 1
       test2: 2
@@ -68,6 +83,9 @@ cases:
     validators:
       - {assertion: response, field: status, expected: 200, rule: ==}
   - title: body 与 data 互斥，以先配置的为准（body）
+    dataset:
+      vars:
+        login: login
     body:
       userName: ${user}
       password: ${password}
@@ -79,6 +97,9 @@ cases:
     validators:
       - {assertion: response, field: status, expected: 200, rule: ==}
   - title: body 与 data 互斥，以先配置的为准(data)
+    dataset:
+      vars:
+        login: login2
     data:
       userName: ${user}
       password: ${password}
