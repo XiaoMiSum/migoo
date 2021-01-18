@@ -95,13 +95,13 @@ public class TestCase extends Test {
     }
 
     private void convertRequestVariable() throws FunctionException {
+        super.addVars("migoo.request.query", context.getQuery());
+        super.addVars("migoo.request.data", context.getData());
+        super.addVars("migoo.request.body", context.getBody());
         VarsHelper.convertVariables(context.getRequest(), super.getVars());
         VarsHelper.convertVariables(context.getQuery(), super.getVars());
         VarsHelper.convertVariables(context.getData(), super.getVars());
         VarsHelper.convertVariables(context.getBody(), super.getVars());
-        super.addVars("migoo.request.query", context.getQuery());
-        super.addVars("migoo.request.data", context.getData());
-        super.addVars("migoo.request.body", context.getBody());
     }
 
     private void printRequestLog() {

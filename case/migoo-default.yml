@@ -56,6 +56,7 @@ sets:
           userName: ${user}
           password: ${password}
           sign: ${sign}
+          null: '__method(str=打印请求数据)'
         validators: # 检查点， 当 assertion 为JSON 时可空
           - {assertion: response, field: status, expected: 200, rule: ==}
           - {assertion: json, field: $.status, expected: 200, rule: ==}

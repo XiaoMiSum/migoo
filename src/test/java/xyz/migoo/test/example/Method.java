@@ -40,7 +40,11 @@ public class Method implements Function {
     @Override
     public Object execute(CompoundVariable parameters) throws FunctionException {
         System.out.println(parameters.get("str"));
-        return null;
+        System.out.println(parameters.getCurrentVars());
+        System.out.println(parameters.getCurrentVars().getRequestBody());
+        System.out.println(parameters.getCurrentVars().getRequestData());
+        System.out.println(parameters.getCurrentVars().getRequestQuery());
+        return "null";
     }
 
     @Override
