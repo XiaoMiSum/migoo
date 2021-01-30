@@ -31,6 +31,7 @@ package core.xyz.migoo;
 import components.xyz.migoo.reports.Report;
 import core.xyz.migoo.functions.FunctionException;
 import core.xyz.migoo.functions.FunctionHelper;
+import core.xyz.migoo.utils.StringUtil;
 import core.xyz.migoo.vars.Vars;
 import core.xyz.migoo.vars.VarsHelper;
 
@@ -89,7 +90,7 @@ public abstract class Test implements ITest {
                 superContext.getRequestHeaders().forEach(context::addRequestHeaders);
             } else if ("api".equalsIgnoreCase(key)) {
                 context.setRequestApi((String) value);
-            } else if (!context.getRequest().containsKey(key) && value != null) {
+            } else if (StringUtil.isEmpty(context.getRequest().getString(key)) && value != null) {
                 context.getRequest().put(key, value);
             }
         });
@@ -102,7 +103,7 @@ public abstract class Test implements ITest {
      * @param value the variable value
      */
     protected void addVars(String key, Object value) {
-        if (key != null || value != null) {
+        if (StringUtil.isNotEmpty(key) || value != null) {
             vars.put(key, value);
         }
     }

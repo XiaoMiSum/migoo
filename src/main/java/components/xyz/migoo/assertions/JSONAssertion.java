@@ -45,4 +45,6 @@ public class JSONAssertion extends AbstractAssertion {
     public void setActual(Response actual) {
         this.actual = JSONPath.read(actual.text(), field);
     }
+
+
 }

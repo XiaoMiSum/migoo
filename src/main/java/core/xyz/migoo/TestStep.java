@@ -53,7 +53,7 @@ import java.util.regex.Pattern;
 @JSONType(orders = {"url", "method", "headers", "query", "data", "body", "extractor"})
 public class TestStep {
 
-    private final static Pattern URL_REGEX = Pattern.compile("^(http[s]?)+://([0-9a-zA-Z][.\\w]*[0-9a-zA-Z])*[:]?([0-9]+)?((/\\w*)*)?");
+    private static final Pattern URL_REGEX = Pattern.compile("^(http|https)://([\\w\\-_][.\\w\\-_]*)*[:]?([0-9]+)?(([/\\w\\-_]*)*)?");
 
     private String desc;
 
@@ -94,7 +94,10 @@ public class TestStep {
     }
 
     private void convertRequestVariable(Vars vars) throws FunctionException {
-        url = VarsHelper.convertVariables(url, vars);
+        vars.put("migoo.request.query", query);
+        vars.put("migoo.request.data", data);
+        vars.put("migoo.request.body", body);
+        url = (String) VarsHelper.convertVariables(url, vars);
         VarsHelper.convertVariables(headers, vars);
         VarsHelper.convertVariables(query, vars);
         VarsHelper.convertVariables(data, vars);
