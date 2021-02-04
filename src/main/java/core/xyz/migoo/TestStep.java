@@ -137,7 +137,7 @@ public class TestStep {
             if (!matcher.find()) {
                 throw new VarsException("extract value con not be null, path: " + path);
             }
-            extract.put("value", matcher.group(1));
+            extract.put(k, matcher.group(1));
             vars.put(k, matcher.group(1));
         });
     }
@@ -148,7 +148,7 @@ public class TestStep {
             if (extractValue == null || "".equals(extractValue)) {
                 throw new VarsException("extract value con not be null, path: " + path);
             }
-            extract.put("value", extractValue);
+            extract.put(k, extractValue);
             vars.put(k, extractValue);
         });
     }
