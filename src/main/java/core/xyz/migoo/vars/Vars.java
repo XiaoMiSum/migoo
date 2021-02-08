@@ -57,7 +57,10 @@ public class Vars extends JSONObject {
         return this.getJSONObject("migoo.request.data");
     }
 
-    public <T> T getPlugin(Class<? extends Plugin> clazz){
-        return (T) this.getJSONObject("migoo.plugins").get(clazz.getSimpleName().toUpperCase());
+    public Plugin getPlugin(Class<? extends Plugin> clazz){
+        return (Plugin) this.getJSONObject("migoo.plugins").get(clazz.getSimpleName().toUpperCase());
+    }
+    public Plugin getPlugin(String key){
+        return (Plugin) this.getJSONObject("migoo.plugins").get(key.toLowerCase());
     }
 }

@@ -1,12 +1,17 @@
-mybatis: # 使用类名作为 key
-  package: components.xyz.migoo.plugins.mybatis
-  default: env1 # 默认数据源
-  envs: # 环境配置，支持多数据源
-    env1:
-      url: url
-      username: username
-      password: password
-    env2:
-      {url: url2, username: username2, password: password2}
-  mappers:
-    - file:./mapper/TestMapper.xml
+#mybatis: # 使用类名作为 key
+#  class: components.xyz.migoo.plugins.mybatis.Mybatis
+#  default: env1 # 默认数据源
+#  envs: # 环境配置，支持多数据源
+#    env1:
+#      url: url
+#      username: username
+#      password: password
+#    env2:
+#      {url: url2, username: username2, password: password2}
+#  mappers:
+#    - file:./mapper/TestMapper.xml
+datasource1: # 引用名称
+  class: components.xyz.migoo.plugins.jdbc.DataSource # 必须指定这个类
+  url: 'jdbc:mysql://127.0.0.1:3306/migoo?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2b8&failOverReadOnly=false'
+  username: 'migoo'
+  password: '123456'

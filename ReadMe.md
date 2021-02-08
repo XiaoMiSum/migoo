@@ -4,6 +4,7 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/xyz.migoo/migoo/badge.svg)](https://maven-badges.herokuapp.com/maven-central/xyz.migoo/migoo)
 [![MiGoo Author](https://img.shields.io/badge/Author-xiaomi-yellow.svg)](https://github.com/XiaoMiSum)
 [![GitHub release](https://img.shields.io/github/release/XiaoMiSum/migoo.svg)](https://github.com/XiaoMiSum/MiGoo/releases)
+[![JETBRAINS IDEA](https://img.shields.io/badge/JETBRAINS-IDEA-yellowgreen)](https://www.jetbrains.com/?from=migoo)
 ## 1. 介绍
 
 MiGoo 是一个Java语言开发的测试工具，可用于接口测试脚本开发。
@@ -38,3 +39,7 @@ MiGoo 是一个Java语言开发的测试工具，可用于接口测试脚本开�
     <version>最新版本</version>
 </dependency>
 ```
+
+## 3. 感谢
+
+感谢 jetbrains 提供开发工具支持

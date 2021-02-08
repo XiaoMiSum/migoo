@@ -94,7 +94,7 @@ public class DataSource implements Plugin {
     public Object execute(String sql) throws Exception {
         try (Connection connection = dataSource.getConnection();
              Statement stmt = connection.createStatement()) {
-            return stmt.execute(sql);
+            return stmt.executeUpdate(sql);
         }
     }
 

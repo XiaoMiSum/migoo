@@ -28,6 +28,7 @@
 
 package core.xyz.migoo;
 
+import core.xyz.migoo.step.TestStep;
 import xyz.migoo.simplehttp.Request;
 import xyz.migoo.simplehttp.Response;
 

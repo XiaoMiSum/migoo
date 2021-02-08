@@ -35,6 +35,7 @@ import core.xyz.migoo.functions.FunctionHelper;
 import core.xyz.migoo.utils.StringUtil;
 import core.xyz.migoo.utils.TypeUtil;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -91,18 +92,26 @@ public class VarsHelper {
      *
      * @param variables variables mapping
      */
-    public static String convertVariables(String mapping, JSONObject variables) throws FunctionException {
+    public static Object convertVariables(String mapping, JSONObject variables) throws FunctionException {
         if (variables != null) {
-            mapping = extractVariable(mapping, variables);
+            return extractVariable(mapping, variables);
         }
         return mapping;
     }
 
     private static void convertVariables(JSONArray temp, JSONObject variables) throws FunctionException {
         for (int i = 0; i < temp.size(); i++) {
-            String item = temp.getString(i);
+            Object item = temp.get(i);
+            if (item instanceof String) {
+                item = extractVariables((String) item, variables);
+            } else if (item instanceof JSONObject) {
+                convertVariables((JSONObject) item, variables);
+
+            } else if (item instanceof JSONArray) {
+                convertVariables((JSONArray) item, variables);
+            }
             temp.remove(i);
-            temp.add(i, extractVariables(item, variables));
+            temp.add(i, item);
         }
     }
 
@@ -115,7 +124,7 @@ public class VarsHelper {
         return value;
     }
 
-    private static String extractVariable(String value, JSONObject variables) throws FunctionException {
+    private static Object extractVariable(String value, JSONObject variables) throws FunctionException {
         Matcher matcher = VARS_PATTERN.matcher(value);
         while (matcher.find()) {
             String temp = matcher.group();
@@ -124,8 +133,12 @@ public class VarsHelper {
             if (v == null || StringUtil.isEmpty(v.toString())) {
                 throw new VarsException("The variable value cannot be null: " + key);
             }
+            // 变量值是个对象，直接返回
+            if (v instanceof List || v instanceof Map) {
+                return v;
+            }
             if (v instanceof String && TypeUtil.isFunc((String) v)) {
-                v=  FunctionHelper.execute((String) v, variables);
+                v = FunctionHelper.execute((String) v, variables);
             }
             value = value.replace(temp, v.toString());
         }
