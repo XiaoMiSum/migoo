@@ -86,13 +86,12 @@ public class TestSuite extends Test {
         if (context.getPlugins() != null && !context.getPlugins().isEmpty()) {
             for (Map.Entry<String, Object> entry : context.getPlugins().entrySet()) {
                 JSONObject value = (JSONObject) entry.getValue();
-                String clazz = value.get("package") != null ? value.get("package") + "." + StringUtil.initialToUpperCase(entry.getKey())
+                String clazz = value.get("class") != null ? value.getString("class")
                         : String.format("components.xyz.migoo.plugins.%s.%s",
                         entry.getKey().toLowerCase(), StringUtil.initialToUpperCase(entry.getKey()));
                 Plugin plugin = (Plugin) Class.forName(clazz).newInstance();
                 plugin.initialize(value);
-                String key = value.get("name") != null ? value.getString("name") : plugin.getClass().getSimpleName().toUpperCase();
-                plugins.put(key, plugin);
+                plugins.put(entry.getKey().toLowerCase(), plugin);
             }
         }
         super.getVars().put("migoo.plugins", plugins);

@@ -31,6 +31,9 @@ package core.xyz.migoo;
 import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.assertions.AssertionFactory;
 import core.xyz.migoo.functions.FunctionException;
+import core.xyz.migoo.step.HttpTestStep;
+import core.xyz.migoo.step.JDBCTestStep;
+import core.xyz.migoo.step.TestStep;
 import core.xyz.migoo.vars.VarsHelper;
 import core.xyz.migoo.http.MiGooRequest;
 import components.xyz.migoo.reports.Report;
@@ -72,7 +75,7 @@ public class TestCase extends Test {
             this.status(ERROR);
             Report.log("An error occurred in the test case. ", t);
         } finally {
-            super.teardown();
+;            super.teardown();
             this.setResult(result);
         }
         return result;
@@ -132,12 +135,23 @@ public class TestCase extends Test {
         if (!isSkipped()) {
             this.processVariable();
             super.setup();
-            if (context.getSteps() != null) {
-                for (TestStep step : context.getSteps()) {
-                    step.execute(getVars(), context.getRequest());
-                }
-            }
+            this.executeTestStep();
             this.buildRequest();
+        }
+    }
+
+    private List<TestStep> steps;
+
+    private void executeTestStep() throws Exception {
+        if (context.getSteps() != null) {
+            steps = new ArrayList<>(context.getSteps().size());
+            for (int i = 0; i < context.getSteps().size(); i++) {
+                JSONObject object = context.getSteps().get(i);
+                Class<? extends TestStep> clazz = object.containsKey("url") ? HttpTestStep.class : JDBCTestStep.class;
+                TestStep step = object.toJavaObject(clazz);
+                step.execute(getVars(), context.getRequest());
+                steps.add(step);
+            }
         }
     }
 
@@ -146,7 +160,7 @@ public class TestCase extends Test {
         TestResult r = (TestResult) result;
         super.setResult(result);
         r.setValidators(validators);
-        r.setSteps(context.getSteps());
+        r.setSteps(steps);
         r.setRequest(request);
         r.setResponse(response);
     }

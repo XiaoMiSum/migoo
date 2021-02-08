@@ -43,6 +43,7 @@ import components.xyz.migoo.readers.YamlReader;
 import components.xyz.migoo.reports.common.CharSequenceTranslator;
 import core.xyz.migoo.*;
 import core.xyz.migoo.report.IReport;
+import core.xyz.migoo.step.TestStep;
 import core.xyz.migoo.utils.FileUtils;
 import org.apache.commons.mail.HtmlEmail;
 import org.slf4j.Logger;

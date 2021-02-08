@@ -31,3 +31,16 @@ cases:
       sign: ${sign}
     validators:
       - { assertion: response, field: status, expected: 200, rule: == }
+  - title: sql步骤
+    steps:
+      - datasource: datasource1
+        statement: 'select * from users;'
+        extract:
+          json:
+            username: '$[0].user_name'
+    body:
+      userName: ${username}
+      password: ${password}
+      sign: ${sign}
+    validators:
+      - { assertion: response, field: status, expected: 200, rule: == }

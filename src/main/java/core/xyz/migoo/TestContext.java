@@ -30,6 +30,7 @@ package core.xyz.migoo;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import core.xyz.migoo.step.TestStep;
 import core.xyz.migoo.utils.StringUtil;
 import lombok.Data;
 
@@ -59,7 +60,7 @@ public class TestContext {
 
     private JSONObject dataset;
 
-    private List<TestStep> steps;
+    private List<JSONObject> steps;
 
     private JSONObject query;
 
