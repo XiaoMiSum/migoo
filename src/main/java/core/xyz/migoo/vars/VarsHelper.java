@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 
+import static core.xyz.migoo.utils.TypeUtil.FUNC_PATTERN;
 import static core.xyz.migoo.utils.TypeUtil.VARS_PATTERN;
 
 
@@ -117,7 +118,7 @@ public class VarsHelper {
 
     private static Object extractVariables(String value, JSONObject variables) throws FunctionException {
         if (TypeUtil.isFunc(value)) {
-            return FunctionHelper.execute(value, variables);
+            return calcVariable(value, variables);
         } else if (TypeUtil.isVars(value)) {
             return extractVariable(value, variables);
         }
@@ -138,10 +139,19 @@ public class VarsHelper {
                 return v;
             }
             if (v instanceof String && TypeUtil.isFunc((String) v)) {
-                v = FunctionHelper.execute((String) v, variables);
+                v = calcVariable((String) v, variables);
             }
             value = value.replace(temp, v.toString());
         }
         return value;
+    }
+
+    private static Object calcVariable(String v, JSONObject variables) throws FunctionException {
+        Matcher func = FUNC_PATTERN.matcher(v);
+        if (func.find()) {
+            String result = FunctionHelper.execute(func.group(1), func.group(2), variables).toString();
+            v = v.replace(func.group(), result);
+        }
+        return v;
     }
 }

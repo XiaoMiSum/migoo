@@ -228,4 +228,29 @@ public class VarsHelperTest {
         Assertions.assertEquals(o, array);
     }
 
+    /**
+     * 测试变量转换，变量值是一个包含了扩展函数的字符串
+     * @throws FunctionException
+     */
+    @Test
+    public void testVarValueFunc1() throws FunctionException {
+        vars.put("list", "aa__uuid()11");
+        String result = VarsHelper.convertVariables("${list}", vars).toString();
+        Assertions.assertTrue(result.length() > "aa__uuid()bb".length());
+        Assertions.assertTrue(result.startsWith("aa"));
+        Assertions.assertTrue(result.endsWith("11"));
+    }
+
+    /**
+     * 测试变量转换，变量值是一个扩展函数
+     * @throws FunctionException
+     */
+    @Test
+    public void testVarValueFunc2() throws FunctionException {
+        vars.put("list", "__uuid()");
+        String result = VarsHelper.convertVariables("${list}", vars).toString();
+        Assertions.assertTrue(result.length() > "__uuid()".length());
+        Assertions.assertTrue(result.contains("-"));
+    }
+
 }

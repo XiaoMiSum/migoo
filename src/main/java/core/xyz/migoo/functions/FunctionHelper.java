@@ -77,6 +77,16 @@ public class FunctionHelper {
         }
     }
 
+    public static Object execute(String fName, String parameter, JSONObject variables) throws FunctionException {
+        try {
+            FACTORY.initFunc(fName);
+            FACTORY.initParameter(parameter, variables);
+            return FACTORY.execute();
+        } finally {
+            FACTORY.clear();
+        }
+    }
+
     private Function function;
 
     private final CompoundVariable parameters = new CompoundVariable();
