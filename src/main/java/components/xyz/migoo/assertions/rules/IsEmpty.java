@@ -2,7 +2,7 @@
  *
  *  * The MIT License (MIT)
  *  *
- *  * Copyright (c) 2018 XiaoMiSum (mi_xiao@qq.com)
+ *  * Copyright (c) 2021. Lorem XiaoMiSum (mi_xiao@qq.com)
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining
  *  * a copy of this software and associated documentation files (the
@@ -23,26 +23,25 @@
  *  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  *  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- *
  */
 
 package components.xyz.migoo.assertions.rules;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.assertions.rules.Alias;
-import core.xyz.migoo.assertions.rules.IRule;
-import core.xyz.migoo.utils.StringUtil;
+import core.xyz.migoo.testelement.Alias;
+import core.xyz.migoo.assertions.Rule;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author xiaomi
  * @date 2019-08-13 22:17
  */
 @Alias(aliasList = {"isEmpty", "isNull", "empty", "blank"})
-public class IsEmpty extends BaseRule implements IRule {
+public class IsEmpty extends BaseRule implements Rule {
 
     @Override
-    public boolean assertTrue(Object actual, Object expected) {
+    public boolean assertThat(Object actual, Object expected) {
         if (actual instanceof JSONObject) {
             return ((JSONObject) actual).isEmpty();
         }
@@ -50,7 +49,7 @@ public class IsEmpty extends BaseRule implements IRule {
             return ((JSONArray) actual).isEmpty();
         }
         if (actual instanceof String) {
-            return StringUtil.isEmpty((String) actual);
+            return StringUtils.isEmpty((String) actual);
         }
         return actual == null;
     }

@@ -2,7 +2,7 @@
  *
  *  * The MIT License (MIT)
  *  *
- *  * Copyright (c) 2018 XiaoMiSum (mi_xiao@qq.com)
+ *  * Copyright (c) 2021. Lorem XiaoMiSum (mi_xiao@qq.com)
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining
  *  * a copy of this software and associated documentation files (the
@@ -23,7 +23,6 @@
  *  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  *  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- *
  */
 
 
@@ -31,16 +30,12 @@ package components.xyz.migoo.assertions.rules;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.utils.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author xiaomi
- * @date 2019-08-13 22:21
- */
 public abstract class BaseRule {
 
     private final static ThreadLocal<DecimalFormat> FORMAT_THREAD_LOCAL =
@@ -60,8 +55,8 @@ public abstract class BaseRule {
 
     public String objectToString(Object subj, String defaultString) {
         String str;
-        defaultString = StringUtil.isEmpty(defaultString) ? "null" : defaultString;
-        if (subj == null || StringUtil.isEmpty(subj.toString())) {
+        defaultString = StringUtils.isEmpty(defaultString) ? "null" : defaultString;
+        if (subj == null || StringUtils.isEmpty(subj.toString())) {
             str =  defaultString;
         } else if (subj instanceof List) {
             str = ((List) subj).isEmpty() ? defaultString : JSONArray.toJSONString(subj);

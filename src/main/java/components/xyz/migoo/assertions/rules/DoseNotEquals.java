@@ -2,7 +2,7 @@
  *
  *  * The MIT License (MIT)
  *  *
- *  * Copyright (c) 2018 XiaoMiSum (mi_xiao@qq.com)
+ *  * Copyright (c) 2021. Lorem XiaoMiSum (mi_xiao@qq.com)
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining
  *  * a copy of this software and associated documentation files (the
@@ -23,13 +23,12 @@
  *  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  *  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- *
  */
 
 package components.xyz.migoo.assertions.rules;
 
-import core.xyz.migoo.assertions.rules.Alias;
-import core.xyz.migoo.assertions.rules.IRule;
+import core.xyz.migoo.testelement.Alias;
+import core.xyz.migoo.assertions.Rule;
 
 
 /**
@@ -37,12 +36,12 @@ import core.xyz.migoo.assertions.rules.IRule;
  * @date 2019-08-13 22:17
  */
 @Alias(aliasList = {"!==", "not", "<>", "!="})
-public class DoseNotEquals extends BaseRule implements IRule {
+public class DoseNotEquals extends BaseRule implements Rule {
 
     private final Equals equals = new Equals();
 
     @Override
-    public boolean assertTrue(Object actual, Object expected) {
-        return !equals.assertTrue(actual, expected);
+    public boolean assertThat(Object actual, Object expected) {
+        return !equals.assertThat(actual, expected);
     }
 }
