@@ -140,7 +140,7 @@ public class MiGooVariables extends AbstractTestElement implements VariableState
 
     public Object extractVariables(String value) throws Exception {
         if (isFunc(value)) {
-            return calcVariable(value);
+            return evalVariable(value);
         } else if (isVars(value)) {
             return extractVariable(value);
         }
@@ -161,20 +161,19 @@ public class MiGooVariables extends AbstractTestElement implements VariableState
                 return v;
             }
             if (v instanceof String) {
-                v = calcVariable((String) v);
+                v = evalVariable((String) v);
             }
             value = value.replace(temp, v.toString());
         }
         return value;
     }
 
-    private String calcVariable(String v) throws Exception {
+    private String evalVariable(String v) throws Exception {
         Matcher func = FUNC_PATTERN.matcher( v);
-        if (func.find()) {
+        while (func.find()) {
             String result = FunctionService.execute(func.group(1), func.group(2), this).toString();
             v = v.replace(func.group(), result);
         }
         return v;
     }
-
 }

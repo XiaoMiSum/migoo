@@ -14,24 +14,24 @@ configelements:
     method: post
     protocol: http
     host: migoo.xyz
-PreProcessors:
-  - testclass: jdbcpreprocessor
-    datasource: JDBCDataSource_var
-    query_type: select
-    statement: 'select * from users;'
-    extractors:
-      - { testclass: jsonextractor, field: '$.user_name', variable_name: user_name }
-      - { testclass: resultextractor, variable_name: result }
-      - { testclass: regexextractor, field: '"id":"([0-9]+)","create_', variable_name: r_total, match_num: 0 }
-PostProcessors:
-  - testclass: jdbcpostprocessor
-    datasource: JDBCDataSource_var
-    query_type: select
-    statement: 'select * from users;'
 childs:
   - title: 标准测试用例包
     variables:
       test2: 2
+    PreProcessors:
+      - testclass: jdbcpreprocessor
+        datasource: JDBCDataSource_var
+        query_type: select
+        statement: 'select * from users;'
+        extractors:
+          - { testclass: jsonextractor, field: '$.user_name', variable_name: user_name }
+          - { testclass: resultextractor, variable_name: result }
+          - { testclass: regexextractor, field: '"id":"([0-9]+)","create_', variable_name: r_total, match_num: 0 }
+    PostProcessors:
+      - testclass: jdbcpostprocessor
+        datasource: JDBCDataSource_var
+        query_type: select
+        statement: 'select * from users;'
     childs:
       - title: 标准测试用例1
         variables:

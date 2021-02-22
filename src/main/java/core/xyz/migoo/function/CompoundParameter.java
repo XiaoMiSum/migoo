@@ -73,7 +73,7 @@ public class CompoundParameter extends HashMap<String, Object> {
     }
 
     public BigDecimal getBigDecimal(String key) {
-        return isNullKey(key) ? null : (BigDecimal) get(key);
+        return isNullKey(key) ? null : new BigDecimal(getString(key));
     }
 
     public JSONObject getJSONObject(String key) {

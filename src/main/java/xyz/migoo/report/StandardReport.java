@@ -35,6 +35,7 @@ import core.xyz.migoo.assertions.AssertionResult;
 import core.xyz.migoo.report.Report;
 import core.xyz.migoo.samplers.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
+import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 import xyz.migoo.report.util.CharSequenceTranslator;
 import xyz.migoo.report.util.DateUtils;
@@ -63,7 +64,8 @@ public class StandardReport extends AbstractTestElement implements Report {
         feature.getModel().setStartTime(DateUtils.toDate(result.getStartTime()));
         if (result.getType() == 0 && result.getSubResults() != null) {
             for (SampleResult subResult : result.getSubResults()) {
-                ExtentTest story = feature.createNode(subResult.getTitle());
+                String title = StringUtils.isEmpty(subResult.getTitle()) ? subResult.getTestClass() :  subResult.getTitle();
+                ExtentTest story = feature.createNode(title);
                 story.getModel().setStartTime(DateUtils.toDate(subResult.getStartTime()));
                 generateExtentReport(subResult, story);
                 story.getModel().setEndTime(DateUtils.toDate(subResult.getEndTime()));
@@ -73,7 +75,7 @@ public class StandardReport extends AbstractTestElement implements Report {
             if (result instanceof HTTPSampleResult && ((HTTPSampleResult) result).getCookies() != null) {
                 feature.info(((HTTPSampleResult) result).getCookies());
             }
-            if (result.getRequestHeaders() != null) {
+            if (!result.getRequestHeaders().isEmpty()) {
                 feature.info(result.getRequestHeaders());
             }
             feature.info(result.getSamplerData());
