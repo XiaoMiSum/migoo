@@ -88,7 +88,7 @@ public abstract class AbstractTestElement implements TestElement, VariableStateL
     @Override
     public void setProperties(Map<String, Object> props) {
         if (props != null && props.size() > 0) {
-            props.forEach((key, value) -> propMap.put(key.toLowerCase(), value));
+            props.forEach((key, value) -> propMap.putAndIgnoreExist(key.toLowerCase(), value));
         }
     }
 
@@ -100,7 +100,7 @@ public abstract class AbstractTestElement implements TestElement, VariableStateL
     @Override
     public void setProperty(String key, Object value) {
         key = key.toLowerCase();
-        propMap.put(key, value);
+        propMap.putAndIgnoreExist(key, value);
     }
 
     @Override

@@ -52,8 +52,7 @@ public class MiGooProperty extends JSONObject {
         super.put(key, value);
     }
 
-    @Override
-    public Object put(String name, Object value) {
+    public Object putAndIgnoreExist(String name, Object value) {
         if (this.get(name) == null && value != null) {
             return super.put(name, value);
         }
