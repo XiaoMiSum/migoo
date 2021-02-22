@@ -148,7 +148,7 @@ public class VarsHelper {
 
     private static Object calcVariable(String v, JSONObject variables) throws FunctionException {
         Matcher func = FUNC_PATTERN.matcher(v);
-        if (func.find()) {
+        while (func.find()) {
             String result = FunctionHelper.execute(func.group(1), func.group(2), variables).toString();
             v = v.replace(func.group(), result);
         }
