@@ -28,7 +28,6 @@
 package core.xyz.migoo.testelement;
 
 import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.variables.MiGooVariables;
 
 import java.util.Map;
 
@@ -52,11 +51,10 @@ public class MiGooProperty extends JSONObject {
         super.put(key, value);
     }
 
-    public Object putAndIgnoreExist(String name, Object value) {
+    public void putAndIgnoreExist(String name, Object value) {
         if (this.get(name) == null && value != null) {
-            return super.put(name, value);
+            super.put(name, value);
         }
-        return null;
     }
 
     @Override
