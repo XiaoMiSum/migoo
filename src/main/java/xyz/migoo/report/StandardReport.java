@@ -79,7 +79,7 @@ public class StandardReport extends AbstractTestElement implements Report {
                 feature.info(result.getRequestHeaders());
             }
             feature.info(result.getSamplerData());
-            feature.info(getResponseString(result.getResponseDataAsString()));
+            feature.info(getResponseString(result.getResponseDataAsString().trim()));
             if (result.getAssertionResults() != null) {
                 for (AssertionResult subResult : result.getAssertionResults()) {
                     ExtentTest node = feature.createNode(subResult.getName());
