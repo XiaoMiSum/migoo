@@ -42,7 +42,7 @@ public class TypeUtil {
     private static final String YES = "YES";
     private static final Pattern REGEX_NUMBER = Pattern.compile("^[-+]?[0-9]+(\\.[0-9]+)?$");
     public static final Pattern VARS_PATTERN = Pattern.compile("\\$\\{(\\w+)}");
-    public static final Pattern FUNC_PATTERN = Pattern.compile("__([A-Za-z0-9]+)\\((\\w+=.+)*\\)");
+    public static final Pattern FUNC_PATTERN = Pattern.compile("__([A-Za-z0-9]+)\\(([\\w]*[=]\\S[^)]*)?\\)");
 
     public static boolean booleanOf(Object value) {
         if (value == null) {
