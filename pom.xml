@@ -1,80 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>xyz.migoo</groupId>
     <artifactId>migoo</artifactId>
-
-    <version>3.3.0</version>
-    <name>migoo</name>
-    <description>a test tool for rest-api</description>
-    <url>https://xiaomisum.github.io/MiGoo/</url>
-
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
-
-    <licenses>
-        <license>
-            <name>MIT</name>
-            <url>https://github.com/XiaoMiSum/MiGoo/blob/master/LICENSE</url>
-        </license>
-    </licenses>
-
-    <scm>
-        <connection>scm:git:git@github.com:XiaoMiSum/MiGoo.git</connection>
-        <developerConnection>scm:git:git@github.com:XiaoMiSum/MiGoo.git</developerConnection>
-        <url>https://xiaomisum.github.io/MiGoo/</url>
-    </scm>
-
-    <developers>
-        <developer>
-            <name>xiao mi</name>
-            <email>mi_xiao@qq.com</email>
-            <organization>github</organization>
-            <organizationUrl>https://xiaomisum.github.io/MiGoo/</organizationUrl>
-        </developer>
-    </developers>
+    <version>4.0.0</version>
 
     <properties>
-        <jdk.version>1.8</jdk.version>
-        <poi.version>4.1.2</poi.version>
         <yaml.version>1.26</yaml.version>
-        <email.version>1.5</email.version>
         <druid.version>1.2.4</druid.version>
-        <zt-zip.version>1.14</zt-zip.version>
+        <redis.version>3.4.1</redis.version>
         <mysql.version>8.0.16</mysql.version>
-        <slf4j.version>1.7.30</slf4j.version>
-        <mybatis.version>3.5.3</mybatis.version>
-        <reports.version>5.0.4</reports.version>
+        <reports.version>5.0.6</reports.version>
         <compile.version>3.6.1</compile.version>
         <fastjson.version>1.2.73</fastjson.version>
         <simplehttp.version>1.0.6</simplehttp.version>
         <commons-lang3.version>3.11</commons-lang3.version>
         <commons-codec.version>1.14</commons-codec.version>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>${commons-codec.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
@@ -84,38 +37,6 @@
             <version>${commons-lang3.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>${poi.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-codec</groupId>
-                    <artifactId>commons-codec</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>${yaml.version}</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-email -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-email</artifactId>
-            <version>${email.version}</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.zeroturnaround/zt-zip -->
-        <dependency>
-            <groupId>org.zeroturnaround</groupId>
-            <artifactId>zt-zip</artifactId>
-            <version>${zt-zip.version}</version>
-        </dependency>
-
         <!-- https://mvnrepository.com/artifact/xyz.migoo/simplehttp -->
         <dependency>
             <groupId>xyz.migoo</groupId>
@@ -123,14 +44,12 @@
             <version>${simplehttp.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.aventstack/extentreports -->
         <dependency>
             <groupId>com.aventstack</groupId>
             <artifactId>extentreports</artifactId>
             <version>${reports.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -144,29 +63,23 @@
         </dependency>
 
         <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis</artifactId>
-            <version>${mybatis.version}</version>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${redis.version}</version>
         </dependency>
 
         <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${yaml.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.6.0-M1</version>
+            <artifactId>junit-jupiter</artifactId>
+            <version>RELEASE</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>nexus-release</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>nexus-release</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
     <build>
         <resources>
@@ -179,62 +92,8 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
-                </configuration>
                 <version>${compile.version}</version>
-            </plugin>
-            <!--            <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-source-plugin</artifactId>
-                            <version>3.0.1</version>
-                            <configuration>
-                                <attach>true</attach>
-                            </configuration>
-                            <executions>
-                                <execution>
-                                    <phase>install</phase>
-                                    <goals>
-                                        <goal>jar</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                        </plugin>-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.3</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <!-- 解决 java8 下发布到 maven 中心库时，生成 doc 的异常 -->
-                    <additionalparam>-Xdoclint:none</additionalparam>
-                    <encoding>UTF-8</encoding>
-                    <outputDirectory>${basedir}/doc</outputDirectory>
-                    <reportOutputDirectory>${basedir}/reports</reportOutputDirectory>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
-
 </project>

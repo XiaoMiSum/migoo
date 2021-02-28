@@ -2,7 +2,7 @@
  *
  *  * The MIT License (MIT)
  *  *
- *  * Copyright (c) 2018 XiaoMiSum (mi_xiao@qq.com)
+ *  * Copyright (c) 2018. Lorem XiaoMiSum (mi_xiao@qq.com)
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining
  *  * a copy of this software and associated documentation files (the
@@ -23,28 +23,34 @@
  *  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  *  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- *
  */
-
 
 package components.xyz.migoo.assertions;
 
 import com.alibaba.fastjson.JSONPath;
 import core.xyz.migoo.assertions.AbstractAssertion;
-import core.xyz.migoo.assertions.rules.Alias;
-import xyz.migoo.simplehttp.Response;
+import core.xyz.migoo.assertions.AssertionResult;
+import core.xyz.migoo.samplers.SampleResult;
+import core.xyz.migoo.testelement.Alias;
 
-/**
- * @author xiaomi
- * @date 2019-04-13 21:37
- */
-@Alias(aliasList = {"json", "JSONAssertion", "json_assertion"})
+@Alias(aliasList = {"JSONAssertion", "json_assertion"})
 public class JSONAssertion extends AbstractAssertion {
 
     @Override
-    public void setActual(Response actual) {
-        this.actual = JSONPath.read(actual.text(), field);
+    public AssertionResult getResult(SampleResult samplerResult) {
+        AssertionResult result = new AssertionResult("JSONAssertion");
+        try {
+            // 1. 获取json字符串
+            String jsonStr = samplerResult.getResponseDataAsString();
+            // 2. 获取json path
+            String path = getPropertyAsString(FIELD);
+            setActual(JSONPath.read(jsonStr, path));
+            setExpected(get(EXPECTED));
+            super.assertThat(result);
+        } catch (Exception e) {
+            result.setError(true);
+            result.setFailureMessage(e);
+        }
+        return result;
     }
-
-
 }

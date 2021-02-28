@@ -1,0 +1,99 @@
+/*
+ *
+ *  * The MIT License (MIT)
+ *  *
+ *  * Copyright (c) 2018. Lorem XiaoMiSum (mi_xiao@qq.com)
+ *  *
+ *  * Permission is hereby granted, free of charge, to any person obtaining
+ *  * a copy of this software and associated documentation files (the
+ *  * 'Software'), to deal in the Software without restriction, including
+ *  * without limitation the rights to use, copy, modify, merge, publish,
+ *  * distribute, sublicense, and/or sell copies of the Software, and to
+ *  * permit persons to whom the Software is furnished to do so, subject to
+ *  * the following conditions:
+ *  *
+ *  * The above copyright notice and this permission notice shall be
+ *  * included in all copies or substantial portions of the Software.
+ *  *
+ *  * THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+ *  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ *  * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ *  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ *  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ *  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+package xyz.migoo;
+
+import com.alibaba.fastjson.JSONObject;
+import core.xyz.migoo.engine.TestEngine;
+import core.xyz.migoo.engine.TestPlan;
+import core.xyz.migoo.report.Report;
+import core.xyz.migoo.report.ReportService;
+import core.xyz.migoo.samplers.SampleResult;
+import core.xyz.migoo.testelement.TestElement;
+import xyz.migoo.engine.LoopEngine;
+import xyz.migoo.engine.StandardEngine;
+import xyz.migoo.readers.ReaderException;
+import xyz.migoo.readers.ReaderFactory;
+import xyz.migoo.report.StandardReport;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static core.xyz.migoo.testelement.AbstractTestElement.*;
+
+public class MiGoo {
+
+    private final JSONObject testcase;
+
+    private final boolean generateReport;
+
+    public MiGoo(JSONObject testcase) {
+        this.testcase = testcase;
+        this.generateReport = true;
+    }
+
+    public MiGoo(JSONObject testcase, boolean generateReport) {
+        this.testcase = testcase;
+        this.generateReport = generateReport;
+    }
+
+    public SampleResult run() {
+        TestPlan plan = new TestPlan(testcase);
+        TestEngine engine = plan.level() == 0 ? new LoopEngine(plan) : new StandardEngine(plan);
+        SampleResult result = engine.run();
+        if (generateReport) {
+            this.generateReport((JSONObject) plan.get(REPORT_ELEMENT, new JSONObject()), result);
+        }
+        return result;
+    }
+
+    private void generateReport(JSONObject config, SampleResult result){
+        config.put(TITLE, result.getTitle());
+        config.computeIfAbsent(TEST_CLASS, k -> StandardReport.class.getSimpleName().toLowerCase());
+        Report report = ReportService.getService(config.getString(TEST_CLASS));
+        if (report instanceof TestElement) {
+            ((StandardReport) report).setProperties(config);
+        }
+        report.generateReport(result);
+    }
+
+    public static final Map<String, Object> SYSTEM = new HashMap<>(10);
+    static {
+        SYSTEM.put("os.name", System.getProperty("os.name"));
+        SYSTEM.put("java.runtime.name", System.getProperty("java.runtime.name"));
+        SYSTEM.put("java.version", System.getProperty("java.version"));
+        SYSTEM.put("java.vm.name", System.getProperty("java.vm.name"));
+        SYSTEM.put("migoo.version", System.getProperty("migoo.version"));
+        try {
+            JSONObject config = (JSONObject) ReaderFactory.getReader("classpath://props.migoo.yml").read();
+            config.forEach(SYSTEM::put);
+        } catch (ReaderException ignored) {
+
+        }
+    }
+
+}

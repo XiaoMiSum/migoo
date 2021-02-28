@@ -2,7 +2,7 @@
  *
  *  * The MIT License (MIT)
  *  *
- *  * Copyright (c) 2018 XiaoMiSum (mi_xiao@qq.com)
+ *  * Copyright (c) 2018. Lorem XiaoMiSum (mi_xiao@qq.com)
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining
  *  * a copy of this software and associated documentation files (the
@@ -23,14 +23,13 @@
  *  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  *  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- *
  */
 
 
 package components.xyz.migoo.assertions.rules;
 
-import core.xyz.migoo.assertions.rules.Alias;
-import core.xyz.migoo.assertions.rules.IRule;
+import core.xyz.migoo.testelement.Alias;
+import core.xyz.migoo.assertions.Rule;
 
 import java.util.List;
 import java.util.Map;
@@ -40,10 +39,10 @@ import java.util.Map;
  * @date 2019-08-13 22:17
  */
 @Alias(aliasList = {"contains", "contain", "ct", "⊆"})
-public class Contains extends BaseRule implements IRule {
+public class Contains extends BaseRule implements Rule {
 
     @Override
-    public boolean assertTrue(Object actual, Object expected) {
+    public boolean assertThat(Object actual, Object expected) {
         if (actual instanceof String) {
             return ((String) actual).contains((String) expected);
         }
