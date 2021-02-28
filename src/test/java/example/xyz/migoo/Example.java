@@ -2,7 +2,7 @@
  *
  *  * The MIT License (MIT)
  *  *
- *  * Copyright (c) 2018. Lorem XiaoMiSum (mi_xiao@qq.com)
+ *  * Copyright (c) 2018 XiaoMiSum (mi_xiao@qq.com)
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining
  *  * a copy of this software and associated documentation files (the
@@ -23,24 +23,28 @@
  *  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  *  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
+ *
  */
 
-package core.xyz.migoo.variables;
+package example.xyz.migoo;
 
-import org.apache.commons.lang3.StringUtils;
+import com.alibaba.fastjson.JSONObject;
+import core.xyz.migoo.samplers.SampleResult;
+import xyz.migoo.MiGoo;
+import xyz.migoo.readers.ReaderException;
+import xyz.migoo.readers.ReaderFactory;
 
-import java.util.regex.Pattern;
+/**
+ * @author mi.xiao
+ * @date 2021/2/28 13:37
+ */
+public class Example {
 
-public class VariableUtils {
-
-    public static final Pattern VARS_PATTERN = Pattern.compile("\\$\\{(\\w+)}");
-    public static final Pattern FUNC_PATTERN = Pattern.compile("__([A-Za-z0-9]+)\\(([\\w]*[=]\\S[^)]*)?\\)");
-
-    public static boolean isVars(String str) {
-        return VARS_PATTERN.matcher(str).find();
-    }
-
-    public static boolean isFunc(String str) {
-        return !StringUtils.isEmpty(str) && FUNC_PATTERN.matcher(str).find();
+    public static void main(String[] args) throws ReaderException {
+        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardsampler_http.yaml").read();
+        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardpackage.yaml").read();
+        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardtestcase.yaml").read();
+        JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardproject.yaml").read();
+        SampleResult result = new MiGoo(yaml, true).run();
     }
 }

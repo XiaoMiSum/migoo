@@ -2,7 +2,7 @@
  *
  *  * The MIT License (MIT)
  *  *
- *  * Copyright (c) 2021. Lorem XiaoMiSum (mi_xiao@qq.com)
+ *  * Copyright (c) 2018. Lorem XiaoMiSum (mi_xiao@qq.com)
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining
  *  * a copy of this software and associated documentation files (the
@@ -66,38 +66,19 @@ public class MiGoo {
         TestEngine engine = plan.level() == 0 ? new LoopEngine(plan) : new StandardEngine(plan);
         SampleResult result = engine.run();
         if (generateReport) {
-            JSONObject config = (JSONObject) plan.get(REPORT_ELEMENT, new JSONObject());
-            config.put(TITLE, result.getTitle());
-            config.computeIfAbsent(TEST_CLASS, k -> StandardReport.class.getSimpleName().toLowerCase());
-            Report report = ReportService.getService(config.getString(TEST_CLASS));
-            if (report instanceof TestElement) {
-                ((StandardReport) report).setProperties(config);
-            }
-            report.generateReport(result);
+            this.generateReport((JSONObject) plan.get(REPORT_ELEMENT, new JSONObject()), result);
         }
         return result;
     }
 
-    public static void main(String[] args) throws ReaderException {
-        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./case/standardsampler_http.yaml").read();
-        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./case/standardpackage.yaml").read();
-        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./case/standardtestcase.yaml").read();
-        JSONObject yaml = (JSONObject) ReaderFactory.getReader("./case/standardproject.yaml").read();
-        SampleResult result = new MiGoo(yaml, true).run();
-        //printLog(result);
-    }
-
-    private static void printLog(SampleResult result) {
-        System.out.println("----------------------");
-        System.out.println(result.getTitle() == null ? result.getTestClass() : result.getTitle());
-
-        if (result.getSubResults() != null && result.getSubResults().size() > 0) {
-            for (SampleResult subResult : result.getSubResults()) {
-                printLog(subResult);
-            }
-        } else {
-            System.out.println(result.getResponseDataAsString());
+    private void generateReport(JSONObject config, SampleResult result){
+        config.put(TITLE, result.getTitle());
+        config.computeIfAbsent(TEST_CLASS, k -> StandardReport.class.getSimpleName().toLowerCase());
+        Report report = ReportService.getService(config.getString(TEST_CLASS));
+        if (report instanceof TestElement) {
+            ((StandardReport) report).setProperties(config);
         }
+        report.generateReport(result);
     }
 
     public static final Map<String, Object> SYSTEM = new HashMap<>(10);
