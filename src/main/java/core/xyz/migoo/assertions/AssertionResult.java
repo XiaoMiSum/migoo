@@ -55,6 +55,7 @@ public class AssertionResult {
     public boolean isSuccessful() {
         return !failure && !error;
     }
+
     public boolean isFailure() {
         return failure;
     }

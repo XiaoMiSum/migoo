@@ -213,6 +213,10 @@ public class SampleResult implements Serializable {
         }
     }
 
+    public void resetStartTime() {
+        setStartTime(LocalDateTime.now(ZoneId.systemDefault()));
+    }
+
     public void sampleEnd() {
         if (endTime == null) {
             setEndTime(LocalDateTime.now(ZoneId.systemDefault()));

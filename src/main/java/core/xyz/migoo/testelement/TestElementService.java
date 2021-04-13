@@ -65,8 +65,6 @@ public class TestElementService {
     }
 
     public static Map<String, Class<? extends TestElement>> getAllService() {
-        Map<String, Class<? extends TestElement>> services = new HashMap<>(SERVICES.size());
-        SERVICES.forEach(services::put);
-        return services;
+        return new HashMap<>(SERVICES);
     }
 }

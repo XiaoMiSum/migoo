@@ -27,15 +27,16 @@
 
 package protocol.xyz.migoo.http.config;
 
+import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.http.AbstractHttpTestElement;
+import protocol.xyz.migoo.http.util.HTTPConstantsInterface;
 
-public class HttpDefaults extends AbstractHttpTestElement implements TestStateListener {
+public class HttpDefaults extends AbstractTestElement implements TestStateListener, HTTPConstantsInterface {
 
     @Override
     public void testStarted() {
         super.convertVariable();
-        super.testStarted();
         getVariables().put(HTTP_DEFAULT, this);
     }
 

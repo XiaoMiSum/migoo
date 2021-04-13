@@ -50,7 +50,7 @@ public interface TestElement {
 
     MiGooProperty getProperty();
 
-    void removeProperty(String key);
+    Object removeProperty(String key);
 
     boolean getPropertyAsBoolean(String key);
 

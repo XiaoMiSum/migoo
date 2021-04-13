@@ -42,6 +42,7 @@ import core.xyz.migoo.testelement.TestStateListener;
 import core.xyz.migoo.variables.MiGooVariables;
 import core.xyz.migoo.variables.VariableStateListener;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 

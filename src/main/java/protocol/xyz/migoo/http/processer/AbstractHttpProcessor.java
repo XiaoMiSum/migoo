@@ -34,7 +34,6 @@ public abstract class AbstractHttpProcessor extends AbstractHttpTestElement impl
 
     @Override
     public void testStarted() {
-        super.convertVariable();
         super.testStarted();
     }
 

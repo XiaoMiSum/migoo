@@ -67,9 +67,9 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
     }
 
     public void testEnded() {
-        getVariables().removeProperty("migoo.protocol.http.request.body");
-        getVariables().removeProperty("migoo.protocol.http.request.data");
-        getVariables().removeProperty("migoo.protocol.http.request.query");
+        getVariables().remove("migoo.protocol.http.request.body");
+        getVariables().remove("migoo.protocol.http.request.data");
+        getVariables().remove("migoo.protocol.http.request.query");
     }
 
     private void setHeader(MiGooProperty other) {

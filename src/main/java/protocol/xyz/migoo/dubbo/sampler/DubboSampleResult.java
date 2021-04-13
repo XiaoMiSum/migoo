@@ -26,28 +26,30 @@
  *
  */
 
-package example.xyz.migoo;
+package protocol.xyz.migoo.dubbo.sampler;
 
 import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.samplers.SampleResult;
-import xyz.migoo.MiGoo;
-import xyz.migoo.readers.ReaderException;
-import xyz.migoo.readers.ReaderFactory;
-
-import java.util.Date;
+import core.xyz.migoo.testelement.MiGooProperty;
+import protocol.xyz.migoo.dubbo.util.DubboConstantsInterface;
 
 /**
  * @author mi.xiao
- * @date 2021/2/28 13:37
+ * @date 2021/4/13 14:44
  */
-public class Example {
+public class DubboSampleResult extends SampleResult implements DubboConstantsInterface {
 
-    public static void main(String[] args) throws ReaderException {
-         JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardsampler_dubbo.yaml").read();
-        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardsampler_http.yaml").read();
-        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardpackage.yaml").read();
-        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardtestcase.yaml").read();
-        //JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardproject.yaml").read();
-        SampleResult result = new MiGoo(yaml, true).run();
+    public DubboSampleResult(String title) {
+        super(title, 1);
     }
+
+    public void setRequestData(MiGooProperty property){
+        JSONObject data = new JSONObject();
+        data.put(CONFIG_CENTER, property.getJSONObject(CONFIG_CENTER));
+        data.put(REGISTRY_CENTER, property.getJSONObject(REGISTRY_CENTER));
+        data.put(CONSUMER_PROVIDER, property.getJSONObject(CONSUMER_PROVIDER));
+        data.put(PROVIDER_INTERFACE, property.getJSONObject(PROVIDER_INTERFACE));
+        super.setSamplerData(data.toString());
+    }
+
 }

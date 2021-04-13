@@ -56,7 +56,7 @@ public class DataSourceElement extends AbstractTestElement implements TestStateL
         dataSource.setPassword(getPropertyAsString(PASSWORD_KEY));
         dataSource.setMaxActive(getPropertyAsInt(MAX_ACTIVE_KEY) > 0 ? getPropertyAsInt(MAX_ACTIVE_KEY) : 10);
         dataSource.setMaxWait(getPropertyAsInt(MAX_WAIT_KEY) > 0 ? getPropertyAsInt(MAX_WAIT_KEY) : 10000);
-        getVariables().setProperty(getPropertyAsString(VARIABLE_NAME_KEY), this);
+        getVariables().put(getPropertyAsString(VARIABLE_NAME_KEY), this);
     }
 
     @Override

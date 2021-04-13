@@ -26,28 +26,25 @@
  *
  */
 
-package example.xyz.migoo;
+package protocol.xyz.migoo.dubbo.processor;
 
-import com.alibaba.fastjson.JSONObject;
+import core.xyz.migoo.processor.PostProcessor;
 import core.xyz.migoo.samplers.SampleResult;
-import xyz.migoo.MiGoo;
-import xyz.migoo.readers.ReaderException;
-import xyz.migoo.readers.ReaderFactory;
-
-import java.util.Date;
+import protocol.xyz.migoo.dubbo.sampler.DubboSampleResult;
 
 /**
  * @author mi.xiao
- * @date 2021/2/28 13:37
+ * @date 2021/4/13 20:08
  */
-public class Example {
+public class DubboPostProcessor extends AbstractDubboProcessor implements PostProcessor {
 
-    public static void main(String[] args) throws ReaderException {
-         JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardsampler_dubbo.yaml").read();
-        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardsampler_http.yaml").read();
-        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardpackage.yaml").read();
-        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardtestcase.yaml").read();
-        //JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardproject.yaml").read();
-        SampleResult result = new MiGoo(yaml, true).run();
+    @Override
+    public SampleResult process() {
+        DubboSampleResult result = new DubboSampleResult(getPropertyAsString(TITLE));
+        try {
+            return super.execute(result);
+        } catch (Exception e) {
+            throw new RuntimeException("DubboPostProcessor error", e);
+        }
     }
 }

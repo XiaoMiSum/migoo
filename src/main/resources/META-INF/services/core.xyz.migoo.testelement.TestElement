@@ -37,10 +37,14 @@ protocol.xyz.migoo.http.config.HttpDefaults
 protocol.xyz.migoo.jdbc.processor.JDBCPreProcessor
 protocol.xyz.migoo.jdbc.processor.JDBCPostProcessor
 protocol.xyz.migoo.http.sampler.HttpSampler
+protocol.xyz.migoo.dubbo.config.DubboDefaults
+protocol.xyz.migoo.dubbo.sampler.DubboSampler
 components.xyz.migoo.assertions.JSONAssertion
 components.xyz.migoo.assertions.ResponseAssertion
+components.xyz.migoo.assertions.ResultAssertion
 components.xyz.migoo.extractor.JSONExtractor
 components.xyz.migoo.extractor.RegexExtractor
 components.xyz.migoo.extractor.ResultExtractor
+components.xyz.migoo.timers.SyncTimer
 
 

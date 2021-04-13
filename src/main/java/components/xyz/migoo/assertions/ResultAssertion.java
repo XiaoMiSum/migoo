@@ -27,42 +27,19 @@
 
 package components.xyz.migoo.assertions;
 
-import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.assertions.AbstractAssertion;
 import core.xyz.migoo.assertions.AssertionResult;
 import core.xyz.migoo.samplers.SampleResult;
 import core.xyz.migoo.testelement.Alias;
 
-import java.util.Arrays;
-import java.util.List;
-
-@Alias(aliasList = {"ResponseAssertion", "Response_Assertion"})
-public class ResponseAssertion extends AbstractAssertion {
-
-    private static final List<String> STATUS = Arrays.asList("line", "status", "code", "statuscode", "statusline", "status_code", "status_line");
-
-    private static final String HEADER = "header.";
-    private static final String CONTEXT = "context";
+@Alias(aliasList = {"ResultAssertion", "Result_Assertion"})
+public class ResultAssertion extends AbstractAssertion {
 
     @Override
     public AssertionResult getResult(SampleResult samplerResult) {
-        AssertionResult result = new AssertionResult("ResponseAssertion");
+        AssertionResult result = new AssertionResult("ResultAssertion");
         try {
-            String field = get(FIELD) == null ? CONTEXT : getPropertyAsString(FIELD).toLowerCase();
-            if (STATUS.contains(field)) {
-                setActual(samplerResult.getResponseCode());
-            } else if (field.startsWith(HEADER)) {
-                JSONObject headers = JSONObject.parseObject(samplerResult.getResponseHeaders());
-                String attribute = field.substring(field.indexOf(".") + 1).toLowerCase();
-                for (String key : headers.keySet()) {
-                    if (key.toLowerCase().equals(attribute)) {
-                        setActual(headers.getString(attribute));
-                        break;
-                    }
-                }
-            } else {
-                setActual(samplerResult.getResponseDataAsString());
-            }
+            setActual(samplerResult.getResponseDataAsString());
             setExpected(get(EXPECTED));
             super.assertThat(result);
         } catch (Exception e) {

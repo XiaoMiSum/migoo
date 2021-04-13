@@ -63,7 +63,7 @@ public class RedisSourceElement extends AbstractTestElement implements TestState
         int database = get(DATABASE_KEY) == null ? 0 : getPropertyAsInt(DATABASE_KEY);
         String password = getPropertyAsString(PASSWORD_KEY);
         jedisPool = new JedisPool(poolConfig, host, port, timeout, password, database);
-        getVariables().setProperty(getPropertyAsString(VARIABLE_NAME_KEY), this);
+        getVariables().put(getPropertyAsString(VARIABLE_NAME_KEY), this);
         url = String.format("redis://%s:%s/%s", host, port, database);
     }
 

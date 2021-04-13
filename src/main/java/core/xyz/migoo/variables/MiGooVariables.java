@@ -31,6 +31,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.function.FunctionService;
 import core.xyz.migoo.testelement.AbstractTestElement;
+import core.xyz.migoo.testelement.MiGooProperty;
+import core.xyz.migoo.testelement.TestElement;
 
 import java.util.List;
 import java.util.Map;
@@ -39,7 +41,9 @@ import java.util.regex.Matcher;
 
 import static core.xyz.migoo.variables.VariableUtils.*;
 
-public class MiGooVariables extends AbstractTestElement implements VariableStateListener, Cloneable {
+public class MiGooVariables  implements VariableStateListener, Cloneable {
+
+    private final MiGooProperty propMap = new MiGooProperty();
 
     public MiGooVariables() {
 
@@ -50,19 +54,31 @@ public class MiGooVariables extends AbstractTestElement implements VariableState
     }
 
     public void putAll(MiGooVariables variables) {
-        if (variables != null && variables.getProperty() != null) {
-            getProperty().putAll(variables.getProperty());
+        if (variables != null) {
+            propMap.putAll(variables.getProperty());
         }
     }
 
     public void putAll(Map<? extends String, ?> variables) {
         if (variables != null) {
-            getProperty().putAll(variables);
+            propMap.putAll(variables);
         }
     }
 
     public void put(String name, Object value) {
-        getProperty().put(name, value);
+        propMap.put(name, value);
+    }
+
+    public MiGooProperty getProperty(){
+        return this.propMap;
+    }
+
+    public Object get(String key) {
+        return propMap.get(key);
+    }
+
+    public Object remove(String key) {
+        return propMap.remove(key);
     }
 
     @Override
@@ -152,7 +168,7 @@ public class MiGooVariables extends AbstractTestElement implements VariableState
         while (matcher.find()) {
             String temp = matcher.group();
             String key = temp.substring(2, temp.length() - 1);
-            Object v = this.get(key);
+            Object v = propMap.get(key);
             if (v == null) {
                 throw new Exception("The variable value cannot be null: " + key);
             }

@@ -51,7 +51,6 @@ public class HttpSampler extends AbstractHttpTestElement implements Sampler, Tes
 
     @Override
     public void testStarted() {
-        super.convertVariable();
         MiGooProperty property = getPropertyAsMGooProperty(CONFIG);
         this.setProperties(property);
         super.testStarted();

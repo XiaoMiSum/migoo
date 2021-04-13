@@ -26,28 +26,24 @@
  *
  */
 
-package example.xyz.migoo;
+package protocol.xyz.migoo.dubbo.processor;
 
-import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.samplers.SampleResult;
-import xyz.migoo.MiGoo;
-import xyz.migoo.readers.ReaderException;
-import xyz.migoo.readers.ReaderFactory;
-
-import java.util.Date;
+import core.xyz.migoo.testelement.TestStateListener;
+import protocol.xyz.migoo.dubbo.AbstractDubboTestElement;
 
 /**
  * @author mi.xiao
- * @date 2021/2/28 13:37
+ * @date 2021/4/13 20:09
  */
-public class Example {
+public abstract class AbstractDubboProcessor extends AbstractDubboTestElement implements TestStateListener {
 
-    public static void main(String[] args) throws ReaderException {
-         JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardsampler_dubbo.yaml").read();
-        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardsampler_http.yaml").read();
-        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardpackage.yaml").read();
-        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardtestcase.yaml").read();
-        //JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardproject.yaml").read();
-        SampleResult result = new MiGoo(yaml, true).run();
+    @Override
+    public void testStarted() {
+        super.testStarted();
+    }
+
+    @Override
+    public void testEnded() {
+        // nothing to do
     }
 }

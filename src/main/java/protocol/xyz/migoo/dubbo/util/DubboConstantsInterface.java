@@ -2,7 +2,7 @@
  *
  *  * The MIT License (MIT)
  *  *
- *  * Copyright (c) 2018 XiaoMiSum (mi_xiao@qq.com)
+ *  * Copyright (c) 2018. Lorem XiaoMiSum (mi_xiao@qq.com)
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining
  *  * a copy of this software and associated documentation files (the
@@ -23,31 +23,58 @@
  *  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  *  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- *
  */
 
-package example.xyz.migoo;
+package protocol.xyz.migoo.dubbo.util;
 
-import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.samplers.SampleResult;
-import xyz.migoo.MiGoo;
-import xyz.migoo.readers.ReaderException;
-import xyz.migoo.readers.ReaderFactory;
+public interface DubboConstantsInterface {
 
-import java.util.Date;
+    String DUBBO_DEFAULT = "migoo.protocol.dubbo.element.defaults";
 
-/**
- * @author mi.xiao
- * @date 2021/2/28 13:37
- */
-public class Example {
+    String CONFIG_CENTER = "config_center";
 
-    public static void main(String[] args) throws ReaderException {
-         JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardsampler_dubbo.yaml").read();
-        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardsampler_http.yaml").read();
-        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardpackage.yaml").read();
-        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardtestcase.yaml").read();
-        //JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardproject.yaml").read();
-        SampleResult result = new MiGoo(yaml, true).run();
-    }
+    String REGISTRY_CENTER = "registry_center";
+
+    String CONSUMER_PROVIDER = "consumer_provider";
+
+    String PROVIDER_INTERFACE = "provider_interface";
+
+    String DUBBO_REFERENCE = "reference";
+
+    String PROTOCOL = "protocol";
+
+    String GROUP = "group";
+
+    String NAMESPACE = "namespace";
+
+    String APP_NAME = "app_name";
+
+    String USERNAME = "username";
+
+    String PASSWORD = "password";
+
+    String ADDRESS = "address";
+
+    String TIMEOUT = "timeout";
+
+    String LOAD_BALANCE = "load_balance";
+
+    String RETRIES = "retries";
+
+    String ASYNC = "async";
+
+    String INTERFACE = "interface";
+
+    String VERSION = "version";
+
+    String METHOD = "method";
+
+    String ARGS = "args";
+
+    String ARGS_PARAMETER_TYPES = "parameter_types";
+
+    String ARGS_PARAMETERS = "parameters";
+
+    String ATTACHMENT_ARGS = "attachment_args";
+
 }

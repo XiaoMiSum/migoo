@@ -35,7 +35,7 @@ public interface HTTPConstantsInterface {
     String COOKIE_DOMAIN = "domain";
     String COOKIE_PATH = "path";
 
-    String HTTP_DEFAULT = "migoo.http.element.defaults";
+    String HTTP_DEFAULT = "migoo.protocol.http.element.defaults";
     String HOST = "host";
     String PORT = "port";
     String PROTOCOL = "protocol";

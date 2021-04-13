@@ -55,12 +55,12 @@ public class MiGooVariablesTest {
     @Test
     public void testConvertVariable() {
         MiGooVariables variables = new MiGooVariables();
-        variables.setProperty("username", "migoo");
-        variables.setProperty("password", "${username}");
-        variables.setProperty("uuid", "__uuid()");
-        variables.setProperty("sign", "__random()___timestamp()");
-        variables.setProperty("f_v1", "__random(bound=10)___timestamp()");
-        variables.setProperty("f_v2", "11__random(bound=10)___timestamp()22");
+        variables.put("username", "migoo");
+        variables.put("password", "${username}");
+        variables.put("uuid", "__uuid()");
+        variables.put("sign", "__random()___timestamp()");
+        variables.put("f_v1", "__random(bound=10)___timestamp()");
+        variables.put("f_v2", "11__random(bound=10)___timestamp()22");
         variables.convertVariable();
         Assertions.assertEquals("migoo", variables.get("password"));
         Assertions.assertNotEquals("__uuid()", variables.get("uuid"));
@@ -75,9 +75,9 @@ public class MiGooVariablesTest {
     @Test
     public void testConvertStringVariable() throws Exception {
         MiGooVariables variables = new MiGooVariables();
-        variables.setProperty("username", "migoo");
-        variables.setProperty("password", "123456");
-        variables.setProperty("uuid", "__uuid()");
+        variables.put("username", "migoo");
+        variables.put("password", "123456");
+        variables.put("uuid", "__uuid()");
 
         JSONObject data = new JSONObject();
         data.put("username", "${username}");
@@ -98,13 +98,13 @@ public class MiGooVariablesTest {
     public void testConvertObjectVariable() throws Exception {
         List<String> list = new ArrayList<>();
         MiGooVariables variables = new MiGooVariables();
-        variables.setProperty("list", list);
+        variables.put("list", list);
         list.add("test");
         list.add("migoo");
         Map<String, String> map = new HashMap<>(2);
         map.put("test", "1");
         map.put("migoo", "2");
-        variables.setProperty("map", map);
+        variables.put("map", map);
 
         JSONObject data = new JSONObject();
         data.put("username", "${list}");
@@ -122,7 +122,7 @@ public class MiGooVariablesTest {
     @Test
     public void testMapConvertVariable() throws Exception {
         MiGooVariables variables = new MiGooVariables();
-        variables.setProperty("test", "list");
+        variables.put("test", "list");
         JSONObject data = new JSONObject();
         data.put("username", new JSONObject());
         data.getJSONObject("username").put("test1", "${test}");
@@ -139,7 +139,7 @@ public class MiGooVariablesTest {
     @Test
     public void testListConvertVariable() throws Exception {
         MiGooVariables variables = new MiGooVariables();
-        variables.setProperty("test", "list");
+        variables.put("test", "list");
         JSONObject data = new JSONObject();
         data.put("username", new JSONArray());
         data.getJSONArray("username").add("${test}");

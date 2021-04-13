@@ -31,3 +31,5 @@ PostProcessors:
       - { testclass: jsonextractor, field: '$.user_name', variable_name: user_name }
       - { testclass: resultextractor, variable_name: result }
       - { testclass: regexextractor, field: '"id":"([0-9]+)","create_', variable_name: r_total, match_num: 0 }
+  - testclass: def_timer
+    timeout: 10 # 单位：秒

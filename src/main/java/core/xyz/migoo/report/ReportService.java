@@ -58,8 +58,6 @@ public class ReportService {
     }
 
     public static Map<String, Class<? extends Report>> getAllService() {
-        Map<String, Class<? extends Report>> services = new HashMap<>(SERVICES.size());
-        SERVICES.forEach(services::put);
-        return services;
+        return new HashMap<>(SERVICES);
     }
 }

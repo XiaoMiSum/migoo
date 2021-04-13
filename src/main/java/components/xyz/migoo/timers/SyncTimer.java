@@ -26,28 +26,46 @@
  *
  */
 
-package example.xyz.migoo;
+package components.xyz.migoo.timers;
 
-import com.alibaba.fastjson.JSONObject;
+import core.xyz.migoo.processor.PostProcessor;
 import core.xyz.migoo.samplers.SampleResult;
-import xyz.migoo.MiGoo;
-import xyz.migoo.readers.ReaderException;
-import xyz.migoo.readers.ReaderFactory;
-
-import java.util.Date;
+import core.xyz.migoo.testelement.AbstractTestElement;
+import core.xyz.migoo.testelement.Alias;
 
 /**
  * @author mi.xiao
- * @date 2021/2/28 13:37
+ * @date 2021/4/7 19:49
  */
-public class Example {
+@Alias(aliasList = {"SyncTimer", "Timer", "sync_timer", "def_timer", "defTimer"})
+public class SyncTimer extends AbstractTestElement implements PostProcessor {
 
-    public static void main(String[] args) throws ReaderException {
-         JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardsampler_dubbo.yaml").read();
-        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardsampler_http.yaml").read();
-        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardpackage.yaml").read();
-        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardtestcase.yaml").read();
-        //JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardproject.yaml").read();
-        SampleResult result = new MiGoo(yaml, true).run();
+    private long timeout;
+
+    @Override
+    public void testStarted() {
+        timeout = getPropertyAsLong("timeout") * 1000L;
+    }
+
+    @Override
+    public void testEnded() {
+        timeout = 0;
+    }
+
+    @Override
+    public SampleResult process() {
+        SampleResult result = new SampleResult(this.getClass().toString());
+        if (timeout > 0) {
+            synchronized (this) {
+                try {
+                    this.wait(timeout);
+                } catch (InterruptedException e) {
+                    this.notify();
+                }
+            }
+        }
+        result.setSuccessful(true);
+        result.setResponseData(String.format("the test wait %s second", timeout));
+        return result;
     }
 }

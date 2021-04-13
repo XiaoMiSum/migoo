@@ -49,6 +49,7 @@ public abstract class AbstractTestElement implements TestElement, VariableStateL
     public static final String CHILDS = "childs";
     public static final String TITLE = "title";
     public static final String REPORT_ELEMENT = "reportelement";
+    public static final String SLEEP = "sleep";
 
     private MiGooVariables variables;
 
@@ -109,9 +110,9 @@ public abstract class AbstractTestElement implements TestElement, VariableStateL
     }
 
     @Override
-    public void removeProperty(String key) {
+    public Object removeProperty(String key) {
         String lowerKey = key.toLowerCase();
-        propMap.remove(lowerKey);
+        return propMap.remove(lowerKey);
     }
 
     @Override
