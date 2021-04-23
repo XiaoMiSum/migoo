@@ -39,6 +39,8 @@ protocol.xyz.migoo.jdbc.processor.JDBCPostProcessor
 protocol.xyz.migoo.http.sampler.HttpSampler
 protocol.xyz.migoo.dubbo.config.DubboDefaults
 protocol.xyz.migoo.dubbo.sampler.DubboSampler
+protocol.xyz.migoo.dubbo.processor.DubboPostProcessor
+protocol.xyz.migoo.dubbo.processor.DubboPreProcessor
 components.xyz.migoo.assertions.JSONAssertion
 components.xyz.migoo.assertions.ResponseAssertion
 components.xyz.migoo.assertions.ResultAssertion
