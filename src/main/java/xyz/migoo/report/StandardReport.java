@@ -37,7 +37,7 @@ import core.xyz.migoo.samplers.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
-import xyz.migoo.report.util.CharSequenceTranslator;
+import org.apache.commons.text.translate.CharSequenceTranslator;
 import xyz.migoo.report.util.DateUtils;
 
 import static xyz.migoo.MiGoo.SYSTEM;
