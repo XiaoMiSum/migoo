@@ -2,19 +2,17 @@ title: 标准dubbo取样器
 testclass: DubboSampler
 variables:
   deviceNo: NO00011
-  registrationId: 极光
-  mobile: 13455556666
-  data_class: tech.joymo.centermember.dto.login.MemberVerificationLoginDTO
+  data_class: xxyz.test
   parameter_types:
-    - tech.joymo.centermember.dto.login.MemberLoginDTO
+    - xxyz.test.Member
 configelements:
   - testclass: dubbodefaults
     config_center: {}
     registry_center:
       protocol: zookeeper
-      address: zk1test1.joymo.tech:5181?backup=zk2test1.joymo.tech:5181,zk3test1.joymo.tech:5181
+      address: 127.0.0.1
     consumer_provider:
-      app_name: centermember-service
+      app_name: member-service
       group: dubbo
       version: 1.0.0
       retries: 1
@@ -23,20 +21,11 @@ configelements:
       load_balance: random
 config:
   provider_interface:
-    interface: tech.joymo.centermember.facade.member.MemberActionFacade
+    interface:
     method: login
     parameter_types: ${parameter_types}
     parameters:
-      - bizType: 1
-        deviceType: 1
-        memberSource: 1
-        channel: 1
-        deviceNo: ${deviceNo}
-        registrationId: ${registrationId}
-        data:
-          class: ${data_class}
-          mobile: ${mobile}
-          verificationCode:
+      - test: test
     attachment_args:
 validators:
   - { testclass: ResultAssertion, expected: 验证码不能为空, rule: ==}
