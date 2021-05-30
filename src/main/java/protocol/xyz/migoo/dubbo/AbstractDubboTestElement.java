@@ -50,12 +50,12 @@ import java.util.*;
 public abstract class AbstractDubboTestElement extends AbstractTestElement implements DubboConstantsInterface {
 
     protected final String name = this.getClass().getSimpleName().toLowerCase();
+    protected ReferenceConfig<GenericService> reference;
 
     public void testStarted() {
         super.convertVariable();
         DubboDefaults other = (DubboDefaults) getVariables().get(DUBBO_DEFAULT);
-        ReferenceConfig<GenericService> reference = other == null ? buildReferenceConfig() :
-                (ReferenceConfig<GenericService>) other.removeProperty(DUBBO_REFERENCE);
+        reference = other == null ? buildReferenceConfig() : (ReferenceConfig<GenericService>) other.removeProperty(DUBBO_REFERENCE);
         if (other != null) {
             setProperty(CONFIG_CENTER, other.get(CONFIG_CENTER));
             setProperty(REGISTRY_CENTER, other.get(REGISTRY_CENTER));
@@ -63,7 +63,6 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
         }
         JSONObject providerInterface = getPropertyAsJSONObject(PROVIDER_INTERFACE);
         reference.setInterface(providerInterface.getString(INTERFACE));
-        setProperty(DUBBO_REFERENCE, reference);
         getVariables().put("migoo.protocol.dubbo.request.args", getPropertyAsJSONObject(PROVIDER_INTERFACE).get(ARGS));
     }
 
@@ -76,8 +75,7 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
         result.sampleStart();
         try {
             JSONObject providerInterface = getPropertyAsJSONObject(PROVIDER_INTERFACE);
-            ReferenceConfig<GenericService> referenceConfig = (ReferenceConfig<GenericService>) get(DUBBO_REFERENCE);
-            GenericService genericService = referenceConfig.get();
+            GenericService service = reference.get();
             if (providerInterface.getJSONObject(ATTACHMENT_ARGS) != null && !providerInterface.getJSONObject(ATTACHMENT_ARGS).isEmpty()) {
                 Map<String, String> attachments = new HashMap<>();
                 providerInterface.getJSONObject(ATTACHMENT_ARGS).forEach((key, value) -> attachments.put(key, value.toString()));
@@ -91,7 +89,7 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
             Object[] parameters = providerInterface.getJSONArray(ARGS_PARAMETERS).toArray();
             try {
                 result.resetStartTime();
-                Object response = genericService.$invoke(providerInterface.getString(METHOD), parameterTypes, parameters);
+                Object response = service.$invoke(providerInterface.getString(METHOD), parameterTypes, parameters);
                 result.setResponseData(JSONObject.toJSONBytes(response));
             } catch (GenericException  e) {
                 result.setResponseData(e.getExceptionMessage());
@@ -112,7 +110,7 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
 
         ReferenceConfig<GenericService> reference = new ReferenceConfig<>();
         reference.setGeneric("true");
-        reference.setApplication(new ApplicationConfig(consumerProvider.getString(APP_NAME)));
+        reference.setApplication(new ApplicationConfig(registerCenter.getString(APP_NAME)));
         reference.setVersion(consumerProvider.getString(VERSION));
         reference.setGroup(consumerProvider.getString(GROUP));
         reference.setRetries(consumerProvider.get(RETRIES) != null ? consumerProvider.getIntValue(RETRIES) : 2);
@@ -122,6 +120,9 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
         RegistryConfig registry = new RegistryConfig();
         Protocol protocol = Enum.valueOf(Protocol.class, registerCenter.getString(PROTOCOL).toUpperCase(Locale.ROOT));
         registry.setAddress(protocol.getProtocol() + registerCenter.getString(ADDRESS));
+        registry.setGroup(consumerProvider.getString(GROUP));
+        registry.setUsername(registerCenter.getString(USERNAME));
+        registry.setPassword(registerCenter.getString(PASSWORD));
         reference.setRegistry(registry);
         return reference;
     }
