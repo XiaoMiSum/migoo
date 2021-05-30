@@ -1,32 +1,32 @@
 title: 标准dubbo取样器
 testclass: DubboSampler
 variables:
-  deviceNo: NO00011
-  data_class: xxyz.test
   parameter_types:
-    - xxyz.test.Member
+    - java.lang.String
 configelements:
   - testclass: dubbodefaults
     config_center: {}
     registry_center:
       protocol: zookeeper
-      address: 127.0.0.1
+      address: localhost:2181
+      app_name: demo-service
+      #group: dubbo
+      username:
+      passoword:
     consumer_provider:
-      app_name: member-service
-      group: dubbo
-      version: 1.0.0
+      #group: dubbo
+      #version: 1.0.0
       retries: 1
       timeout: 5000
       async: false
       load_balance: random
 config:
   provider_interface:
-    interface:
-    method: login
+    interface: com.test.service.DemoService
+    method: sayHello
     parameter_types: ${parameter_types}
     parameters:
-      - test: test
+      - name: test
     attachment_args:
 validators:
-  - { testclass: ResultAssertion, expected: 验证码不能为空, rule: ==}
-  - { testclass: ResponseAssertion, field: context, expected: 验证码不能为空, rule: ==}
+  - { testclass: ResultAssertion, expected: Hello, rule: ct}
