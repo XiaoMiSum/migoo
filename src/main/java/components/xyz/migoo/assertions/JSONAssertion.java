@@ -43,9 +43,7 @@ public class JSONAssertion extends AbstractAssertion {
             // 1. 获取json字符串
             String jsonStr = samplerResult.getResponseDataAsString();
             // 2. 获取json path
-            String path = getPropertyAsString(FIELD);
-            setActual(JSONPath.read(jsonStr, path));
-            setExpected(get(EXPECTED));
+            setActual(JSONPath.read(jsonStr, getPropertyAsString(FIELD)));
             super.assertThat(result);
         } catch (Exception e) {
             result.setError(true);

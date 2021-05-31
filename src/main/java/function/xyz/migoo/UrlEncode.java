@@ -27,9 +27,10 @@
 
 package function.xyz.migoo;
 
-import core.xyz.migoo.function.CompoundParameter;
+import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 public class UrlEncode implements Function {
@@ -40,12 +41,14 @@ public class UrlEncode implements Function {
      *      content: 待url encode的字符串，非空
      */
     @Override
-    public String execute(CompoundParameter parameters) throws Exception {
-        String content = parameters.isNullKey("content") ?
-                parameters.getString("string") : parameters.getString("content");
-        if (content.trim().isEmpty()) {
-            throw new Exception("content con not be null");
+    public String execute(Args args) {
+        if (args.getString(0).isEmpty()) {
+            throw new RuntimeException("content con not be null");
         }
-        return URLEncoder.encode(content, "utf-8");
+        try {
+            return URLEncoder.encode(args.getString(0), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 }

@@ -50,4 +50,5 @@ public class Example {
         //JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardproject.yaml").read();
         SampleResult result = new MiGoo(yaml, true).run();
     }
+
 }

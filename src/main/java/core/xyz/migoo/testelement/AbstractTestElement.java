@@ -71,13 +71,9 @@ public abstract class AbstractTestElement implements TestElement, VariableStateL
 
     @Override
     public void convertVariable() {
-        try {
-            if (variableState == 0 && variables != null) {
-                variableState++;
-                variables.convertVariables(getProperty());
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("convert variable error", e);
+        if (variableState == 0 && variables != null) {
+            variableState++;
+            variables.convertVariables(getProperty());
         }
     }
 

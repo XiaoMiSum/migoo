@@ -41,7 +41,7 @@ import java.util.regex.Matcher;
 
 import static core.xyz.migoo.variables.VariableUtils.*;
 
-public class MiGooVariables  implements VariableStateListener, Cloneable {
+public class MiGooVariables implements VariableStateListener, Cloneable {
 
     private final MiGooProperty propMap = new MiGooProperty();
 
@@ -69,7 +69,7 @@ public class MiGooVariables  implements VariableStateListener, Cloneable {
         propMap.put(name, value);
     }
 
-    public MiGooProperty getProperty(){
+    public MiGooProperty getProperty() {
         return this.propMap;
     }
 
@@ -83,18 +83,16 @@ public class MiGooVariables  implements VariableStateListener, Cloneable {
 
     @Override
     public void convertVariable() {
-        try {
-            this.convertVariables(getProperty());
-        } catch (Exception e) {
-            throw new RuntimeException("convert variable error", e);
-        }
+        this.convertVariables(getProperty());
     }
 
     public void mergeVariable(MiGooVariables other) {
-        MiGooVariables clone = this.clone();
-        this.getProperty().clear();
-        this.putAll(other);
-        this.putAll(clone);
+        if (other != null) {
+            MiGooVariables clone = this.clone();
+            this.getProperty().clear();
+            this.putAll(other);
+            this.putAll(clone);
+        }
     }
 
     @Override
@@ -108,19 +106,19 @@ public class MiGooVariables  implements VariableStateListener, Cloneable {
         return new MiGooVariables(variables);
     }
 
-    public JSONObject getRequestBody(){
+    public JSONObject getRequestBody() {
         return this.getProperty().getJSONObject("migoo.protocol.http.request.body");
     }
 
-    public JSONObject getRequestData(){
+    public JSONObject getRequestData() {
         return this.getProperty().getJSONObject("migoo.protocol.http.request.data");
     }
 
-    public JSONObject getRequestQuery(){
+    public JSONObject getRequestQuery() {
         return this.getProperty().getJSONObject("migoo.protocol.http.request.query");
     }
 
-    public void convertVariables(JSONObject dataMapping) throws Exception {
+    public void convertVariables(JSONObject dataMapping) {
         if (dataMapping != null) {
             Set<Map.Entry<String, Object>> entries = dataMapping.entrySet();
             for (Map.Entry<String, Object> entry : entries) {
@@ -138,7 +136,7 @@ public class MiGooVariables  implements VariableStateListener, Cloneable {
         }
     }
 
-    private void convertVariables(JSONArray temp) throws Exception {
+    private void convertVariables(JSONArray temp) {
         for (int i = 0; i < temp.size(); i++) {
             Object item = temp.get(i);
             if (item instanceof String) {
@@ -154,7 +152,8 @@ public class MiGooVariables  implements VariableStateListener, Cloneable {
         }
     }
 
-    public Object extractVariables(String value) throws Exception {
+    public Object extractVariables(String value) {
+        value = value.trim();
         if (isFunc(value)) {
             return evalVariable(value);
         } else if (isVars(value)) {
@@ -163,14 +162,14 @@ public class MiGooVariables  implements VariableStateListener, Cloneable {
         return value;
     }
 
-    private Object extractVariable(String value) throws Exception {
+    private Object extractVariable(String value) {
         Matcher matcher = VARS_PATTERN.matcher(value);
         while (matcher.find()) {
             String temp = matcher.group();
             String key = temp.substring(2, temp.length() - 1);
             Object v = propMap.get(key);
             if (v == null) {
-                throw new Exception("The variable value cannot be null: " + key);
+                throw new RuntimeException("The variable value cannot be null: " + key);
             }
             // 变量值是个对象，直接返回
             if (v instanceof List || v instanceof Map) {
@@ -184,8 +183,8 @@ public class MiGooVariables  implements VariableStateListener, Cloneable {
         return value;
     }
 
-    private String evalVariable(String v) throws Exception {
-        Matcher func = FUNC_PATTERN.matcher( v);
+    private String evalVariable(String v) {
+        Matcher func = FUNC_PATTERN.matcher(v);
         while (func.find()) {
             String result = FunctionService.execute(func.group(1), func.group(2), this).toString();
             v = v.replace(func.group(), result);

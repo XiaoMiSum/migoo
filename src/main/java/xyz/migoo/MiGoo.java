@@ -40,6 +40,7 @@ import xyz.migoo.readers.ReaderException;
 import xyz.migoo.readers.ReaderFactory;
 import xyz.migoo.report.StandardReport;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,7 +72,7 @@ public class MiGoo {
         return result;
     }
 
-    private void generateReport(JSONObject config, SampleResult result){
+    private void generateReport(JSONObject config, SampleResult result) {
         config.put(TITLE, result.getTitle());
         config.computeIfAbsent(TEST_CLASS, k -> StandardReport.class.getSimpleName().toLowerCase());
         Report report = ReportService.getService(config.getString(TEST_CLASS));
@@ -82,6 +83,7 @@ public class MiGoo {
     }
 
     public static final Map<String, Object> SYSTEM = new HashMap<>(10);
+
     static {
         SYSTEM.put("os.name", System.getProperty("os.name"));
         SYSTEM.put("java.runtime.name", System.getProperty("java.runtime.name"));

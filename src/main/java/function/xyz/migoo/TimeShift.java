@@ -27,7 +27,7 @@
 
 package function.xyz.migoo;
 
-import core.xyz.migoo.function.CompoundParameter;
+import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
 
 import java.time.*;
@@ -60,14 +60,14 @@ public class TimeShift implements Function {
      * 当两个参数都未传递时，则返回当前时间戳
      */
     @Override
-    public String execute(CompoundParameter parameters) throws Exception {
-        String format = parameters.getString("format").trim();
+    public String execute(Args args) {
+        String format = args.getString(0);
         LocalDateTime localDateTimeToShift = LocalDateTime.now(systemDefaultZoneId);
         DateTimeFormatter dateTimeFormatter = null;
         if (!format.isEmpty()){
             dateTimeFormatter = createFormatter(format, Locale.getDefault());
         }
-        String amount = parameters.getString("amount").trim();
+        String amount = args.getString(1);
         if (!amount.isEmpty()){
             Duration duration = Duration.parse(amount);
             localDateTimeToShift = localDateTimeToShift.plus(duration);

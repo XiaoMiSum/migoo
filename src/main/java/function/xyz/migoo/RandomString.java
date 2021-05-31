@@ -28,11 +28,9 @@
 
 package function.xyz.migoo;
 
-import core.xyz.migoo.function.CompoundParameter;
+import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
 import org.apache.commons.lang3.RandomStringUtils;
-
-import java.math.BigDecimal;
 
 public class RandomString implements Function {
 
@@ -45,17 +43,14 @@ public class RandomString implements Function {
      *
      */
     @Override
-    public String execute(CompoundParameter parameters) throws Exception {
-        if (parameters.isEmpty()){
-            throw new Exception("parameters con not be null");
+    public String execute(Args args) {
+        if (args.isEmpty()){
+            throw new RuntimeException("parameters con not be null");
         }
-        BigDecimal length = parameters.getBigDecimal("length");
-        if (length == null){
-            length = new BigDecimal("10");
-        }
-        String charsToUse = parameters.getString("string").trim();
-        String str = charsToUse.isEmpty() ? RandomStringUtils.randomAlphabetic(length.intValue())
-                : RandomStringUtils.random(length.intValue(), charsToUse);
-        return parameters.getBooleanValue("upper") ? str.toUpperCase() : str;
+        int length = args.getNumber(0) == null ? 10 :  args.getNumber(0).intValue();
+        String charsToUse = args.getString(1);
+        String str = charsToUse.isEmpty() ? RandomStringUtils.randomAlphabetic(length)
+                : RandomStringUtils.random(length, charsToUse);
+        return args.getBooleanValue(2) ? str.toUpperCase() : str;
     }
 }

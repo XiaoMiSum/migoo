@@ -33,6 +33,7 @@ import core.xyz.migoo.testelement.Alias;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ServiceLoader;
 
@@ -59,8 +60,10 @@ public abstract class AbstractAssertion extends AbstractTestElement implements S
     }
 
     protected void assertThat(AssertionResult result) {
+        convertVariable();
+        setExpected(get(EXPECTED));
         String ruleStr = get(RULE) == null ? "==" : getPropertyAsString(RULE);
-        Rule rule = RULES.get(ruleStr);
+        Rule rule = RULES.get(ruleStr.toLowerCase(Locale.ROOT));
         if (rule == null) {
             result.setError(true);
             result.setFailureMessage(String.format("assert rule '%s' not found", ruleStr));

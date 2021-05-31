@@ -2,7 +2,7 @@
  *
  *  * The MIT License (MIT)
  *  *
- *  * Copyright (c) 2018. Lorem XiaoMiSum (mi_xiao@qq.com)
+ *  * Copyright (c) 2018 XiaoMiSum (mi_xiao@qq.com)
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining
  *  * a copy of this software and associated documentation files (the
@@ -23,35 +23,43 @@
  *  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  *  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
+ *
  */
 
 package function.xyz.migoo;
 
-import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.function.CompoundParameter;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONPath;
+import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
 
-public class Value implements Function {
+/**
+ * @author mi.xiao
+ * @date 2021/5/31 23:32
+ */
+public class JsonRead implements Function {
 
     /**
-     * 从传入的JSON对象中获取指定key的值，支持两个参数，且两个参数都不允许为空
-     * 参数：
-     *      key: 指定的key，非空
-     *      json: 指定json对象，非空
+     * 通过 json path 读取数据
+     * 参数顺序
+     * json: json对象
+     * path: jsonpath
+     *
+     * @param args 包含json对象、json path的复合参数
+     * @return jsonpath对应数据
      */
     @Override
-    public Object execute(CompoundParameter parameters) throws Exception {
-        if (parameters.isEmpty()){
-            throw new Exception("parameters con not be null");
+    public Object execute(Args args) {
+        if (args.isEmpty() || args.size() < 2) {
+            throw new RuntimeException("args is null or invalid args.");
         }
-        if (parameters.getString("key").isEmpty()) {
-            throw new Exception("key con not be null");
+        if (args.getString(1).isEmpty()) {
+            throw new RuntimeException("path con not be null");
         }
-        JSONObject object = parameters.isNullKey("json")?
-                parameters.getJSONObject("object") : parameters.getJSONObject("json");
-        if (object == null){
-            throw new Exception("json con not be null");
+        if (args.get(0) == null || "".equals(args.get(0))) {
+            throw new RuntimeException("json con not be null");
         }
-        return object.get(parameters.getString("key"));
+        return args.get(0) instanceof String ? JSONPath.read((String) args.get(0), args.getString(1)) :
+                JSONPath.read(JSON.toJSONString(args.get(0)), args.getString(1));
     }
 }

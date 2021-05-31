@@ -32,6 +32,7 @@ import core.xyz.migoo.engine.TestEngine;
 import core.xyz.migoo.engine.TestPlan;
 import core.xyz.migoo.samplers.SampleResult;
 import core.xyz.migoo.testelement.TestElement;
+import core.xyz.migoo.variables.MiGooVariables;
 
 import java.util.ArrayList;
 
@@ -48,10 +49,10 @@ public class LoopEngine extends AbstractTestEngine {
         result.sampleStart();
         try {
             super.convertVariable();
-            super.testStarted(result.getSubResults());
+            super.preprocess(result.getSubResults());
             for (TestElement element : getChildTestElements()) {
                 TestPlan testPlan = (TestPlan) element;
-                TestEngine engine = testPlan.level() == 0 ? new LoopEngine(testPlan) : new StandardEngine(testPlan);
+                TestEngine engine = testPlan.level() == 0 ? new LoopEngine(testPlan) : new StandardEngine(testPlan, getVariables());
                 engine.mergeVariable(getVariables());
                 SampleResult subResult = engine.run();
                 result.getSubResults().add(subResult);
@@ -62,7 +63,7 @@ public class LoopEngine extends AbstractTestEngine {
                     }
                 }
             }
-            super.testEnded(result.getSubResults());
+            super.postprocess(result.getSubResults());
         } catch (Exception e) {
             result.setSuccessful(false);
             result.setResponseData(e);

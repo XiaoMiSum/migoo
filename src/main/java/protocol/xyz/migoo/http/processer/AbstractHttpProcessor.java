@@ -39,6 +39,6 @@ public abstract class AbstractHttpProcessor extends AbstractHttpTestElement impl
 
     @Override
     public void testEnded() {
-        super.testEnded();
+
     }
 }

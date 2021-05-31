@@ -29,5 +29,5 @@ package core.xyz.migoo.function;
 
 public interface Function {
 
-    Object execute(CompoundParameter parameters) throws Exception;
+    Object execute(Args args);
 }

@@ -40,7 +40,6 @@ public class ResultAssertion extends AbstractAssertion {
         AssertionResult result = new AssertionResult("ResultAssertion");
         try {
             setActual(samplerResult.getResponseDataAsString());
-            setExpected(get(EXPECTED));
             super.assertThat(result);
         } catch (Exception e) {
             result.setError(true);

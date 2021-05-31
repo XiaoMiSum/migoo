@@ -69,8 +69,6 @@ public interface DubboConstantsInterface {
 
     String METHOD = "method";
 
-    String ARGS = "args";
-
     String ARGS_PARAMETER_TYPES = "parameter_types";
 
     String ARGS_PARAMETERS = "parameters";

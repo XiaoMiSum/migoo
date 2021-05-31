@@ -30,62 +30,77 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.util.TypeUtils;
 import core.xyz.migoo.variables.MiGooVariables;
 import core.xyz.migoo.variables.VariableUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
  * @author xiaomi
  * @date 2019/11/18 15:47
  */
-public class CompoundParameter extends HashMap<String, Object> {
+public class Args extends ArrayList<Object> {
+
+    public static Args newArgs(String origin, MiGooVariables variables) {
+        final Args args = new Args(variables);
+        if (StringUtils.isNotBlank(origin)) {
+            Collections.addAll(args, origin.split(","));
+        }
+        return args;
+    }
+
+    public static Args newArgs(String origin) {
+        final Args args = new Args();
+        if (StringUtils.isNotBlank(origin)) {
+            Collections.addAll(args, origin.split(","));
+        }
+        return args;
+    }
+
     private static final long serialVersionUID = 362498820763181265L;
 
-    private final MiGooVariables variables;
+    private MiGooVariables variables;
 
-    public CompoundParameter(MiGooVariables variables) {
+    public Args() {
+    }
+
+    public Args(MiGooVariables variables) {
         this.variables = variables;
     }
 
-    public Object put(String parameter) throws Exception {
-        String[] array = parameter.split("=");
-        return this.put(array[0], this.getParameterValue(array[1]));
-    }
-
     @Override
-    public Object put(String key, Object value) {
-        return super.put(key, value);
+    public boolean add(Object parameter) {
+        return super.add(getParameterValue((String) parameter));
     }
 
-    private Object getParameterValue(String parameter) throws Exception {
+    private Object getParameterValue(String parameter) {
         if (VariableUtils.isVars(parameter) || VariableUtils.isFunc(parameter)) {
             return variables.extractVariables(parameter);
         }
-        return parameter;
+        return parameter.trim();
     }
 
-    public boolean isNullKey(String key) {
-        return super.get(key) == null;
+    public String getString(int index) {
+        return size() <= index ? "" : super.get(index).toString().trim();
     }
 
-    public String getString(String key) {
-        return isNullKey(key) ? "" : super.get(key).toString();
+    public BigDecimal getNumber(int index) {
+        return size() <= index || "".equals(getString(index)) ? null : new BigDecimal(getString(index));
     }
 
-    public BigDecimal getBigDecimal(String key) {
-        return isNullKey(key) ? null : new BigDecimal(getString(key));
+    public JSONObject getJSONObject(int index) {
+        return size() <= index || "".equals(getString(index)) ? null : JSONObject.parseObject(JSONObject.toJSONString(get(index)));
     }
 
-    public JSONObject getJSONObject(String key) {
-        return JSONObject.parseObject(getString(key));
+    public JSONArray getJSONArray(int index) {
+        return size() <= index || "".equals(getString(index)) ? null : JSONArray.parseArray(JSONArray.toJSONString(get(index)));
     }
 
-    public JSONArray getJSONArray(String key) {
-        return JSONArray.parseArray(getString(key));
-    }
-
-    public boolean getBooleanValue(String key) {
-        return !isNullKey(key) && TypeUtils.castToBoolean(get(key) != null && TypeUtils.castToBoolean(get(key)));
+    public boolean getBooleanValue(int index) {
+        return (size() <= index || "".equals(getString(index))) &&
+                TypeUtils.castToBoolean(get(index)) != null && TypeUtils.castToBoolean(get(index));
     }
 
     public MiGooVariables getCurrentVars() {

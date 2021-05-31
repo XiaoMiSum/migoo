@@ -29,6 +29,7 @@ package xyz.migoo.report;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 import core.xyz.migoo.assertions.AssertionResult;
@@ -66,9 +67,7 @@ public class StandardReport extends AbstractTestElement implements Report {
             for (SampleResult subResult : result.getSubResults()) {
                 String title = StringUtils.isEmpty(subResult.getTitle()) ? subResult.getTestClass() :  subResult.getTitle();
                 ExtentTest story = feature.createNode(title);
-                story.getModel().setStartTime(DateUtils.toDate(subResult.getStartTime()));
                 generateExtentReport(subResult, story);
-                story.getModel().setEndTime(DateUtils.toDate(subResult.getEndTime()));
             }
         } else {
             ExtentTest requestNode = feature.createNode("TEST DATA");
@@ -82,6 +81,7 @@ public class StandardReport extends AbstractTestElement implements Report {
                 requestNode.info(result.getRequestHeaders());
             }
             requestNode.info(result.getSamplerData());
+            requestNode.getModel().setStatus(result.isSuccessful() ? Status.PASS : Status.FAIL);
             requestNode.info(getResponseString(result.getResponseDataAsString().trim()));
             if (result.getAssertionResults() != null) {
                 for (AssertionResult subResult : result.getAssertionResults()) {

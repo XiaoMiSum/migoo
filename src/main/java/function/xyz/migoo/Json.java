@@ -28,7 +28,7 @@
 package function.xyz.migoo;
 
 import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.function.CompoundParameter;
+import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
 
 public class Json implements Function {
@@ -37,12 +37,15 @@ public class Json implements Function {
      * 将传入的参数转换为JSONObject
      */
     @Override
-    public JSONObject execute(CompoundParameter parameters) throws Exception {
-        if (parameters.isEmpty()){
-            throw new Exception("parameters con not be null");
+    public JSONObject execute(Args args) {
+        if (args.isEmpty() || args.getString(0).isEmpty()) {
+            throw new RuntimeException("parameters con not be null");
         }
         JSONObject json = new JSONObject();
-        parameters.forEach(json::put);
+        for (String str : args.getString(0).split(",")) {
+            String[] arr = str.split("=");
+            json.put(arr[0], arr[1]);
+        }
         return json;
     }
 }

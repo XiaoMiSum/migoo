@@ -30,6 +30,7 @@ package core.xyz.migoo.function;
 import core.xyz.migoo.variables.MiGooVariables;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -48,29 +49,22 @@ public class FunctionService {
         SERVICES.put(clz.getSimpleName().toLowerCase(), clz.newInstance());
     }
 
-    public static Object execute(String fName, String parameter, MiGooVariables variables) throws Exception {
+    public static Object execute(String fName, String parameter, MiGooVariables variables) {
         Function function = getService(fName);
-        CompoundParameter parameters = getParameters(parameter, variables);
-        return function.execute(parameters);
+        return function.execute(Args.newArgs(parameter, variables));
     }
 
-    private static Function getService(String fName) throws Exception {
+    public static Object execute(String fName, String parameter) {
+        Function function = getService(fName);
+        return function.execute(Args.newArgs(parameter));
+    }
+
+    private static Function getService(String fName) {
         fName = fName.toLowerCase();
         Function function = SERVICES.get(fName);
         if (function == null) {
-            throw new Exception("No matcher the function: " + fName);
+            throw new RuntimeException("No matcher the function: " + fName);
         }
         return function;
-    }
-
-    private static CompoundParameter getParameters(String origin, MiGooVariables variables) throws Exception {
-        final CompoundParameter parameters = new CompoundParameter(variables);
-        if (StringUtils.isNotBlank(origin)) {
-            String[] array = origin.split(",");
-            for (String str : array) {
-                parameters.put(str);
-            }
-        }
-        return parameters;
     }
 }

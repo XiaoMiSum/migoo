@@ -29,7 +29,7 @@
 
 package function.xyz.migoo;
 
-import core.xyz.migoo.function.CompoundParameter;
+import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
 import org.apache.commons.codec.binary.Base32;
 
@@ -42,21 +42,19 @@ public class GoogleAuthCode implements Function {
 
     /**
      * 获取谷歌验证码，支持一个参数，且不允许为空
-     * 参数：
+     * 参数顺序：
      *      secret: 谷歌验证器安全码，非空，通过该安全码生成谷歌验证码
      *
      */
     @Override
-    public String execute(CompoundParameter parameters) throws Exception {
-        if (parameters.isEmpty()) {
-            throw new Exception("parameters con not be null");
+    public String execute(Args args) {
+        if (args.isEmpty()) {
+            throw new RuntimeException("parameters con not be null");
         }
-        String secretKey = parameters.isNullKey("secretKey") ?
-                parameters.getString("secret") : parameters.getString("secretKey");
-        if (secretKey.isEmpty()) {
-            throw new Exception("secretKey con not be null");
+        if (args.getString(0).isEmpty()) {
+            throw new RuntimeException("secretKey con not be null");
         }
-        return GoogleAuthenticator.generateVerifyCode(secretKey);
+        return GoogleAuthenticator.generateVerifyCode(args.getString(0));
     }
 
     public static class GoogleAuthenticator {
@@ -67,14 +65,14 @@ public class GoogleAuthCode implements Function {
 
         private static final int BYTES_PER_SCRATCH_CODE = 4;
 
-        public static String generateVerifyCode(String secretKey) throws Exception {
+        public static String generateVerifyCode(String secretKey) {
             long t = (System.currentTimeMillis() / 1000L) / 30L;
             byte[] decodedKey = new Base32().decode(secretKey);
             try {
                 String code = String.valueOf(generateVerifyCode(decodedKey, t));
                 return code.length() == LENGTH ? "0" + code : code;
             } catch (Exception e) {
-                throw new Exception("generateVerifyCode exception", e);
+                throw new RuntimeException("generateVerifyCode exception", e);
             }
         }
 

@@ -74,7 +74,7 @@ public abstract class AbstractTestEngine extends AbstractTestElement implements 
         plan.getVariables().mergeVariable(other);
     }
 
-    public void testStarted(List<SampleResult> subResults) {
+    public void preprocess(List<SampleResult> subResults) {
         plan.getTestElements().addAll(plan.getConfigElements());
         for (TestElement element : plan.getTestElements()) {
             testStarted(element);
@@ -88,7 +88,7 @@ public abstract class AbstractTestEngine extends AbstractTestElement implements 
         }
     }
 
-    public void testEnded(List<SampleResult> subResults) {
+    public void postprocess(List<SampleResult> subResults) {
         // 5. 运行后置处理器
         process(subResults, plan.getPostprocessors());
     }

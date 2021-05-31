@@ -84,6 +84,13 @@ public class SampleResult implements Serializable {
 
     private boolean success = true;
 
+    public static SampleResult Failed(String title){
+        SampleResult result = new SampleResult(title);
+        result.sampleStart();
+        result.sampleEnd();
+        return result;
+    }
+
     public SampleResult(String title) {
         this.title = title;
         this.type = 0;
@@ -211,10 +218,6 @@ public class SampleResult implements Serializable {
         if (startTime == null) {
             setStartTime(LocalDateTime.now(ZoneId.systemDefault()));
         }
-    }
-
-    public void resetStartTime() {
-        setStartTime(LocalDateTime.now(ZoneId.systemDefault()));
     }
 
     public void sampleEnd() {

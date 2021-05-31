@@ -59,14 +59,14 @@ public class MiGooVariablesTest {
         variables.put("password", "${username}");
         variables.put("uuid", "__uuid()");
         variables.put("sign", "__random()___timestamp()");
-        variables.put("f_v1", "__random(bound=10)___timestamp()");
-        variables.put("f_v2", "11__random(bound=10)___timestamp()22");
+        variables.put("f_v1", "__random(10)___timestamp()");
+        variables.put("f_v2", "11__random(10)___timestamp()22");
         variables.convertVariable();
         Assertions.assertEquals("migoo", variables.get("password"));
         Assertions.assertNotEquals("__uuid()", variables.get("uuid"));
         Assertions.assertNotEquals("__random()___timestamp()", variables.get("sign"));
-        Assertions.assertNotEquals("__random(bound=10)___timestamp()", variables.get("f_v1"));
-        Assertions.assertNotEquals("11__random(bound=10)___timestamp()22", variables.get("f_v2"));
+        Assertions.assertNotEquals("__random(10)___timestamp()", variables.get("f_v1"));
+        Assertions.assertNotEquals("11__random(10)___timestamp()22", variables.get("f_v2"));
     }
 
     /**

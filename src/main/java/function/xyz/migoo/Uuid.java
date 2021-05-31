@@ -27,7 +27,7 @@
 
 package function.xyz.migoo;
 
-import core.xyz.migoo.function.CompoundParameter;
+import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
 
 import java.util.UUID;
@@ -38,7 +38,7 @@ public class Uuid implements Function {
      * 返回一个UUID，无参数
      */
     @Override
-    public String execute(CompoundParameter parameters) {
+    public String execute(Args args) {
         return UUID.randomUUID().toString();
     }
 

@@ -28,6 +28,7 @@
 function.xyz.migoo.Digest
 function.xyz.migoo.GoogleAuthCode
 function.xyz.migoo.Json
+function.xyz.migoo.JsonRead
 function.xyz.migoo.Random
 function.xyz.migoo.RandomString
 function.xyz.migoo.TimeShift
@@ -35,4 +36,3 @@ function.xyz.migoo.Timestamp
 function.xyz.migoo.UrlDecode
 function.xyz.migoo.UrlEncode
 function.xyz.migoo.Uuid
-function.xyz.migoo.Value

@@ -63,12 +63,8 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
         }
         JSONObject providerInterface = getPropertyAsJSONObject(PROVIDER_INTERFACE);
         reference.setInterface(providerInterface.getString(INTERFACE));
-        getVariables().put("migoo.protocol.dubbo.request.args", getPropertyAsJSONObject(PROVIDER_INTERFACE).get(ARGS));
-    }
-
-    public void testEnd() {
-        getVariables().remove("migoo.protocol.dubbo.request.args");
-    }
+        getVariables().put("migoo.protocol.dubbo.request.args", getPropertyAsJSONObject(PROVIDER_INTERFACE).get(ARGS_PARAMETERS));
+   }
 
     protected SampleResult execute(DubboSampleResult result) throws Exception {
         result.setTestClass(this.getClass());
@@ -80,6 +76,8 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
                 Map<String, String> attachments = new HashMap<>();
                 providerInterface.getJSONObject(ATTACHMENT_ARGS).forEach((key, value) -> attachments.put(key, value.toString()));
                 RpcContext.getContext().setAttachments(attachments);
+                getVariables().put("migoo.protocol.dubbo.attachment.args", getPropertyAsJSONObject(PROVIDER_INTERFACE).get(ATTACHMENT_ARGS));
+
             }
             String[] parameterTypes = new String[providerInterface.getJSONArray(ARGS_PARAMETER_TYPES).size()];
             for (int i = 0; i < providerInterface.getJSONArray(ARGS_PARAMETER_TYPES).size(); i++) {
@@ -88,7 +86,6 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
             result.setRequestData(getProperty());
             Object[] parameters = providerInterface.getJSONArray(ARGS_PARAMETERS).toArray();
             try {
-                result.resetStartTime();
                 Object response = service.$invoke(providerInterface.getString(METHOD), parameterTypes, parameters);
                 result.setResponseData(JSONObject.toJSONBytes(response));
             } catch (GenericException  e) {

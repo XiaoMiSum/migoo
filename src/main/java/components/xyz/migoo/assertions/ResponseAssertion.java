@@ -63,7 +63,6 @@ public class ResponseAssertion extends AbstractAssertion {
             } else {
                 setActual(samplerResult.getResponseDataAsString());
             }
-            setExpected(get(EXPECTED));
             super.assertThat(result);
         } catch (Exception e) {
             result.setError(true);

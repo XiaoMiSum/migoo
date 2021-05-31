@@ -43,7 +43,7 @@ childs:
               username: migoo
             config:
               api: /api/login
-              body: { userName: 'migoo', password: '123456qq', sign: '__digest(content=${username}123456qq)' }
+              body: { userName: 'migoo', password: '123456qq', sign: '__digest(${username}123456qq)' }
             extractors:
               - { testclass: jsonextractor, field: '$.status', variable_name: status, match_num: 0 }
               - { testclass: jsonextractor, field: '$.data', variable_name: message, match_num: 0 }
@@ -56,7 +56,7 @@ childs:
               username: migoo
             config:
               api: /api/login
-              body: { userName: 'migoo', password: '123456qq', sign: '__digest(content=${username}123456qq)' }
+              body: { userName: 'migoo', password: '123456qq', sign: '__digest(${username}123456qq)' }
             extractors:
               - { testclass: jsonextractor, field: '$.status', variable_name: status, match_num: 0 }
               - { testclass: jsonextractor, field: '$.data', variable_name: message, match_num: 0 }
@@ -73,7 +73,7 @@ childs:
               username: migoo
             config:
               api: /api/login
-              body: { userName: '${username}', password: '123456qq', sign: '__digest(content=${username}123456qq)' }
+              body: { userName: '${username}', password: '123456qq', sign: '__digest(${username}123456qq)' }
             extractors:
               - { testclass: jsonextractor, field: '$.status', variable_name: status, match_num: 0 }
               - { testclass: jsonextractor, field: '$.data', variable_name: message, match_num: 0 }
@@ -86,7 +86,7 @@ childs:
               username: migoo
             config:
               api: /api/login
-              body: { userName: '${username}', password: '123456qq', sign: '__digest(content=${username}123456qq)' }
+              body: { userName: '${username}', password: '123456qq', sign: '__digest(${username}123456qq)' }
             extractors:
               - { testclass: jsonextractor, field: '$.status', variable_name: status, match_num: 0 }
               - { testclass: jsonextractor, field: '$.data', variable_name: message, match_num: 0 }

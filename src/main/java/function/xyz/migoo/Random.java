@@ -27,7 +27,7 @@
 
 package function.xyz.migoo;
 
-import core.xyz.migoo.function.CompoundParameter;
+import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
 
 import java.math.BigDecimal;
@@ -41,8 +41,8 @@ public class Random implements Function {
      * 当传入的bound值小于1或空值时，则不限制返回的数据（可能为正数，也可能为负数）
      */
     @Override
-    public Integer execute(CompoundParameter parameters) throws Exception {
-        BigDecimal bound = parameters.getBigDecimal("bound");
+    public Integer execute(Args args) {
+        BigDecimal bound = args.getNumber(0);
         java.util.Random random = new java.util.Random();
         return bound != null && bound.intValue() > 0 ? random.nextInt(bound.intValue()) : random.nextInt();
     }

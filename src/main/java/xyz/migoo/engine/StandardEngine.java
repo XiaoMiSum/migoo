@@ -36,6 +36,7 @@ import core.xyz.migoo.samplers.SampleResult;
 import core.xyz.migoo.samplers.Sampler;
 import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestStateListener;
+import core.xyz.migoo.variables.MiGooVariables;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -46,11 +47,18 @@ import java.util.List;
  */
 public class StandardEngine extends AbstractTestEngine {
 
+    private MiGooVariables superVariables;
+
     public StandardEngine(TestPlan plan) {
         super(plan);
     }
 
-    private TestElement getSampler(){
+    public StandardEngine(TestPlan plan, MiGooVariables variables) {
+        super(plan);
+        this.superVariables = variables;
+    }
+
+    private TestElement getSampler() {
         return plan.traverseInto().getSampler();
     }
 
@@ -59,16 +67,11 @@ public class StandardEngine extends AbstractTestEngine {
         SampleResult result = null;
         List<SampleResult> subResults = new ArrayList<>();
         try {
-            super.convertVariable();
-            super.testStarted(subResults);
+            this.testStart(subResults);
             result = this.sampler();
-            this.assertResult(result);
-            this.extractResult(result);
-            super.testEnded(subResults);
+            this.testEnd(result, subResults);
         } catch (Exception e) {
-            if (result == null) {
-                result = new SampleResult(plan.getPropertyAsString(TITLE));
-            }
+            result = result == null ? SampleResult.Failed(plan.getPropertyAsString(TITLE)) : result;
             result.setSuccessful(false);
             result.setResponseData(e);
         } finally {
@@ -76,7 +79,19 @@ public class StandardEngine extends AbstractTestEngine {
         }
         result.setVariables(plan.getVariables());
         result.setSubResults(subResults);
+        superVariables.mergeVariable(result.getVariables());
         return result;
+    }
+
+    private void testStart(List<SampleResult> subResults){
+        super.convertVariable();
+        super.preprocess(subResults);
+    }
+
+    private void testEnd(SampleResult result, List<SampleResult> subResults){
+        this.assertResult(result);
+        this.extractResult(result);
+        super.postprocess(subResults);
     }
 
     private SampleResult sampler() {
@@ -87,7 +102,7 @@ public class StandardEngine extends AbstractTestEngine {
         return ((Sampler) ele).sample();
     }
 
-    private void assertResult(SampleResult result){
+    private void assertResult(SampleResult result) {
         if (!result.isSuccessful()) {
             return;
         }
@@ -107,7 +122,7 @@ public class StandardEngine extends AbstractTestEngine {
         }
     }
 
-    private void extractResult(SampleResult result){
+    private void extractResult(SampleResult result) {
         if (!result.isSuccessful()) {
             return;
         }

@@ -27,9 +27,8 @@
 
 package function.xyz.migoo;
 
-import core.xyz.migoo.function.CompoundParameter;
+import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
-import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -49,15 +48,13 @@ public class Timestamp implements Function {
      * 当格式化参数未传递时，则返回当前时间戳
      */
     @Override
-    public String execute(CompoundParameter parameters) throws Exception {
-        String pattern = parameters.isNullKey("format") ?
-                parameters.getString("pattern") : parameters.getString("format");
+    public String execute(Args args) {
         LocalDateTime localDateTime = LocalDateTime.now(ZoneId.systemDefault());
-        if (!StringUtils.isEmpty(pattern)) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
-            return localDateTime.format(formatter);
+        if (args.getString(0).isEmpty()) {
+            ZoneOffset offset = ZoneOffset.systemDefault().getRules().getOffset(localDateTime);
+            return String.valueOf(localDateTime.toInstant(offset).toEpochMilli());
         }
-        ZoneOffset offset = ZoneOffset.systemDefault().getRules().getOffset(localDateTime);
-        return String.valueOf(localDateTime.toInstant(offset).toEpochMilli());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(args.getString(0));
+        return localDateTime.format(formatter);
     }
 }

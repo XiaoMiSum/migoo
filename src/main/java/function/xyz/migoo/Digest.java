@@ -27,46 +27,43 @@
 
 package function.xyz.migoo;
 
-import core.xyz.migoo.function.CompoundParameter;
+import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.lang3.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class Digest implements Function {
 
     /**
      * 获取信息摘要，通常为MD5，支持四个参数
-     * 参数：
-     *      algorithm: 算法，允许为空，默认为md5
-     *      content: 待编码的原始内容，非空
-     *      salt：盐，允许为空
-     *      upper: 是否将结果转为大写，允许为空，默认 false
-     *
+     * 参数顺序：
+     * algorithm: 算法，允许为空，默认为md5
+     * content: 待编码的原始内容，非空
+     * salt：盐，允许为空
+     * upper: 是否将结果转为大写，允许为空，默认 false
      */
     @Override
-    public Object execute(CompoundParameter parameters) throws Exception {
-        if (parameters.isEmpty()) {
-            throw new Exception("parameters con not be null");
+    public Object execute(Args args) {
+        if (args.isEmpty()) {
+            throw new RuntimeException("parameters con not be null");
         }
-        String algorithm = parameters.getString("algorithm").trim().isEmpty() ? "md5"
-                : parameters.getString("algorithm").trim();
-        String stringToEncode = parameters.isNullKey("content") ?
-                parameters.getString("string") : parameters.getString("content");
-        if (StringUtils.isEmpty(stringToEncode)) {
-            throw new Exception("content is null or empty");
+        String algorithm = args.getString(0).isEmpty() ? "md5" : args.getString(0).trim();
+        if (args.getString(1).isEmpty()) {
+            throw new RuntimeException("content is null or empty");
         }
-        MessageDigest md = MessageDigest.getInstance(algorithm);
-        md.update(stringToEncode.getBytes(StandardCharsets.UTF_8));
-        String salt = parameters.getString("salt");
-        if (!salt.isEmpty()) {
-            md.update(salt.getBytes(StandardCharsets.UTF_8));
+        try {
+            MessageDigest md = MessageDigest.getInstance(algorithm);
+            md.update(args.getString(1).getBytes(StandardCharsets.UTF_8));
+            if (!args.getString(2).isEmpty()) {
+                md.update(args.getString(2).getBytes(StandardCharsets.UTF_8));
+            }
+            byte[] bytes = md.digest();
+            return args.getBooleanValue(3) ? new String(Hex.encodeHex(bytes)).toUpperCase() : new String(Hex.encodeHex(bytes));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e.getMessage(), e);
         }
-        byte[] bytes = md.digest();
-        return parameters.getBooleanValue("upper") ? new String(Hex.encodeHex(bytes)).toUpperCase()
-                : new String(Hex.encodeHex(bytes));
-
     }
 }
