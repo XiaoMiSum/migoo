@@ -28,7 +28,6 @@
 
 package example.xyz.migoo;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.samplers.SampleResult;
 import xyz.migoo.MiGoo;
@@ -42,24 +41,13 @@ import xyz.migoo.readers.ReaderFactory;
 public class Example {
 
     public static void main(String[] args) throws ReaderException {
-         JSONObject yaml = get("./doc/supply_decision_service.yaml");
+         JSONObject yaml =  (JSONObject) ReaderFactory.getReader("./doc/supply_decision_service.yaml").read();
         // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardsampler_dubbo.yaml").read();
         // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardsampler_http.yaml").read();
         // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardpackage.yaml").read();
         // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardtestcase.yaml").read();
         // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardproject.yaml").read();
          SampleResult result = new MiGoo(yaml).run();
-    }
-
-    private static JSONObject get(String path) throws ReaderException {
-        JSONObject yaml = (JSONObject) ReaderFactory.getReader(path).read();
-        JSONArray chs = new JSONArray();
-        for (int i = 0; i < yaml.getJSONArray("childs").size(); i++) {
-            JSONObject testcase = (JSONObject) ReaderFactory.getReader(yaml.getJSONArray("childs").getString(i)).read();
-            chs.add(testcase);
-        }
-        yaml.put("childs", chs);
-        return yaml;
     }
 
 }
