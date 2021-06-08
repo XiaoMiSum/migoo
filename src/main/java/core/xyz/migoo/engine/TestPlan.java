@@ -79,7 +79,7 @@ public class TestPlan extends AbstractTestElement {
         if (testElements != null && !testElements.isEmpty()) {
             for (int i = 0; i < testElements.size(); i++) {
                 JSONObject testElement = testElements.getJSONObject(i);
-                String testClass = (String) testElement.remove(TEST_CLASS);
+                String testClass = (String) testElement.get(TEST_CLASS);
                 TestElement element = TestElementService.getService(testClass);
                 for (String subKey : testElement.keySet()) {
                     element.setProperty(subKey, testElement.get(subKey));

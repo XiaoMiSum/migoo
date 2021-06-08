@@ -36,7 +36,6 @@ import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.service.GenericService;
-import org.apache.dubbo.rpc.service.GenericException;
 import protocol.xyz.migoo.dubbo.config.DubboDefaults;
 import protocol.xyz.migoo.dubbo.sampler.DubboSampleResult;
 import protocol.xyz.migoo.dubbo.util.DubboConstantsInterface;
@@ -55,7 +54,7 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
     public void testStarted() {
         super.convertVariable();
         DubboDefaults other = (DubboDefaults) getVariables().get(DUBBO_DEFAULT);
-        reference = other == null ? buildReferenceConfig() : (ReferenceConfig<GenericService>) other.removeProperty(DUBBO_REFERENCE);
+        reference = other == null ? buildReferenceConfig() : (ReferenceConfig<GenericService>) other.get(DUBBO_REFERENCE);
         if (other != null) {
             setProperty(CONFIG_CENTER, other.get(CONFIG_CENTER));
             setProperty(REGISTRY_CENTER, other.get(REGISTRY_CENTER));
@@ -85,14 +84,8 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
             }
             result.setRequestData(getProperty());
             Object[] parameters = providerInterface.getJSONArray(ARGS_PARAMETERS).toArray();
-            try {
-                Object response = service.$invoke(providerInterface.getString(METHOD), parameterTypes, parameters);
-                result.setResponseData(JSONObject.toJSONBytes(response));
-            } catch (GenericException  e) {
-                result.setResponseData(e.getExceptionMessage());
-            } catch (com.alibaba.dubbo.rpc.service.GenericException e) {
-                result.setResponseData(e.getExceptionMessage());
-            }
+            Object response = service.$invoke(providerInterface.getString(METHOD), parameterTypes, parameters);
+            result.setResponseData(JSONObject.toJSONBytes(response));
             result.setSuccessful(true);
         } finally {
             result.sampleEnd();

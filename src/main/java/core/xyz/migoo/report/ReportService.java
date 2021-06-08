@@ -33,31 +33,27 @@ import java.util.ServiceLoader;
 
 public class ReportService {
     
-    private static final Map<String, Class<? extends Report>> SERVICES = new HashMap<>(20);
+    private static final Map<String, Report> SERVICES = new HashMap<>(20);
 
     static {
         for (Report element : ServiceLoader.load(Report.class)) {
-            SERVICES.put(element.getClass().getSimpleName().toLowerCase(), element.getClass());
+            SERVICES.put(element.getClass().getSimpleName().toLowerCase(), element);
         }
     }
 
     public static Report getService(String key) {
-        Class<? extends Report> clazz = SERVICES.get(key.toLowerCase());
-        if (clazz == null) {
+        Report report = SERVICES.get(key.toLowerCase());
+        if (report == null) {
             throw new RuntimeException("No matching test element: " + key.toLowerCase());
         }
-        try {
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException("Get test element instance error. ", e);
-        }
+        return report;
     }
 
-    public static void addService(String key, Class<? extends Report> clazz) {
-        SERVICES.put(key.toLowerCase(), clazz);
+    public static void addService(String key, Report report) {
+        SERVICES.put(key.toLowerCase(), report);
     }
 
-    public static Map<String, Class<? extends Report>> getAllService() {
+    public static Map<String, Report> getAllService() {
         return new HashMap<>(SERVICES);
     }
 }

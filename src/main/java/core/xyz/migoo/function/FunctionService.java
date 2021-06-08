@@ -28,9 +28,7 @@
 package core.xyz.migoo.function;
 
 import core.xyz.migoo.variables.MiGooVariables;
-import org.apache.commons.lang3.StringUtils;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -45,23 +43,20 @@ public class FunctionService {
         }
     }
 
-    public static void addService(Class<? extends Function> clz) throws Exception {
-        SERVICES.put(clz.getSimpleName().toLowerCase(), clz.newInstance());
+    public static void addService(Function service) {
+        SERVICES.put(service.getClass().getSimpleName().toLowerCase(), service);
     }
 
     public static Object execute(String fName, String parameter, MiGooVariables variables) {
-        Function function = getService(fName);
-        return function.execute(Args.newArgs(parameter, variables));
+        return getService(fName).execute(Args.newArgs(parameter, variables));
     }
 
     public static Object execute(String fName, String parameter) {
-        Function function = getService(fName);
-        return function.execute(Args.newArgs(parameter));
+        return execute(fName, parameter, new MiGooVariables());
     }
 
     private static Function getService(String fName) {
-        fName = fName.toLowerCase();
-        Function function = SERVICES.get(fName);
+        Function function = SERVICES.get(fName.toLowerCase());
         if (function == null) {
             throw new RuntimeException("No matcher the function: " + fName);
         }

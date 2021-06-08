@@ -40,13 +40,10 @@ public class JSONAssertion extends AbstractAssertion {
     public AssertionResult getResult(SampleResult samplerResult) {
         AssertionResult result = new AssertionResult("JSONAssertion");
         try {
-            // 1. 获取json字符串
             String jsonStr = samplerResult.getResponseDataAsString();
-            // 2. 获取json path
             setActual(JSONPath.read(jsonStr, getPropertyAsString(FIELD)));
             super.assertThat(result);
         } catch (Exception e) {
-            result.setError(true);
             result.setFailureMessage(e);
         }
         return result;

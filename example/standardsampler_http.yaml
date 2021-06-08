@@ -20,7 +20,7 @@ extractors:
   - { testclass: jsonextractor, field: '$.status', variable_name: status, match_num: 0 }
   - { testclass: jsonextractor, field: '$.data', variable_name: message, match_num: 0 }
 validators:
-  - { testclass: responseassertion, field: status, expected: 200, rule: ==}
+  - { testclass: httpassertion, field: status, expected: 200, rule: ==}
   - { testclass: jsonassertion, field: '$.status', expected: 200, rule: '=='}
 PostProcessors:
   - testclass: jdbcpostprocessor

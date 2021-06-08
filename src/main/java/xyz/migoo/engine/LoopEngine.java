@@ -65,10 +65,10 @@ public class LoopEngine extends AbstractTestEngine {
             }
             super.postprocess(result.getSubResults());
         } catch (Exception e) {
-            result.setSuccessful(false);
-            result.setResponseData(e);
+            result.setThrowable(e);
         } finally {
             super.testEnded();
+            result.setVariables(getVariables());
         }
         result.sampleEnd();
         return result;

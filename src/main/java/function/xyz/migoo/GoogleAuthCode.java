@@ -48,11 +48,8 @@ public class GoogleAuthCode implements Function {
      */
     @Override
     public String execute(Args args) {
-        if (args.isEmpty()) {
-            throw new RuntimeException("parameters con not be null");
-        }
         if (args.getString(0).isEmpty()) {
-            throw new RuntimeException("secretKey con not be null");
+            throw new IllegalArgumentException("secretKey con not be null");
         }
         return GoogleAuthenticator.generateVerifyCode(args.getString(0));
     }

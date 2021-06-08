@@ -42,7 +42,7 @@ protocol.xyz.migoo.dubbo.sampler.DubboSampler
 protocol.xyz.migoo.dubbo.processor.DubboPostProcessor
 protocol.xyz.migoo.dubbo.processor.DubboPreProcessor
 components.xyz.migoo.assertions.JSONAssertion
-components.xyz.migoo.assertions.ResponseAssertion
+components.xyz.migoo.assertions.HTTPResponseAssertion
 components.xyz.migoo.assertions.ResultAssertion
 components.xyz.migoo.extractor.JSONExtractor
 components.xyz.migoo.extractor.RegexExtractor

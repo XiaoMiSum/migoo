@@ -48,11 +48,11 @@ public class Digest implements Function {
     @Override
     public Object execute(Args args) {
         if (args.isEmpty()) {
-            throw new RuntimeException("parameters con not be null");
+            throw new IllegalArgumentException("parameters con not be null");
         }
         String algorithm = args.getString(0).isEmpty() ? "md5" : args.getString(0).trim();
         if (args.getString(1).isEmpty()) {
-            throw new RuntimeException("content is null or empty");
+            throw new IllegalArgumentException("content is null or empty");
         }
         try {
             MessageDigest md = MessageDigest.getInstance(algorithm);
@@ -63,7 +63,7 @@ public class Digest implements Function {
             byte[] bytes = md.digest();
             return args.getBooleanValue(3) ? new String(Hex.encodeHex(bytes)).toUpperCase() : new String(Hex.encodeHex(bytes));
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
 }

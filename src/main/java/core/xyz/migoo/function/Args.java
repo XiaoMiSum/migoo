@@ -44,15 +44,7 @@ import java.util.HashMap;
 public class Args extends ArrayList<Object> {
 
     public static Args newArgs(String origin, MiGooVariables variables) {
-        final Args args = new Args(variables);
-        if (StringUtils.isNotBlank(origin)) {
-            Collections.addAll(args, origin.split(","));
-        }
-        return args;
-    }
-
-    public static Args newArgs(String origin) {
-        final Args args = new Args();
+        Args args = new Args(variables);
         if (StringUtils.isNotBlank(origin)) {
             Collections.addAll(args, origin.split(","));
         }
@@ -63,10 +55,7 @@ public class Args extends ArrayList<Object> {
 
     private MiGooVariables variables;
 
-    public Args() {
-    }
-
-    public Args(MiGooVariables variables) {
+    public Args(MiGooVariables variables){
         this.variables = variables;
     }
 
@@ -87,23 +76,26 @@ public class Args extends ArrayList<Object> {
     }
 
     public BigDecimal getNumber(int index) {
-        return size() <= index || "".equals(getString(index)) ? null : new BigDecimal(getString(index));
+        return getString(index).isEmpty() ? null : new BigDecimal(getString(index));
     }
 
     public JSONObject getJSONObject(int index) {
-        return size() <= index || "".equals(getString(index)) ? null : JSONObject.parseObject(JSONObject.toJSONString(get(index)));
+        return getString(index).isEmpty() ? null : JSONObject.parseObject(JSONObject.toJSONString(get(index)));
     }
 
     public JSONArray getJSONArray(int index) {
-        return size() <= index || "".equals(getString(index)) ? null : JSONArray.parseArray(JSONArray.toJSONString(get(index)));
+        return getString(index).isEmpty() ? null : JSONArray.parseArray(JSONArray.toJSONString(get(index)));
     }
 
     public boolean getBooleanValue(int index) {
-        return (size() <= index || "".equals(getString(index))) &&
-                TypeUtils.castToBoolean(get(index)) != null && TypeUtils.castToBoolean(get(index));
+        return !getString(index).isEmpty() && TypeUtils.castToBoolean(get(index)) != null && TypeUtils.castToBoolean(get(index));
     }
 
     public MiGooVariables getCurrentVars() {
         return this.variables;
+    }
+
+    private void setVariables(MiGooVariables variables) {
+        this.variables = variables;
     }
 }

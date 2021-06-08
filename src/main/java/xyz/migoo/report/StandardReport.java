@@ -30,6 +30,9 @@ package xyz.migoo.report;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.markuputils.ExtentColor;
+import com.aventstack.extentreports.markuputils.Markup;
+import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 import core.xyz.migoo.assertions.AssertionResult;
@@ -49,53 +52,74 @@ public class StandardReport extends AbstractTestElement implements Report {
     public void generateReport(SampleResult result) {
         ExtentReports extent = new ExtentReports();
         testStarted(result, extent);
-        if (result.getAssertionResults() != null && result.getAssertionResults().size() > 0) {
-            generateExtentReport(result, extent.createTest(result.getTitle()));
+        if (result.isException() || (result.getAssertionResults() != null && result.getAssertionResults().size() > 0)) {
+            generateExtentReport(result, extent.createTest(result.getTitle()), true);
         } else if (result.getSubResults() != null && result.getSubResults().size() > 0) {
             for (SampleResult subResult : result.getSubResults()) {
                 if (subResult.getSubResults() != null || subResult.getAssertionResults() != null) {
-                    generateExtentReport(subResult, extent.createTest(subResult.getTitle()));
+                    generateExtentReport(subResult, extent.createTest(subResult.getTitle()), true);
                 }
             }
         }
         extent.flush();
     }
 
-    private void generateExtentReport(SampleResult result, ExtentTest feature) {
+    private void generateExtentReport(SampleResult result, ExtentTest feature, boolean isFeature) {
         feature.getModel().setStartTime(DateUtils.toDate(result.getStartTime()));
-        if (result.getType() == 0 && result.getSubResults() != null) {
-            for (SampleResult subResult : result.getSubResults()) {
-                String title = StringUtils.isEmpty(subResult.getTitle()) ? subResult.getTestClass() :  subResult.getTitle();
-                ExtentTest story = feature.createNode(title);
-                generateExtentReport(subResult, story);
+        if (result.getType() == 0 && !result.getSubResults().isEmpty()) {
+            for (int i = 0; i < result.getSubResults().size(); i++) {
+                SampleResult subResult = result.getSubResults().get(i);
+                String title = StringUtils.isEmpty(subResult.getTitle()) ? subResult.getTestClass() : subResult.getTitle();
+                ExtentTest story = isFeature ? feature.createNode(title) : feature;
+                this.write(story, result, isFeature)
+                        .write(story, !isFeature ? MarkupHelper.createLabel(String.format("Step-%s：%s", i, title), ExtentColor.WHITE) : null);
+                generateExtentReport(subResult, story, false);
             }
         } else {
-            ExtentTest requestNode = feature.createNode("TEST DATA");
-            if (StringUtils.isNotEmpty(result.getUrl())) {
-                requestNode.info(result.getUrl() + " " + result.getResponseCode() + " " + result.getResponseMessage());
-            }
-            if (result instanceof HTTPSampleResult && ((HTTPSampleResult) result).getCookies() != null) {
-                requestNode.info(((HTTPSampleResult) result).getCookies());
-            }
-            if (!result.getRequestHeaders().isEmpty()) {
-                requestNode.info(result.getRequestHeaders());
-            }
-            requestNode.info(result.getSamplerData());
-            requestNode.getModel().setStatus(result.isSuccessful() ? Status.PASS : Status.FAIL);
-            requestNode.info(getResponseString(result.getResponseDataAsString().trim()));
+            this.write(feature, result, isFeature)
+                    .write(feature, result.getUrl()).write(feature, 0, result).write(feature, 1, result)
+                    .write(feature, -1, result).write(feature, result.getSamplerData())
+                    .write(feature, getResponseString(result.getResponseDataAsString().trim())).write(feature, result.getThrowable())
+                    .write(feature, result.isSuccessful() ? Status.PASS : Status.FAIL);
             if (result.getAssertionResults() != null) {
                 for (AssertionResult subResult : result.getAssertionResults()) {
-                    ExtentTest node = feature.createNode(subResult.getName());
-                    if (subResult.isSuccessful()) {
-                        node.pass(subResult.getContext());
-                    } else {
-                        node.fail(subResult.getFailureMessage());
-                    }
+                    feature.log(subResult.isSuccessful() ? Status.PASS : Status.FAIL, subResult.getContext());
                 }
             }
-            feature.getModel().setEndTime(DateUtils.toDate(result.getEndTime()));
         }
         feature.getModel().setEndTime(DateUtils.toDate(result.getEndTime()));
+    }
+
+    private StandardReport write(ExtentTest feature, Object content) {
+        if (content instanceof String && !((String) content).isEmpty()) {
+            feature.info((String) content);
+        } else if (content instanceof Throwable) {
+            feature.info((Throwable) content);
+        } else if (content instanceof Markup) {
+            feature.info((Markup) content);
+        } else if (content instanceof Status) {
+            feature.getModel().setStatus((Status) content);
+        }
+        return this;
+    }
+
+    private StandardReport write(ExtentTest feature, int count, SampleResult result) {
+        if (count == 0 && result instanceof HTTPSampleResult) {
+            this.write(feature, ((HTTPSampleResult) result).getCookies());
+        } else if (count == 1 && result instanceof HTTPSampleResult) {
+            this.write(feature, ((HTTPSampleResult) result).getRequestHeaders());
+        } else if (count == -1 && result instanceof HTTPSampleResult) {
+            this.write(feature, ((HTTPSampleResult) result).getQueryString());
+        }
+        return this;
+    }
+
+    private StandardReport write(ExtentTest feature, SampleResult result, boolean isFeature) {
+        if (isFeature && result.getVariables().getProperty().size() > 0) {
+            this.write(feature, MarkupHelper.createLabel("Testcase global variables", ExtentColor.WHITE))
+                    .write(feature, result.getVariables().getProperty().toString());
+        }
+        return this;
     }
 
     private String getResponseString(String text) {
@@ -115,7 +139,7 @@ public class StandardReport extends AbstractTestElement implements Report {
                 "<img src=\"https://img.shields.io/badge/MiGoo-By Mi.xiao-yellow.svg?style=social&amp;logo=github\">");
         reporter.config().setTimeStampFormat("yyyy-MM-dd HH:mm:ss");
         reporter.config().setTheme(Theme.DARK);
-        reporter.config().enableOfflineMode((Boolean) get(ENABLE_OFFLINE_MODE, true));
+        reporter.config().enableOfflineMode((Boolean) get(ENABLE_OFFLINE_MODE, false));
         reporter.config().setTimelineEnabled(false);
 
         extent.attachReporter(reporter);

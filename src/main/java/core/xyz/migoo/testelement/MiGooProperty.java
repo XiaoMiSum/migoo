@@ -29,6 +29,8 @@ package core.xyz.migoo.testelement;
 
 import com.alibaba.fastjson.JSONObject;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MiGooProperty extends JSONObject {
@@ -60,5 +62,17 @@ public class MiGooProperty extends JSONObject {
     @Override
     public MiGooProperty clone() {
         return (MiGooProperty) super.clone();
+    }
+
+    @Override
+    public String toString(){
+        JSONObject newMap = new JSONObject(size());
+        keySet().forEach(key -> newMap.put(key, convertObject(get(key))));
+        return newMap.toString();
+    }
+
+    private Object convertObject(Object obj){
+        return obj instanceof String || obj instanceof Number || obj instanceof Boolean
+                || obj instanceof Map || obj instanceof List ? obj : obj.toString();
     }
 }

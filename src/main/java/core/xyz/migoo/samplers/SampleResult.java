@@ -30,11 +30,7 @@ package core.xyz.migoo.samplers;
 import core.xyz.migoo.assertions.AssertionResult;
 import core.xyz.migoo.variables.MiGooVariables;
 
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -43,9 +39,8 @@ import java.util.List;
 
 public class SampleResult implements Serializable {
 
-    public static final String DEFAULT_HTTP_ENCODING = StandardCharsets.UTF_8.name();
-    private static final String OK_CODE = Integer.toString(HttpURLConnection.HTTP_OK);
-    private static final String OK_MSG = "OK";
+    public static final Charset DEFAULT_HTTP_ENCODING = StandardCharsets.UTF_8;
+
     private static final byte[] EMPTY_BA = new byte[0];
 
     public static final String TEXT = "text";
@@ -60,15 +55,7 @@ public class SampleResult implements Serializable {
 
     private MiGooVariables variables;
 
-    private String samplerData;
-
-    private String responseCode = "";
-
-    private String responseHeaders = "";
-
-    private String responseMessage = "";
-
-    private String requestHeaders = "";
+    private String samplerData = "";
 
     private byte[] responseData = EMPTY_BA;
 
@@ -82,9 +69,11 @@ public class SampleResult implements Serializable {
 
     private List<SampleResult> subResults;
 
+    private Throwable throwable;
+
     private boolean success = true;
 
-    public static SampleResult Failed(String title){
+    public static SampleResult Failed(String title) {
         SampleResult result = new SampleResult(title);
         result.sampleStart();
         result.sampleEnd();
@@ -117,50 +106,6 @@ public class SampleResult implements Serializable {
         return success;
     }
 
-    public void setResponseCodeOK() {
-        responseCode = OK_CODE;
-    }
-
-    public boolean isResponseCodeOK() {
-        return responseCode.equals(OK_CODE);
-    }
-
-    public String getResponseCode() {
-        return responseCode;
-    }
-
-    public void setResponseCode(String responseCode) {
-        this.responseCode = responseCode;
-    }
-
-    public String getResponseHeaders() {
-        return responseHeaders;
-    }
-
-    public void setResponseHeaders(String responseHeaders) {
-        this.responseHeaders = responseHeaders;
-    }
-
-    public void setResponseMessageOK() {
-        responseMessage = OK_MSG;
-    }
-
-    public String getResponseMessage() {
-        return responseMessage;
-    }
-
-    public void setResponseMessage(String responseMessage) {
-        this.responseMessage = responseMessage;
-    }
-
-    public String getRequestHeaders() {
-        return requestHeaders;
-    }
-
-    public void setRequestHeaders(String requestHeaders) {
-        this.requestHeaders = requestHeaders;
-    }
-
     public LocalDateTime getStartTime() {
         return startTime;
     }
@@ -188,30 +133,14 @@ public class SampleResult implements Serializable {
 
     public void setResponseData(String responseData) {
         responseDataAsString = null;
-        try {
-            this.responseData = responseData == null ? EMPTY_BA : responseData.getBytes(DEFAULT_HTTP_ENCODING);
-        } catch (UnsupportedEncodingException e) {
-            this.responseData = responseData.getBytes();
-        }
-    }
-
-    public void setResponseData(Throwable throwable) {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter);
-        throwable.printStackTrace(writer);
-        StringBuffer buffer = stringWriter.getBuffer();
-        responseData = buffer.toString().getBytes(Charset.defaultCharset());
+        this.responseData = responseData == null ? EMPTY_BA : responseData.getBytes(DEFAULT_HTTP_ENCODING);
     }
 
     public String getResponseDataAsString() {
-        try {
-            if (responseDataAsString == null) {
-                responseDataAsString = new String(responseData, DEFAULT_HTTP_ENCODING);
-            }
-            return responseDataAsString;
-        } catch (UnsupportedEncodingException e) {
-            return new String(responseData, Charset.defaultCharset());
+        if (responseDataAsString == null) {
+            responseDataAsString = new String(responseData, DEFAULT_HTTP_ENCODING);
         }
+        return responseDataAsString;
     }
 
     public void sampleStart() {
@@ -276,5 +205,18 @@ public class SampleResult implements Serializable {
 
     public int getType() {
         return type;
+    }
+
+    public boolean isException() {
+        return throwable != null;
+    }
+
+    public Throwable getThrowable() {
+        return throwable;
+    }
+
+    public void setThrowable(Throwable throwable) {
+        this.success = false;
+        this.throwable = throwable;
     }
 }

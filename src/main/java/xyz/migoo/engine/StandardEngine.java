@@ -72,14 +72,12 @@ public class StandardEngine extends AbstractTestEngine {
             this.testEnd(result, subResults);
         } catch (Exception e) {
             result = result == null ? SampleResult.Failed(plan.getPropertyAsString(TITLE)) : result;
-            result.setSuccessful(false);
-            result.setResponseData(e);
+            result.setThrowable(e);
         } finally {
             super.testEnded();
         }
-        result.setVariables(plan.getVariables());
         result.setSubResults(subResults);
-        superVariables.mergeVariable(result.getVariables());
+        superVariables.mergeVariable(plan.getVariables());
         return result;
     }
 
@@ -113,7 +111,7 @@ public class StandardEngine extends AbstractTestEngine {
             if (element instanceof Assertion) {
                 AssertionResult aResult = ((Assertion) element).getResult(result);
                 // 如果有断言失败，则设置当前取样器的结果为失败
-                if (aResult.isFailure() || aResult.isError()) {
+                if (!aResult.isSuccessful()) {
                     result.setSuccessful(false);
                 }
                 result.getAssertionResults().add(aResult);

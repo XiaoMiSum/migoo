@@ -42,7 +42,6 @@ public class ResultAssertion extends AbstractAssertion {
             setActual(samplerResult.getResponseDataAsString());
             super.assertThat(result);
         } catch (Exception e) {
-            result.setError(true);
             result.setFailureMessage(e);
         }
         return result;

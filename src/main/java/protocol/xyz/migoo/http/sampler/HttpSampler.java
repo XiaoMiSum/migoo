@@ -43,8 +43,7 @@ public class HttpSampler extends AbstractHttpTestElement implements Sampler, Tes
         try {
             super.execute(result);
         } catch (Exception e) {
-            result.setSuccessful(false);
-            result.setResponseData(e);
+            result.setThrowable(e);
         }
         return result;
     }

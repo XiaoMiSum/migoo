@@ -54,8 +54,7 @@ public class JDBCSampler extends AbstractJDBCTestElement implements Sampler, Tes
         try (Connection conn = dataSource.getConnection()) {
             return execute(conn, result);
         } catch (Exception e) {
-            result.setSuccessful(false);
-            result.setResponseData(e);
+            result.setThrowable(e);
         }
         return result;
     }

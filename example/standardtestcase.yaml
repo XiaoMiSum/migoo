@@ -38,7 +38,7 @@ childs:
       - { testclass: jsonextractor, field: '$.status', variable_name: status, match_num: 0 }
       - { testclass: jsonextractor, field: '$.data', variable_name: message, match_num: 0 }
     validators:
-      - { testclass: responseassertion, field: status, expected: 200, rule: == }
+      - { testclass: httpresponseassertion, field: status, expected: 200, rule: == }
       - { testclass: jsonassertion, field: '$.status', expected: 200, rule: '==' }
   - title: 标准HTTP取样器2
     testclass: httpsampler
@@ -51,5 +51,5 @@ childs:
       - { testclass: jsonextractor, field: '$.status', variable_name: status, match_num: 0 }
       - { testclass: jsonextractor, field: '$.data', variable_name: message, match_num: 0 }
     validators:
-      - { testclass: responseassertion, field: status, expected: 200, rule: == }
+      - { testclass: httpassertion, field: status, expected: 200, rule: == }
       - { testclass: jsonassertion, field: '$.status', expected: 200, rule: '==' }

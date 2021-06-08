@@ -27,7 +27,6 @@
 
 package core.xyz.migoo.assertions;
 
-import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 
@@ -47,8 +46,7 @@ public abstract class AbstractAssertion extends AbstractTestElement implements S
 
     protected static final String EXPECTED = "expected";
 
-    private Object actual;
-    private Object expected;
+    protected static final String ACTUAL = "actual";
 
     static {
         ServiceLoader<Rule> loaders = ServiceLoader.load(Rule.class);
@@ -61,38 +59,27 @@ public abstract class AbstractAssertion extends AbstractTestElement implements S
 
     protected void assertThat(AssertionResult result) {
         convertVariable();
-        setExpected(get(EXPECTED));
         String ruleStr = get(RULE) == null ? "==" : getPropertyAsString(RULE);
         Rule rule = RULES.get(ruleStr.toLowerCase(Locale.ROOT));
         if (rule == null) {
-            result.setError(true);
             result.setFailureMessage(String.format("assert rule '%s' not found", ruleStr));
         } else {
-            result.setFailure(!rule.assertThat(actual, expected));
-            result.setFailureMessage(!result.isFailure() ? "" :
-                    String.format("expected value '%s', but found '%s', rule: '%s'", expected, actual, ruleStr));
-            result.setContext(this.toString());
-        }
+            try {
+                result.setSuccessful(rule.assertThat(get(ACTUAL), get(EXPECTED)));
+                result.setContext(result.isSuccessful() ? this.toString() :
+                        String.format("expected value '%s', but found '%s', rule: '%s'", get(EXPECTED), get(ACTUAL), ruleStr));
+            } catch (Exception e) {
+                result.setFailureMessage(e);
+            }
+       }
     }
 
     protected void setActual(Object actual) {
-        this.actual = actual;
-    }
-
-    protected Object getActual() {
-        return actual;
-    }
-
-    protected Object getExpected() {
-        return expected;
-    }
-
-    protected void setExpected(Object expected) {
-        this.expected = expected;
+        getProperty().put(ACTUAL, actual);
     }
 
     @Override
     public String toString(){
-        return JSONObject.toJSONString(getProperty());
+        return getProperty().toString();
     }
 }

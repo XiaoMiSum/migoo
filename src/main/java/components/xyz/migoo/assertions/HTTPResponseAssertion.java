@@ -27,46 +27,42 @@
 
 package components.xyz.migoo.assertions;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPath;
 import core.xyz.migoo.assertions.AbstractAssertion;
 import core.xyz.migoo.assertions.AssertionResult;
 import core.xyz.migoo.samplers.SampleResult;
 import core.xyz.migoo.testelement.Alias;
+import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-@Alias(aliasList = {"ResponseAssertion", "Response_Assertion"})
-public class ResponseAssertion extends AbstractAssertion {
+@Alias(aliasList = {"HTTPAssertion", "HTTP_Assertion"})
+public class HTTPResponseAssertion extends AbstractAssertion {
 
     private static final List<String> STATUS = Arrays.asList("line", "status", "code", "statuscode", "statusline", "status_code", "status_line");
 
-    private static final String HEADER = "header.";
     private static final String CONTEXT = "context";
+    private static final Pattern PATTERN = Pattern.compile("^header(\\[[\\d]+])?(\\.\\w+)?");
 
     @Override
     public AssertionResult getResult(SampleResult samplerResult) {
-        AssertionResult result = new AssertionResult("ResponseAssertion");
-        try {
+        AssertionResult result = new AssertionResult("HTTPAssertion");
+        if (samplerResult instanceof HTTPSampleResult) {
             String field = get(FIELD) == null ? CONTEXT : getPropertyAsString(FIELD).toLowerCase();
-            if (STATUS.contains(field)) {
-                setActual(samplerResult.getResponseCode());
-            } else if (field.startsWith(HEADER)) {
-                JSONObject headers = JSONObject.parseObject(samplerResult.getResponseHeaders());
-                String attribute = field.substring(field.indexOf(".") + 1).toLowerCase();
-                for (String key : headers.keySet()) {
-                    if (key.toLowerCase().equals(attribute)) {
-                        setActual(headers.getString(attribute));
-                        break;
-                    }
-                }
+            HTTPSampleResult httpResult = (HTTPSampleResult) samplerResult;
+            Matcher matcher = PATTERN.matcher(field);
+            if (matcher.find()) {
+                String path = "$" + (matcher.group(1) == null ? "[0]" : matcher.group(1)) + matcher.group(2);
+                setActual(JSONPath.read(((HTTPSampleResult) samplerResult).getResponseHeaders(), path));
             } else {
-                setActual(samplerResult.getResponseDataAsString());
+                setActual(STATUS.contains(field) ? httpResult.getResponseCode() : samplerResult.getResponseDataAsString());
             }
             super.assertThat(result);
-        } catch (Exception e) {
-            result.setError(true);
-            result.setFailureMessage(e);
+        } else {
+            result.setSuccessful(true);
+            result.setContext(String.format("SampleResult instanceof %s, assert default true", samplerResult.getClass().getSimpleName()));
         }
         return result;
     }

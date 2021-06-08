@@ -27,21 +27,35 @@
 
 package protocol.xyz.migoo.http.sampler;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.samplers.SampleResult;
+import core.xyz.migoo.testelement.MiGooProperty;
 import org.apache.http.Header;
 import xyz.migoo.simplehttp.Request;
 import xyz.migoo.simplehttp.Response;
 
+import java.net.HttpURLConnection;
 import java.util.Arrays;
 
 public class HTTPSampleResult extends SampleResult {
+
+    private static final String OK_CODE = Integer.toString(HttpURLConnection.HTTP_OK);
+    private static final String OK_MSG = "OK";
 
     private String method;
 
     private String queryString = "";
 
-    private String cookies;
+    private String cookies = "";
+
+    private String requestHeaders = "";
+
+    private String responseHeaders = "";
+
+    private String responseCode = "";
+
+    private String responseMessage = "";
 
     public HTTPSampleResult(String title) {
         super(title, 1);
@@ -71,6 +85,23 @@ public class HTTPSampleResult extends SampleResult {
         this.cookies = cookies;
     }
 
+    public String getRequestHeaders() {
+        return requestHeaders;
+    }
+
+    public void setRequestHeaders(String requestHeaders) {
+        this.requestHeaders = requestHeaders;
+    }
+
+    public String getResponseHeaders() {
+        return responseHeaders;
+    }
+
+    public void setResponseHeaders(String responseHeaders) {
+        this.responseHeaders = responseHeaders;
+    }
+
+
     public void setRequestData(Request request){
         setUrl(request.uriNotContainsParam());
         setMethod(request.method());
@@ -82,13 +113,49 @@ public class HTTPSampleResult extends SampleResult {
     public void setResponseData(Response response){
         setResponseData(response.text());
         setResponseCode(String.valueOf(response.statusCode()));
-        JSONObject header = new JSONObject(response.headers().length);
+        JSONArray headers = new JSONArray(response.headers().length);
         for (Header h : response.headers()) {
-            header.put(h.getName(), h.getValue());
+            headers.add(new MiGooProperty(h.getName(), h.getValue()));
         }
-        setResponseHeaders(header.toJSONString());
+        setResponseHeaders(headers.toJSONString());
         if (isResponseCodeOK()) {
             setResponseMessageOK();
         }
+    }
+
+    public String getUrl() {
+        if (super.getUrl() != null && !super.getUrl().isEmpty()){
+            return super.getUrl() + "" + responseCode + " " + responseMessage;
+        }
+        return super.getUrl();
+    }
+
+
+    public void setResponseCodeOK() {
+        responseCode = OK_CODE;
+    }
+
+    public boolean isResponseCodeOK() {
+        return responseCode.equals(OK_CODE);
+    }
+
+    public String getResponseCode() {
+        return responseCode;
+    }
+
+    public void setResponseCode(String responseCode) {
+        this.responseCode = responseCode;
+    }
+
+    public void setResponseMessageOK() {
+        responseMessage = OK_MSG;
+    }
+
+    public String getResponseMessage() {
+        return responseMessage;
+    }
+
+    public void setResponseMessage(String responseMessage) {
+        this.responseMessage = responseMessage;
     }
 }

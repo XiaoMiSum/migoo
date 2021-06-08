@@ -38,8 +38,8 @@ public class Json implements Function {
      */
     @Override
     public JSONObject execute(Args args) {
-        if (args.isEmpty() || args.getString(0).isEmpty()) {
-            throw new RuntimeException("parameters con not be null");
+        if (args.getString(0).isEmpty()) {
+            throw new IllegalArgumentException("parameters con not be null");
         }
         JSONObject json = new JSONObject();
         for (String str : args.getString(0).split(",")) {

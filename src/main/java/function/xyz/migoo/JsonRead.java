@@ -51,13 +51,10 @@ public class JsonRead implements Function {
     @Override
     public Object execute(Args args) {
         if (args.isEmpty() || args.size() < 2) {
-            throw new RuntimeException("args is null or invalid args.");
+            throw new IllegalArgumentException("args is empty or invalid args.");
         }
-        if (args.getString(1).isEmpty()) {
-            throw new RuntimeException("path con not be null");
-        }
-        if (args.get(0) == null || "".equals(args.get(0))) {
-            throw new RuntimeException("json con not be null");
+        if (args.getString(0).isEmpty() || args.getString(1).isEmpty()) {
+            throw new IllegalArgumentException("json or jsonpath con not be null");
         }
         return args.get(0) instanceof String ? JSONPath.read((String) args.get(0), args.getString(1)) :
                 JSONPath.read(JSON.toJSONString(args.get(0)), args.getString(1));

@@ -45,12 +45,12 @@ public class RandomString implements Function {
     @Override
     public String execute(Args args) {
         if (args.isEmpty()){
-            throw new RuntimeException("parameters con not be null");
+            throw new IllegalArgumentException("parameters con not be null");
         }
         int length = args.getNumber(0) == null ? 10 :  args.getNumber(0).intValue();
         String charsToUse = args.getString(1);
-        String str = charsToUse.isEmpty() ? RandomStringUtils.randomAlphabetic(length)
+        String randomString = charsToUse.isEmpty() ? RandomStringUtils.randomAlphabetic(length)
                 : RandomStringUtils.random(length, charsToUse);
-        return args.getBooleanValue(2) ? str.toUpperCase() : str;
+        return args.getBooleanValue(2) ? randomString.toUpperCase() : randomString;
     }
 }

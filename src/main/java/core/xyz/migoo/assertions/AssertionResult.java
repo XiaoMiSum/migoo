@@ -36,11 +36,7 @@ public class AssertionResult {
 
     private final String name;
 
-    private boolean failure;
-
-    private boolean error;
-
-    private String failureMessage;
+    private boolean success;
 
     private String context;
 
@@ -53,53 +49,20 @@ public class AssertionResult {
     }
 
     public boolean isSuccessful() {
-        return !failure && !error;
+        return success;
     }
 
-    public boolean isFailure() {
-        return failure;
-    }
-
-    public boolean isError() {
-        return error;
-    }
-
-    public String getFailureMessage() {
-        return failureMessage;
-    }
-
-    public void setError(boolean e) {
-        error = e;
-    }
-
-    public void setFailure(boolean f) {
-        failure = f;
-    }
-
-    public void setFailureMessage(String message) {
-        failureMessage = message;
+    public void setSuccessful(boolean success) {
+        this.success = success;
     }
 
     public void setFailureMessage(Throwable throwable) {
+        this.success = false;
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
         throwable.printStackTrace(writer);
         StringBuffer buffer = stringWriter.getBuffer();
-        failureMessage = buffer.toString();
-    }
-
-    public AssertionResult setResultForFailure(String message) {
-        error = false;
-        failure = true;
-        failureMessage = message;
-        return this;
-    }
-
-    public AssertionResult setResultForNull() {
-        error = false;
-        failure = true;
-        failureMessage = RESPONSE_WAS_NULL;
-        return this;
+        context = buffer.toString();
     }
 
     public String getContext() {
@@ -107,6 +70,11 @@ public class AssertionResult {
     }
 
     public void setContext(String context) {
+        this.context = context;
+    }
+
+    public void setFailureMessage( String context) {
+        this.success = false;
         this.context = context;
     }
 }

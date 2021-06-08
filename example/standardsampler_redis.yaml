@@ -8,8 +8,8 @@ extractors:
   - { testclass: jsonextractor, field: '$.result.total', variable_name: total, match_num: 0 }
   - { testclass: jsonextractor, field: '$.code', variable_name: code, match_num: 0 }
 validators:
-  - { testclass: responseassertion, field: status, excepted: 200, rule: ==}
-  - { testclass: responseassertion, field: header, attribute: token, excepted: '(\w+)(.(\w+)+)', rule: regex}
+  - { testclass: httpassertion, field: status, excepted: 200, rule: ==}
+  - { testclass: httpassertion, field: header, attribute: token, excepted: '(\w+)(.(\w+)+)', rule: regex}
   - { testclass: jsonassertion, field: '$.code', excepted: 200, rule: '>'}
 PreProcessors:
   - testclass: jdbcpreprocessor
@@ -26,4 +26,5 @@ PostProcessors:
     query_type: hget
     key: syshash
     field: app_name
-    resultextractor: app_name
+    extractors:
+      - { testclass: resultextractor, variable_name: app_name }

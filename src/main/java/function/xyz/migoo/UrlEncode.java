@@ -43,12 +43,12 @@ public class UrlEncode implements Function {
     @Override
     public String execute(Args args) {
         if (args.getString(0).isEmpty()) {
-            throw new RuntimeException("content con not be null");
+            throw new IllegalArgumentException("content con not be null");
         }
         try {
             return URLEncoder.encode(args.getString(0), "utf-8");
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
 }
