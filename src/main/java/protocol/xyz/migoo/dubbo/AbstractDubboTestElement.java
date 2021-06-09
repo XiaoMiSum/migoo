@@ -86,7 +86,6 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
             Object[] parameters = providerInterface.getJSONArray(ARGS_PARAMETERS).toArray();
             Object response = service.$invoke(providerInterface.getString(METHOD), parameterTypes, parameters);
             result.setResponseData(JSONObject.toJSONBytes(response));
-            result.setSuccessful(true);
         } finally {
             result.sampleEnd();
         }

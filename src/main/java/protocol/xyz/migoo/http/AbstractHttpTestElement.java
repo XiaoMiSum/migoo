@@ -91,7 +91,6 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
             result.sampleStart();
             Response response = request.execute();
             result.setResponseData(response);
-            result.setSuccessful(true);
         } finally {
             result.sampleEnd();
         }

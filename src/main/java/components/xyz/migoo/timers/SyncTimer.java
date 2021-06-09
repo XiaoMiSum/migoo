@@ -64,7 +64,6 @@ public class SyncTimer extends AbstractTestElement implements PostProcessor {
                 }
             }
         }
-        result.setSuccessful(true);
         result.setResponseData(String.format("the test wait %s second", timeout));
         return result;
     }
