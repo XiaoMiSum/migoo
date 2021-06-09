@@ -100,7 +100,6 @@ public interface HTTPConstantsInterface {
     String HEADER_LOCATION = "Location";
     String APPLICATION_X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
     String MULTIPART_FORM_DATA = "multipart/form-data";
-    // For handling caching
     String IF_NONE_MATCH = "If-None-Match";
     String IF_MODIFIED_SINCE = "If-Modified-Since";
     String ETAG = "Etag";

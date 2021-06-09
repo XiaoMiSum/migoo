@@ -73,7 +73,7 @@ public class SampleResult implements Serializable {
 
     private boolean success = true;
 
-    public static SampleResult Failed(String title) {
+    public static SampleResult failed(String title) {
         SampleResult result = new SampleResult(title);
         result.sampleStart();
         result.sampleEnd();

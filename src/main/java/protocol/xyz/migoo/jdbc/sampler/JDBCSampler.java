@@ -61,7 +61,7 @@ public class JDBCSampler extends AbstractJDBCTestElement implements Sampler, Tes
     @Override
     public void testStarted() {
         super.convertVariable();
-        MiGooProperty property = getPropertyAsMGooProperty(CONFIG);
+        MiGooProperty property = getPropertyAsMiGooProperty(CONFIG);
         this.setProperties(property);
     }
 

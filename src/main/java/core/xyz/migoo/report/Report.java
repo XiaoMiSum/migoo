@@ -34,5 +34,10 @@ public interface Report {
     String OUTPUT_DIRECTORY_NAME = "outputdirectoryname";
     String ENABLE_OFFLINE_MODE = "enableOfflineMode";
 
+    /**
+     * 通过取样器结果生成测试报告
+     *
+     * @param result 取样器结果
+     */
     void generateReport(SampleResult result);
 }

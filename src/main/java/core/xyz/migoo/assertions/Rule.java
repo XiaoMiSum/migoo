@@ -29,5 +29,12 @@ package core.xyz.migoo.assertions;
 
 public interface Rule {
 
+    /**
+     * 断言规格执行
+     *
+     * @param actual  实际值
+     * @param expected 期望值
+     * @return 对比结果
+     */
     boolean assertThat(Object actual, Object expected);
 }

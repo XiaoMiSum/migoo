@@ -173,7 +173,7 @@ public abstract class AbstractTestElement implements TestElement, VariableStateL
     }
 
     @Override
-    public MiGooProperty getPropertyAsMGooProperty(String key) {
+    public MiGooProperty getPropertyAsMiGooProperty(String key) {
         Object object = get(key);
         if (object instanceof MiGooProperty) {
             return (MiGooProperty) object;

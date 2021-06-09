@@ -33,5 +33,10 @@ public interface Sampler extends Serializable {
 
     String CONFIG = "config";
 
+    /**
+     * 取样器执行，返回执行结果
+     *
+     * @return 执行结果
+     */
     SampleResult sample();
 }

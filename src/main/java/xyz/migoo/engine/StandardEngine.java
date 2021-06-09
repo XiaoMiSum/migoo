@@ -71,7 +71,7 @@ public class StandardEngine extends AbstractTestEngine {
             result = this.sampler();
             this.testEnd(result, subResults);
         } catch (Exception e) {
-            result = result == null ? SampleResult.Failed(plan.getPropertyAsString(TITLE)) : result;
+            result = result == null ? SampleResult.failed(plan.getPropertyAsString(TITLE)) : result;
             result.setThrowable(e);
         } finally {
             super.testEnded();

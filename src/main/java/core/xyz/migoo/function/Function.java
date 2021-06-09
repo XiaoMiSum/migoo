@@ -29,5 +29,11 @@ package core.xyz.migoo.function;
 
 public interface Function {
 
+    /**
+     * 扩展函数执行，返回生成的数据
+     *
+     * @param args 扩展函数参数
+     * @return 生成的数据
+     */
     Object execute(Args args);
 }

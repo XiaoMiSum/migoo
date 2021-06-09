@@ -72,7 +72,7 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
             JSONObject providerInterface = getPropertyAsJSONObject(PROVIDER_INTERFACE);
             GenericService service = reference.get();
             if (providerInterface.getJSONObject(ATTACHMENT_ARGS) != null && !providerInterface.getJSONObject(ATTACHMENT_ARGS).isEmpty()) {
-                Map<String, String> attachments = new HashMap<>();
+                Map<String, String> attachments = new HashMap<>(16);
                 providerInterface.getJSONObject(ATTACHMENT_ARGS).forEach((key, value) -> attachments.put(key, value.toString()));
                 RpcContext.getContext().setAttachments(attachments);
                 getVariables().put("migoo.protocol.dubbo.attachment.args", getPropertyAsJSONObject(PROVIDER_INTERFACE).get(ATTACHMENT_ARGS));
@@ -117,6 +117,9 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
     }
 
     private enum Protocol {
+        /**
+         * Dubbo 注册中心协议
+         */
         ZOOKEEPER("zookeeper://"),
         NACOS("nacos://");
 

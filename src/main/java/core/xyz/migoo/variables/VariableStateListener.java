@@ -29,5 +29,8 @@ package core.xyz.migoo.variables;
 
 public interface VariableStateListener {
 
+    /**
+     * 转换变量
+     */
     void convertVariable();
 }

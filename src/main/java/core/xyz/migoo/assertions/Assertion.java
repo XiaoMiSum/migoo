@@ -31,5 +31,11 @@ import core.xyz.migoo.samplers.SampleResult;
 
 public interface Assertion {
 
+    /**
+     * 验证取样器结果是否符合预期
+     *
+     * @param samplerResult 取样器结果
+     * @return 断言结果
+     */
     AssertionResult getResult(SampleResult samplerResult);
 }

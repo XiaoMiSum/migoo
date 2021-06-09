@@ -31,5 +31,10 @@ import core.xyz.migoo.samplers.SampleResult;
 
 public interface Extractor {
 
+    /**
+     * 提取器执行，从取样器结果中按指定规格提取数据，并保存到变量中
+     *
+     * @param result 取样器结果
+     */
     void process(SampleResult result);
 }
