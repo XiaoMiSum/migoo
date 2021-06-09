@@ -50,7 +50,7 @@ import static core.xyz.migoo.testelement.AbstractTestElement.*;
 
 public class MiGoo {
 
-    private static final Pattern FILE_PATTERN = Pattern.compile("^__file\\((.+)+\\)");
+    private static final Pattern FILE_PATTERN = Pattern.compile("^@F(.+)+");
 
     private final JSONObject testcase;
 
