@@ -142,4 +142,14 @@ public class MiGoo {
 
         }
     }
+
+    public static void main(String[] args) {
+        try {
+            JSONObject yaml =  (JSONObject) ReaderFactory.getReader(args[0]).read();
+            boolean generateReport = args.length < 2 || Boolean.parseBoolean(args[1]);
+            new MiGoo(yaml, generateReport).run();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }
