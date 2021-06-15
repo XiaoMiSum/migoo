@@ -28,16 +28,13 @@
 package core.xyz.migoo.samplers;
 
 import core.xyz.migoo.assertions.AssertionResult;
-import core.xyz.migoo.variables.MiGooVariables;
+import core.xyz.migoo.report.Result;
 
-import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
-public class SampleResult implements Serializable {
+public class SampleResult extends Result {
 
     public static final Charset DEFAULT_HTTP_ENCODING = StandardCharsets.UTF_8;
 
@@ -45,15 +42,9 @@ public class SampleResult implements Serializable {
 
     public static final String TEXT = "text";
 
-    private final String title;
-
-    private final int type;
-
     private String url;
 
     private String testClass;
-
-    private MiGooVariables variables;
 
     private String samplerData = "";
 
@@ -61,33 +52,10 @@ public class SampleResult implements Serializable {
 
     private String responseDataAsString;
 
-    private LocalDateTime startTime;
-
-    private LocalDateTime endTime;
-
     private List<AssertionResult> assertionResults;
 
-    private List<SampleResult> subResults;
-
-    private Throwable throwable;
-
-    private boolean success = true;
-
-    public static SampleResult failed(String title) {
-        SampleResult result = new SampleResult(title);
-        result.sampleStart();
-        result.sampleEnd();
-        return result;
-    }
-
     public SampleResult(String title) {
-        this.title = title;
-        this.type = 0;
-    }
-
-    public SampleResult(String title, int type) {
-        this.title = title;
-        this.type = type;
+        super(title);
     }
 
     public String getUrl() {
@@ -98,29 +66,6 @@ public class SampleResult implements Serializable {
         this.url = url;
     }
 
-    public void setSuccessful(boolean success) {
-        this.success = success;
-    }
-
-    public boolean isSuccessful() {
-        return success;
-    }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
 
     public byte[] getResponseData() {
         return responseData;
@@ -143,17 +88,6 @@ public class SampleResult implements Serializable {
         return responseDataAsString;
     }
 
-    public void sampleStart() {
-        if (startTime == null) {
-            setStartTime(LocalDateTime.now(ZoneId.systemDefault()));
-        }
-    }
-
-    public void sampleEnd() {
-        if (endTime == null) {
-            setEndTime(LocalDateTime.now(ZoneId.systemDefault()));
-        }
-    }
 
     public String getSamplerData() {
         return samplerData;
@@ -171,22 +105,6 @@ public class SampleResult implements Serializable {
         this.assertionResults = assertionResults;
     }
 
-    public List<SampleResult> getSubResults() {
-        return subResults;
-    }
-
-    public void setSubResults(List<SampleResult> subResults) {
-        this.subResults = subResults;
-    }
-
-    public MiGooVariables getVariables() {
-        return variables;
-    }
-
-    public void setVariables(MiGooVariables variables) {
-        this.variables = variables;
-    }
-
     public String getTestClass() {
         return testClass;
     }
@@ -199,24 +117,14 @@ public class SampleResult implements Serializable {
         this.testClass = testClass.getName();
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public boolean isException() {
-        return throwable != null;
-    }
-
-    public Throwable getThrowable() {
-        return throwable;
-    }
-
-    public void setThrowable(Throwable throwable) {
-        this.success = false;
-        this.throwable = throwable;
+    public void setSamplerData(SampleResult result) {
+        this.samplerData = result.getSamplerData();
+        this.responseData = result.getResponseData();
+        this.url = result.getUrl();
+        this.testClass = result.getTestClass();
+        super.setSuccessful(result.isSuccessful());
+        this.setStartTime(result.getStartTime());
+        this.setEndTime(result.getEndTime());
+        this.setThrowable(result.getThrowable());
     }
 }

@@ -38,7 +38,7 @@ public class RedisSampler extends AbstractRedisTestElement implements Sampler {
 
     @Override
     public SampleResult sample() {
-        SampleResult result = new SampleResult(getPropertyAsString(TITLE), 1);
+        SampleResult result = new SampleResult(getPropertyAsString(TITLE));
         String dataSourceName = getPropertyAsString("datasource");
         RedisSourceElement dataSource = (RedisSourceElement) getVariables().get(dataSourceName);
         if (StringUtils.isBlank(dataSourceName) || dataSource == null) {

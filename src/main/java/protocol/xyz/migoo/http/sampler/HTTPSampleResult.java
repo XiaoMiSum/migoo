@@ -58,7 +58,7 @@ public class HTTPSampleResult extends SampleResult {
     private String responseMessage = "";
 
     public HTTPSampleResult(String title) {
-        super(title, 1);
+        super(title);
     }
 
     public String getQueryString() {

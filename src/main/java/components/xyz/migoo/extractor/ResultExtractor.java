@@ -35,7 +35,12 @@ import core.xyz.migoo.testelement.Alias;
 public class ResultExtractor extends AbstractExtractor {
 
     @Override
-    public void process(SampleResult result) {
-        getVariables().put(getPropertyAsString(VARIABLE_NAME), result.getResponseDataAsString());
+    public SampleResult process(SampleResult result) {
+        SampleResult extractorResult = new SampleResult("RegexExtractor");
+        Object value = result.getResponseDataAsString();
+        getVariables().put(getPropertyAsString(VARIABLE_NAME), value);
+        getProperty().put("value", value);
+        extractorResult.setSamplerData(getProperty().toString());
+        return extractorResult;
     }
 }

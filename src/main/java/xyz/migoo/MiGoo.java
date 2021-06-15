@@ -33,7 +33,7 @@ import core.xyz.migoo.engine.TestEngine;
 import core.xyz.migoo.engine.TestPlan;
 import core.xyz.migoo.report.Report;
 import core.xyz.migoo.report.ReportService;
-import core.xyz.migoo.samplers.SampleResult;
+import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.TestElement;
 import xyz.migoo.engine.LoopEngine;
 import xyz.migoo.engine.StandardEngine;
@@ -108,17 +108,17 @@ public class MiGoo {
         return value;
     }
 
-    public SampleResult run() {
+    public Result run() {
         TestPlan plan = new TestPlan(testcase);
         TestEngine engine = plan.level() == 0 ? new LoopEngine(plan) : new StandardEngine(plan);
-        SampleResult result = engine.run();
+        Result result = engine.run();
         if (generateReport) {
             this.generateReport((JSONObject) plan.get(REPORT_ELEMENT, new JSONObject()), result);
         }
         return result;
     }
 
-    private void generateReport(JSONObject config, SampleResult result) {
+    private void generateReport(JSONObject config, Result result) {
         config.put(TITLE, result.getTitle());
         config.putIfAbsent(TEST_CLASS, StandardReport.class.getSimpleName().toLowerCase());
         Report report = ReportService.getService(config.getString(TEST_CLASS));

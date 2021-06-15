@@ -75,7 +75,7 @@ public abstract class AbstractRedisTestElement extends AbstractTestElement {
     private static final String COUNT = "count";
 
     protected SampleResult execute(Jedis conn) throws UnsupportedOperationException {
-        return execute(conn, new SampleResult(getPropertyAsString(TITLE), 1));
+        return execute(conn, new SampleResult(getPropertyAsString(TITLE)));
     }
 
     protected SampleResult execute(Jedis conn, SampleResult sample) throws UnsupportedOperationException {

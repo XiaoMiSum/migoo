@@ -41,7 +41,7 @@ public class JDBCSampler extends AbstractJDBCTestElement implements Sampler, Tes
 
     @Override
     public SampleResult sample() {
-        SampleResult result = new SampleResult(getPropertyAsString(TITLE), 1);
+        SampleResult result = new SampleResult(getPropertyAsString(TITLE));
         String dataSourceName = getPropertyAsString("datasource");
         DataSourceElement dataSource = (DataSourceElement) getVariables().get(dataSourceName);
         if (StringUtils.isBlank(dataSourceName) || dataSource == null) {

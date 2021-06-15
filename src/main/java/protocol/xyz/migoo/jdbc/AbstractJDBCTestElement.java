@@ -44,7 +44,7 @@ public abstract class AbstractJDBCTestElement extends AbstractTestElement {
 
 
     protected SampleResult execute(Connection conn) throws SQLException, UnsupportedOperationException {
-        return execute(conn, new SampleResult(getPropertyAsString(TITLE), 1));
+        return execute(conn, new SampleResult(getPropertyAsString(TITLE)));
     }
 
     protected SampleResult execute(Connection conn, SampleResult result) throws SQLException, UnsupportedOperationException {

@@ -27,8 +27,6 @@
 
 package core.xyz.migoo.report;
 
-import core.xyz.migoo.samplers.SampleResult;
-
 public interface Report {
 
     String OUTPUT_DIRECTORY_NAME = "outputdirectoryname";
@@ -39,5 +37,5 @@ public interface Report {
      *
      * @param result 取样器结果
      */
-    void generateReport(SampleResult result);
+    void generateReport(Result result);
 }

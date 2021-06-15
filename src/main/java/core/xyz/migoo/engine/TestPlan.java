@@ -59,10 +59,8 @@ public class TestPlan extends AbstractTestElement {
                 setProperty(key.toLowerCase(), planJson.get(key));
             } else if (key.equalsIgnoreCase(CHILDS)) {
                 JSONArray testElements = planJson.getJSONArray(key);
-                if (testElements != null && !testElements.isEmpty()) {
-                    for (int i = 0; i < testElements.size(); i++) {
-                        getChildTestElements().add(new TestPlan(testElements.getJSONObject(i)));
-                    }
+                for (int i = 0; i < testElements.size(); i++) {
+                    getChildTestElements().add(new TestPlan(testElements.getJSONObject(i)));
                 }
             } else {
                 Vector<TestElement> node = TEST_ELEMENTS.equalsIgnoreCase(key) ? testElements :

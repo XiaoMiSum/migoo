@@ -40,7 +40,8 @@ import java.util.List;
 public class JSONExtractor extends AbstractExtractor {
 
     @Override
-    public void process(SampleResult result) {
+    public SampleResult process(SampleResult result) {
+        SampleResult extractorResult = new SampleResult("JSONExtractor");
         String jsonStr = result.getResponseDataAsString();
         JSON json = (JSON) JSON.parse(jsonStr);
         if (json instanceof List && get(MATCH_NUM) != null) {
@@ -50,5 +51,8 @@ public class JSONExtractor extends AbstractExtractor {
         String path = getPropertyAsString(FIELD);
         Object value = JSONPath.read(jsonStr, path);
         getVariables().put(getPropertyAsString(VARIABLE_NAME), value == null ? "def_value" : value);
+        getProperty().put("value", value);
+        extractorResult.setSamplerData(getProperty().toString());
+        return extractorResult;
     }
 }

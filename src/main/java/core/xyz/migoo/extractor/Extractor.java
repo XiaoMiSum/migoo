@@ -36,5 +36,5 @@ public interface Extractor {
      *
      * @param result 取样器结果
      */
-    void process(SampleResult result);
+    SampleResult process(SampleResult result);
 }

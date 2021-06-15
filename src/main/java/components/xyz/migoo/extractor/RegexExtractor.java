@@ -38,10 +38,15 @@ import java.util.regex.Pattern;
 public class RegexExtractor extends AbstractExtractor {
 
     @Override
-    public void process(SampleResult result) {
+    public SampleResult process(SampleResult result) {
+        SampleResult extractorResult = new SampleResult("RegexExtractor");
         Pattern pattern = Pattern.compile(getPropertyAsString(FIELD));
         Matcher matcher = pattern.matcher(result.getResponseDataAsString());
         int matchNum = get(MATCH_NUM) == null || getPropertyAsInt(MATCH_NUM) < 1 ? 1 : getPropertyAsInt(MATCH_NUM);
-        getVariables().put(getPropertyAsString(VARIABLE_NAME), matcher.find() ? matcher.group(matchNum) : "def_value");
+        Object value = matcher.find() ? matcher.group(matchNum) : "def_value";
+        getVariables().put(getPropertyAsString(VARIABLE_NAME), value);
+        getProperty().put("value", value);
+        extractorResult.setSamplerData(getProperty().toString());
+        return extractorResult;
     }
 }

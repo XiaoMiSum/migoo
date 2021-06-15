@@ -29,7 +29,7 @@
 package example.xyz.migoo;
 
 import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.samplers.SampleResult;
+import core.xyz.migoo.report.Result;
 import xyz.migoo.MiGoo;
 import xyz.migoo.readers.ReaderException;
 import xyz.migoo.readers.ReaderFactory;
@@ -47,7 +47,7 @@ public class Example {
         // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardpackage.yaml").read();
         // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardtestcase.yaml").read();
         // JSONObject yaml = (JSONObject) ReaderFactory.getReader("./example/standardproject.yaml").read();
-         SampleResult result = new MiGoo(yaml).run();
+         Result result = new MiGoo(yaml).run();
     }
 
 }
