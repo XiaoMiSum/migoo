@@ -38,20 +38,19 @@ public class RedisSampler extends AbstractRedisTestElement implements Sampler {
 
     @Override
     public SampleResult sample() {
-        // 1. 获取当前处理器设置的数据源变量名称
-        SampleResult result = new SampleResult(getPropertyAsString(TITLE), 1);
+        SampleResult result = new SampleResult(getPropertyAsString(TITLE));
         String dataSourceName = getPropertyAsString("datasource");
-        if (StringUtils.isBlank(dataSourceName)) {
-            result.setSuccessful(false);
-            result.setResponseData("DataSource Name must not be null in datasource");
-        }
-        // 2. 从变量中取出保存的连接池
         RedisSourceElement dataSource = (RedisSourceElement) getVariables().get(dataSourceName);
-        result.setUrl(dataSource.getUrl());
-        try (Jedis conn = dataSource.getConnection()) {
-            return execute(conn, result);
-        } catch (Exception e) {
-            result.setThrowable(e);
+        if (StringUtils.isBlank(dataSourceName) || dataSource == null) {
+            result.setSuccessful(false);
+            result.setResponseData("DataSourceName is not specified or DataSource is null");
+        } else {
+            result.setUrl(dataSource.getUrl());
+            try (Jedis conn = dataSource.getConnection()) {
+                return execute(conn, result);
+            } catch (Exception e) {
+                result.setThrowable(e);
+            }
         }
         return result;
     }

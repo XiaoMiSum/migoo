@@ -58,7 +58,7 @@ public class HTTPSampleResult extends SampleResult {
     private String responseMessage = "";
 
     public HTTPSampleResult(String title) {
-        super(title, 1);
+        super(title);
     }
 
     public String getQueryString() {
@@ -123,6 +123,7 @@ public class HTTPSampleResult extends SampleResult {
         }
     }
 
+    @Override
     public String getUrl() {
         if (super.getUrl() != null && !super.getUrl().isEmpty()){
             return super.getUrl() + "" + responseCode + " " + responseMessage;

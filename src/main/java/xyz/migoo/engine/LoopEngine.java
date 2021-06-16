@@ -30,9 +30,8 @@ package xyz.migoo.engine;
 import core.xyz.migoo.engine.AbstractTestEngine;
 import core.xyz.migoo.engine.TestEngine;
 import core.xyz.migoo.engine.TestPlan;
-import core.xyz.migoo.samplers.SampleResult;
+import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.TestElement;
-import core.xyz.migoo.variables.MiGooVariables;
 
 import java.util.ArrayList;
 
@@ -43,34 +42,36 @@ public class LoopEngine extends AbstractTestEngine {
     }
 
     @Override
-    public SampleResult run() {
-        SampleResult result = new SampleResult(plan.getPropertyAsString(TITLE));
-        result.setSubResults(new ArrayList<>());
+    public Result run() {
+        Result result = new Result(plan.getPropertyAsString(TITLE));
         result.sampleStart();
         try {
             super.convertVariable();
-            super.preprocess(result.getSubResults());
+            result.setPreprocessorResults(super.preprocess(new ArrayList<>()));
+            result.setSubResults(new ArrayList<>(getChildTestElements().size()));
             for (TestElement element : getChildTestElements()) {
                 TestPlan testPlan = (TestPlan) element;
-                TestEngine engine = testPlan.level() == 0 ? new LoopEngine(testPlan) : new StandardEngine(testPlan, getVariables());
+                TestEngine engine = testPlan.level() == 0 ? new LoopEngine(testPlan) : new StandardEngine(testPlan);
                 engine.mergeVariable(getVariables());
-                SampleResult subResult = engine.run();
+                Result subResult = engine.run();
                 result.getSubResults().add(subResult);
-                if (!subResult.isSuccessful()) {
-                    result.setSuccessful(false);
-                    if ((engine instanceof StandardEngine)) {
+                result.setSuccessful(!result.isSuccessful() ? result.isSuccessful() : subResult.isSuccessful());
+                if(engine instanceof StandardEngine) {
+                    // 标准引擎 需要将变量传递到子测试元素里面，并且如果测试结果失败的，后续也没必要再执行了
+                    getVariables().mergeVariable(testPlan.getVariables());
+                    if (!result.isSuccessful()) {
                         break;
                     }
                 }
             }
-            super.postprocess(result.getSubResults());
+            result.setPostprocessorResults(super.postprocess(new ArrayList<>()));
         } catch (Exception e) {
             result.setThrowable(e);
         } finally {
+            result.sampleEnd();
             super.testEnded();
             result.setVariables(getVariables());
         }
-        result.sampleEnd();
         return result;
     }
 }

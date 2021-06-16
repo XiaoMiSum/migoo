@@ -40,7 +40,7 @@ import protocol.xyz.migoo.dubbo.util.DubboConstantsInterface;
 public class DubboSampleResult extends SampleResult implements DubboConstantsInterface {
 
     public DubboSampleResult(String title) {
-        super(title, 1);
+        super(title);
     }
 
     public void setRequestData(MiGooProperty property){

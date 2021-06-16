@@ -42,6 +42,7 @@ import core.xyz.migoo.testelement.TestStateListener;
 import core.xyz.migoo.variables.MiGooVariables;
 import core.xyz.migoo.variables.VariableStateListener;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -74,12 +75,12 @@ public abstract class AbstractTestEngine extends AbstractTestElement implements 
         plan.getVariables().mergeVariable(other);
     }
 
-    public void preprocess(List<SampleResult> subResults) {
+    public List<SampleResult> preprocess(List<SampleResult> subResults) {
         plan.getTestElements().addAll(plan.getConfigElements());
         for (TestElement element : plan.getTestElements()) {
             testStarted(element);
         }
-        process(subResults, plan.getPreprocessors());
+        return process(subResults, plan.getPreprocessors());
     }
 
     private void testStarted(TestElement element) {
@@ -88,9 +89,9 @@ public abstract class AbstractTestEngine extends AbstractTestElement implements 
         }
     }
 
-    public void postprocess(List<SampleResult> subResults) {
+    public List<SampleResult> postprocess(List<SampleResult> subResults) {
         // 5. 运行后置处理器
-        process(subResults, plan.getPostprocessors());
+        return process(subResults, plan.getPostprocessors());
     }
 
     protected void testEnded() {
@@ -119,19 +120,21 @@ public abstract class AbstractTestEngine extends AbstractTestElement implements 
         }
     }
 
-    private void process(List<SampleResult> subResults, List<TestElement> elements) {
+    private List<SampleResult> process(List<SampleResult> subResults, List<TestElement> elements) {
         for (TestElement element : elements) {
             ((VariableStateListener) element).convertVariable();
             this.initializeChildTestElements(element, element.getPropertyAsJSONArray(EXTRACTORS));
             testStarted(element);
-            SampleResult postprocessorResult = ((Processor) element).process();
+            SampleResult processorResult = ((Processor) element).process();
+            processorResult.setSubResults(new ArrayList<>(element.getChildTestElements().size()));
             for (TestElement extractor : element.getChildTestElements()) {
                 if (extractor instanceof Extractor) {
-                    ((Extractor) extractor).process(postprocessorResult);
+                    processorResult.getSubResults().add( ((Extractor) extractor).process(processorResult));
                 }
             }
             testEnded(element);
-            subResults.add(postprocessorResult);
+            subResults.add(processorResult);
         }
+        return subResults;
     }
 }

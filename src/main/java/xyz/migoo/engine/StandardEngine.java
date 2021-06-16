@@ -47,15 +47,8 @@ import java.util.List;
  */
 public class StandardEngine extends AbstractTestEngine {
 
-    private MiGooVariables superVariables;
-
     public StandardEngine(TestPlan plan) {
         super(plan);
-    }
-
-    public StandardEngine(TestPlan plan, MiGooVariables variables) {
-        super(plan);
-        this.superVariables = variables;
     }
 
     private TestElement getSampler() {
@@ -64,32 +57,28 @@ public class StandardEngine extends AbstractTestEngine {
 
     @Override
     public SampleResult run() {
-        SampleResult result = null;
-        List<SampleResult> subResults = new ArrayList<>();
+        SampleResult result = new SampleResult(plan.getPropertyAsString(TITLE));
         try {
-            this.testStart(subResults);
-            result = this.sampler();
-            this.testEnd(result, subResults);
+            result.setPreprocessorResults(this.testStart());
+            result.setSamplerData(this.sampler());
+            result.setPostprocessorResults(this.testEnd(result));
         } catch (Exception e) {
-            result = result == null ? SampleResult.Failed(plan.getPropertyAsString(TITLE)) : result;
             result.setThrowable(e);
         } finally {
             super.testEnded();
         }
-        result.setSubResults(subResults);
-        superVariables.mergeVariable(plan.getVariables());
         return result;
     }
 
-    private void testStart(List<SampleResult> subResults){
+    private List<SampleResult> testStart(){
         super.convertVariable();
-        super.preprocess(subResults);
+        return super.preprocess(new ArrayList<>());
     }
 
-    private void testEnd(SampleResult result, List<SampleResult> subResults){
+    private List<SampleResult> testEnd(SampleResult result){
         this.assertResult(result);
         this.extractResult(result);
-        super.postprocess(subResults);
+        return super.postprocess(new ArrayList<>());
     }
 
     private SampleResult sampler() {
@@ -110,10 +99,7 @@ public class StandardEngine extends AbstractTestEngine {
             TestElement element = iterators.next();
             if (element instanceof Assertion) {
                 AssertionResult aResult = ((Assertion) element).getResult(result);
-                // 如果有断言失败，则设置当前取样器的结果为失败
-                if (!aResult.isSuccessful()) {
-                    result.setSuccessful(false);
-                }
+                result.setSuccessful(!result.isSuccessful() ? result.isSuccessful() : aResult.isSuccessful());
                 result.getAssertionResults().add(aResult);
                 iterators.remove();
             }

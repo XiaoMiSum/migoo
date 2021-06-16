@@ -29,7 +29,9 @@
 package xyz.migoo.readers;
 
 public enum FileType {
-
+    /**
+     * 文件类型枚举
+     */
     YML,
     YAML,
     JSON,

@@ -32,5 +32,10 @@ import core.xyz.migoo.testelement.TestStateListener;
 
 public interface Processor extends TestStateListener {
 
+    /**
+     * 前\后置处理器执行
+     *
+     * @return 处理结果
+     */
     SampleResult process();
 }

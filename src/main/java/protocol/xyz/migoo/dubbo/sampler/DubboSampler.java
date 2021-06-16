@@ -42,7 +42,7 @@ public class DubboSampler extends AbstractDubboTestElement implements Sampler, T
 
     @Override
     public void testStarted() {
-        MiGooProperty property = getPropertyAsMGooProperty(CONFIG);
+        MiGooProperty property = getPropertyAsMiGooProperty(CONFIG);
         this.setProperties(property);
         super.testStarted();
     }

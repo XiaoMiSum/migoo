@@ -29,7 +29,12 @@ package core.xyz.migoo.testelement;
 
 public interface TestStateListener {
 
+    /**
+     * 测试开始监听
+     */
     void testStarted();
-
+    /**
+     * 测试结束监听
+     */
     void testEnded();
 }

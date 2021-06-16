@@ -69,7 +69,7 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
     private void setHeader(MiGooProperty other) {
         JSONObject otherHeaders = other.getJSONObject(HEADERS);
         if (otherHeaders != null && otherHeaders.size() > 0) {
-            MiGooProperty thisHeaders = getPropertyAsMGooProperty(HEADERS);
+            MiGooProperty thisHeaders = getPropertyAsMiGooProperty(HEADERS);
             if (thisHeaders == null) {
                 thisHeaders = new MiGooProperty();
                 otherHeaders.forEach(thisHeaders::put);
@@ -91,7 +91,6 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
             result.sampleStart();
             Response response = request.execute();
             result.setResponseData(response);
-            result.setSuccessful(true);
         } finally {
             result.sampleEnd();
         }

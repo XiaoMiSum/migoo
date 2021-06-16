@@ -27,12 +27,22 @@
 
 package core.xyz.migoo.engine;
 
-import core.xyz.migoo.samplers.SampleResult;
+import core.xyz.migoo.report.Result;
 import core.xyz.migoo.variables.MiGooVariables;
 
 public interface TestEngine {
 
-    SampleResult run();
+    /**
+     * 测试引擎执行，返回执行结果
+     *
+     * @return 执行结果
+     */
+    Result run();
 
+    /**
+     * 将传入变量合并到当前引擎保存的变量中
+     *
+     * @param other 其他变量
+     */
     void mergeVariable(MiGooVariables other);
 }

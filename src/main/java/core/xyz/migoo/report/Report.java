@@ -27,12 +27,15 @@
 
 package core.xyz.migoo.report;
 
-import core.xyz.migoo.samplers.SampleResult;
-
 public interface Report {
 
     String OUTPUT_DIRECTORY_NAME = "outputdirectoryname";
     String ENABLE_OFFLINE_MODE = "enableOfflineMode";
 
-    void generateReport(SampleResult result);
+    /**
+     * 通过取样器结果生成测试报告
+     *
+     * @param result 取样器结果
+     */
+    void generateReport(Result result);
 }
