@@ -2,7 +2,7 @@ title: 标准HTTP取样器
 testclass: httpsampler
 variables:
   username: migoo
-testelements:
+configelements:
   - testclass: JDBCDataSource
     variable_name: JDBCDataSource_var
     url: 'jdbc:mysql://127.0.0.1:3306/migoo?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2b8&failOverReadOnly=false'

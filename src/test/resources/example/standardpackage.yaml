@@ -1,5 +1,5 @@
 title: 标准测试用例包
-testelements:
+configelements:
   - testclass: JDBCDataSource
     variable_name: JDBCDataSource_var
     url: 'jdbc:mysql://127.0.0.1:3306/migoo?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2b8&failOverReadOnly=false'
@@ -7,7 +7,6 @@ testelements:
     password: '123456qq'
     max_active: '10'
     max_wait: '60000'
-configelements:
   - testclass: HttpDefaults
     method: post
     protocol: http

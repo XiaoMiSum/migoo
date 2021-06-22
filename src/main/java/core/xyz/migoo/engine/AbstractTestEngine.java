@@ -76,8 +76,7 @@ public abstract class AbstractTestEngine extends AbstractTestElement implements 
     }
 
     public List<SampleResult> preprocess(List<SampleResult> subResults) {
-        plan.getTestElements().addAll(plan.getConfigElements());
-        for (TestElement element : plan.getTestElements()) {
+        for (TestElement element : plan.getConfigElements()) {
             testStarted(element);
         }
         return process(subResults, plan.getPreprocessors());
@@ -95,7 +94,7 @@ public abstract class AbstractTestEngine extends AbstractTestElement implements 
     }
 
     protected void testEnded() {
-        for (TestElement element : plan.getTestElements()) {
+        for (TestElement element : plan.getConfigElements()) {
             testEnded(element);
         }
     }

@@ -27,6 +27,7 @@
 
 package core.xyz.migoo.function;
 
+import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.variables.MiGooVariables;
 
 import java.util.HashMap;
@@ -39,6 +40,12 @@ public class FunctionService {
 
     static {
         for (Function service : ServiceLoader.load(Function.class)) {
+            Alias alias = service.getClass().getAnnotation(Alias.class);
+            if (alias != null) {
+                for (String key : alias.aliasList()) {
+                    SERVICES.put(key.toLowerCase(), service);
+                }
+            }
             SERVICES.put(service.getClass().getSimpleName().toLowerCase(), service);
         }
     }
