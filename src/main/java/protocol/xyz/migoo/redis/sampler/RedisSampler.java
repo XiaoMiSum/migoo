@@ -29,12 +29,14 @@ package protocol.xyz.migoo.redis.sampler;
 
 import core.xyz.migoo.samplers.SampleResult;
 import core.xyz.migoo.samplers.Sampler;
+import core.xyz.migoo.testelement.MiGooProperty;
+import core.xyz.migoo.testelement.TestStateListener;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.redis.AbstractRedisTestElement;
 import protocol.xyz.migoo.redis.config.RedisSourceElement;
 import redis.clients.jedis.Jedis;
 
-public class RedisSampler extends AbstractRedisTestElement implements Sampler {
+public class RedisSampler extends AbstractRedisTestElement implements Sampler, TestStateListener {
 
     @Override
     public SampleResult sample() {
@@ -53,5 +55,17 @@ public class RedisSampler extends AbstractRedisTestElement implements Sampler {
             }
         }
         return result;
+    }
+
+    @Override
+    public void testStarted() {
+        super.convertVariable();
+        MiGooProperty property = getPropertyAsMiGooProperty(CONFIG);
+        this.setProperties(property);
+    }
+
+    @Override
+    public void testEnded() {
+
     }
 }
