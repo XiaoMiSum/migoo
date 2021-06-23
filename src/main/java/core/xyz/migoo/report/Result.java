@@ -122,10 +122,12 @@ public class Result implements Serializable {
     }
 
     public void setThrowable(Throwable throwable) {
+        this.sampleStart();
         if (throwable != null) {
             this.success = false;
             this.throwable = throwable;
         }
+        this.sampleEnd();
     }
 
     public List<SampleResult> getPreprocessorResults() {

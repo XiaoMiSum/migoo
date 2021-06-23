@@ -41,9 +41,9 @@ import xyz.migoo.readers.ReaderFactory;
 public class Example {
 
     public static void main(String[] args) throws ReaderException {
-        // JSONObject yaml =  (JSONObject) ReaderFactory.getReader("./doc/supply_decision_service.yaml").read();
-         JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath://example/standardsampler_dubbo.yaml").read();
+        // JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath://example/standardsampler_dubbo.yaml").read();
         // JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath://example/standardsampler_http.yaml").read();
+         JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath://example/standardsampler_jdbc.yaml").read();
         // JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath://example/standardpackage.yaml").read();
         // JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath://example/standardtestcase.yaml").read();
         // JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath://example/standardproject.yaml").read();

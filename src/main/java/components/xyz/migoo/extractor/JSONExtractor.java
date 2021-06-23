@@ -45,8 +45,8 @@ public class JSONExtractor extends AbstractExtractor {
         String jsonStr = result.getResponseDataAsString();
         JSON json = (JSON) JSON.parse(jsonStr);
         if (json instanceof List && get(MATCH_NUM) != null) {
-            int matchNum = getPropertyAsInt(MATCH_NUM) < 1 ? 1 : getPropertyAsInt(MATCH_NUM);
-            jsonStr = ((JSONArray) json).get(matchNum - 1).toString();
+            int matchNum = getPropertyAsInt(MATCH_NUM) < 0 ? 0 : getPropertyAsInt(MATCH_NUM);
+            jsonStr = ((JSONArray) json).get(matchNum).toString();
         }
         String path = getPropertyAsString(FIELD);
         Object value = JSONPath.read(jsonStr, path);

@@ -39,6 +39,8 @@ public abstract class AbstractJDBCTestElement extends AbstractTestElement {
 
     static final String SELECT = "select";
     static final String UPDATE = "update";
+    static final String DELETE = "delete";
+    static final String INSERT = "insert";
     static final String STATEMENT = "statement";
     static final String QUERY_TYPE = "query_type";
 
@@ -64,7 +66,7 @@ public abstract class AbstractJDBCTestElement extends AbstractTestElement {
                 result.setResponseData(results);
                 return result;
             }
-        } else if (sqlQuery.startsWith(UPDATE) || UPDATE.equalsIgnoreCase(queryType)) {
+        } else if (isUpdate(sqlQuery, queryType)) {
             sqlQuery = sqlQuery.trim();
             try (Statement stmt = conn.createStatement()) {
                 stmt.executeUpdate(sqlQuery);
@@ -77,6 +79,10 @@ public abstract class AbstractJDBCTestElement extends AbstractTestElement {
         } else { // User provided incorrect query type
             throw new UnsupportedOperationException("Unexpected query type or Incorrect SQL statement");
         }
+    }
+
+    private boolean isUpdate(String sqlQuery, String queryType){
+        return sqlQuery.startsWith(UPDATE) || sqlQuery.startsWith(DELETE) || sqlQuery.startsWith(INSERT) || UPDATE.equalsIgnoreCase(queryType);
     }
 
     protected String rsToJSONString(ResultSet rs) throws SQLException {
