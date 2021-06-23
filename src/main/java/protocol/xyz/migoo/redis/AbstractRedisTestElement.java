@@ -47,18 +47,18 @@ public abstract class AbstractRedisTestElement extends AbstractTestElement {
 
     protected SampleResult execute(Jedis conn, SampleResult sample) throws UnsupportedOperationException {
         sample.setTestClass(this.getClass());
-        Object result = null;
         try {
             sample.sampleStart();
             String command = getPropertyAsString(COMMAND);
             if (StringUtils.isBlank(command)) {
                 throw new UnsupportedOperationException("Unexpected command: " + command);
             }
-            result = conn.sendCommand(Protocol.Command.valueOf(command.toUpperCase(Locale.ROOT)), getPropertyAsString(SEND).split(","));
+            Object result = conn.sendCommand(Protocol.Command.valueOf(command.toUpperCase(Locale.ROOT)), getPropertyAsString(SEND).split(","));
+            sample.setSamplerData("{\"command\": \"" + command + "\", \"send\": \"" + getPropertyAsString(SEND) + "\"}");
+            sample.setResponseData(result == null ? "" : result instanceof Collection ? listToString((Collection) result) : result.toString());
         } finally {
             sample.sampleEnd();
-            sample.setResponseData(result == null ? "" : result instanceof Collection ? listToString((Collection) result) : result.toString());
-        }
+       }
         return sample;
     }
 
