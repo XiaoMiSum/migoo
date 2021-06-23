@@ -27,7 +27,6 @@
 
 package protocol.xyz.migoo.redis;
 
-import com.alibaba.fastjson.JSONArray;
 import core.xyz.migoo.samplers.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
