@@ -27,6 +27,7 @@
 
 package protocol.xyz.migoo.redis;
 
+import com.alibaba.fastjson.JSONArray;
 import core.xyz.migoo.samplers.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
@@ -68,9 +69,7 @@ public abstract class AbstractRedisTestElement extends AbstractTestElement {
             if (sb.length() > 1) {
                 sb.append(",");
             }
-            if (item != null) {
-                sb.append("\"").append(item).append("\"");
-            }
+            sb.append(item instanceof String ? "\"" + item + "\"" : item);
         });
         return sb.append("]").toString();
     }
