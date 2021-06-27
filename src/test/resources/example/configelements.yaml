@@ -1,0 +1,31 @@
+- testclass: JDBCDataSource
+  variable_name: JDBCDataSource_var
+  url: 'jdbc:mysql://127.0.0.1:3306/waaagh?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2b8&failOverReadOnly=false'
+  username: 'root'
+  password: '123456qq'
+  max_active: '10'
+  max_wait: '60000'
+- testclass: HttpDefaults
+  method: post
+  protocol: http
+  host: migoo.xyz
+#- testclass: RedisDataSource
+#  variable_name: RedisDataSource_var
+#  host: 127.0.0.1
+#  port: 6379
+#- testclass: Dubbodefaults
+#  config_center: {}
+#  registry_center:
+#    protocol: zookeeper
+#    address: localhost:2181
+#    app_name: demo-service
+    #group: dubbo
+#    username:
+#    passoword:
+#  consumer_provider:
+    #group: dubbo
+    #version: 1.0.0
+#    retries: 1
+#    timeout: 5000
+#    async: false
+#    load_balance: random

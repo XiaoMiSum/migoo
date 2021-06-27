@@ -37,7 +37,7 @@ migoo 是一个Java语言开发的测试框架，适用于HTTP(S)、Dubbo、JDBC
 # 使用
 [(Back to top)](#目录)
 
-本项目已发布在Maven中央仓库，请在pom.xml中引用
+1. 本项目已发布在Maven中央仓库，请在pom.xml中引用
 
 ``` xml
 <!-- https://mvnrepository.com/artifact/xyz.migoo/migoo -->
@@ -47,6 +47,19 @@ migoo 是一个Java语言开发的测试框架，适用于HTTP(S)、Dubbo、JDBC
     <version>${version}</version>
 </dependency>
 ```
+
+2. 下载打包好的文件，命令行执行
+
+``` shell
+options:
+        -f: 测试用例文件路径，如：/user/migoo/testcase.yaml
+        -r: 测试报告保存路径，如：/user/migoo/report
+        -h2m: har文件路径，将指定的har文件转换为标准Http取样器文件
+        -p2m: postman文件路径，将指定的postman文件(v2.1)转换为标准Http取样器文件
+        -h: 帮助信息
+        
+        example: ./migoo.sh -f ./example/example_project.yaml -r ./report
+``` 
 
 # 示例
 [(Back to top)](#目录)

@@ -75,6 +75,6 @@ public class MiGooProperty extends JSONObject {
 
     private Object convertObject(Object obj){
         return obj instanceof String || obj instanceof Number || obj instanceof Boolean
-                || obj instanceof Map || obj instanceof List ? obj : obj.toString();
+                || obj instanceof Map || obj instanceof List || obj == null ? obj : obj.toString();
     }
 }

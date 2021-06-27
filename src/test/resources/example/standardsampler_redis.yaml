@@ -1,17 +1,5 @@
 title: 标准redis取样器
 testclass: redissampler
-reportelement:
-  enableOfflineMode: true
-configelements:
-  - testclass: RedisDataSource
-    variable_name: RedisDataSource_var
-    host: 127.0.0.1
-    port: 6379
-  - testclass: JDBCDataSource
-    variable_name: JDBCDataSource_var
-    url: 'jdbc:mysql://127.0.0.1:3306/waaagh?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2b8&failOverReadOnly=false'
-    username: 'root'
-    password: '123456qq'
 config:
   datasource: RedisDataSource_var
   command: hset

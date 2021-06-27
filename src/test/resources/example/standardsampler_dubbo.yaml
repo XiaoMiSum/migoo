@@ -3,23 +3,6 @@ testclass: DubboSampler
 variables:
   parameter_types:
     - java.lang.String
-configelements:
-  - testclass: dubbodefaults
-    config_center: {}
-    registry_center:
-      protocol: zookeeper
-      address: localhost:2181
-      app_name: demo-service
-      #group: dubbo
-      username:
-      passoword:
-    consumer_provider:
-      #group: dubbo
-      #version: 1.0.0
-      retries: 1
-      timeout: 5000
-      async: false
-      load_balance: random
 config:
   provider_interface:
     interface: com.test.service.DemoService

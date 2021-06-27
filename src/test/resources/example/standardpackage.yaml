@@ -1,16 +1,5 @@
 title: 标准测试用例包
-configelements:
-  - testclass: JDBCDataSource
-    variable_name: JDBCDataSource_var
-    url: 'jdbc:mysql://127.0.0.1:3306/migoo?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2b8&failOverReadOnly=false'
-    username: 'migoo'
-    password: '123456qq'
-    max_active: '10'
-    max_wait: '60000'
-  - testclass: HttpDefaults
-    method: post
-    protocol: http
-    host: migoo.xyz
+configelements: '@F()'
 PreProcessors:
   - testclass: jdbcpreprocessor
     datasource: JDBCDataSource_var
@@ -26,18 +15,5 @@ PostProcessors:
     query_type: select
     statement: 'select * from users;'
 childs:
-  - title: 标准测试用例
-    childs:
-      - title: 标准HTTP取样器
-        testclass: httpsampler
-        variables:
-          username: migoo
-        config:
-          api: /api/login
-          body: { userName: 'migoo', password: '123456qq', sign: '__digest(${username}123456qq)' }
-        extractors:
-          - { testclass: jsonextractor, field: '$.status', variable_name: status, match_num: 0 }
-          - { testclass: jsonextractor, field: '$.data', variable_name: message, match_num: 0 }
-        validators:
-          - { testclass: httpassertion, field: status, expected: 200, rule: == }
-          - { testclass: jsonassertion, field: '$.status', expected: 200, rule: '==' }
+  - '@F(classpath://example/standardtestcase.yaml)'
+  - '@F(classpath://example/standardtestcase.yaml)'

@@ -126,7 +126,7 @@ public class HTTPSampleResult extends SampleResult {
     @Override
     public String getUrl() {
         if (super.getUrl() != null && !super.getUrl().isEmpty()){
-            return super.getUrl() + "" + responseCode + " " + responseMessage;
+            return super.getUrl() + " " + responseCode + " " + responseMessage;
         }
         return super.getUrl();
     }

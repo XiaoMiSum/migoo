@@ -1,16 +1,4 @@
 title: 标准测试用例
-configelements:
-  - testclass: JDBCDataSource
-    variable_name: JDBCDataSource_var
-    url: 'jdbc:mysql://127.0.0.1:3306/migoo?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2b8&failOverReadOnly=false'
-    username: 'migoo'
-    password: '123456qq'
-    max_active: '10'
-    max_wait: '60000'
-  - testclass: HttpDefaults
-    method: post
-    protocol: http
-    host: migoo.xyz
 PreProcessors:
   - testclass: jdbcpreprocessor
     datasource: JDBCDataSource_var
@@ -26,29 +14,7 @@ PostProcessors:
     query_type: select
     statement: 'select * from users;'
 childs:
-  - title: 标准HTTP取样器1
-    testclass: httpsampler
-    variables:
-      username: migoo
-    config:
-      api: /api/login
-      body: { userName: 'migoo', password: '123456qq', sign: '__digest(${username}123456qq)' }
-    extractors:
-      - { testclass: jsonextractor, field: '$.status', variable_name: status, match_num: 0 }
-      - { testclass: jsonextractor, field: '$.data', variable_name: message, match_num: 0 }
-    validators:
-      - { testclass: httpresponseassertion, field: status, expected: 200, rule: == }
-      - { testclass: jsonassertion, field: '$.status', expected: 200, rule: '==' }
-  - title: 标准HTTP取样器2
-    testclass: httpsampler
-    variables:
-      username: migoo
-    config:
-      api: /api/login
-      body: { userName: 'migoo', password: '123456qq', sign: '__digest(${username}123456qq)' }
-    extractors:
-      - { testclass: jsonextractor, field: '$.status', variable_name: status, match_num: 0 }
-      - { testclass: jsonextractor, field: '$.data', variable_name: message, match_num: 0 }
-    validators:
-      - { testclass: httpassertion, field: status, expected: 200, rule: == }
-      - { testclass: jsonassertion, field: '$.status', expected: 200, rule: '==' }
+  - '@F(classpath://example/standardsampler_http.yaml)'
+#  - '@F(classpath://example/standardsampler_jdbc.yaml)'
+#  - '@F(classpath://example/standardsampler_dubbo.yaml)'
+#  - '@F(classpath://example/standardsampler_redis.yaml)'

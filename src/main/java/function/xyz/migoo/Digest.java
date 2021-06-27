@@ -50,6 +50,9 @@ public class Digest implements Function {
         if (args.isEmpty()) {
             throw new IllegalArgumentException("parameters con not be null");
         }
+        if (args.size() == 1) {
+            args.add(0, "md5");
+        }
         String algorithm = args.getString(0).isEmpty() ? "md5" : args.getString(0).trim();
         if (args.getString(1).isEmpty()) {
             throw new IllegalArgumentException("content is null or empty");

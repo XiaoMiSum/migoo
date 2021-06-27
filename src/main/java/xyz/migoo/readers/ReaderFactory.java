@@ -39,6 +39,7 @@ public class ReaderFactory {
     public static Reader getReader(File file) throws ReaderException {
         FileType type = suffix(file.getName());
         switch (type) {
+            case HAR:
             case JSON:
                 return new JSONReader(file);
             case YML:
@@ -54,6 +55,7 @@ public class ReaderFactory {
     public static Reader getReader(String file) throws ReaderException {
         FileType type = suffix(file);
         switch (type) {
+            case HAR:
             case JSON:
                 return new JSONReader(file);
             case YML:
@@ -71,7 +73,7 @@ public class ReaderFactory {
         try {
             return FileType.valueOf(suffix.toUpperCase());
         } catch (Exception e) {
-            throw new ReaderException("unsupported file types: " + file);
+            throw new ReaderException("unsupported file type: " + file);
         }
     }
 }

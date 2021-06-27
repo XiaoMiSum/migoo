@@ -26,38 +26,38 @@
  *
  */
 
-package example.xyz.migoo;
+package xyz.migoo.convert;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.report.Result;
-import xyz.migoo.MiGoo;
-import xyz.migoo.readers.ReaderException;
-import xyz.migoo.readers.ReaderFactory;
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * @author mi.xiao
- * @date 2021/2/28 13:37
+ * @date 2021/6/24 23:34
  */
-public class Example {
+public interface Convert2Sampler {
 
-    public static void main(String[] args) throws ReaderException {
-        // 执行前，请先开启redis、mysql、dubbo（官方示例）
-        /* 创建表
-            DROP TABLE IF EXISTS `users`;
-            CREATE TABLE `users` (
-                `id` int(11) NOT NULL AUTO_INCREMENT,
-                `status` tinyint(1) DEFAULT '1' COMMENT '1：启用，0：禁用',
-                `user_name` varchar(50) NOT NULL COMMENT '登录名',
-                `real_name` varchar(10) NOT NULL COMMENT '姓名',
-                `password` varchar(50) NOT NULL,
-                `salt` varchar(50) NOT NULL,
-                `create_time` datetime DEFAULT NULL,
-                `update_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-                PRIMARY KEY (`id`)
-            ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='用户信息表';
-        */
-        JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath://example/standardproject.yaml").read();
-        Result result = new MiGoo(yaml).run();
+    default void writer(JSONObject sampler, String path) throws IOException {
+        if (this instanceof Har2Sampler || this instanceof  Postman2Sampler) {
+            sampler.put("validators", new JSONArray());
+            JSONObject validator = new JSONObject();
+            validator.put("testclass", "httpassertion");
+            validator.put("field", "status");
+            validator.put("expected", 200);
+            validator.put("rule", "==");
+            sampler.getJSONArray("validators").add(validator);
+        }
+        File file = new File(path + "/" + this.getClass().getSimpleName() + "_"+ System.currentTimeMillis() + ".yaml");
+        try (FileWriter writer = new FileWriter(file)) {
+            new Yaml().dump(sampler, writer);
+        }
+        System.out.println("转换完成: " + file.getPath());
     }
 
+    void convert(JSONObject content, String path);
 }
