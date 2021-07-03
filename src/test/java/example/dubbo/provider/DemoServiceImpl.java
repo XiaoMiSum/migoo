@@ -26,29 +26,27 @@
  *
  */
 
-package protocol.xyz.migoo.dubbo.sampler;
+package example.dubbo.provider;
 
-import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.samplers.SampleResult;
-import core.xyz.migoo.testelement.MiGooProperty;
-import protocol.xyz.migoo.dubbo.util.DubboConstantsInterface;
+import example.dubbo.service.DemoService;
+import org.apache.dubbo.rpc.RpcContext;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author mi.xiao
- * @date 2021/4/13 14:44
+ * @date 2021/7/3 17:51
  */
-public class DubboSampleResult extends SampleResult implements DubboConstantsInterface {
+public class DemoServiceImpl implements DemoService {
 
-    public DubboSampleResult(String title) {
-        super(title);
+    @Override
+    public String sayHello(String name) {
+        return "Hello " + name + ", response from provider: " + RpcContext.getContext().getLocalAddress();
     }
 
-    public void setRequestData(MiGooProperty property){
-        JSONObject data = new JSONObject();
-        data.put(REGISTRY_CENTER, property.getJSONObject(REGISTRY_CENTER));
-        data.put(REFERENCE_CONFIG, property.getJSONObject(REFERENCE_CONFIG));
-        data.put("config", property.getJSONObject("config"));
-        super.setSamplerData(data.toString());
+    @Override
+    public CompletableFuture<String> sayHelloAsync(String name) {
+        return null;
     }
 
 }

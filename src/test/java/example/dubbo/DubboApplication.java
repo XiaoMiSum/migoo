@@ -26,29 +26,39 @@
  *
  */
 
-package protocol.xyz.migoo.dubbo.sampler;
+package example.dubbo;
 
-import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.samplers.SampleResult;
-import core.xyz.migoo.testelement.MiGooProperty;
-import protocol.xyz.migoo.dubbo.util.DubboConstantsInterface;
+import example.dubbo.provider.DemoServiceImpl;
+import example.dubbo.service.DemoService;
+import org.apache.dubbo.config.ApplicationConfig;
+import org.apache.dubbo.config.RegistryConfig;
+import org.apache.dubbo.config.ServiceConfig;
+import org.apache.dubbo.config.bootstrap.DubboBootstrap;
 
 /**
  * @author mi.xiao
- * @date 2021/4/13 14:44
+ * @date 2021/7/3 19:49
  */
-public class DubboSampleResult extends SampleResult implements DubboConstantsInterface {
+public class DubboApplication {
 
-    public DubboSampleResult(String title) {
-        super(title);
+    public static void main(String[] args) throws Exception {
+        startWithBootstrap();
     }
 
-    public void setRequestData(MiGooProperty property){
-        JSONObject data = new JSONObject();
-        data.put(REGISTRY_CENTER, property.getJSONObject(REGISTRY_CENTER));
-        data.put(REFERENCE_CONFIG, property.getJSONObject(REFERENCE_CONFIG));
-        data.put("config", property.getJSONObject("config"));
-        super.setSamplerData(data.toString());
+    private static boolean isClassic(String[] args) {
+        return args.length > 0 && "classic".equalsIgnoreCase(args[0]);
     }
 
+    private static void startWithBootstrap() {
+        ServiceConfig<DemoServiceImpl> service = new ServiceConfig<>();
+        service.setInterface(DemoService.class);
+        service.setRef(new DemoServiceImpl());
+
+        DubboBootstrap bootstrap = DubboBootstrap.getInstance();
+        bootstrap.application(new ApplicationConfig("demo-service"))
+                .registry(new RegistryConfig("zookeeper://127.0.0.1:2181"))
+                .service(service)
+                .start()
+                .await();
+    }
 }

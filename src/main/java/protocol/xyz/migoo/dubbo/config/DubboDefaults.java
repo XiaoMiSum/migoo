@@ -29,8 +29,6 @@
 package protocol.xyz.migoo.dubbo.config;
 
 import core.xyz.migoo.testelement.TestStateListener;
-import org.apache.dubbo.config.ReferenceConfig;
-import org.apache.dubbo.rpc.service.GenericService;
 import protocol.xyz.migoo.dubbo.AbstractDubboTestElement;
 import protocol.xyz.migoo.dubbo.util.DubboConstantsInterface;
 

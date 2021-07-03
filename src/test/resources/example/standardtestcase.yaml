@@ -15,6 +15,6 @@ PostProcessors:
     statement: 'select * from users;'
 childs:
   - '@F(classpath://example/standardsampler_http.yaml)'
-#  - '@F(classpath://example/standardsampler_jdbc.yaml)'
+  - '@F(classpath://example/standardsampler_jdbc.yaml)'
 #  - '@F(classpath://example/standardsampler_dubbo.yaml)'
 #  - '@F(classpath://example/standardsampler_redis.yaml)'

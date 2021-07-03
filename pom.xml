@@ -45,7 +45,7 @@
         <druid.version>1.2.4</druid.version>
         <redis.version>3.4.1</redis.version>
         <mysql.version>8.0.16</mysql.version>
-        <dubbo.version>2.7.8</dubbo.version>
+        <dubbo.version>2.7.10</dubbo.version>
         <reports.version>5.0.6</reports.version>
         <compile.version>3.8.1</compile.version>
         <fastjson.version>1.2.75</fastjson.version>

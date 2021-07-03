@@ -14,7 +14,6 @@
 #  host: 127.0.0.1
 #  port: 6379
 #- testclass: Dubbodefaults
-#  config_center: {}
 #  registry_center:
 #    protocol: zookeeper
 #    address: localhost:2181
@@ -22,7 +21,7 @@
     #group: dubbo
 #    username:
 #    passoword:
-#  consumer_provider:
+#  reference_config:
     #group: dubbo
     #version: 1.0.0
 #    retries: 1
