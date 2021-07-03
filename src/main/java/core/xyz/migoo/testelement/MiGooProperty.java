@@ -53,10 +53,12 @@ public class MiGooProperty extends JSONObject {
         super.put(key, value);
     }
 
-    public void putAndIgnoreExist(String name, Object value) {
+    @Override
+    public Object putIfAbsent(String name, Object value) {
         if (this.get(name) == null && value != null) {
-            super.put(name, value);
+            return super.put(name, value);
         }
+        return null;
     }
 
     @Override
@@ -73,6 +75,6 @@ public class MiGooProperty extends JSONObject {
 
     private Object convertObject(Object obj){
         return obj instanceof String || obj instanceof Number || obj instanceof Boolean
-                || obj instanceof Map || obj instanceof List ? obj : obj.toString();
+                || obj instanceof Map || obj instanceof List || obj == null ? obj : obj.toString();
     }
 }

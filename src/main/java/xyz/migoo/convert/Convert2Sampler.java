@@ -26,29 +26,40 @@
  *
  */
 
-package protocol.xyz.migoo.dubbo.sampler;
+package xyz.migoo.convert;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.samplers.SampleResult;
-import core.xyz.migoo.testelement.MiGooProperty;
-import protocol.xyz.migoo.dubbo.util.DubboConstantsInterface;
+import org.apache.commons.lang3.StringUtils;
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * @author mi.xiao
- * @date 2021/4/13 14:44
+ * @date 2021/6/24 23:34
  */
-public class DubboSampleResult extends SampleResult implements DubboConstantsInterface {
+public interface Convert2Sampler {
 
-    public DubboSampleResult(String title) {
-        super(title);
+    default void writer(JSONObject sampler, String path) throws IOException {
+        if (this instanceof Har2Sampler || this instanceof  Postman2Sampler) {
+            sampler.put("validators", new JSONArray());
+            JSONObject validator = new JSONObject();
+            validator.put("testclass", "httpassertion");
+            validator.put("field", "status");
+            validator.put("expected", 200);
+            validator.put("rule", "==");
+            sampler.getJSONArray("validators").add(validator);
+        }
+        path = StringUtils.isBlank(path) ? System.getProperty("user.dir") : path;
+        File file = new File(path + "/" + this.getClass().getSimpleName() + "_"+ System.currentTimeMillis() + ".yaml");
+        try (FileWriter writer = new FileWriter(file)) {
+            new Yaml().dump(sampler, writer);
+        }
+        System.out.println("转换完成: " + file.getPath());
     }
 
-    public void setRequestData(MiGooProperty property){
-        JSONObject data = new JSONObject();
-        data.put(REGISTRY_CENTER, property.getJSONObject(REGISTRY_CENTER));
-        data.put(REFERENCE_CONFIG, property.getJSONObject(REFERENCE_CONFIG));
-        data.put("config", property.getJSONObject("config"));
-        super.setSamplerData(data.toString());
-    }
-
+    void convert(JSONObject content, String path);
 }

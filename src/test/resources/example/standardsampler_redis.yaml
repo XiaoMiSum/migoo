@@ -2,29 +2,13 @@ title: 标准redis取样器
 testclass: redissampler
 config:
   datasource: RedisDataSource_var
-  query_type: hget
-  key: syshash
-extractors:
-  - { testclass: jsonextractor, field: '$.result.total', variable_name: total, match_num: 0 }
-  - { testclass: jsonextractor, field: '$.code', variable_name: code, match_num: 0 }
+  command: hset
+  send: syshash,key2,value2
 validators:
-  - { testclass: httpassertion, field: status, excepted: 200, rule: ==}
-  - { testclass: httpassertion, field: header, attribute: token, excepted: '(\w+)(.(\w+)+)', rule: regex}
-  - { testclass: jsonassertion, field: '$.code', excepted: 200, rule: '>'}
+  - { testclass: resultassertion, expected: 1, rule: '=='}
 PreProcessors:
   - testclass: jdbcpreprocessor
     datasource: JDBCDataSource_var
-    query_type: select
-    statement: 'select * from t_sys;'
+    statement: 'select * from users;'
     extractors:
-      - { testclass: jsonextractor, field: '$.result.total', variable_name: total }
-      - { testclass: jsonextractor, field: '$.code', variable_name: code }
-      - { testclass: regexextractor, field: '"total": [0-9]+', variable_name: r_total, match_num: 0 }
-PostProcessors:
-  - testclass: redispostprocessor
-    datasource: RedisDataSource_var
-    query_type: hget
-    key: syshash
-    field: app_name
-    extractors:
-      - { testclass: resultextractor, variable_name: app_name }
+      - { testclass: jsonextractor, field: '$.user_name', variable_name: users }

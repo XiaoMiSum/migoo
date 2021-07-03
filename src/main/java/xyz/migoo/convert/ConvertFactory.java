@@ -2,7 +2,7 @@
  *
  *  * The MIT License (MIT)
  *  *
- *  * Copyright (c) 2018. Lorem XiaoMiSum (mi_xiao@qq.com)
+ *  * Copyright (c) 2018 XiaoMiSum (mi_xiao@qq.com)
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining
  *  * a copy of this software and associated documentation files (the
@@ -23,24 +23,33 @@
  *  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  *  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
+ *
  */
 
-package components.xyz.migoo.extractor;
+package xyz.migoo.convert;
 
-import core.xyz.migoo.extractor.AbstractExtractor;
-import core.xyz.migoo.samplers.SampleResult;
-import core.xyz.migoo.testelement.Alias;
+import com.alibaba.fastjson.JSONObject;
+import xyz.migoo.readers.ReaderException;
+import xyz.migoo.readers.ReaderFactory;
 
-@Alias(aliasList = {"ResultExtractor", "result_extractor"})
-public class ResultExtractor extends AbstractExtractor {
+import java.io.File;
 
-    @Override
-    public SampleResult process(SampleResult result) {
-        SampleResult extractorResult = new SampleResult("ResultExtractor");
-        Object value = result.getResponseDataAsString();
-        getVariables().put(getPropertyAsString(VARIABLE_NAME), value);
-        getProperty().put("value", value);
-        extractorResult.setSamplerData(getProperty().toString());
-        return extractorResult;
+/**
+ * @author mi.xiao
+ * @date 2021/6/24 15:44
+ */
+public class ConvertFactory {
+
+    public static void convert(String command, File file){
+        try {
+            JSONObject object = (JSONObject) ReaderFactory.getReader(file).read();
+            if ("-h2m".equals(command)) {
+                new Har2Sampler().convert(object, file.getParent());
+            } else if ("-p2m".equals(command)) {
+                new Postman2Sampler().convert(object, file.getParent());
+            }
+        } catch (ReaderException e) {
+            e.printStackTrace();
+        }
     }
 }

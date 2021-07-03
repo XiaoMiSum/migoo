@@ -38,8 +38,6 @@ import java.util.Vector;
 
 public class TestPlan extends AbstractTestElement {
 
-    private final Vector<TestElement> testElements = new Vector<>(10);
-
     private final Vector<TestElement> configElements = new Vector<>(10);
 
     private final Vector<TestElement> preprocessors = new Vector<>(10);
@@ -63,10 +61,9 @@ public class TestPlan extends AbstractTestElement {
                     getChildTestElements().add(new TestPlan(testElements.getJSONObject(i)));
                 }
             } else {
-                Vector<TestElement> node = TEST_ELEMENTS.equalsIgnoreCase(key) ? testElements :
-                        CONFIG_ELEMENTS.equalsIgnoreCase(key) ? configElements :
-                                PREPROCESSORS.equalsIgnoreCase(key) ? preprocessors :
-                                        POSTPROCESSORS.equalsIgnoreCase(key) ? postprocessors : this.getChildTestElements();
+                Vector<TestElement> node = TEST_ELEMENTS.equalsIgnoreCase(key) || CONFIG_ELEMENTS.equalsIgnoreCase(key) ? configElements :
+                        PREPROCESSORS.equalsIgnoreCase(key) ? preprocessors :
+                                POSTPROCESSORS.equalsIgnoreCase(key) ? postprocessors : this.getChildTestElements();
                 addTestElements(planJson.getJSONArray(key), node);
             }
 
@@ -86,10 +83,6 @@ public class TestPlan extends AbstractTestElement {
                 node.add(element);
             }
         }
-    }
-
-    public Vector<TestElement> getTestElements() {
-        return this.testElements;
     }
 
     public Vector<TestElement> getConfigElements() {

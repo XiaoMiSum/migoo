@@ -62,7 +62,7 @@ public class HTTPResponseAssertion extends AbstractAssertion {
             super.assertThat(result);
         } else {
             result.setSuccessful(true);
-            result.setContext(String.format("SampleResult instanceof %s, assert default true", samplerResult.getClass().getSimpleName()));
+            result.setContext(String.format("UnSupport %s, assert default true", samplerResult.getClass().getSimpleName()));
         }
         return result;
     }

@@ -191,4 +191,8 @@ public class MiGooVariables implements VariableStateListener, Cloneable {
         }
         return v;
     }
+
+    public String toString(){
+        return propMap.toString();
+    }
 }

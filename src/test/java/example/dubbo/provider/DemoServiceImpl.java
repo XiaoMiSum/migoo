@@ -2,7 +2,7 @@
  *
  *  * The MIT License (MIT)
  *  *
- *  * Copyright (c) 2018. Lorem XiaoMiSum (mi_xiao@qq.com)
+ *  * Copyright (c) 2018 XiaoMiSum (mi_xiao@qq.com)
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining
  *  * a copy of this software and associated documentation files (the
@@ -23,24 +23,30 @@
  *  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  *  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
+ *
  */
 
-package components.xyz.migoo.extractor;
+package example.dubbo.provider;
 
-import core.xyz.migoo.extractor.AbstractExtractor;
-import core.xyz.migoo.samplers.SampleResult;
-import core.xyz.migoo.testelement.Alias;
+import example.dubbo.service.DemoService;
+import org.apache.dubbo.rpc.RpcContext;
 
-@Alias(aliasList = {"ResultExtractor", "result_extractor"})
-public class ResultExtractor extends AbstractExtractor {
+import java.util.concurrent.CompletableFuture;
+
+/**
+ * @author mi.xiao
+ * @date 2021/7/3 17:51
+ */
+public class DemoServiceImpl implements DemoService {
 
     @Override
-    public SampleResult process(SampleResult result) {
-        SampleResult extractorResult = new SampleResult("ResultExtractor");
-        Object value = result.getResponseDataAsString();
-        getVariables().put(getPropertyAsString(VARIABLE_NAME), value);
-        getProperty().put("value", value);
-        extractorResult.setSamplerData(getProperty().toString());
-        return extractorResult;
+    public String sayHello(String name) {
+        return "Hello " + name + ", response from provider: " + RpcContext.getContext().getLocalAddress();
     }
+
+    @Override
+    public CompletableFuture<String> sayHelloAsync(String name) {
+        return null;
+    }
+
 }

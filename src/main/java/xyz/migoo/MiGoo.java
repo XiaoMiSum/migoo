@@ -41,8 +41,7 @@ import xyz.migoo.readers.ReaderException;
 import xyz.migoo.readers.ReaderFactory;
 import xyz.migoo.report.StandardReport;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,7 +49,7 @@ import static core.xyz.migoo.testelement.AbstractTestElement.*;
 
 public class MiGoo {
 
-    private static final Pattern FILE_PATTERN = Pattern.compile("^@F(.+)+");
+    private static final Pattern FILE_PATTERN = Pattern.compile("^@F\\((.+)+\\)");
 
     private final JSONObject testcase;
 
@@ -138,18 +137,34 @@ public class MiGoo {
         try {
             JSONObject config = (JSONObject) ReaderFactory.getReader("classpath://props.migoo.yml").read();
             config.forEach(SYSTEM::put);
-        } catch (ReaderException ignored) {
-
+        } catch (Exception ignored) {
         }
     }
 
     public static void main(String[] args) {
+        CommandLine.printLogo();
         try {
-            JSONObject yaml =  (JSONObject) ReaderFactory.getReader(args[0]).read();
-            boolean generateReport = args.length < 2 || Boolean.parseBoolean(args[1]);
-            new MiGoo(yaml, generateReport).run();
-        } catch (Exception e){
+            if (args == null || args.length == 0 || "-h".equals(args[0]) || "-ext".equals(args[0])) {
+                CommandLine.printHelp();
+            } else {
+                List<String> arrays = Arrays.asList(args);
+                if (!arrays.contains("-h2m") && !arrays.contains("p2m") && !arrays.contains("-f")) {
+                    CommandLine.unsupportedCommand();
+                } else {
+                    CommandLine.loadClasspath(!arrays.contains("-ext") ? "" : args[arrays.indexOf("-ext")],
+                            !arrays.contains("-ext") ? "" : args[arrays.indexOf("-ext") + 1]);
+                    CommandLine.convert2Sampler(arrays.get(0), arrays.get(1));
+                    if (arrays.contains("-f")) {
+                        CommandLine.run(arrays.indexOf("-f") + 1 > arrays.size() ? null : args[arrays.indexOf("-f") + 1],
+                                !arrays.contains("-r") || arrays.indexOf("-r") + 1 > arrays.size() ? null : args[arrays.indexOf("-r") + 1]);
+                    }
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println();
     }
+
+
 }

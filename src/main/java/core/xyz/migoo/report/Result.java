@@ -38,7 +38,7 @@ import java.util.List;
 
 /**
  * @author mi.xiao
- * @date 2021/6/15 14:44
+ * @date 2021/6/15 20:44
  */
 public class Result implements Serializable {
 
@@ -122,10 +122,12 @@ public class Result implements Serializable {
     }
 
     public void setThrowable(Throwable throwable) {
+        this.sampleStart();
         if (throwable != null) {
             this.success = false;
             this.throwable = throwable;
         }
+        this.sampleEnd();
     }
 
     public List<SampleResult> getPreprocessorResults() {

@@ -4,10 +4,10 @@
 
 <!-- Add buttons here -->
 
-[![License](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/XiaoMiSum/MiGoo/blob/master/LICENSE)
+[![License](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/XiaoMiSum/migoo/blob/master/LICENSE)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/xyz.migoo/migoo/badge.svg)](https://maven-badges.herokuapp.com/maven-central/xyz.migoo/migoo)
 [![Author](https://img.shields.io/badge/Author-xiaomi-yellow.svg)](https://github.com/XiaoMiSum)
-[![Release](https://img.shields.io/github/release/XiaoMiSum/migoo.svg)](https://github.com/XiaoMiSum/MiGoo/releases)
+[![Release](https://img.shields.io/github/release/XiaoMiSum/migoo.svg)](https://github.com/XiaoMiSum/migoo/releases)
 
 <!-- Describe your project in brief -->
 
@@ -23,7 +23,7 @@ migoo 是一个Java语言开发的测试框架，适用于HTTP(S)、Dubbo、JDBC
 
 4.极强的可扩展性，满足个性化扩展需求；
 
-5.简洁美观的测试报告与执行日志；
+5.简洁美观的测试报告；
 
 # 目录
 
@@ -37,7 +37,7 @@ migoo 是一个Java语言开发的测试框架，适用于HTTP(S)、Dubbo、JDBC
 # 使用
 [(Back to top)](#目录)
 
-本项目已发布在Maven中央仓库，请在pom.xml中引用
+方式一：创建Java项目，在pom.xml中引用
 
 ``` xml
 <!-- https://mvnrepository.com/artifact/xyz.migoo/migoo -->
@@ -47,6 +47,31 @@ migoo 是一个Java语言开发的测试框架，适用于HTTP(S)、Dubbo、JDBC
     <version>${version}</version>
 </dependency>
 ```
+在Main方法中调用 MiGoo
+
+``` java
+public static void main(String[] args) throws ReaderException {
+    JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath://example/standardproject.yaml").read();
+    Result result = new MiGoo(yaml).run();
+}
+``` 
+
+方式二：使用命令行方式（ [点击下载](https://github.com/XiaoMiSum/migoo/releases) ）
+
+mac、linux下可运行 migoo.sh
+
+windows下可运行 migoo.bat
+
+``` shell
+options:
+        -f: 测试用例文件路径，如：/user/migoo/testcase.yaml
+        -r: 测试报告保存路径，如：/user/migoo/report
+        -h2m: har文件路径，将指定的har文件转换为标准Http取样器文件
+        -p2m: postman文件路径，将指定的postman文件(v2.1)转换为标准Http取样器文件
+        -h: 帮助信息
+        
+        example: ./migoo.sh -f ./example/example_project.yaml -r ./report
+``` 
 
 # 示例
 [(Back to top)](#目录)

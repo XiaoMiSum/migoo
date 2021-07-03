@@ -31,13 +31,9 @@ public interface DubboConstantsInterface {
 
     String DUBBO_DEFAULT = "migoo.protocol.dubbo.element.defaults";
 
-    String CONFIG_CENTER = "config_center";
-
     String REGISTRY_CENTER = "registry_center";
 
-    String CONSUMER_PROVIDER = "consumer_provider";
-
-    String PROVIDER_INTERFACE = "provider_interface";
+    String REFERENCE_CONFIG = "reference_config";
 
     String DUBBO_REFERENCE = "reference";
 

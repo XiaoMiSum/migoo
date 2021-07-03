@@ -37,6 +37,7 @@ import core.xyz.migoo.samplers.Sampler;
 import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestStateListener;
 import core.xyz.migoo.variables.MiGooVariables;
+import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -60,7 +61,12 @@ public class StandardEngine extends AbstractTestEngine {
         SampleResult result = new SampleResult(plan.getPropertyAsString(TITLE));
         try {
             result.setPreprocessorResults(this.testStart());
-            result.setSamplerData(this.sampler());
+            SampleResult s = this.sampler();
+            if (s instanceof HTTPSampleResult) {
+                result = s;
+            } else {
+                result.setSamplerData(s);
+            }
             result.setPostprocessorResults(this.testEnd(result));
         } catch (Exception e) {
             result.setThrowable(e);

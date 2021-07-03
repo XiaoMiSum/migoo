@@ -29,11 +29,13 @@ package protocol.xyz.migoo.redis.config;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import core.xyz.migoo.testelement.AbstractTestElement;
+import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestStateListener;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+@Alias(aliasList = {"RedisDataSource", "Redis_DataSource"})
 public class RedisSourceElement extends AbstractTestElement implements TestStateListener {
 
     private static final String HOST_KEY = "host";
