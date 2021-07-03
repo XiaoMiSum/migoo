@@ -30,6 +30,7 @@ package xyz.migoo.convert;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -52,6 +53,7 @@ public interface Convert2Sampler {
             validator.put("rule", "==");
             sampler.getJSONArray("validators").add(validator);
         }
+        path = StringUtils.isBlank(path) ? System.getProperty("user.dir") : path;
         File file = new File(path + "/" + this.getClass().getSimpleName() + "_"+ System.currentTimeMillis() + ".yaml");
         try (FileWriter writer = new FileWriter(file)) {
             new Yaml().dump(sampler, writer);
