@@ -36,6 +36,9 @@ import core.xyz.migoo.variables.MiGooVariables;
 
 import java.util.Vector;
 
+/**
+ * @author xiaomi
+ */
 public class TestPlan extends AbstractTestElement {
 
     private final Vector<TestElement> configElements = new Vector<>(10);

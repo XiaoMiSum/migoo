@@ -38,6 +38,9 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * @author xiaomi
+ */
 public class GoogleAuthCode implements Function {
 
     /**

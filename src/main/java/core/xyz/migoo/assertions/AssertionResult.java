@@ -30,6 +30,9 @@ package core.xyz.migoo.assertions;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+/**
+ * @author xiaomi
+ */
 public class AssertionResult {
 
     public static final String RESPONSE_WAS_NULL = "Response was null";

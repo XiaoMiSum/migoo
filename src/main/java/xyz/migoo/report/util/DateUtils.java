@@ -33,6 +33,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
+/**
+ * @author xiaomi
+ */
 public class DateUtils {
 
     public static Date toDate(LocalDate localDate) {

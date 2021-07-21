@@ -47,6 +47,9 @@ import java.util.regex.Pattern;
 
 import static core.xyz.migoo.testelement.AbstractTestElement.*;
 
+/**
+ * @author xiaomi
+ */
 public class MiGoo {
 
     private static final Pattern FILE_PATTERN = Pattern.compile("^@F\\((.+)+\\)");
@@ -165,6 +168,4 @@ public class MiGoo {
         }
         System.out.println();
     }
-
-
 }

@@ -31,6 +31,9 @@ import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
 
+/**
+ * @author xiaomi
+ */
 public class Json implements Function {
 
     /**

@@ -38,6 +38,9 @@ import xyz.migoo.simplehttp.Response;
 import java.net.HttpURLConnection;
 import java.util.Arrays;
 
+/**
+ * @author xiaomi
+ */
 public class HTTPSampleResult extends SampleResult {
 
     private static final String OK_CODE = Integer.toString(HttpURLConnection.HTTP_OK);
@@ -107,7 +110,7 @@ public class HTTPSampleResult extends SampleResult {
         setMethod(request.method());
         setRequestHeaders(Arrays.toString(request.headers()));
         setQueryString(request.query());
-        setSamplerData(request.data().isEmpty() ? request.body() : request.data());
+        setSamplerData(request.body());
     }
 
     public void setResponseData(Response response){

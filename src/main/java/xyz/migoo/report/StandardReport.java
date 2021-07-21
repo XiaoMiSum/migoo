@@ -48,6 +48,9 @@ import java.util.List;
 
 import static xyz.migoo.MiGoo.SYSTEM;
 
+/**
+ * @author xiaomi
+ */
 public class StandardReport extends AbstractTestElement implements Report {
 
     @Override

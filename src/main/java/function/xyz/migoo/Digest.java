@@ -35,6 +35,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * @author xiaomi
+ */
 public class Digest implements Function {
 
     /**

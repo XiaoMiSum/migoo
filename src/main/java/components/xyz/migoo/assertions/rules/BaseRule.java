@@ -36,6 +36,9 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author xiaomi
+ */
 public abstract class BaseRule {
 
     private final static ThreadLocal<DecimalFormat> FORMAT_THREAD_LOCAL =

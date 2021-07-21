@@ -32,6 +32,9 @@ import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
 import org.apache.commons.lang3.RandomStringUtils;
 
+/**
+ * @author xiaomi
+ */
 public class RandomString implements Function {
 
     /**

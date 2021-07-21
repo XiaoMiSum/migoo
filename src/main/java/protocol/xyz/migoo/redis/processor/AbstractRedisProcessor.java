@@ -33,6 +33,9 @@ import protocol.xyz.migoo.redis.AbstractRedisTestElement;
 import protocol.xyz.migoo.redis.config.RedisSourceElement;
 import redis.clients.jedis.Jedis;
 
+/**
+ * @author xiaomi
+ */
 public abstract class AbstractRedisProcessor extends AbstractRedisTestElement {
 
     protected SampleResult result;

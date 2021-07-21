@@ -29,12 +29,16 @@ package core.xyz.migoo.extractor;
 
 import core.xyz.migoo.samplers.SampleResult;
 
+/**
+ * @author xiaomi
+ */
 public interface Extractor {
 
     /**
      * 提取器执行，从取样器结果中按指定规格提取数据，并保存到变量中
      *
      * @param result 取样器结果
+     * @return 执行结果
      */
     SampleResult process(SampleResult result);
 }

@@ -36,6 +36,9 @@ import redis.clients.jedis.Protocol;
 import java.util.Collection;
 import java.util.Locale;
 
+/**
+ * @author xiaomi
+ */
 public abstract class AbstractRedisTestElement extends AbstractTestElement {
 
     private static final String COMMAND = "command";

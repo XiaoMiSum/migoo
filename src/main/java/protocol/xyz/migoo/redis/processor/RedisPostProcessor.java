@@ -30,6 +30,9 @@ package protocol.xyz.migoo.redis.processor;
 import core.xyz.migoo.processor.PostProcessor;
 import core.xyz.migoo.samplers.SampleResult;
 
+/**
+ * @author xiaomi
+ */
 public class RedisPostProcessor extends AbstractRedisProcessor implements PostProcessor {
 
     @Override

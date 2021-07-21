@@ -36,6 +36,9 @@ import core.xyz.migoo.testelement.TestStateListener;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * @author xiaomi
+ */
 @Alias(aliasList = {"jdbcdatasource", "jdbc_datasource"})
 public class DataSourceElement extends AbstractTestElement implements TestStateListener {
 

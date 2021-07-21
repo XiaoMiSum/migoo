@@ -43,8 +43,15 @@ import java.io.IOException;
  */
 public interface Convert2Sampler {
 
+    /**
+     * 写入文件
+     *
+     * @param sampler sampler 数据
+     * @param path 文件路径
+     * @throws IOException
+     */
     default void writer(JSONObject sampler, String path) throws IOException {
-        if (this instanceof Har2Sampler || this instanceof  Postman2Sampler) {
+        if (this instanceof Har2Sampler || this instanceof Postman2Sampler) {
             sampler.put("validators", new JSONArray());
             JSONObject validator = new JSONObject();
             validator.put("testclass", "httpassertion");
@@ -61,5 +68,11 @@ public interface Convert2Sampler {
         System.out.println("转换完成: " + file.getPath());
     }
 
+    /**
+     * 转换为文件
+     *
+     * @param content json 内容
+     * @param path 转换后的文件地址
+     */
     void convert(JSONObject content, String path);
 }

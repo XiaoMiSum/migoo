@@ -34,6 +34,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
+/**
+ * @author xiaomi
+ */
 public class FunctionService {
 
     private static final Map<String, Function> SERVICES = new HashMap<>(16);

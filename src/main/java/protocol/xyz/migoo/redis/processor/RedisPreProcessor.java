@@ -30,6 +30,9 @@ package protocol.xyz.migoo.redis.processor;
 import core.xyz.migoo.processor.PreProcessor;
 import core.xyz.migoo.samplers.SampleResult;
 
+/**
+ * @author xiaomi
+ */
 public class RedisPreProcessor extends AbstractRedisProcessor implements PreProcessor {
 
     @Override

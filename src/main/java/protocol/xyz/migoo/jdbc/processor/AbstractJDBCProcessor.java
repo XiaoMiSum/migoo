@@ -34,6 +34,9 @@ import protocol.xyz.migoo.jdbc.config.DataSourceElement;
 
 import java.sql.Connection;
 
+/**
+ * @author xiaomi
+ */
 public abstract class AbstractJDBCProcessor extends AbstractJDBCTestElement {
 
     public SampleResult process() {

@@ -27,5 +27,8 @@
 
 package core.xyz.migoo.processor;
 
+/**
+ * @author xiaomi
+ */
 public interface PostProcessor  extends Processor{
 }

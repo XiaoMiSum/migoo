@@ -31,6 +31,9 @@ import core.xyz.migoo.processor.PostProcessor;
 import core.xyz.migoo.samplers.SampleResult;
 import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 
+/**
+ * @author xiaomi
+ */
 public class HttpPostProcessor extends AbstractHttpProcessor implements PostProcessor {
 
     @Override

@@ -33,6 +33,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author xiaomi
+ */
 public class MiGooProperty extends JSONObject {
 
     public MiGooProperty() {

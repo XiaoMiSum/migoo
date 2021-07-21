@@ -36,6 +36,9 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Vector;
 
+/**
+ * @author xiaomi
+ */
 public abstract class AbstractTestElement implements TestElement, VariableStateListener, Serializable {
 
     public static final String VARIABLES = "variables";

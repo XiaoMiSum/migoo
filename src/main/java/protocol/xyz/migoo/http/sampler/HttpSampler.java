@@ -34,8 +34,10 @@ import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.http.AbstractHttpTestElement;
 import protocol.xyz.migoo.http.util.HTTPConstantsInterface;
 
+/**
+ * @author xiaomi
+ */
 public class HttpSampler extends AbstractHttpTestElement implements Sampler, TestStateListener, HTTPConstantsInterface {
-
 
     @Override
     public SampleResult sample() {

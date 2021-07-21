@@ -32,6 +32,9 @@ import core.xyz.migoo.function.Function;
 
 import java.math.BigDecimal;
 
+/**
+ * @author xiaomi
+ */
 public class Random implements Function {
 
     /**

@@ -27,6 +27,9 @@
 
 package protocol.xyz.migoo.http.util;
 
+/**
+ * @author xiaomi
+ */
 public interface HTTPConstantsInterface {
     String HEADERS = "headers";
     String COOKIE = "cookie";

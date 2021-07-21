@@ -31,6 +31,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
+/**
+ * @author xiaomi
+ */
 public class ReportService {
     
     private static final Map<String, Report> SERVICES = new HashMap<>(20);

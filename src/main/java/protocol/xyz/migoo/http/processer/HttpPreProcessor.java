@@ -31,6 +31,9 @@ import core.xyz.migoo.processor.PreProcessor;
 import core.xyz.migoo.samplers.SampleResult;
 import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 
+/**
+ * @author xiaomi
+ */
 public class HttpPreProcessor extends AbstractHttpProcessor implements PreProcessor {
 
     @Override

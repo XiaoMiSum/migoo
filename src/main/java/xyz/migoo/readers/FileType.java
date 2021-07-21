@@ -28,6 +28,10 @@
 
 package xyz.migoo.readers;
 
+/**
+ * @author xiaomi
+ */
+
 public enum FileType {
     /**
      * 文件类型枚举

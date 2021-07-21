@@ -32,6 +32,9 @@ import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.http.AbstractHttpTestElement;
 import protocol.xyz.migoo.http.util.HTTPConstantsInterface;
 
+/**
+ * @author xiaomi
+ */
 public class HttpDefaults extends AbstractTestElement implements TestStateListener, HTTPConstantsInterface {
 
     @Override
