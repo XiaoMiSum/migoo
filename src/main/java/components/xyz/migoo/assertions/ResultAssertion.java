@@ -32,6 +32,9 @@ import core.xyz.migoo.assertions.AssertionResult;
 import core.xyz.migoo.samplers.SampleResult;
 import core.xyz.migoo.testelement.Alias;
 
+/**
+ * @author xiaomi
+ */
 @Alias(aliasList = {"ResultAssertion", "Result_Assertion"})
 public class ResultAssertion extends AbstractAssertion {
 

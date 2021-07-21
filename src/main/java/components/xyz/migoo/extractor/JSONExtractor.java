@@ -36,6 +36,9 @@ import core.xyz.migoo.testelement.Alias;
 
 import java.util.List;
 
+/**
+ * @author xiaomi
+ */
 @Alias(aliasList = {"JSONExtractor", "json_extractor"})
 public class JSONExtractor extends AbstractExtractor {
 

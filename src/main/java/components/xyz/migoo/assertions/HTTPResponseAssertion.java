@@ -38,6 +38,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author xiaomi
+ */
 @Alias(aliasList = {"HTTPAssertion", "HTTP_Assertion"})
 public class HTTPResponseAssertion extends AbstractAssertion {
 
