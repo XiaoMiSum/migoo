@@ -29,6 +29,7 @@
 package xyz.migoo.readers;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 
@@ -54,8 +55,7 @@ public class YamlReader extends AbstractReader implements Reader{
     public JSON read(){
         try {
             Yaml yaml = new Yaml();
-            Object object = yaml.load(inputStream);
-            json =(JSON) JSON.toJSON(object);
+            json = yaml.loadAs(inputStream, JSON.class);
             return json;
         } finally {
             super.close();
@@ -63,12 +63,15 @@ public class YamlReader extends AbstractReader implements Reader{
     }
 
     @Override
-    public String get(String key) {
+    public String get(String keyOrIndex) {
         if (json == null){
             read();
         }
         if (json instanceof JSONObject){
-            return ((JSONObject) json).getString(key);
+            return ((JSONObject) json).getString(keyOrIndex);
+        }
+        if (json instanceof JSONArray){
+            return ((JSONArray) json).getString(Integer.parseInt(keyOrIndex));
         }
         return null;
     }
