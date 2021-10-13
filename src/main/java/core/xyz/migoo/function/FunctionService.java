@@ -43,17 +43,17 @@ public class FunctionService {
 
     static {
         for (Function service : ServiceLoader.load(Function.class)) {
-            Alias alias = service.getClass().getAnnotation(Alias.class);
-            if (alias != null) {
-                for (String key : alias.aliasList()) {
-                    SERVICES.put(key.toLowerCase(), service);
-                }
-            }
-            SERVICES.put(service.getClass().getSimpleName().toLowerCase(), service);
+            addService(service);
         }
     }
 
     public static void addService(Function service) {
+        Alias alias = service.getClass().getAnnotation(Alias.class);
+        if (alias != null) {
+            for (String key : alias.aliasList()) {
+                SERVICES.put(key.toLowerCase(), service);
+            }
+        }
         SERVICES.put(service.getClass().getSimpleName().toLowerCase(), service);
     }
 

@@ -31,6 +31,7 @@ package xyz.migoo;
 import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.function.Function;
 import core.xyz.migoo.function.FunctionService;
+import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestElementService;
 import xyz.migoo.convert.ConvertFactory;
@@ -71,12 +72,12 @@ public class CommandLine {
                 "example: ./migoo.sh -f ./example/example.yaml -r ./report");
     }
 
-    public static void unsupportedCommand(){
+    public static void unsupportedCommand() {
         System.out.println();
         System.out.println("不支持的操作，请通过 -h 查看帮助");
     }
 
-    public static void convert2Sampler(String command, String param){
+    public static void convert2Sampler(String command, String param) {
         if ("-h2m".equals(command) || "-p2m".equals(command)) {
             File file = new File(param);
             if (file.exists() && file.isFile()) {
@@ -119,7 +120,7 @@ public class CommandLine {
                     loadClasspath(file);
                 }
             }
-        } else if (dir.exists() && dir.isFile()) {
+        } else if (dir.exists() && dir.isFile() && dir.getName().endsWith(".jar")) {
             new ClassLoader(dir).loadClass();
         }
     }
@@ -143,7 +144,7 @@ public class CommandLine {
                     if (Function.class.isAssignableFrom(clz)) {
                         FunctionService.addService((Function) clz.newInstance());
                     } else if (TestElement.class.isAssignableFrom(clz)) {
-                        TestElementService.addService(clz.getSimpleName(), (Class<? extends TestElement>) clz);
+                        TestElementService.addService((Class<? extends TestElement>) clz);
                     }
                 }
             }

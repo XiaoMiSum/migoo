@@ -44,11 +44,11 @@ public class Contains extends BaseRule implements Rule {
     @Override
     public boolean assertThat(Object actual, Object expected) {
         if (actual instanceof String) {
-            return ((String) actual).contains((String) expected);
+            return ((String) actual).contains(String.valueOf(expected));
         }
         if (actual instanceof Map) {
-            Map json = (Map) actual;
-            return json.containsValue(expected) || json.containsKey(expected);
+            Map map = (Map) actual;
+            return map.containsValue(expected) || map.containsKey(expected);
         }
         if (actual instanceof List) {
             return ((List) actual).contains(expected);
