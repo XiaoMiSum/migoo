@@ -57,7 +57,7 @@ public class TestElementService {
     }
 
     public static void addService(Class<? extends TestElement> clazz) {
-        Alias annotation =  clazz.getAnnotation(Alias.class);
+        Alias annotation = clazz.getAnnotation(Alias.class);
         if (annotation != null) {
             String[] aliasList = annotation.aliasList();
             for (String alias : aliasList) {
@@ -67,7 +67,7 @@ public class TestElementService {
         SERVICES.put(clazz.getSimpleName().toLowerCase(), clazz);
     }
 
-    public static Map<String, Class<? extends TestElement>> getAllService() {
+    public static Map<String, Class<? extends TestElement>> getServices() {
         return new HashMap<>(SERVICES);
     }
 }

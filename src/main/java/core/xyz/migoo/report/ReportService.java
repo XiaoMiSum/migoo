@@ -35,7 +35,7 @@ import java.util.ServiceLoader;
  * @author xiaomi
  */
 public class ReportService {
-    
+
     private static final Map<String, Report> SERVICES = new HashMap<>(20);
 
     static {
@@ -56,7 +56,7 @@ public class ReportService {
         SERVICES.put(key.toLowerCase(), report);
     }
 
-    public static Map<String, Report> getAllService() {
+    public static Map<String, Report> getServices() {
         return new HashMap<>(SERVICES);
     }
 }

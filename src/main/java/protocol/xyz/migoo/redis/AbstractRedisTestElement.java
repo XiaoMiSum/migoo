@@ -43,6 +43,7 @@ public abstract class AbstractRedisTestElement extends AbstractTestElement {
 
     private static final String COMMAND = "command";
     private static final String SEND = "send";
+    private static final long serialVersionUID = -4663337260190043880L;
 
     protected SampleResult execute(Jedis conn) throws UnsupportedOperationException {
         return execute(conn, new SampleResult(getPropertyAsString(TITLE)));
@@ -54,14 +55,14 @@ public abstract class AbstractRedisTestElement extends AbstractTestElement {
             sample.sampleStart();
             String command = getPropertyAsString(COMMAND);
             if (StringUtils.isBlank(command)) {
-                throw new UnsupportedOperationException("Unexpected command: " + command);
+                throw new UnsupportedOperationException("unsupported command: " + command);
             }
             Object result = conn.sendCommand(Protocol.Command.valueOf(command.toUpperCase(Locale.ROOT)), getPropertyAsString(SEND).split(","));
             sample.setSamplerData("{\"command\": \"" + command + "\", \"send\": \"" + getPropertyAsString(SEND) + "\"}");
             sample.setResponseData(result == null ? "" : result instanceof Collection ? listToString((Collection) result) : result.toString());
         } finally {
             sample.sampleEnd();
-       }
+        }
         return sample;
     }
 

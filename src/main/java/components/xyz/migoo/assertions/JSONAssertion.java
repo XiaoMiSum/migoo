@@ -39,9 +39,12 @@ import core.xyz.migoo.testelement.Alias;
 @Alias(aliasList = {"JSONAssertion", "json_assertion"})
 public class JSONAssertion extends AbstractAssertion {
 
+    private static final long serialVersionUID = 3660713030047593688L;
+
     @Override
     public AssertionResult getResult(SampleResult samplerResult) {
-        AssertionResult result = new AssertionResult("JSONAssertion");
+        AssertionResult
+                result = new AssertionResult("JSONAssertion");
         try {
             String jsonStr = samplerResult.getResponseDataAsString();
             setActual(JSONPath.read(jsonStr, getPropertyAsString(FIELD)));

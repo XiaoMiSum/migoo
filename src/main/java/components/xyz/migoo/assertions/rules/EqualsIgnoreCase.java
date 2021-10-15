@@ -27,8 +27,8 @@
 
 package components.xyz.migoo.assertions.rules;
 
-import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.assertions.Rule;
+import core.xyz.migoo.testelement.Alias;
 
 /**
  * @author xiaomi
@@ -39,6 +39,9 @@ public class EqualsIgnoreCase extends BaseRule implements Rule {
 
     @Override
     public boolean assertThat(Object actual, Object expected) {
+        if (actual instanceof Number || expected instanceof Number) {
+            return new NumberEquals().assertThat(actual, expected);
+        }
         return objectToString(actual).equalsIgnoreCase(objectToString(expected));
     }
 }

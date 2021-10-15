@@ -61,13 +61,13 @@ public abstract class BaseRule {
         String str;
         defaultString = StringUtils.isEmpty(defaultString) ? "null" : defaultString;
         if (Objects.isNull(subj)) {
-            str =  defaultString;
+            str = defaultString;
         } else if (subj instanceof String) {
             str = StringUtils.isBlank((String) subj) ? defaultString : (String) subj;
-        }  else if (subj instanceof List) {
-            str = ((List) subj).isEmpty() ? defaultString : JSONArray.toJSONString(subj);
+        } else if (subj instanceof List) {
+            str = ((List<?>) subj).isEmpty() ? defaultString : JSONArray.toJSONString(subj);
         } else if (subj instanceof Map) {
-            str = ((Map) subj).isEmpty() ? defaultString : JSONObject.toJSONString(subj);
+            str = ((Map<?, ?>) subj).isEmpty() ? defaultString : JSONObject.toJSONString(subj);
         } else if (subj instanceof Double || subj instanceof Float) {
             str = FORMAT_THREAD_LOCAL.get().format(subj);
         } else {

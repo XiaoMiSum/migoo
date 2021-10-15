@@ -25,7 +25,7 @@
 
 package components.xyz.migoo.assertions.rule;
 
-import components.xyz.migoo.assertions.rules.Equals;
+import components.xyz.migoo.assertions.rules.EqualsIgnoreCase;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -38,52 +38,51 @@ import java.util.Map;
  * @author xiaomi
  * Created in 2021/10/13 17:15
  */
-public class EqualsTest {
+public class EqualsIgnoreCaseTest {
 
-    Equals equals = new Equals();
+    EqualsIgnoreCase equalsIgnoreCase = new EqualsIgnoreCase();
 
     @Test
     public void test4String() {
         // "" 空字符串 等同于 null 结果 true
-        assert equals.assertThat("", null);
+        assert equalsIgnoreCase.assertThat("", null);
         // "   " 空白字符串 等同于 null 结果 true
-        assert equals.assertThat("    ", null);
+        assert equalsIgnoreCase.assertThat("    ", null);
         // "1" == "1" 结果 true
-        assert equals.assertThat("1", "1");
+        assert equalsIgnoreCase.assertThat("1", "1");
         // "1" == 1 结果 true  非字符串先转换为字符串再进行对比
-        assert equals.assertThat("1", 1);
+        assert equalsIgnoreCase.assertThat("1", 1);
         // 1 == "1" 结果 true  非字符串先转换为字符串再进行对比
-        assert equals.assertThat(1, "1");
+        assert equalsIgnoreCase.assertThat(1, "1");
+        // A == a 结果 true 忽略大小写
+        assert equalsIgnoreCase.assertThat("A", "a");
         // "null" == null 结果 true
-        assert equals.assertThat("null", null);
-
+        assert equalsIgnoreCase.assertThat("null", null);
         // 1 != 2 结果 false
-        assert !equals.assertThat("1", "2");
-        // A != a 结果 false
-        assert !equals.assertThat("A", "a");
+        assert !equalsIgnoreCase.assertThat("1", "2");
     }
 
     @Test
     public void test4Number() {
         // 1 == 1 结果 true
-        assert equals.assertThat(1, 1);
+        assert equalsIgnoreCase.assertThat(1, 1);
         // 1.0 == 1.00 结果 true 数值对比
-        assert equals.assertThat(1.0, 1.00);
-        assert equals.assertThat(new BigDecimal("1.0"), new BigDecimal("1.00"));
+        assert equalsIgnoreCase.assertThat(1.0, 1.00);
+        assert equalsIgnoreCase.assertThat(new BigDecimal("1.0"), new BigDecimal("1.00"));
         // 数字对比，null 当作 0 结果 true
-        assert equals.assertThat(new BigDecimal("0"), null);
-        assert equals.assertThat(0, null);
-        assert equals.assertThat(0L, null);
-        assert equals.assertThat(0.00F, null);
-        assert equals.assertThat(0.00D, null);
-        assert equals.assertThat(null, new BigDecimal("0.00"));
-        assert equals.assertThat(null, 0);
-        assert equals.assertThat(null, 0L);
-        assert equals.assertThat(null, 0.00F);
-        assert equals.assertThat(null, 0.00D);
+        assert equalsIgnoreCase.assertThat(new BigDecimal("0"), null);
+        assert equalsIgnoreCase.assertThat(0, null);
+        assert equalsIgnoreCase.assertThat(0L, null);
+        assert equalsIgnoreCase.assertThat(0.00F, null);
+        assert equalsIgnoreCase.assertThat(0.00D, null);
+        assert equalsIgnoreCase.assertThat(null, new BigDecimal("0.00"));
+        assert equalsIgnoreCase.assertThat(null, 0);
+        assert equalsIgnoreCase.assertThat(null, 0L);
+        assert equalsIgnoreCase.assertThat(null, 0.00F);
+        assert equalsIgnoreCase.assertThat(null, 0.00D);
 
         // 1 != 2 结果 false
-        assert !equals.assertThat(1, 2);
+        assert !equalsIgnoreCase.assertThat(1, 2);
     }
 
     @Test
@@ -93,19 +92,19 @@ public class EqualsTest {
         Map<String, String> expected = new HashMap<>();
         expected.put("1", "1");
         // Map 内容一致 结果 true
-        assert equals.assertThat(actual, expected);
+        assert equalsIgnoreCase.assertThat(actual, expected);
         Map<String, Object> expected2 = new HashMap<>();
         expected2.put("1", "1");
         // Map 内容一致 结果 true
-        assert equals.assertThat(actual, expected2);
+        assert equalsIgnoreCase.assertThat(actual, expected2);
         // 空Map == null 结果 true
-        assert equals.assertThat(new ArrayList<>(), null);
+        assert equalsIgnoreCase.assertThat(new ArrayList<>(), null);
         Map<String, Object> expected3 = new HashMap<>();
         expected3.put("1", Integer.valueOf("1"));
         // Map 内容不一致 结果 false
-        assert !equals.assertThat(actual, expected3);
+        assert !equalsIgnoreCase.assertThat(actual, expected3);
         expected.put("2", "2");
-        assert !equals.assertThat(actual, expected);
+        assert !equalsIgnoreCase.assertThat(actual, expected);
     }
 
     @Test
@@ -115,29 +114,29 @@ public class EqualsTest {
         List<String> expected = new ArrayList<>();
         expected.add("1");
         // List 内容一致 结果 true
-        assert equals.assertThat(actual, expected);
+        assert equalsIgnoreCase.assertThat(actual, expected);
         List<Object> expected2 = new ArrayList<>();
         expected2.add("1");
         // List 内容一致 结果 true
-        assert equals.assertThat(actual, expected2);
+        assert equalsIgnoreCase.assertThat(actual, expected2);
         // 空List == null 结果 true
-        assert equals.assertThat(new ArrayList<>(), null);
+        assert equalsIgnoreCase.assertThat(new ArrayList<>(), null);
         List<Object> expected3 = new ArrayList<>();
         expected3.add(Integer.valueOf("1"));
         // List 内容不一致 结果 false
-        assert !equals.assertThat(actual, expected3);
+        assert !equalsIgnoreCase.assertThat(actual, expected3);
         expected.add("2");
-        assert !equals.assertThat(actual, expected);
+        assert !equalsIgnoreCase.assertThat(actual, expected);
     }
 
 
     @Test
     public void test4OtherObject() {
         // 类型不一致   结果 false
-        assert !equals.assertThat(new Object(), new HashMap<>());
+        assert !equalsIgnoreCase.assertThat(new Object(), new HashMap<>());
         // 类型不一致 但长度都是 0  结果 true
-        assert equals.assertThat(new ArrayList<>(), new HashMap<>());
+        assert equalsIgnoreCase.assertThat(new ArrayList<>(), new HashMap<>());
         // 不同对象  结果 false
-        assert !equals.assertThat(new Object(), new Object());
+        assert !equalsIgnoreCase.assertThat(new Object(), new Object());
     }
 }

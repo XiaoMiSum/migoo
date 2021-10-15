@@ -29,8 +29,8 @@ package components.xyz.migoo.assertions.rules;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.assertions.Rule;
+import core.xyz.migoo.testelement.Alias;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -49,7 +49,7 @@ public class IsEmpty extends BaseRule implements Rule {
             return ((JSONArray) actual).isEmpty();
         }
         if (actual instanceof String) {
-            return StringUtils.isEmpty((String) actual);
+            return StringUtils.isBlank((String) actual);
         }
         return actual == null;
     }

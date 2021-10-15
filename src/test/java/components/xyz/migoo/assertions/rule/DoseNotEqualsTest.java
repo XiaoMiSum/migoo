@@ -43,7 +43,7 @@ public class DoseNotEqualsTest {
     DoseNotEquals doseNotEquals = new DoseNotEquals();
 
     @Test
-    public void test4String(){
+    public void test4String() {
         // "" 空字符串 等同于 null 结果 false
         assert !doseNotEquals.assertThat("", null);
         // "   " 空白字符串 等同于 null 结果 false
@@ -54,15 +54,17 @@ public class DoseNotEqualsTest {
         assert !doseNotEquals.assertThat("1", 1);
         // 1 == "1" 结果 false  非字符串先转换为字符串再进行对比
         assert !doseNotEquals.assertThat(1, "1");
+        // "null" == null 结果 false
+        assert !doseNotEquals.assertThat("null", null);
 
         // 1 != 2 结果 true
         assert doseNotEquals.assertThat("1", "2");
         // A != a 结果 true
         assert doseNotEquals.assertThat("A", "a");
     }
-    
+
     @Test
-    public void test4Number(){
+    public void test4Number() {
         // 1 == 1 结果 false
         assert !doseNotEquals.assertThat(1, 1);
         // 1.0 == 1.00 结果 false 数值对比
@@ -86,7 +88,7 @@ public class DoseNotEqualsTest {
 
 
     @Test
-    public void test4Map(){
+    public void test4Map() {
         Map<String, String> actual = new HashMap<>();
         actual.put("1", "1");
         Map<String, String> expected = new HashMap<>();
@@ -108,7 +110,7 @@ public class DoseNotEqualsTest {
     }
 
     @Test
-    public void test4List(){
+    public void test4List() {
         List<String> actual = new ArrayList<>();
         actual.add("1");
         List<String> expected = new ArrayList<>();
@@ -128,11 +130,13 @@ public class DoseNotEqualsTest {
         expected.add("2");
         assert doseNotEquals.assertThat(actual, expected);
     }
-    
+
     @Test
-    public void test4OtherObject(){
+    public void test4OtherObject() {
         // 类型不一致   结果 true
         assert doseNotEquals.assertThat(new Object(), new HashMap<>());
+        // 类型不一致 但长度都是 0  结果 false
+        assert !doseNotEquals.assertThat(new ArrayList<>(), new HashMap<>());
         // 不同对象  结果 true
         assert doseNotEquals.assertThat(new Object(), new Object());
     }

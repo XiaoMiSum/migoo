@@ -27,8 +27,8 @@
 
 package components.xyz.migoo.assertions.rules;
 
-import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.assertions.Rule;
+import core.xyz.migoo.testelement.Alias;
 
 /**
  * @author xiaomi
@@ -37,10 +37,10 @@ import core.xyz.migoo.assertions.Rule;
 @Alias(aliasList = {"isNotEmpty", "isNotNull", "isNotBlank", "notEmpty", "notNull", "notBlank"})
 public class IsNotEmpty extends BaseRule implements Rule {
 
-    private final IsEmpty isEmpty = new IsEmpty();
+    private static final IsEmpty IS_EMPTY = new IsEmpty();
 
     @Override
     public boolean assertThat(Object actual, Object expected) {
-        return !isEmpty.assertThat(actual, expected);
+        return !IS_EMPTY.assertThat(actual, expected);
     }
 }

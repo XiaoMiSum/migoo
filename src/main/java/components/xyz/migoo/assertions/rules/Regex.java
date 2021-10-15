@@ -27,8 +27,8 @@
 
 package components.xyz.migoo.assertions.rules;
 
-import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.assertions.Rule;
+import core.xyz.migoo.testelement.Alias;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
  * @author xiaomi
  * @date 2019-08-13 22:17
  */
-@Alias(aliasList = {"regex"})
+@Alias(aliasList = {"regex", "rx"})
 public class Regex extends BaseRule implements Rule {
 
     @Override

@@ -36,7 +36,6 @@ import core.xyz.migoo.samplers.SampleResult;
 import core.xyz.migoo.samplers.Sampler;
 import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestStateListener;
-import core.xyz.migoo.variables.MiGooVariables;
 import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 
 import java.util.ArrayList;
@@ -45,16 +44,15 @@ import java.util.List;
 
 /**
  * 标准引擎，用于执行最小的一个测试用例
+ *
  * @author xiaomi
  */
 public class StandardEngine extends AbstractTestEngine {
 
+    private static final long serialVersionUID = 7169414178720270251L;
+
     public StandardEngine(TestPlan plan) {
         super(plan);
-    }
-
-    private TestElement getSampler() {
-        return plan.traverseInto().getSampler();
     }
 
     @Override
@@ -62,11 +60,12 @@ public class StandardEngine extends AbstractTestEngine {
         SampleResult result = new SampleResult(plan.getPropertyAsString(TITLE));
         try {
             result.setPreprocessorResults(this.testStart());
-            SampleResult s = this.sampler();
-            if (s instanceof HTTPSampleResult) {
-                result = s;
+            SampleResult sampleResult = this.sampler();
+            if (sampleResult instanceof HTTPSampleResult) {
+                sampleResult.setPreprocessorResults(result.getPreprocessorResults());
+                result = sampleResult;
             } else {
-                result.setSamplerData(s);
+                result.setSamplerData(sampleResult);
             }
             result.setPostprocessorResults(this.testEnd(result));
         } catch (Exception e) {
@@ -77,23 +76,23 @@ public class StandardEngine extends AbstractTestEngine {
         return result;
     }
 
-    private List<SampleResult> testStart(){
+    private List<SampleResult> testStart() {
         super.convertVariable();
         return super.preprocess(new ArrayList<>());
     }
 
-    private List<SampleResult> testEnd(SampleResult result){
+    private List<SampleResult> testEnd(SampleResult result) {
         this.assertResult(result);
         this.extractResult(result);
         return super.postprocess(new ArrayList<>());
     }
 
     private SampleResult sampler() {
-        TestElement ele = this.getSampler();
-        if (ele instanceof TestStateListener) {
-            ((TestStateListener) ele).testStarted();
+        TestElement element = plan.traverseInto().getSampler();
+        if (element instanceof TestStateListener) {
+            ((TestStateListener) element).testStarted();
         }
-        return ((Sampler) ele).sample();
+        return ((Sampler) element).sample();
     }
 
     private void assertResult(SampleResult result) {
