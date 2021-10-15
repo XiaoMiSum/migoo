@@ -41,7 +41,10 @@ import xyz.migoo.readers.ReaderException;
 import xyz.migoo.readers.ReaderFactory;
 import xyz.migoo.report.StandardReport;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -125,7 +128,7 @@ public class MiGoo {
         config.putIfAbsent(TEST_CLASS, StandardReport.class.getSimpleName().toLowerCase());
         Report report = ReportService.getService(config.getString(TEST_CLASS));
         if (report instanceof TestElement) {
-            ((StandardReport) report).setProperties(config);
+            ((TestElement) report).setProperties(config);
         }
         report.generateReport(result);
     }
@@ -139,7 +142,7 @@ public class MiGoo {
         SYSTEM.put("java.vm.name", System.getProperty("java.vm.name"));
         try {
             JSONObject config = (JSONObject) ReaderFactory.getReader("classpath://props.migoo.yml").read();
-            config.forEach(SYSTEM::put);
+            SYSTEM.putAll(config);
         } catch (Exception ignored) {
         }
     }
