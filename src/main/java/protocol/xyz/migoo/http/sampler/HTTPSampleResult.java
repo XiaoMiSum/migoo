@@ -28,10 +28,9 @@
 package protocol.xyz.migoo.http.sampler;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.samplers.SampleResult;
 import core.xyz.migoo.testelement.MiGooProperty;
-import org.apache.http.Header;
+import org.apache.hc.core5.http.Header;
 import xyz.migoo.simplehttp.Request;
 import xyz.migoo.simplehttp.Response;
 
@@ -45,6 +44,7 @@ public class HTTPSampleResult extends SampleResult {
 
     private static final String OK_CODE = Integer.toString(HttpURLConnection.HTTP_OK);
     private static final String OK_MSG = "OK";
+    private static final long serialVersionUID = -101758235270552554L;
 
     private String method;
 
@@ -105,7 +105,7 @@ public class HTTPSampleResult extends SampleResult {
     }
 
 
-    public void setRequestData(Request request){
+    public void setRequestData(Request request) {
         setUrl(request.uriNotContainsParam());
         setMethod(request.method());
         setRequestHeaders(Arrays.toString(request.headers()));
@@ -113,7 +113,7 @@ public class HTTPSampleResult extends SampleResult {
         setSamplerData(request.body());
     }
 
-    public void setResponseData(Response response){
+    public void setResponseData(Response response) {
         setResponseData(response.text());
         setResponseCode(String.valueOf(response.statusCode()));
         JSONArray headers = new JSONArray(response.headers().length);
@@ -128,7 +128,7 @@ public class HTTPSampleResult extends SampleResult {
 
     @Override
     public String getUrl() {
-        if (super.getUrl() != null && !super.getUrl().isEmpty()){
+        if (super.getUrl() != null && !super.getUrl().isEmpty()) {
             return super.getUrl() + " " + responseCode + " " + responseMessage;
         }
         return super.getUrl();
