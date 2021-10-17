@@ -44,6 +44,6 @@ public class Regex extends BaseRule implements Rule {
     public boolean assertThat(Object actual, Object expected) {
         Pattern pattern = Pattern.compile(objectToString(expected));
         Matcher matcher = pattern.matcher(objectToString(actual));
-        return matcher.find();
+        return matcher.matches();
     }
 }
