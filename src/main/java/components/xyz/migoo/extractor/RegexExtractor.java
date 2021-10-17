@@ -40,13 +40,21 @@ import java.util.regex.Pattern;
 @Alias(aliasList = {"RegexExtractor", "regex_extractor"})
 public class RegexExtractor extends AbstractExtractor {
 
+    private static final long serialVersionUID = -5926230173518436842L;
+
     @Override
     public SampleResult process(SampleResult result) {
         SampleResult extractorResult = new SampleResult("RegexExtractor");
         Pattern pattern = Pattern.compile(getPropertyAsString(FIELD));
         Matcher matcher = pattern.matcher(result.getResponseDataAsString());
-        int matchNum = get(MATCH_NUM) == null || getPropertyAsInt(MATCH_NUM) < 1 ? 1 : getPropertyAsInt(MATCH_NUM);
-        Object value = matcher.find() ? matcher.group(matchNum) : "def_value";
+        int matchNum = get(MATCH_NUM) == null || getPropertyAsInt(MATCH_NUM) < 0 ? 0 : getPropertyAsInt(MATCH_NUM);
+        Object value = "def_value";
+        int state = 0;
+        while (state > -1 && matcher.find()) {
+            state = matcher.groupCount() > 0 ? matchNum : state;
+            value = matcher.group(state > 0 ? 1 : 0);
+            state--;
+        }
         getVariables().put(getPropertyAsString(VARIABLE_NAME), value);
         getProperty().put("value", value);
         extractorResult.setSamplerData(getProperty().toString());
