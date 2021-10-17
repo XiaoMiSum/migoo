@@ -59,13 +59,26 @@ public class JSONExtractorTest {
     }
 
     @Test
-    public void test4Map() {
+    public void test4Map1() {
         SAMPLE_RESULT.setResponseData(JSON.toJSONString());
         extractor.setProperty("field", "$.key2");
         extractor.setProperty("variable_name", "vaa");
         SampleResult result = extractor.process(SAMPLE_RESULT);
         assert extractor.get("value").equals(2);
         assert extractor.getVariables().get("vaa").equals(2);
+        assert result.getSamplerData().equals(extractor.getProperty().toString());
+        assert result.getTitle().equals("JSONExtractor");
+    }
+
+    @Test
+    public void test4Map2() {
+        SAMPLE_RESULT.setResponseData(JSON.toJSONString());
+        extractor.setProperty("field", "$.key3");
+        extractor.setProperty("variable_name", "vaa");
+        SampleResult result = extractor.process(SAMPLE_RESULT);
+        // json PATH无法匹配到值 取默认值
+        assert extractor.get("value").equals("def_value");
+        assert extractor.getVariables().get("vaa").equals("def_value");
         assert result.getSamplerData().equals(extractor.getProperty().toString());
         assert result.getTitle().equals("JSONExtractor");
     }
@@ -107,6 +120,20 @@ public class JSONExtractorTest {
         SampleResult result = extractor.process(SAMPLE_RESULT);
         assert extractor.get("value").equals(2);
         assert extractor.getVariables().get("vaa").equals(2);
+        assert result.getSamplerData().equals(extractor.getProperty().toString());
+        assert result.getTitle().equals("JSONExtractor");
+    }
+
+    @Test
+    public void test4List4() {
+        this.add();
+        SAMPLE_RESULT.setResponseData(list.toJSONString());
+        extractor.setProperty("field", "$[1].key3");
+        extractor.setProperty("variable_name", "vaa");
+        SampleResult result = extractor.process(SAMPLE_RESULT);
+        // json PATH无法匹配到值 取默认值
+        assert extractor.get("value").equals("def_value");
+        assert extractor.getVariables().get("vaa").equals("def_value");
         assert result.getSamplerData().equals(extractor.getProperty().toString());
         assert result.getTitle().equals("JSONExtractor");
     }

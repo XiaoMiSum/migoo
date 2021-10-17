@@ -111,4 +111,15 @@ public class RegexExtractorTest {
         assert result.getSamplerData().equals(extractor.getProperty().toString());
         assert result.getTitle().equals("RegexExtractor");
     }
+
+    @Test
+    public void test4RegexExtractor6() {
+        extractor.setProperty("field", "\"aabb\":\"\\33333+\"");
+        SampleResult result = extractor.process(SAMPLE_RESULT);
+        // 匹配不到 取默认值
+        assert extractor.get("value").toString().equals("def_value");
+        assert extractor.getVariables().get("vaa").toString().equals("def_value");
+        assert result.getSamplerData().equals(extractor.getProperty().toString());
+        assert result.getTitle().equals("RegexExtractor");
+    }
 }
