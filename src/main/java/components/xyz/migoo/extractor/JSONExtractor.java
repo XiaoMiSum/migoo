@@ -42,6 +42,8 @@ import java.util.List;
 @Alias(aliasList = {"JSONExtractor", "json_extractor"})
 public class JSONExtractor extends AbstractExtractor {
 
+    private static final long serialVersionUID = -5527704814281313196L;
+
     @Override
     public SampleResult process(SampleResult result) {
         SampleResult extractorResult = new SampleResult("JSONExtractor");
@@ -54,7 +56,7 @@ public class JSONExtractor extends AbstractExtractor {
         String path = getPropertyAsString(FIELD);
         Object value = JSONPath.read(jsonStr, path);
         getVariables().put(getPropertyAsString(VARIABLE_NAME), value == null ? "def_value" : value);
-        getProperty().put("value", value);
+        getProperty().put("value", value == null ? "def_value" : value);
         extractorResult.setSamplerData(getProperty().toString());
         return extractorResult;
     }
