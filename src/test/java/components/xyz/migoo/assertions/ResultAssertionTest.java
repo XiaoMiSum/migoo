@@ -25,9 +25,46 @@
 
 package components.xyz.migoo.assertions;
 
+import com.alibaba.fastjson.JSONObject;
+import core.xyz.migoo.assertions.AssertionResult;
+import core.xyz.migoo.samplers.SampleResult;
+import core.xyz.migoo.testelement.TestElement;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
+
+import java.util.Objects;
+
 /**
  * @author xiaomi
  * Created in 2021/10/16 16:36
  */
 public class ResultAssertionTest {
+
+    private ResultAssertion assertion;
+    private SampleResult sampleResult;
+    private static final JSONObject JSON = new JSONObject();
+
+    @BeforeAll
+    public static void beforeAll() {
+        JSON.put("key1", 1);
+        JSON.put("key2", 2);
+    }
+
+    @BeforeEach
+    public void beforeEach() {
+        this.assertion = new ResultAssertion();
+        sampleResult = new HTTPSampleResult("test http");
+        sampleResult.setUrl("test url");
+        sampleResult.setResponseData(JSON.toJSONString());
+    }
+
+    @Test
+    public void testJSONAssertion() {
+        ((TestElement) assertion).setProperty("expected", JSON.toJSONString());
+        AssertionResult result = assertion.getResult(sampleResult);
+        assert result.isSuccessful();
+        assert Objects.equals(result.getName(), "ResultAssertion");
+    }
 }
