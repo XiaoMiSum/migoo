@@ -43,8 +43,7 @@ public class JSONAssertion extends AbstractAssertion {
 
     @Override
     public AssertionResult getResult(SampleResult samplerResult) {
-        AssertionResult
-                result = new AssertionResult("JSONAssertion");
+        AssertionResult result = new AssertionResult("JSONAssertion");
         try {
             String jsonStr = samplerResult.getResponseDataAsString();
             setActual(JSONPath.read(jsonStr, getPropertyAsString(FIELD)));
