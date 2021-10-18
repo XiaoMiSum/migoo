@@ -28,6 +28,7 @@
 package core.xyz.migoo.report;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ServiceLoader;
 
@@ -40,20 +41,20 @@ public class ReportService {
 
     static {
         for (Report element : ServiceLoader.load(Report.class)) {
-            SERVICES.put(element.getClass().getSimpleName().toLowerCase(), element);
+            addService(element);
         }
     }
 
     public static Report getService(String key) {
         Report report = SERVICES.get(key.toLowerCase());
         if (report == null) {
-            throw new RuntimeException("No matching test element: " + key.toLowerCase());
+            throw new RuntimeException("No matching test element: " + key);
         }
         return report;
     }
 
-    public static void addService(String key, Report report) {
-        SERVICES.put(key.toLowerCase(), report);
+    public static void addService(Report report) {
+        SERVICES.put(report.getClass().getSimpleName().toLowerCase(Locale.ROOT), report);
     }
 
     public static Map<String, Report> getServices() {
