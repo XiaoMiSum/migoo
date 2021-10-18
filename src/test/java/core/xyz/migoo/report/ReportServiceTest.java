@@ -36,7 +36,8 @@ public class ReportServiceTest {
 
     @Test
     public void testReportService1() {
-        ReportService.addService(result -> System.out.println(result.toString()));
+        ReportService.addService(((Report) result -> {
+        }).getClass());
     }
 
     @Test

@@ -118,6 +118,7 @@ public class MiGoo {
         TestEngine engine = plan.level() == 0 ? new LoopEngine(plan) : new StandardEngine(plan);
         Result result = engine.run();
         if (generateReport) {
+            plan.getVariables().convertVariables((JSONObject) plan.get(REPORT_ELEMENT));
             this.generateReport((JSONObject) plan.get(REPORT_ELEMENT, new JSONObject()), result);
         }
         return result;

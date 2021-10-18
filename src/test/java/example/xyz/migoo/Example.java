@@ -40,7 +40,7 @@ import xyz.migoo.readers.ReaderFactory;
  */
 public class Example {
 
-    public static void main(String[] args) throws ReaderException {
+    public static void main(String[] args) {
         /* 执行示例前，请先开启Mysql，创建 users 表，并插入几条测试数据
         修改 example/configelements.yaml 中 的jdbc配置
          创建表
@@ -63,8 +63,33 @@ public class Example {
          如果想要运行 redis示例，请取消 example/configelements.yam 中 RedisDataSource相关配置的注释，并修改为实际值
          如果想要运行 dubbo示例，请取消 example/configelements.yam 中 DubboDefaults相关配置的注释，并修改为实际值，然后启动 zookeeper服务，启动 example.dubbo.DubboApplication
         */
-        JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath://example/standardproject.yaml").read();
-        Result result = new MiGoo(yaml).run();
+        new Thread(() -> {
+            try {
+                Thread.sleep(30);
+                JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath://example/standardproject.yaml").read();
+                Result result = new MiGoo(yaml).run();
+            } catch (ReaderException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+        new Thread(() -> {
+            try {
+                Thread.sleep(30);
+                JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath://example/standardproject.yaml").read();
+                Result result = new MiGoo(yaml).run();
+            } catch (ReaderException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+        new Thread(() -> {
+            try {
+                Thread.sleep(30);
+                JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath://example/standardproject.yaml").read();
+                Result result = new MiGoo(yaml).run();
+            } catch (ReaderException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
 }

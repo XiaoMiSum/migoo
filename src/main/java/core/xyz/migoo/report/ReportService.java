@@ -37,27 +37,31 @@ import java.util.ServiceLoader;
  */
 public class ReportService {
 
-    private static final Map<String, Report> SERVICES = new HashMap<>(20);
+    private static final Map<String, Class<? extends Report>> SERVICES = new HashMap<>(20);
 
     static {
         for (Report element : ServiceLoader.load(Report.class)) {
-            addService(element);
+            addService(element.getClass());
         }
     }
 
     public static Report getService(String key) {
-        Report report = SERVICES.get(key.toLowerCase());
+        Class<? extends Report> report = SERVICES.get(key.toLowerCase());
         if (report == null) {
             throw new RuntimeException("No matching test element: " + key);
         }
-        return report;
+        try {
+            return report.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("Get report instance error. ", e);
+        }
     }
 
-    public static void addService(Report report) {
-        SERVICES.put(report.getClass().getSimpleName().toLowerCase(Locale.ROOT), report);
+    public static void addService(Class<? extends Report> report) {
+        SERVICES.put(report.getSimpleName().toLowerCase(Locale.ROOT), report);
     }
 
-    public static Map<String, Report> getServices() {
+    public static Map<String, Class<? extends Report>> getServices() {
         return new HashMap<>(SERVICES);
     }
 }
