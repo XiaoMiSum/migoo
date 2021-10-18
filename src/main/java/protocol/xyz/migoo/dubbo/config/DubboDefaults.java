@@ -28,6 +28,7 @@
 
 package protocol.xyz.migoo.dubbo.config;
 
+import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.dubbo.AbstractDubboTestElement;
 import protocol.xyz.migoo.dubbo.util.DubboConstantsInterface;
@@ -36,7 +37,10 @@ import protocol.xyz.migoo.dubbo.util.DubboConstantsInterface;
  * @author mi.xiao
  * @date 2021/4/10 20:38
  */
+@Alias(aliasList = {"Dubbo_Default", "DubboDefault", "Dubbo_Defaults"})
 public class DubboDefaults extends AbstractDubboTestElement implements TestStateListener, DubboConstantsInterface {
+
+    private static final long serialVersionUID = -3403481399811912085L;
 
     @Override
     public void testStarted() {

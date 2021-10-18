@@ -28,14 +28,17 @@
 package protocol.xyz.migoo.http.config;
 
 import core.xyz.migoo.testelement.AbstractTestElement;
+import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestStateListener;
-import protocol.xyz.migoo.http.AbstractHttpTestElement;
 import protocol.xyz.migoo.http.util.HTTPConstantsInterface;
 
 /**
  * @author xiaomi
  */
+@Alias(aliasList = {"http_default", "HttpDefault", "Http_Defaults"})
 public class HttpDefaults extends AbstractTestElement implements TestStateListener, HTTPConstantsInterface {
+
+    private static final long serialVersionUID = -5353412086167919169L;
 
     @Override
     public void testStarted() {
