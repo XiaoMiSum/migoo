@@ -26,27 +26,39 @@
  *
  */
 
-package example.dubbo.provider;
+package example.dubboserver;
 
-import example.dubbo.service.DemoService;
-import org.apache.dubbo.rpc.RpcContext;
-
-import java.util.concurrent.CompletableFuture;
+import example.dubboserver.provider.DemoServiceImpl;
+import example.dubboserver.service.DemoService;
+import org.apache.dubbo.config.ApplicationConfig;
+import org.apache.dubbo.config.RegistryConfig;
+import org.apache.dubbo.config.ServiceConfig;
+import org.apache.dubbo.config.bootstrap.DubboBootstrap;
 
 /**
  * @author mi.xiao
- * @date 2021/7/3 17:51
+ * @date 2021/7/3 19:49
  */
-public class DemoServiceImpl implements DemoService {
+public class DubboApplication {
 
-    @Override
-    public String sayHello(String name) {
-        return "Hello " + name + ", response from provider: " + RpcContext.getContext().getLocalAddress();
+    public static void main(String[] args) {
+        startWithBootstrap();
     }
 
-    @Override
-    public CompletableFuture<String> sayHelloAsync(String name) {
-        return null;
+    private static boolean isClassic(String[] args) {
+        return args.length > 0 && "classic".equalsIgnoreCase(args[0]);
     }
 
+    private static void startWithBootstrap() {
+        ServiceConfig<DemoServiceImpl> service = new ServiceConfig<>();
+        service.setInterface(DemoService.class);
+        service.setRef(new DemoServiceImpl());
+
+        DubboBootstrap bootstrap = DubboBootstrap.getInstance();
+        bootstrap.application(new ApplicationConfig("demo-service"))
+                .registry(new RegistryConfig("zookeeper://127.0.0.1:2181"))
+                .service(service)
+                .start()
+                .await();
+    }
 }
