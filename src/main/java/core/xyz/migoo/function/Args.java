@@ -62,7 +62,7 @@ public class Args extends ArrayList<Object> {
 
     @Override
     public boolean add(Object parameter) {
-        return super.add(getParameterValue((String) parameter));
+        return super.add(parameter instanceof String ? getParameterValue((String) parameter) : parameter);
     }
 
     private Object getParameterValue(String parameter) {
