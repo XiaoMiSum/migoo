@@ -73,7 +73,7 @@ public class Args extends ArrayList<Object> {
     }
 
     public String getString(int index) {
-        return size() <= index ? "" : super.get(index).toString().trim();
+        return size() <= index || super.get(index) == null ? "" : super.get(index).toString().trim();
     }
 
     public BigDecimal getNumber(int index) {

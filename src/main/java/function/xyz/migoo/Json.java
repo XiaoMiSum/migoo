@@ -41,14 +41,14 @@ public class Json implements Function {
      */
     @Override
     public JSONObject execute(Args args) {
-        if (args.getString(0).isEmpty()) {
+        if (args.isEmpty()) {
             throw new IllegalArgumentException("parameters con not be null");
         }
         JSONObject json = new JSONObject();
-        for (String str : args.getString(0).split(",")) {
-            String[] arr = str.split("=");
+        args.forEach(arg -> {
+            String[] arr = ((String) arg).split("=");
             json.put(arr[0], arr[1]);
-        }
+        });
         return json;
     }
 }

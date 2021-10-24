@@ -40,17 +40,13 @@ public class RandomString implements Function {
     /**
      * 获取随机字符串，支持三个参数，且三个参数都允许为空
      * 参数：
-     *      length: 返回的随机字符串长度，允许为空，默认：10
-     *      string: 基础字符串，允许为空，如果传了该参数，则从该参数中获取字符作为种子生成随机字符串
-     *      upper: 是否将生成的字符串转为大写，允许为空，默认：false
-     *
+     * length: 返回的随机字符串长度，允许为空，默认：10
+     * string: 基础字符串，允许为空，如果传了该参数，则从该参数中获取字符作为种子生成随机字符串
+     * upper: 是否将生成的字符串转为大写，允许为空，默认：false
      */
     @Override
     public String execute(Args args) {
-        if (args.isEmpty()){
-            throw new IllegalArgumentException("parameters con not be null");
-        }
-        int length = args.getNumber(0) == null ? 10 :  args.getNumber(0).intValue();
+        int length = args.getNumber(0) == null ? 10 : args.getNumber(0).intValue();
         String charsToUse = args.getString(1);
         String randomString = charsToUse.isEmpty() ? RandomStringUtils.randomAlphabetic(length)
                 : RandomStringUtils.random(length, charsToUse);

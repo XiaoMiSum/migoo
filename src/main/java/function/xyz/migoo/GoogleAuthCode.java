@@ -46,12 +46,11 @@ public class GoogleAuthCode implements Function {
     /**
      * 获取谷歌验证码，支持一个参数，且不允许为空
      * 参数顺序：
-     *      secret: 谷歌验证器安全码，非空，通过该安全码生成谷歌验证码
-     *
+     * secret: 谷歌验证器安全码，非空，通过该安全码生成谷歌验证码
      */
     @Override
     public String execute(Args args) {
-        if (args.getString(0).isEmpty()) {
+        if (args.isEmpty() || args.getString(0).isEmpty()) {
             throw new IllegalArgumentException("secretKey con not be null");
         }
         return GoogleAuthenticator.generateVerifyCode(args.getString(0));
