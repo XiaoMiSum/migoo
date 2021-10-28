@@ -35,7 +35,6 @@ import xyz.migoo.simplehttp.Request;
 import xyz.migoo.simplehttp.Response;
 
 import java.net.HttpURLConnection;
-import java.util.Arrays;
 
 /**
  * @author xiaomi
@@ -104,11 +103,10 @@ public class HTTPSampleResult extends SampleResult {
         this.responseHeaders = responseHeaders;
     }
 
-
     public void setRequestData(Request request) {
         setUrl(request.uriNotContainsParam());
         setMethod(request.method());
-        setRequestHeaders(request.headers().length == 0 ? requestHeaders : Arrays.toString(request.headers()));
+        setRequestHeaders(getHeaderString(request.headers()));
         setQueryString(request.query());
         setSamplerData(request.body());
     }
@@ -116,15 +114,22 @@ public class HTTPSampleResult extends SampleResult {
     public void setResponseData(Response response) {
         setResponseData(response.text());
         setResponseCode(String.valueOf(response.statusCode()));
-        JSONArray headers = new JSONArray(response.headers().length);
-        for (Header h : response.headers()) {
-            headers.add(new MiGooProperty(h.getName(), h.getValue()));
-        }
-        setResponseHeaders(headers.toJSONString());
+        setResponseHeaders(getHeaderString(response.headers()));
         if (isResponseCodeOK()) {
             setResponseMessageOK();
         }
         setCookies(response.cookies() != null ? JSONArray.toJSONString(response.cookies()) : cookies);
+    }
+
+    private String getHeaderString(Header[] headers) {
+        if (headers.length == 0) {
+            return requestHeaders;
+        }
+        JSONArray array = new JSONArray(headers.length);
+        for (Header h : headers) {
+            array.add(new MiGooProperty(h.getName(), h.getValue()));
+        }
+        return array.toJSONString();
     }
 
     @Override
