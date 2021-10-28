@@ -40,8 +40,8 @@ import core.xyz.migoo.report.Report;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.samplers.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
-import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 import org.apache.commons.text.translate.CharSequenceTranslator;
+import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 import xyz.migoo.report.util.DateUtils;
 
 import java.util.List;
@@ -52,6 +52,8 @@ import static xyz.migoo.MiGoo.SYSTEM;
  * @author xiaomi
  */
 public class StandardReport extends AbstractTestElement implements Report {
+
+    private static final long serialVersionUID = 3498370898639487831L;
 
     @Override
     public void generateReport(Result result) {
@@ -108,9 +110,7 @@ public class StandardReport extends AbstractTestElement implements Report {
                 .write(result.getPostprocessorResults(), feature, "Postprocessor")
                 .write(feature, MarkupHelper.createLabel(String.format("Sampler: %s", result.getTestClass()), ExtentColor.WHITE))
                 .write(feature, result.getUrl())
-                .write(feature, 0, result)
-                .write(feature, 1, result)
-                .write(feature, -1, result)
+                .write(feature, result)
                 .write(feature, result.getSamplerData())
                 .write(feature, getResponseString(result.getResponseDataAsString().trim()))
                 .write(feature, result.getThrowable())
@@ -130,9 +130,7 @@ public class StandardReport extends AbstractTestElement implements Report {
                 String title = result.getTitle() == null ? result.getTestClass() : result.getTitle();
                 this.write(feature, MarkupHelper.createLabel(String.format("%s-%s: %s", desc, i, title), ExtentColor.WHITE))
                         .write(feature, result.getUrl())
-                        .write(feature, 0, result)
-                        .write(feature, 1, result)
-                        .write(feature, -1, result)
+                        .write(feature, result)
                         .write(feature, result.getSamplerData())
                         .write(feature, getResponseString(result.getResponseDataAsString().trim()))
                         .write(feature, result.getThrowable());
@@ -157,13 +155,11 @@ public class StandardReport extends AbstractTestElement implements Report {
         return this;
     }
 
-    private StandardReport write(ExtentTest feature, int count, Result result) {
-        if (count == 0 && result instanceof HTTPSampleResult) {
-            this.write(feature, ((HTTPSampleResult) result).getCookies());
-        } else if (count == 1 && result instanceof HTTPSampleResult) {
-            this.write(feature, ((HTTPSampleResult) result).getRequestHeaders());
-        } else if (count == -1 && result instanceof HTTPSampleResult) {
-            this.write(feature, ((HTTPSampleResult) result).getQueryString());
+    private StandardReport write(ExtentTest feature, Result result) {
+        if (result instanceof HTTPSampleResult) {
+            this.write(feature, ((HTTPSampleResult) result).getCookies())
+                    .write(feature, ((HTTPSampleResult) result).getRequestHeaders())
+                    .write(feature, ((HTTPSampleResult) result).getQueryString());
         }
         return this;
     }

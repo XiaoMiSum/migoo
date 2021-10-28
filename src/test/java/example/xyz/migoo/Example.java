@@ -66,25 +66,7 @@ public class Example {
         new Thread(() -> {
             try {
                 Thread.sleep(30);
-                JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath://example/standardproject.yaml").read();
-                Result result = new MiGoo(yaml).run();
-            } catch (ReaderException | InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
-        new Thread(() -> {
-            try {
-                Thread.sleep(30);
-                JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath://example/standardproject.yaml").read();
-                Result result = new MiGoo(yaml).run();
-            } catch (ReaderException | InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
-        new Thread(() -> {
-            try {
-                Thread.sleep(30);
-                JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath://example/standardproject.yaml").read();
+                JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath://example/standardsampler_http.yaml").read();
                 Result result = new MiGoo(yaml).run();
             } catch (ReaderException | InterruptedException e) {
                 e.printStackTrace();

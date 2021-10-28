@@ -108,7 +108,7 @@ public class HTTPSampleResult extends SampleResult {
     public void setRequestData(Request request) {
         setUrl(request.uriNotContainsParam());
         setMethod(request.method());
-        setRequestHeaders(Arrays.toString(request.headers()));
+        setRequestHeaders(request.headers().length == 0 ? requestHeaders : Arrays.toString(request.headers()));
         setQueryString(request.query());
         setSamplerData(request.body());
     }
@@ -124,6 +124,7 @@ public class HTTPSampleResult extends SampleResult {
         if (isResponseCodeOK()) {
             setResponseMessageOK();
         }
+        setCookies(response.cookies() != null ? JSONArray.toJSONString(response.cookies()) : cookies);
     }
 
     @Override
