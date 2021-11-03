@@ -30,6 +30,9 @@ package core.xyz.migoo.processor;
 import core.xyz.migoo.samplers.SampleResult;
 import core.xyz.migoo.testelement.TestStateListener;
 
+/**
+ * @author xiaomi
+ */
 public interface Processor extends TestStateListener {
 
     /**

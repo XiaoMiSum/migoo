@@ -35,6 +35,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.sql.*;
 
+/**
+ * @author xiaomi
+ */
 public abstract class AbstractJDBCTestElement extends AbstractTestElement {
 
     static final String SELECT = "select";

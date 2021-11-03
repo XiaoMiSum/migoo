@@ -56,7 +56,6 @@ public class Postman2Sampler implements Convert2Sampler {
                     this.body(sampler.getJSONObject("config"), request.getJSONObject("body"));
                     this.writer(sampler, path);
                 }
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,7 +75,6 @@ public class Postman2Sampler implements Convert2Sampler {
             }
             config.put("body", body);
         }
-
     }
 
     private void headers(JSONObject config, JSONArray headers) {

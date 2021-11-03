@@ -28,10 +28,8 @@
 
 package components.xyz.migoo.assertions.rules;
 
-import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.assertions.Rule;
-
-import java.math.BigDecimal;
+import core.xyz.migoo.testelement.Alias;
 
 /**
  * @author xiaomi
@@ -42,13 +40,9 @@ public class Equals extends BaseRule implements Rule {
 
     @Override
     public boolean assertThat(Object actual, Object expected) {
-        String str1 = objectToString(actual);
-        String str2 = objectToString(expected);
-        if (actual instanceof Number || expected instanceof Number){
-            str1 = "null".equals(str1) ? "0" : str1;
-            str2 = "null".equals(str2) ? "0" : str2;
-            return new BigDecimal(str1).compareTo(new BigDecimal(str2)) == 0;
+        if (actual instanceof Number || expected instanceof Number) {
+            return new NumberEquals().assertThat(actual, expected);
         }
-        return str1.equals(str2);
+        return objectToString(actual).equals(objectToString(expected));
     }
 }

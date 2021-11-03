@@ -27,6 +27,9 @@
 
 package core.xyz.migoo.function;
 
+/**
+ * @author xiaomi
+ */
 public interface Function {
 
     /**

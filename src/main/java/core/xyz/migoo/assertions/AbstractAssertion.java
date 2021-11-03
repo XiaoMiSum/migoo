@@ -36,6 +36,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ServiceLoader;
 
+/**
+ * @author xiaomi
+ */
 public abstract class AbstractAssertion extends AbstractTestElement implements Serializable, Assertion  {
 
     private static final Map<String, Rule> RULES = new HashMap<>(100);

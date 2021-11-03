@@ -1,29 +1,18 @@
 /*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *  * The MIT License (MIT)
- *  *
- *  * Copyright (c) 2018 XiaoMiSum (mi_xiao@qq.com)
- *  *
- *  * Permission is hereby granted, free of charge, to any person obtaining
- *  * a copy of this software and associated documentation files (the
- *  * 'Software'), to deal in the Software without restriction, including
- *  * without limitation the rights to use, copy, modify, merge, publish,
- *  * distribute, sublicense, and/or sell copies of the Software, and to
- *  * permit persons to whom the Software is furnished to do so, subject to
- *  * the following conditions:
- *  *
- *  * The above copyright notice and this permission notice shall be
- *  * included in all copies or substantial portions of the Software.
- *  *
- *  * THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
- *  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- *  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- *  * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- *  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- *  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- *  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.apache.commons.text.translate;
@@ -33,8 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * https://gitee.com/mirrors/commons-text
- *
+ * https://github.com/apache/commons-text/blob/master/src/main/java/org/apache/commons/text/translate/EntityArrays.java
+ * <p>
  * Class holding various entity data for HTML and XML - generally for use with
  * the LookupTranslator.
  * All Maps are generated using {@code java.util.Collections.unmodifiableMap()}.
@@ -43,12 +32,13 @@ import java.util.Map;
  */
 public class EntityArrays {
 
-   /**
+    /**
      * A Map&lt;CharSequence, CharSequence&gt; to to escape
      * <a href="https://secure.wikimedia.org/wikipedia/en/wiki/ISO/IEC_8859-1">ISO-8859-1</a>
      * characters to their named HTML 3.x equivalents.
      */
     public static final Map<CharSequence, CharSequence> ISO8859_1_ESCAPE;
+
     static {
         final Map<CharSequence, CharSequence> initialMap = new HashMap<>();
         initialMap.put("\u00A0", "&nbsp;"); // non-breaking space
@@ -154,6 +144,7 @@ public class EntityArrays {
      * Reverse of {@link #ISO8859_1_ESCAPE} for unescaping purposes.
      */
     public static final Map<CharSequence, CharSequence> ISO8859_1_UNESCAPE;
+
     static {
         ISO8859_1_UNESCAPE = Collections.unmodifiableMap(invert(ISO8859_1_ESCAPE));
     }
@@ -165,6 +156,7 @@ public class EntityArrays {
      * HTML 4.0 character entities.
      */
     public static final Map<CharSequence, CharSequence> HTML40_EXTENDED_ESCAPE;
+
     static {
         final Map<CharSequence, CharSequence> initialMap = new HashMap<>();
         // <!-- Latin Extended-B -->
@@ -368,6 +360,7 @@ public class EntityArrays {
      * Reverse of {@link #HTML40_EXTENDED_ESCAPE} for unescaping purposes.
      */
     public static final Map<CharSequence, CharSequence> HTML40_EXTENDED_UNESCAPE;
+
     static {
         HTML40_EXTENDED_UNESCAPE = Collections.unmodifiableMap(invert(HTML40_EXTENDED_ESCAPE));
     }
@@ -375,10 +368,11 @@ public class EntityArrays {
     /**
      * A Map&lt;CharSequence, CharSequence&gt; to escape the basic XML and HTML
      * character entities.
-     *
+     * <p>
      * Namely: {@code " & < >}
      */
     public static final Map<CharSequence, CharSequence> BASIC_ESCAPE;
+
     static {
         final Map<CharSequence, CharSequence> initialMap = new HashMap<>();
         initialMap.put("\"", "&quot;"); // " - double-quote
@@ -392,6 +386,7 @@ public class EntityArrays {
      * Reverse of {@link #BASIC_ESCAPE} for unescaping purposes.
      */
     public static final Map<CharSequence, CharSequence> BASIC_UNESCAPE;
+
     static {
         BASIC_UNESCAPE = Collections.unmodifiableMap(invert(BASIC_ESCAPE));
     }
@@ -401,6 +396,7 @@ public class EntityArrays {
      * its XML character entity.
      */
     public static final Map<CharSequence, CharSequence> APOS_ESCAPE;
+
     static {
         final Map<CharSequence, CharSequence> initialMap = new HashMap<>();
         initialMap.put("'", "&apos;"); // XML apostrophe
@@ -411,6 +407,7 @@ public class EntityArrays {
      * Reverse of {@link #APOS_ESCAPE} for unescaping purposes.
      */
     public static final Map<CharSequence, CharSequence> APOS_UNESCAPE;
+
     static {
         APOS_UNESCAPE = Collections.unmodifiableMap(invert(APOS_ESCAPE));
     }
@@ -418,10 +415,11 @@ public class EntityArrays {
     /**
      * A Map&lt;CharSequence, CharSequence&gt; to escape the Java
      * control characters.
-     *
+     * <p>
      * Namely: {@code \b \n \t \f \r}
      */
     public static final Map<CharSequence, CharSequence> JAVA_CTRL_CHARS_ESCAPE;
+
     static {
         final Map<CharSequence, CharSequence> initialMap = new HashMap<>();
         initialMap.put("\b", "\\b");
@@ -436,12 +434,14 @@ public class EntityArrays {
      * Reverse of {@link #JAVA_CTRL_CHARS_ESCAPE} for unescaping purposes.
      */
     public static final Map<CharSequence, CharSequence> JAVA_CTRL_CHARS_UNESCAPE;
+
     static {
         JAVA_CTRL_CHARS_UNESCAPE = Collections.unmodifiableMap(invert(JAVA_CTRL_CHARS_ESCAPE));
     }
 
     /**
      * Used to invert an escape Map into an unescape Map.
+     *
      * @param map Map&lt;String, String&gt; to be inverted
      * @return Map&lt;String, String&gt; inverted array
      */

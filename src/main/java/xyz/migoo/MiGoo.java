@@ -41,12 +41,18 @@ import xyz.migoo.readers.ReaderException;
 import xyz.migoo.readers.ReaderFactory;
 import xyz.migoo.report.StandardReport;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static core.xyz.migoo.testelement.AbstractTestElement.*;
 
+/**
+ * @author xiaomi
+ */
 public class MiGoo {
 
     private static final Pattern FILE_PATTERN = Pattern.compile("^@F\\((.+)+\\)");
@@ -112,6 +118,7 @@ public class MiGoo {
         TestEngine engine = plan.level() == 0 ? new LoopEngine(plan) : new StandardEngine(plan);
         Result result = engine.run();
         if (generateReport) {
+            plan.getVariables().convertVariables((JSONObject) plan.get(REPORT_ELEMENT));
             this.generateReport((JSONObject) plan.get(REPORT_ELEMENT, new JSONObject()), result);
         }
         return result;
@@ -122,7 +129,7 @@ public class MiGoo {
         config.putIfAbsent(TEST_CLASS, StandardReport.class.getSimpleName().toLowerCase());
         Report report = ReportService.getService(config.getString(TEST_CLASS));
         if (report instanceof TestElement) {
-            ((StandardReport) report).setProperties(config);
+            ((TestElement) report).setProperties(config);
         }
         report.generateReport(result);
     }
@@ -136,7 +143,7 @@ public class MiGoo {
         SYSTEM.put("java.vm.name", System.getProperty("java.vm.name"));
         try {
             JSONObject config = (JSONObject) ReaderFactory.getReader("classpath://props.migoo.yml").read();
-            config.forEach(SYSTEM::put);
+            SYSTEM.putAll(config);
         } catch (Exception ignored) {
         }
     }
@@ -165,6 +172,4 @@ public class MiGoo {
         }
         System.out.println();
     }
-
-
 }

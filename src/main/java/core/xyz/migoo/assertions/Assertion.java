@@ -29,6 +29,9 @@ package core.xyz.migoo.assertions;
 
 import core.xyz.migoo.samplers.SampleResult;
 
+/**
+ * @author xiaomi
+ */
 public interface Assertion {
 
     /**

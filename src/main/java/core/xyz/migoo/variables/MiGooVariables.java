@@ -41,6 +41,9 @@ import java.util.regex.Matcher;
 
 import static core.xyz.migoo.variables.VariableUtils.*;
 
+/**
+ * @author xiaomi
+ */
 public class MiGooVariables implements VariableStateListener, Cloneable {
 
     private final MiGooProperty propMap = new MiGooProperty();
@@ -192,6 +195,7 @@ public class MiGooVariables implements VariableStateListener, Cloneable {
         return v;
     }
 
+    @Override
     public String toString(){
         return propMap.toString();
     }

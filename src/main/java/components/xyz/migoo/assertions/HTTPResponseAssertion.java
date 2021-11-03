@@ -34,10 +34,14 @@ import core.xyz.migoo.samplers.SampleResult;
 import core.xyz.migoo.testelement.Alias;
 import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author xiaomi
+ */
 @Alias(aliasList = {"HTTPAssertion", "HTTP_Assertion"})
 public class HTTPResponseAssertion extends AbstractAssertion {
 
@@ -45,6 +49,7 @@ public class HTTPResponseAssertion extends AbstractAssertion {
 
     private static final String CONTEXT = "context";
     private static final Pattern PATTERN = Pattern.compile("^header(\\[[\\d]+])?(\\.\\w+)?");
+    private static final long serialVersionUID = -1518606323183231494L;
 
     @Override
     public AssertionResult getResult(SampleResult samplerResult) {
@@ -55,14 +60,14 @@ public class HTTPResponseAssertion extends AbstractAssertion {
             Matcher matcher = PATTERN.matcher(field);
             if (matcher.find()) {
                 String path = "$" + (matcher.group(1) == null ? "[0]" : matcher.group(1)) + matcher.group(2);
-                setActual(JSONPath.read(((HTTPSampleResult) samplerResult).getResponseHeaders(), path));
+                setActual(JSONPath.read(httpResult.getResponseHeaders(), path));
             } else {
-                setActual(STATUS.contains(field) ? httpResult.getResponseCode() : samplerResult.getResponseDataAsString());
+                setActual(STATUS.contains(field) ? httpResult.getResponseCode() : httpResult.getResponseDataAsString());
             }
             super.assertThat(result);
         } else {
             result.setSuccessful(true);
-            result.setContext(String.format("UnSupport %s, assert default true", samplerResult.getClass().getSimpleName()));
+            result.setContext(String.format("unsupported %s, assert default true", samplerResult.getClass().getSimpleName()));
         }
         return result;
     }

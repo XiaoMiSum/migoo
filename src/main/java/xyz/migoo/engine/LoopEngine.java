@@ -35,6 +35,9 @@ import core.xyz.migoo.testelement.TestElement;
 
 import java.util.ArrayList;
 
+/**
+ * @author xiaomi
+ */
 public class LoopEngine extends AbstractTestEngine {
 
     public LoopEngine(TestPlan plan) {

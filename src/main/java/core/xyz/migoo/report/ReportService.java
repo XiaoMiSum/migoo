@@ -28,32 +28,40 @@
 package core.xyz.migoo.report;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ServiceLoader;
 
+/**
+ * @author xiaomi
+ */
 public class ReportService {
-    
-    private static final Map<String, Report> SERVICES = new HashMap<>(20);
+
+    private static final Map<String, Class<? extends Report>> SERVICES = new HashMap<>(20);
 
     static {
         for (Report element : ServiceLoader.load(Report.class)) {
-            SERVICES.put(element.getClass().getSimpleName().toLowerCase(), element);
+            addService(element.getClass());
         }
     }
 
     public static Report getService(String key) {
-        Report report = SERVICES.get(key.toLowerCase());
+        Class<? extends Report> report = SERVICES.get(key.toLowerCase());
         if (report == null) {
-            throw new RuntimeException("No matching test element: " + key.toLowerCase());
+            throw new RuntimeException("No matching test element: " + key);
         }
-        return report;
+        try {
+            return report.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("Get report instance error. ", e);
+        }
     }
 
-    public static void addService(String key, Report report) {
-        SERVICES.put(key.toLowerCase(), report);
+    public static void addService(Class<? extends Report> report) {
+        SERVICES.put(report.getSimpleName().toLowerCase(Locale.ROOT), report);
     }
 
-    public static Map<String, Report> getAllService() {
+    public static Map<String, Class<? extends Report>> getServices() {
         return new HashMap<>(SERVICES);
     }
 }

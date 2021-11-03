@@ -37,6 +37,9 @@ import protocol.xyz.migoo.jdbc.config.DataSourceElement;
 
 import java.sql.Connection;
 
+/**
+ * @author xiaomi
+ */
 public class JDBCSampler extends AbstractJDBCTestElement implements Sampler, TestStateListener {
 
     @Override

@@ -35,7 +35,11 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+/**
+ * @author xiaomi
+ */
 public abstract class BaseRule {
 
     private final static ThreadLocal<DecimalFormat> FORMAT_THREAD_LOCAL =
@@ -56,12 +60,14 @@ public abstract class BaseRule {
     public String objectToString(Object subj, String defaultString) {
         String str;
         defaultString = StringUtils.isEmpty(defaultString) ? "null" : defaultString;
-        if (subj == null || StringUtils.isEmpty(subj.toString())) {
-            str =  defaultString;
+        if (Objects.isNull(subj)) {
+            str = defaultString;
+        } else if (subj instanceof String) {
+            str = StringUtils.isBlank((String) subj) ? defaultString : (String) subj;
         } else if (subj instanceof List) {
-            str = ((List) subj).isEmpty() ? defaultString : JSONArray.toJSONString(subj);
+            str = ((List<?>) subj).isEmpty() ? defaultString : JSONArray.toJSONString(subj);
         } else if (subj instanceof Map) {
-            str = ((Map) subj).isEmpty() ? defaultString : JSONObject.toJSONString(subj);
+            str = ((Map<?, ?>) subj).isEmpty() ? defaultString : JSONObject.toJSONString(subj);
         } else if (subj instanceof Double || subj instanceof Float) {
             str = FORMAT_THREAD_LOCAL.get().format(subj);
         } else {

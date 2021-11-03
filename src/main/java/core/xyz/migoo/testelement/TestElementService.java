@@ -31,20 +31,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
+/**
+ * @author xiaomi
+ */
 public class TestElementService {
 
     private static final Map<String, Class<? extends TestElement>> SERVICES = new HashMap<>(20);
 
     static {
         for (TestElement element : ServiceLoader.load(TestElement.class)) {
-            Alias annotation =  element.getClass().getAnnotation(Alias.class);
-            if (annotation != null) {
-                String[] aliasList = annotation.aliasList();
-                for (String alias : aliasList) {
-                    SERVICES.put(alias.toLowerCase(), element.getClass());
-                }
-            }
-            SERVICES.put(element.getClass().getSimpleName().toLowerCase(), element.getClass());
+            addService(element.getClass());
         }
     }
 
@@ -60,11 +56,18 @@ public class TestElementService {
         }
     }
 
-    public static void addService(String key, Class<? extends TestElement> clazz) {
-        SERVICES.put(key.toLowerCase(), clazz);
+    public static void addService(Class<? extends TestElement> clazz) {
+        Alias annotation = clazz.getAnnotation(Alias.class);
+        if (annotation != null) {
+            String[] aliasList = annotation.aliasList();
+            for (String alias : aliasList) {
+                SERVICES.put(alias.toLowerCase(), clazz);
+            }
+        }
+        SERVICES.put(clazz.getSimpleName().toLowerCase(), clazz);
     }
 
-    public static Map<String, Class<? extends TestElement>> getAllService() {
+    public static Map<String, Class<? extends TestElement>> getServices() {
         return new HashMap<>(SERVICES);
     }
 }

@@ -27,11 +27,12 @@
 
 package components.xyz.migoo.assertions.rules;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.assertions.Rule;
+import core.xyz.migoo.testelement.Alias;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author xiaomi
@@ -42,15 +43,7 @@ public class IsEmpty extends BaseRule implements Rule {
 
     @Override
     public boolean assertThat(Object actual, Object expected) {
-        if (actual instanceof JSONObject) {
-            return ((JSONObject) actual).isEmpty();
-        }
-        if (actual instanceof JSONArray) {
-            return ((JSONArray) actual).isEmpty();
-        }
-        if (actual instanceof String) {
-            return StringUtils.isEmpty((String) actual);
-        }
-        return actual == null;
+        return actual == null || (actual instanceof String ? StringUtils.isBlank((String) actual)
+                : actual instanceof Map ? ((Map<?, ?>) actual).isEmpty() : actual instanceof List && ((List<?>) actual).isEmpty());
     }
 }

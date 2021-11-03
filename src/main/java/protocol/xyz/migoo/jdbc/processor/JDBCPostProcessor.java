@@ -30,6 +30,9 @@ package protocol.xyz.migoo.jdbc.processor;
 import core.xyz.migoo.processor.PostProcessor;
 import core.xyz.migoo.samplers.SampleResult;
 
+/**
+ * @author xiaomi
+ */
 public class JDBCPostProcessor extends AbstractJDBCProcessor implements PostProcessor {
 
     @Override

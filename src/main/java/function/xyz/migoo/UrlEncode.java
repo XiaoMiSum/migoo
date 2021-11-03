@@ -33,6 +33,9 @@ import core.xyz.migoo.function.Function;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+/**
+ * @author xiaomi
+ */
 public class UrlEncode implements Function {
 
     /**

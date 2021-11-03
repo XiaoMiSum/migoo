@@ -34,23 +34,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
+/**
+ * @author xiaomi
+ */
 public class FunctionService {
 
     private static final Map<String, Function> SERVICES = new HashMap<>(16);
 
     static {
         for (Function service : ServiceLoader.load(Function.class)) {
-            Alias alias = service.getClass().getAnnotation(Alias.class);
-            if (alias != null) {
-                for (String key : alias.aliasList()) {
-                    SERVICES.put(key.toLowerCase(), service);
-                }
-            }
-            SERVICES.put(service.getClass().getSimpleName().toLowerCase(), service);
+            addService(service);
         }
     }
 
     public static void addService(Function service) {
+        Alias alias = service.getClass().getAnnotation(Alias.class);
+        if (alias != null) {
+            for (String key : alias.aliasList()) {
+                SERVICES.put(key.toLowerCase(), service);
+            }
+        }
         SERVICES.put(service.getClass().getSimpleName().toLowerCase(), service);
     }
 

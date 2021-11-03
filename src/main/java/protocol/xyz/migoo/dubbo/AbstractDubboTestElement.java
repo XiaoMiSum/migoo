@@ -74,7 +74,6 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
                 getPropertyAsJSONObject(ATTACHMENT_ARGS).forEach((key, value) -> attachments.put(key, value.toString()));
                 RpcContext.getContext().setAttachments(attachments);
                 getVariables().put("migoo.protocol.dubbo.attachment.args", get(ATTACHMENT_ARGS));
-
             }
             String[] parameterTypes = new String[getPropertyAsJSONArray(ARGS_PARAMETER_TYPES).size()];
             for (int i = 0; i < getPropertyAsJSONArray(ARGS_PARAMETER_TYPES).size(); i++) {

@@ -34,8 +34,8 @@ protocol.xyz.migoo.redis.processor.RedisPreProcessor
 protocol.xyz.migoo.redis.processor.RedisPostProcessor
 protocol.xyz.migoo.redis.sampler.RedisSampler
 protocol.xyz.migoo.http.config.HttpDefaults
-protocol.xyz.migoo.jdbc.processor.JDBCPreProcessor
-protocol.xyz.migoo.jdbc.processor.JDBCPostProcessor
+protocol.xyz.migoo.http.processer.HttpPreProcessor
+protocol.xyz.migoo.http.processer.HttpPostProcessor
 protocol.xyz.migoo.http.sampler.HttpSampler
 protocol.xyz.migoo.dubbo.config.DubboDefaults
 protocol.xyz.migoo.dubbo.sampler.DubboSampler

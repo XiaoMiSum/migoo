@@ -2,7 +2,7 @@
  *
  *  * The MIT License (MIT)
  *  *
- *  * Copyright (c) 2018. Lorem XiaoMiSum (mi_xiao@qq.com)
+ *  * Copyright (c) 2018 XiaoMiSum (mi_xiao@qq.com)
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining
  *  * a copy of this software and associated documentation files (the
@@ -23,11 +23,30 @@
  *  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  *  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
+ *
  */
 
-package core.xyz.migoo.samplers;
+package example.dubboserver.provider;
 
-import core.xyz.migoo.testelement.AbstractTestElement;
+import example.dubboserver.service.DemoService;
+import org.apache.dubbo.rpc.RpcContext;
 
-public abstract class AbstractSampler extends AbstractTestElement implements Sampler {
+import java.util.concurrent.CompletableFuture;
+
+/**
+ * @author mi.xiao
+ * @date 2021/7/3 17:51
+ */
+public class DemoServiceImpl implements DemoService {
+
+    @Override
+    public String sayHello(String name) {
+        return "Hello " + name + ", response from provider: " + RpcContext.getContext().getLocalAddress();
+    }
+
+    @Override
+    public CompletableFuture<String> sayHelloAsync(String name) {
+        return null;
+    }
+
 }

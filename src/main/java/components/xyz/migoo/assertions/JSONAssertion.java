@@ -33,8 +33,13 @@ import core.xyz.migoo.assertions.AssertionResult;
 import core.xyz.migoo.samplers.SampleResult;
 import core.xyz.migoo.testelement.Alias;
 
+/**
+ * @author xiaomi
+ */
 @Alias(aliasList = {"JSONAssertion", "json_assertion"})
 public class JSONAssertion extends AbstractAssertion {
+
+    private static final long serialVersionUID = 3660713030047593688L;
 
     @Override
     public AssertionResult getResult(SampleResult samplerResult) {

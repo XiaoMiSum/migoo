@@ -27,6 +27,9 @@
 
 package core.xyz.migoo.samplers;
 
+/**
+ * @author xiaomi
+ */
 import java.io.Serializable;
 
 public interface Sampler extends Serializable {

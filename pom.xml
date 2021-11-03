@@ -7,16 +7,10 @@
     <groupId>xyz.migoo</groupId>
     <artifactId>migoo</artifactId>
 
-    <version>4.0.5</version>
+    <version>4.0.6</version>
     <name>migoo</name>
     <description>a test tool for api</description>
     <url>https://xiaomisum.github.io/migoo/</url>
-
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
 
     <licenses>
         <license>
@@ -45,11 +39,11 @@
         <druid.version>1.2.4</druid.version>
         <redis.version>3.4.1</redis.version>
         <mysql.version>8.0.16</mysql.version>
-        <dubbo.version>2.7.10</dubbo.version>
+        <dubbo.version>2.7.13</dubbo.version>
         <reports.version>5.0.6</reports.version>
         <compile.version>3.8.1</compile.version>
         <fastjson.version>1.2.75</fastjson.version>
-        <simplehttp.version>1.0.6</simplehttp.version>
+        <simplehttp.version>2.0.0</simplehttp.version>
         <commons-lang3.version>3.11</commons-lang3.version>
         <commons-codec.version>1.14</commons-codec.version>
         <maven.compiler.source>8</maven.compiler.source>
@@ -62,6 +56,7 @@
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo</artifactId>
             <version>${dubbo.version}</version>
+            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <artifactId>fastjson</artifactId>
@@ -74,6 +69,7 @@
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-dependencies-zookeeper</artifactId>
             <version>${dubbo.version}</version>
+            <optional>true</optional>
             <type>pom</type>
         </dependency>
 
@@ -198,7 +194,9 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <id>copy-dependencies</id>
@@ -220,11 +218,11 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
+            <id>sonatype-nexus</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
         <repository>
-            <id>sonatype-nexus-release</id>
+            <id>sonatype-nexus</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>

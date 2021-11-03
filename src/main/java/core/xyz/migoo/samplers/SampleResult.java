@@ -34,6 +34,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+/**
+ * @author xiaomi
+ */
 public class SampleResult extends Result {
 
     public static final Charset DEFAULT_HTTP_ENCODING = StandardCharsets.UTF_8;

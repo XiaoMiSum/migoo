@@ -27,6 +27,9 @@
 
 package core.xyz.migoo.report;
 
+/**
+ * @author xiaomi
+ */
 public interface Report {
 
     String OUTPUT_DIRECTORY_NAME = "outputdirectoryname";

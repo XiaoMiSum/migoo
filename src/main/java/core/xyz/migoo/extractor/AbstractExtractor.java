@@ -29,6 +29,9 @@ package core.xyz.migoo.extractor;
 
 import core.xyz.migoo.testelement.AbstractTestElement;
 
+/**
+ * @author xiaomi
+ */
 public abstract class AbstractExtractor extends AbstractTestElement implements Extractor {
 
     protected static final String FIELD = "field";

@@ -31,17 +31,15 @@ import com.alibaba.fastjson.JSONObject;
 import core.xyz.migoo.samplers.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.MiGooProperty;
-import org.apache.http.client.CookieStore;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.cookie.BasicClientCookie;
 import protocol.xyz.migoo.http.config.HttpDefaults;
 import protocol.xyz.migoo.http.sampler.HTTPHCImpl;
 import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 import protocol.xyz.migoo.http.util.HTTPConstantsInterface;
-import xyz.migoo.simplehttp.Form;
-import xyz.migoo.simplehttp.Request;
-import xyz.migoo.simplehttp.Response;
+import xyz.migoo.simplehttp.*;
 
+/**
+ * @author xiaomi
+ */
 public abstract class AbstractHttpTestElement extends AbstractTestElement implements HTTPConstantsInterface {
 
     private static final String URL_FORMAT = "%s://%s%s";
@@ -86,7 +84,11 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
         HTTPSampleResult result = (HTTPSampleResult) sample;
         result.setTestClass(this.getClass());
         try {
-            Request request = getRequest();
+            Request request = new HTTPHCImpl(getPropertyAsString(REQUEST_METHOD), buildUrl())
+                    .headers(getPropertyAsJSONObject(HEADERS))
+                    .cookie(getPropertyAsJSONObject(COOKIE))
+                    .query(get(QUERY))
+                    .body(get(BODY), get(DATA));
             result.setRequestData(request);
             result.sampleStart();
             Response response = request.execute();
@@ -97,35 +99,7 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
         return result;
     }
 
-    private Request getRequest() {
-        Request request = new HTTPHCImpl(getPropertyAsString(REQUEST_METHOD), getUrl());
-        if (get(BODY) != null) {
-            request.bodyJson(getPropertyAsString(BODY));
-        } else if (get(DATA) != null) {
-            request.data(getForm(DATA));
-        }
-        if (get(QUERY) != null) {
-            request.query(getForm(QUERY));
-        }
-        if (get(HEADERS) != null) {
-            JSONObject headers = getPropertyAsJSONObject(HEADERS);
-            headers.forEach((name, value) -> request.addHeader(name, value == null ? "" : value.toString()));
-        }
-        if (get(COOKIE) != null) {
-            JSONObject cookie = getPropertyAsJSONObject(COOKIE);
-            if (cookie.size() > 0) {
-                CookieStore cookieStore = new BasicCookieStore();
-                BasicClientCookie clientCookie = new BasicClientCookie(cookie.getString(COOKIE_NAME), cookie.getString(COOKIE_VALUE));
-                clientCookie.setPath(cookie.getString(COOKIE_PATH));
-                clientCookie.setDomain(cookie.getString(COOKIE_DOMAIN));
-                cookieStore.addCookie(clientCookie);
-                request.cookies(cookieStore);
-            }
-        }
-        return request;
-    }
-
-    private String getUrl() {
+    private String buildUrl() {
         String path = getPropertyAsString(BASE_PATH);
         if (path == null || path.isEmpty()) {
             path = get(PORT) == null ? String.format(URL_FORMAT, get(PROTOCOL), get(HOST), "") :
@@ -137,12 +111,4 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
         api = api == null ? "" : !api.startsWith(SEPARATOR) ? SEPARATOR + api : api;
         return path + api;
     }
-
-    private Form getForm(String key) {
-        JSONObject data = getPropertyAsJSONObject(key);
-        Form form = Form.form();
-        data.forEach((name, value) -> form.add(name, value == null ? "" : value.toString()));
-        return form;
-    }
-
 }

@@ -31,6 +31,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Pattern;
 
+/**
+ * @author xiaomi
+ */
 public class VariableUtils {
 
     public static final Pattern VARS_PATTERN = Pattern.compile("\\$\\{(\\S+)}");

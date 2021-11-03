@@ -27,21 +27,55 @@
 
 package protocol.xyz.migoo.http.sampler;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.client5.http.cookie.BasicCookieStore;
+import org.apache.hc.client5.http.cookie.CookieStore;
+import org.apache.hc.client5.http.impl.cookie.BasicClientCookie;
 import protocol.xyz.migoo.http.util.HTTPConstantsInterface;
-import xyz.migoo.simplehttp.EntityEnclosingHttpRequest;
-import xyz.migoo.simplehttp.HttpRequest;
-import xyz.migoo.simplehttp.Request;
+import xyz.migoo.simplehttp.*;
 
-import java.net.URI;
-
+/**
+ * @author xiaomi
+ */
 public class HTTPHCImpl extends Request implements HTTPConstantsInterface {
 
     public HTTPHCImpl(String method, String url) {
-        super(POST.equalsIgnoreCase(method) || PUT.equalsIgnoreCase(method) ?
-                new EntityEnclosingHttpRequest(method.trim().toUpperCase(), URI.create(url)) :
-                StringUtils.isBlank(method) ? new HttpRequest(GET, URI.create(url)) :
-                        new HttpRequest(method.trim().toUpperCase(), URI.create(url)));
+        super(StringUtils.isBlank(method) ? GET : method.trim().toUpperCase(), url);
     }
 
+    public HTTPHCImpl query(Object query) {
+        if (query != null) {
+            super.query(Form.form((JSONObject) query));
+        }
+        return this;
+    }
+
+    public HTTPHCImpl body(Object json, Object data) {
+        BaseRequestEntity entity = json != null ? new RequestJsonEntity((JSONObject) json) :
+                data != null ? new RequestFormEntity((JSONObject) data) : null;
+        if (entity != null) {
+            super.body(entity);
+        }
+        return this;
+    }
+
+    public HTTPHCImpl headers(JSONObject headers) {
+        if (headers != null) {
+            headers.forEach((name, value) -> this.addHeader(name, value == null ? "" : value.toString()));
+        }
+        return this;
+    }
+
+    public HTTPHCImpl cookie(JSONObject cookie) {
+        if (cookie != null && cookie.size() > 0) {
+            CookieStore cookieStore = new BasicCookieStore();
+            BasicClientCookie clientCookie = new BasicClientCookie(cookie.getString(COOKIE_NAME), cookie.getString(COOKIE_VALUE));
+            clientCookie.setPath(cookie.getString(COOKIE_PATH));
+            clientCookie.setDomain(cookie.getString(COOKIE_DOMAIN));
+            cookieStore.addCookie(clientCookie);
+            this.cookies(cookieStore);
+        }
+        return this;
+    }
 }

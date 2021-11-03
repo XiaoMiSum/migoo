@@ -31,6 +31,9 @@ import core.xyz.migoo.extractor.AbstractExtractor;
 import core.xyz.migoo.samplers.SampleResult;
 import core.xyz.migoo.testelement.Alias;
 
+/**
+ * @author xiaomi
+ */
 @Alias(aliasList = {"ResultExtractor", "result_extractor"})
 public class ResultExtractor extends AbstractExtractor {
 

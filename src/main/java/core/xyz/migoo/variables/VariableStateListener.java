@@ -27,6 +27,9 @@
 
 package core.xyz.migoo.variables;
 
+/**
+ * @author xiaomi
+ */
 public interface VariableStateListener {
 
     /**

@@ -32,6 +32,9 @@ import core.xyz.migoo.function.Function;
 
 import java.util.UUID;
 
+/**
+ * @author xiaomi
+ */
 public class Uuid implements Function {
 
     /**

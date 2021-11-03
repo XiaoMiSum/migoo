@@ -30,6 +30,9 @@ package core.xyz.migoo.engine;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.variables.MiGooVariables;
 
+/**
+ * @author xiaomi
+ */
 public interface TestEngine {
 
     /**

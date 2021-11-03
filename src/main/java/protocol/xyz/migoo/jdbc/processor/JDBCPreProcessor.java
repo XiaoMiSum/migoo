@@ -30,6 +30,9 @@ package protocol.xyz.migoo.jdbc.processor;
 import core.xyz.migoo.processor.PreProcessor;
 import core.xyz.migoo.samplers.SampleResult;
 
+/**
+ * @author xiaomi
+ */
 public class JDBCPreProcessor extends AbstractJDBCProcessor implements PreProcessor {
 
     @Override

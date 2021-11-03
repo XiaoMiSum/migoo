@@ -27,6 +27,9 @@
 
 package core.xyz.migoo.assertions;
 
+/**
+ * @author xiaomi
+ */
 public interface Rule {
 
     /**

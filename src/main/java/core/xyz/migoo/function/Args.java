@@ -35,7 +35,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author xiaomi
@@ -53,15 +54,15 @@ public class Args extends ArrayList<Object> {
 
     private static final long serialVersionUID = 362498820763181265L;
 
-    private MiGooVariables variables;
+    private final MiGooVariables variables;
 
-    public Args(MiGooVariables variables){
+    public Args(MiGooVariables variables) {
         this.variables = variables;
     }
 
     @Override
     public boolean add(Object parameter) {
-        return super.add(getParameterValue((String) parameter));
+        return super.add(parameter instanceof String ? getParameterValue((String) parameter) : parameter);
     }
 
     private Object getParameterValue(String parameter) {
@@ -72,7 +73,7 @@ public class Args extends ArrayList<Object> {
     }
 
     public String getString(int index) {
-        return size() <= index ? "" : super.get(index).toString().trim();
+        return size() <= index || super.get(index) == null ? "" : super.get(index).toString().trim();
     }
 
     public BigDecimal getNumber(int index) {
@@ -80,11 +81,17 @@ public class Args extends ArrayList<Object> {
     }
 
     public JSONObject getJSONObject(int index) {
-        return getString(index).isEmpty() ? null : JSONObject.parseObject(JSONObject.toJSONString(get(index)));
+        return getString(index).isEmpty() ? null :
+                get(index) instanceof Map ? new JSONObject((Map<String, Object>) get(index)) :
+                        get(index) instanceof String ? JSONObject.parseObject(getString(index))
+                                : JSONObject.parseObject(JSONObject.toJSONString(get(index)));
     }
 
     public JSONArray getJSONArray(int index) {
-        return getString(index).isEmpty() ? null : JSONArray.parseArray(JSONArray.toJSONString(get(index)));
+        return getString(index).isEmpty() ? null :
+                get(index) instanceof List ? new JSONArray((List<Object>) get(index)) :
+                        get(index) instanceof String ? JSONArray.parseArray(getString(index))
+                                : JSONArray.parseArray(JSONArray.toJSONString(get(index)));
     }
 
     public boolean getBooleanValue(int index) {
@@ -93,9 +100,5 @@ public class Args extends ArrayList<Object> {
 
     public MiGooVariables getCurrentVars() {
         return this.variables;
-    }
-
-    private void setVariables(MiGooVariables variables) {
-        this.variables = variables;
     }
 }

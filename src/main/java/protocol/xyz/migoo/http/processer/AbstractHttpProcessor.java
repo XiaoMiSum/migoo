@@ -30,6 +30,9 @@ package protocol.xyz.migoo.http.processer;
 import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.http.AbstractHttpTestElement;
 
+/**
+ * @author xiaomi
+ */
 public abstract class AbstractHttpProcessor extends AbstractHttpTestElement implements TestStateListener {
 
     @Override

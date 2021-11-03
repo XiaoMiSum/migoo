@@ -34,6 +34,9 @@ import core.xyz.migoo.variables.MiGooVariables;
 import java.util.Map;
 import java.util.Vector;
 
+/**
+ * @author xiaomi
+ */
 public interface TestElement {
 
     /**

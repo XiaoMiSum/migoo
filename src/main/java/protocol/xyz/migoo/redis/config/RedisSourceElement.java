@@ -35,6 +35,9 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+/**
+ * @author xiaomi
+ */
 @Alias(aliasList = {"RedisDataSource", "Redis_DataSource"})
 public class RedisSourceElement extends AbstractTestElement implements TestStateListener {
 

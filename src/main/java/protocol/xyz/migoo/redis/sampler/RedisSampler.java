@@ -36,6 +36,9 @@ import protocol.xyz.migoo.redis.AbstractRedisTestElement;
 import protocol.xyz.migoo.redis.config.RedisSourceElement;
 import redis.clients.jedis.Jedis;
 
+/**
+ * @author xiaomi
+ */
 public class RedisSampler extends AbstractRedisTestElement implements Sampler, TestStateListener {
 
     @Override

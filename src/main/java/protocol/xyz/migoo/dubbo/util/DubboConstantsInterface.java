@@ -27,6 +27,9 @@
 
 package protocol.xyz.migoo.dubbo.util;
 
+/**
+ * @author xiaomi
+ */
 public interface DubboConstantsInterface {
 
     String DUBBO_DEFAULT = "migoo.protocol.dubbo.element.defaults";

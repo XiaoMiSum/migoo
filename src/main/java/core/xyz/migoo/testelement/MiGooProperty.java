@@ -29,17 +29,17 @@ package core.xyz.migoo.testelement;
 
 import com.alibaba.fastjson.JSONObject;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author xiaomi
+ */
 public class MiGooProperty extends JSONObject {
 
-    public MiGooProperty() {
-        super(true);
-    }
+    private static final long serialVersionUID = 8362880129499259086L;
 
-    public MiGooProperty(String name) {
+    public MiGooProperty() {
         super(true);
     }
 
@@ -67,13 +67,13 @@ public class MiGooProperty extends JSONObject {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         JSONObject newMap = new JSONObject(size());
         keySet().forEach(key -> newMap.put(key, convertObject(get(key))));
         return newMap.toString();
     }
 
-    private Object convertObject(Object obj){
+    private Object convertObject(Object obj) {
         return obj instanceof String || obj instanceof Number || obj instanceof Boolean
                 || obj instanceof Map || obj instanceof List || obj == null ? obj : obj.toString();
     }
