@@ -32,8 +32,12 @@ package core.xyz.migoo.report;
  */
 public interface Report {
 
-    String OUTPUT_DIRECTORY_NAME = "outputdirectoryname";
-    String ENABLE_OFFLINE_MODE = "enableOfflineMode";
+    String REPORT_ENABLE = "migoo.report.enable";
+    String REPORT_THEME = "migoo.report.theme";
+    String TIMELINE_ENABLED = "migoo.report.timeline.enabled";
+    String REPORT_OUTPUT = "migoo.report.output";
+    String REPORT_CLASS = "migoo.report.class";
+    String REPORT_OFFLINE = "migoo.report.offline";
 
     /**
      * 通过取样器结果生成测试报告

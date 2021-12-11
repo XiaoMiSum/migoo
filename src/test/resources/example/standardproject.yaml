@@ -1,7 +1,4 @@
 title: 标准测试用例项目
-reportelement:
-  enableOfflineMode: true
-  outputdirectoryname: './test/__timestamp()'
 variables:
   test1: 1
 configelements: '@F(classpath://example/configelements.yaml)'
