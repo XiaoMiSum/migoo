@@ -37,10 +37,6 @@ protocol.xyz.migoo.http.config.HttpDefaults
 protocol.xyz.migoo.http.processer.HttpPreProcessor
 protocol.xyz.migoo.http.processer.HttpPostProcessor
 protocol.xyz.migoo.http.sampler.HttpSampler
-protocol.xyz.migoo.dubbo.config.DubboDefaults
-protocol.xyz.migoo.dubbo.sampler.DubboSampler
-protocol.xyz.migoo.dubbo.processor.DubboPostProcessor
-protocol.xyz.migoo.dubbo.processor.DubboPreProcessor
 components.xyz.migoo.assertions.JSONAssertion
 components.xyz.migoo.assertions.HTTPResponseAssertion
 components.xyz.migoo.assertions.ResultAssertion
