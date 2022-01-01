@@ -36,7 +36,7 @@ import java.math.BigDecimal;
  * @author xiaomi
  * @date 2019-08-13 22:17
  */
-@Alias(aliasList = {"<", "less", "lessThan", "lt"})
+@Alias({"<", "less", "lessThan", "lt"})
 public class LessThan extends BaseRule implements Rule {
 
     @Override

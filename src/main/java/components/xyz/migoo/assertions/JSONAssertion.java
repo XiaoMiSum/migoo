@@ -36,7 +36,7 @@ import core.xyz.migoo.testelement.Alias;
 /**
  * @author xiaomi
  */
-@Alias(aliasList = {"JSONAssertion", "json_assertion"})
+@Alias({"JSONAssertion", "json_assertion"})
 public class JSONAssertion extends AbstractAssertion {
 
     private static final long serialVersionUID = 3660713030047593688L;

@@ -34,7 +34,7 @@ import core.xyz.migoo.testelement.Alias;
 /**
  * @author xiaomi
  */
-@Alias(aliasList = {"ResultExtractor", "result_extractor"})
+@Alias({"ResultExtractor", "result_extractor"})
 public class ResultExtractor extends AbstractExtractor {
 
     @Override

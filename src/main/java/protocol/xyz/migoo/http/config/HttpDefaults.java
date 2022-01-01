@@ -35,7 +35,7 @@ import protocol.xyz.migoo.http.util.HTTPConstantsInterface;
 /**
  * @author xiaomi
  */
-@Alias(aliasList = {"http_default", "HttpDefault", "Http_Defaults"})
+@Alias({"http_default", "HttpDefault", "Http_Defaults"})
 public class HttpDefaults extends AbstractTestElement implements TestStateListener, HTTPConstantsInterface {
 
     private static final long serialVersionUID = -5353412086167919169L;

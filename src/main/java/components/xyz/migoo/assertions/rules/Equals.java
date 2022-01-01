@@ -35,7 +35,7 @@ import core.xyz.migoo.testelement.Alias;
  * @author xiaomi
  * @date 2019-08-13 22:17
  */
-@Alias(aliasList = {"==", "===", "eq", "equal", "equals", "is"})
+@Alias({"==", "===", "eq", "equal", "equals", "is"})
 public class Equals extends BaseRule implements Rule {
 
     @Override

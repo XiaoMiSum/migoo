@@ -37,7 +37,7 @@ import core.xyz.migoo.testelement.Alias;
  * @author mi.xiao
  * @date 2021/4/7 19:49
  */
-@Alias(aliasList = {"SyncTimer", "Timer", "sync_timer", "def_timer", "defTimer"})
+@Alias({"SyncTimer", "Timer", "sync_timer", "def_timer", "defTimer"})
 public class SyncTimer extends AbstractTestElement implements PostProcessor {
 
     private long timeout;

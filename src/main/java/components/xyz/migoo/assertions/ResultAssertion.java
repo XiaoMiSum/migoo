@@ -35,7 +35,7 @@ import core.xyz.migoo.testelement.Alias;
 /**
  * @author xiaomi
  */
-@Alias(aliasList = {"ResultAssertion", "Result_Assertion"})
+@Alias({"ResultAssertion", "Result_Assertion"})
 public class ResultAssertion extends AbstractAssertion {
     private static final long serialVersionUID = -1380049658192545688L;
 

@@ -34,7 +34,7 @@ import core.xyz.migoo.assertions.Rule;
  * @author xiaomi
  * @date 2019-08-13 22:17
  */
-@Alias(aliasList = {"notContain", "notContains", "nc", "doesNotContains", "doesNotContain", "⊈"})
+@Alias({"notContain", "notContains", "nc", "doesNotContains", "doesNotContain", "⊈"})
 public class DoseNotContains extends BaseRule implements Rule {
 
     private final Contains contains = new Contains();

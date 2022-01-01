@@ -35,7 +35,7 @@ import core.xyz.migoo.assertions.Rule;
  * @author xiaomi
  * @date 2019-08-13 22:17
  */
-@Alias(aliasList = {"!==", "not", "<>", "!="})
+@Alias({"!==", "not", "<>", "!="})
 public class DoseNotEquals extends BaseRule implements Rule {
 
     private final Equals equals = new Equals();

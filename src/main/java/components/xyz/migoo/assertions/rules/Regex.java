@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
  * @author xiaomi
  * @date 2019-08-13 22:17
  */
-@Alias(aliasList = {"regex", "rx"})
+@Alias({"regex", "rx"})
 public class Regex extends BaseRule implements Rule {
 
     @Override

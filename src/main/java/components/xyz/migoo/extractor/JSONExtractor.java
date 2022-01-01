@@ -39,7 +39,7 @@ import java.util.List;
 /**
  * @author xiaomi
  */
-@Alias(aliasList = {"JSONExtractor", "json_extractor"})
+@Alias({"JSONExtractor", "json_extractor"})
 public class JSONExtractor extends AbstractExtractor {
 
     private static final long serialVersionUID = -5527704814281313196L;

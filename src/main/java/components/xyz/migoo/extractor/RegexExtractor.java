@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 /**
  * @author xiaomi
  */
-@Alias(aliasList = {"RegexExtractor", "regex_extractor"})
+@Alias({"RegexExtractor", "regex_extractor"})
 public class RegexExtractor extends AbstractExtractor {
 
     private static final long serialVersionUID = -5926230173518436842L;

@@ -59,7 +59,7 @@ public class TestElementService {
     public static void addService(Class<? extends TestElement> clazz) {
         Alias annotation = clazz.getAnnotation(Alias.class);
         if (annotation != null) {
-            String[] aliasList = annotation.aliasList();
+            String[] aliasList = annotation.value();
             for (String alias : aliasList) {
                 SERVICES.put(alias.toLowerCase(), clazz);
             }

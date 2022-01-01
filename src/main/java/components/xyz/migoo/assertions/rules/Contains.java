@@ -38,7 +38,7 @@ import java.util.Map;
  * @author xiaomi
  * @date 2019-08-13 22:17
  */
-@Alias(aliasList = {"contains", "contain", "ct", "⊆"})
+@Alias({"contains", "contain", "ct", "⊆"})
 public class Contains extends BaseRule implements Rule {
 
     @Override

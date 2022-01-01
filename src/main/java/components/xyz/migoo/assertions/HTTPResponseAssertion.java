@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 /**
  * @author xiaomi
  */
-@Alias(aliasList = {"HTTPAssertion", "HTTP_Assertion"})
+@Alias({"HTTPAssertion", "HTTP_Assertion"})
 public class HTTPResponseAssertion extends AbstractAssertion {
 
     private static final List<String> STATUS = Arrays.asList("line", "status", "code", "statuscode", "statusline", "status_code", "status_line");
