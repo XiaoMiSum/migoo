@@ -36,10 +36,6 @@ import components.xyz.migoo.extractor.ResultExtractor;
 import components.xyz.migoo.timers.SyncTimer;
 import core.xyz.migoo.variables.MiGooVariables;
 import org.junit.jupiter.api.Test;
-import protocol.xyz.migoo.dubbo.config.DubboDefaults;
-import protocol.xyz.migoo.dubbo.processor.DubboPostProcessor;
-import protocol.xyz.migoo.dubbo.processor.DubboPreProcessor;
-import protocol.xyz.migoo.dubbo.sampler.DubboSampler;
 import protocol.xyz.migoo.http.config.HttpDefaults;
 import protocol.xyz.migoo.http.processer.HttpPostProcessor;
 import protocol.xyz.migoo.http.processer.HttpPreProcessor;
@@ -213,24 +209,6 @@ public class TestElementServiceTest {
 
         assert TestElementService.getService("HttpSampler") instanceof HttpSampler;
         assert TestElementService.getService("httpSampler") instanceof HttpSampler;
-
-        assert TestElementService.getService("DubboDefaults") instanceof DubboDefaults;
-        assert TestElementService.getService("dubboDefaults") instanceof DubboDefaults;
-        assert TestElementService.getService("Dubbo_Defaults") instanceof DubboDefaults;
-        assert TestElementService.getService("dubbo_Defaults") instanceof DubboDefaults;
-        assert TestElementService.getService("Dubbo_Default") instanceof DubboDefaults;
-        assert TestElementService.getService("dubbo_Default") instanceof DubboDefaults;
-        assert TestElementService.getService("DubboDefault") instanceof DubboDefaults;
-        assert TestElementService.getService("dubboDefault") instanceof DubboDefaults;
-
-        assert TestElementService.getService("DubboSampler") instanceof DubboSampler;
-        assert TestElementService.getService("dubboSampler") instanceof DubboSampler;
-
-        assert TestElementService.getService("DubboPostProcessor") instanceof DubboPostProcessor;
-        assert TestElementService.getService("dubboPostProcessor") instanceof DubboPostProcessor;
-
-        assert TestElementService.getService("DubboPreProcessor") instanceof DubboPreProcessor;
-        assert TestElementService.getService("dubboPreProcessor") instanceof DubboPreProcessor;
 
         assert TestElementService.getService("JSONAssertion") instanceof JSONAssertion;
         assert TestElementService.getService("JsonAssertion") instanceof JSONAssertion;

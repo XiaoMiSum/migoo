@@ -32,7 +32,7 @@
     <groupId>xyz.migoo</groupId>
     <artifactId>migoo</artifactId>
 
-    <version>4.0.7</version>
+    <version>4.1.0</version>
     <name>migoo</name>
     <description>a test tool for api</description>
     <url>https://xiaomisum.github.io/migoo/</url>
@@ -64,7 +64,6 @@
         <druid.version>1.2.4</druid.version>
         <redis.version>3.4.1</redis.version>
         <mysql.version>8.0.16</mysql.version>
-        <dubbo.version>2.7.13</dubbo.version>
         <reports.version>5.0.6</reports.version>
         <compile.version>3.8.1</compile.version>
         <fastjson.version>1.2.75</fastjson.version>
@@ -76,27 +75,6 @@
     </properties>
 
     <dependencies>
-
-        <dependency>
-            <groupId>org.apache.dubbo</groupId>
-            <artifactId>dubbo</artifactId>
-            <version>${dubbo.version}</version>
-            <optional>true</optional>
-            <exclusions>
-                <exclusion>
-                    <artifactId>fastjson</artifactId>
-                    <groupId>com.alibaba</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.dubbo</groupId>
-            <artifactId>dubbo-dependencies-zookeeper</artifactId>
-            <version>${dubbo.version}</version>
-            <optional>true</optional>
-            <type>pom</type>
-        </dependency>
 
         <dependency>
             <groupId>com.alibaba</groupId>
