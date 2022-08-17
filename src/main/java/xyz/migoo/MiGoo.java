@@ -64,7 +64,7 @@ public class MiGoo {
     private final boolean generateReport;
 
     public MiGoo(JSONObject testcase) {
-        this.testcase = testcase;
+        this.testcase = initTestcase(testcase);
         generateReport = Boolean.parseBoolean(System.getProperty(REPORT_ENABLE, "true"));
     }
 
