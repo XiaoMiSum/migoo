@@ -1,1 +1,1 @@
-mvn -f ../pom.xml clean source:jar -Dmaven.test.skip=true deploy gpg:sign
+mvn -f ../pom.xml clean package source:jar deploy gpg:sign

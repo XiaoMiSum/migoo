@@ -1,0 +1,8 @@
+title: 未登录时获取进度表
+child:
+  - title: 获取进度表接口请求执行
+    testclass: httpsampler
+    validators:
+      - { testclass: httpassertion, field: status, expected: 200, rule: == }
+      - { testclass: jsonassertion, field: '$.status', expected: 401, rule: '==' }
+      - { testclass: jsonassertion, field: '$.data', expected: 'invalid token',  rule: '==' }

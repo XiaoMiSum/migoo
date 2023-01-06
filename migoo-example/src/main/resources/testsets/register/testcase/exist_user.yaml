@@ -1,0 +1,19 @@
+title: 已存在的用户重复注册
+PreProcessors:
+  - testclass: jdbcpreprocessor
+    datasource: JDBCDataSource_var
+    query_type: select
+    statement: 'select * from users;'
+    extractors:
+      - { testclass: jsonextractor, field: '$[0].user_name', variable_name: is_exist_user }
+child:
+  - title: 注册接口请求执行
+    testclass: httpsampler
+    variables:
+      username: ${is_exist_user}
+    config:
+      body: { userName: '${username}', password: '123456789'}
+    validators:
+      - { testclass: httpassertion, field: status, expected: 200, rule: == }
+      - { testclass: jsonassertion, field: '$.status', expected: 412, rule: '==' }
+      - { testclass: jsonassertion, field: '$.data', expected: 'user exist', rule: '==' }

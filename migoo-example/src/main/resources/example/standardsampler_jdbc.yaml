@@ -1,0 +1,20 @@
+title: 标准jdbc取样器
+testclass: jdbcsampler
+config:
+  datasource: JDBCDataSource_var
+  query_type: select
+  statement: 'select * from sys_user where id = 1;'
+validators:
+  - { testclass: jsonassertion, field: '$.user_name', expected: user1, rule: '==' }
+  - { testclass: jsonassertion, field: '$.status', expected: 1, rule: '==' }
+PreProcessors:
+  - testclass: jdbcpreprocessor
+    datasource: JDBCDataSource_var
+    query_type: update
+    statement: 'update sys_user set status = 1 where id = 1;'
+  - testclass: jdbcpreprocessor
+    datasource: JDBCDataSource_var
+    statement: 'delete from sys_user where id = 3;'
+  - testclass: jdbcpreprocessor
+    datasource: JDBCDataSource_var
+    statement: 'insert into sys_user (status, user_name) value (1, "__randomString(10)")'

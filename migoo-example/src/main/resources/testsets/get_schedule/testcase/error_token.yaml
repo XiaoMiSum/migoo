@@ -1,0 +1,11 @@
+title: 错误的Token
+child:
+  - title: 获取进度表接口请求执行
+    testclass: httpsampler
+    config:
+      headers:
+        token: 123123123
+    validators:
+      - { testclass: httpassertion, field: status, expected: 200, rule: == }
+      - { testclass: jsonassertion, field: '$.status', expected: 401, rule: '==' }
+      - { testclass: jsonassertion, field: '$.data', expected: 'invalid token',  rule: '==' }
