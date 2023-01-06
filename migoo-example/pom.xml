@@ -84,7 +84,7 @@
 
         <dependency>
             <groupId>xyz.migoo</groupId>
-            <artifactId>migoo-parent</artifactId>
+            <artifactId>migoo</artifactId>
             <version>${migoo.version}</version>
         </dependency>
 
