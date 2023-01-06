@@ -69,7 +69,7 @@
         <kafka.version>3.0.0</kafka.version>
         <mysql.version>8.0.30</mysql.version>
         <druid.version>1.2.11</druid.version>
-        <dubbo.version>3.1.0</dubbo.version>
+        <dubbo.version>3.1.1</dubbo.version>
         <groovy.version>4.0.2</groovy.version>
         <reports.version>5.0.9</reports.version>
         <compile.version>3.10.1</compile.version>
