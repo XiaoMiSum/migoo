@@ -1,0 +1,16 @@
+- testclass: JDBCDataSource
+  driver: com.mysql.cj.bc.Driver # 为空时 默认 com.mysql.cj.bc.Driver
+  variable_name: JDBCDataSource_var
+  url: 'jdbc:mysql://127.0.0.1:3306/db-template?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2b8&failOverReadOnly=false'
+  username: 'root'
+  password: '123456qq'
+  max_active: '10'
+  max_wait: '60000'
+- testclass: HttpDefaults
+  method: post
+  protocol: http
+  host: migoo.xyz
+#- testclass: RedisDataSource
+#  variable_name: RedisDataSource_var
+#  host: 127.0.0.1
+#  port: 6379

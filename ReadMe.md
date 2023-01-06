@@ -35,6 +35,7 @@ migoo 是一个Java语言开发的测试框架，适用于HTTP(S)、Dubbo、JDBC
 - [License](#license)
 
 # 使用
+
 [(Back to top)](#目录)
 
 方式一：创建Java项目，在pom.xml中引用
@@ -47,11 +48,12 @@ migoo 是一个Java语言开发的测试框架，适用于HTTP(S)、Dubbo、JDBC
     <version>${version}</version>
 </dependency>
 ```
+
 在Main方法中调用 MiGoo
 
 ``` java
 public static void main(String[] args) throws ReaderException {
-    JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath://example/standardproject.yaml").read();
+    JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath:example/standardproject.yaml").read();
     Result result = new MiGoo(yaml).run();
 }
 ``` 
@@ -74,11 +76,13 @@ options:
 ``` 
 
 # 示例
+
 [(Back to top)](#目录)
 
 见src/test/java/example/xyz/migoo
 
 # 开发
+
 [(Back to top)](#目录)
 
 sampler开发：请参考 protocol.xyz.migoo包
@@ -88,11 +92,13 @@ function开发：请参考 function.xyz.migoo包
 断言\提取器等组件开发：请参考 components.xyz.migoo包
 
 ### 鸣谢
+
 [(Back to top)](#目录)
 
 [JetBrains IDEA](https://www.jetbrains.com)
 
 # License
+
 [(Back to top)](#目录)
 
 [![License](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/XiaoMiSum/MiGoo/blob/master/LICENSE)

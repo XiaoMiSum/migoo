@@ -1,0 +1,9 @@
+title: 登录接口测试用例集
+configelements:
+  - testclass: httpdefaults
+    method: post
+    api: /api/login
+child:
+  - '@F(classpath:testsets/login/testcase/user_login.yaml)'
+  - '@F(classpath:testsets/login/testcase/user_not_exist.yaml)'
+  - '@F(classpath:testsets/login/testcase/password_error.yaml)'

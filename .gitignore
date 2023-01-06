@@ -1,8 +1,14 @@
 # Created by .ignore support plugin (hsz.mobi)
 /.idea/
+*/.idea/
 *.iml
+*/*.iml
 /reports/
 /out-put/
+*/out-put/
 /target
+*/target
 /doc
+*/doc
 .DS_Store
+*/.DS_Store

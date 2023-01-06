@@ -1,0 +1,12 @@
+title: 注册用户名超长
+child:
+  - title: 注册接口请求执行
+    testclass: httpsampler
+    variables:
+      username: '__RandomString(1000,abcdefghijklmnopqrstuvwxyz1234567890)'
+    config:
+      body: { userName: '${username}', password: '123456789'}
+    validators:
+      - { testclass: httpassertion, field: status, expected: 200, rule: == }
+      - { testclass: jsonassertion, field: '$.status', expected: 412, rule: '==' }
+      - { testclass: jsonassertion, field: '$.data', expected: "Data too long for column 'user_name'", rule: 'ct' }
