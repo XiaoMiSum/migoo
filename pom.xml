@@ -33,7 +33,7 @@
     <artifactId>migoo-parent</artifactId>
     <packaging>pom</packaging>
 
-    <version>5.0.0-SNAPSHOT</version>
+    <version>5.0.0</version>
 
     <name>${project.artifactId}</name>
     <description>a test tool for api</description>
@@ -62,7 +62,7 @@
     </developers>
 
     <properties>
-        <migoo.version>5.0.0-SNAPSHOT</migoo.version>
+        <migoo.version>5.0.0</migoo.version>
         <yaml.version>1.32</yaml.version>
         <junit.version>5.9.0</junit.version>
         <redis.version>4.2.3</redis.version>

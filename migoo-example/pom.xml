@@ -60,7 +60,7 @@
     </developers>
 
     <properties>
-        <migoo.version>5.0.0-SNAPSHOT</migoo.version>
+        <migoo.version>5.0.0</migoo.version>
         <junit.version>5.9.0</junit.version>
         <mysql.version>8.0.30</mysql.version>
         <mysql.version>8.0.30</mysql.version>
