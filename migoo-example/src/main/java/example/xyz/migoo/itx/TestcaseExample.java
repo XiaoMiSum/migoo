@@ -94,6 +94,7 @@ public class TestcaseExample {
                 .addValidator(VERIFY_HTTP_STATUS, DATA_NOT_EMPTY);
 
         Samplers addTaskDetailSampler = Samplers.builder().http("request api: add task").method("post")
+                .addHeader("token", "${token}")
                 .api("/api/task/schedule/detail/add")
                 .body(JSONObject.of("scheduleId", "${scheduleId}", "count", 1, "title", "__randomString(20,,true)"))
                 .addValidator(VERIFY_HTTP_STATUS);

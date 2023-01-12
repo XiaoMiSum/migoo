@@ -92,6 +92,11 @@ public class TestElementServiceTest {
             }
 
             @Override
+            public byte[] getPropertyAsByteArray(String key) {
+                return new byte[0];
+            }
+
+            @Override
             public boolean getPropertyAsBoolean(String key) {
                 return false;
             }

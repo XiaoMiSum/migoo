@@ -89,11 +89,12 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
         HTTPSampleResult result = (HTTPSampleResult) sample;
         result.setTestClass(this.getClass());
         try {
+            JSONObject headers = getPropertyAsJSONObject(HEADERS);
             Request request = new HTTPHCImpl(getPropertyAsString(REQUEST_METHOD), buildUrl())
-                    .headers(getPropertyAsJSONObject(HEADERS))
+                    .headers(headers)
                     .cookie(getPropertyAsJSONObject(COOKIE))
                     .query(get(QUERY))
-                    .body(get(BODY), get(DATA));
+                    .body(getPropertyAsByteArray(BYTES), get(BODY), get(DATA), headers.getString(CONTENT_TYPE));
             result.setRequestData(request);
             result.sampleStart();
             Response response = request.execute();

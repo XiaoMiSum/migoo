@@ -29,6 +29,7 @@ package protocol.xyz.migoo.http.util;
  * @author xiaomi
  */
 public interface HTTPConstantsInterface {
+    String CONTENT_TYPE = "content-type";
     String HEADERS = "headers";
     String COOKIE = "cookie";
     String COOKIE_NAME = "name";
@@ -43,6 +44,7 @@ public interface HTTPConstantsInterface {
     String BASE_PATH = "base_path";
     String API_PATH = "api";
     String REQUEST_METHOD = "method";
+    String BYTES = "bytes";
     String BODY = "body";
     String DATA = "data";
     String QUERY = "query";

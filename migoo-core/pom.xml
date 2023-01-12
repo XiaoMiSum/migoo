@@ -29,14 +29,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <artifactId>migoo-parent</artifactId>
-        <groupId>xyz.migoo</groupId>
-        <version>5.0.0</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
 
+    <groupId>xyz.migoo</groupId>
     <artifactId>migoo-core</artifactId>
+    <version>5.0.1-SNAPSHOT</version>
 
     <name>${project.artifactId}</name>
     <description>core of migoo</description>
@@ -64,22 +60,55 @@
         </developer>
     </developers>
 
+    <properties>
+        <junit.version>5.9.0</junit.version>
+        <redis.version>4.3.1</redis.version>
+        <mysql.version>8.0.31</mysql.version>
+        <druid.version>1.2.15</druid.version>
+        <dubbo.version>3.1.0</dubbo.version>
+        <groovy.version>4.0.7</groovy.version>
+        <reports.version>5.0.9</reports.version>
+        <fastjson.version>2.0.22</fastjson.version>
+        <simplehttp.version>2.1.0-SNAPSHOT</simplehttp.version>
+        <commons-codec.version>1.15</commons-codec.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
+        <compile.version>3.10.1</compile.version>
+        <javadoc.version>3.2.0</javadoc.version>
+        <surefire.version>2.22.2</surefire.version>
+        <gpg-plugin.version>3.0.1</gpg-plugin.version>
+        <gmavenplus.version>1.13.1</gmavenplus.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
+            <version>${fastjson.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec.version}</version>
+        </dependency>
+
 
         <!-- https://mvnrepository.com/artifact/xyz.migoo/simplehttp -->
         <dependency>
             <groupId>xyz.migoo</groupId>
             <artifactId>simplehttp</artifactId>
+            <version>${simplehttp.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-api</artifactId>
@@ -91,17 +120,20 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
             <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
+            <version>${druid.version}</version>
         </dependency>
 
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
+            <version>${redis.version}</version>
         </dependency>
 
         <dependency>
@@ -109,6 +141,7 @@
             <!-- groovy-all 包含所有groovy GDK 中的包,
              groovy 只包含基础 Groovy 编译需要的包-->
             <artifactId>groovy-all</artifactId>
+            <version>${groovy.version}</version>
             <!-- any version of Groovy \>= 1.8.2 should work here -->
             <!--指定类型为 pom -->
             <type>pom</type>
@@ -127,6 +160,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -138,6 +172,74 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${javadoc.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- 解决 java8 下发布到 maven 中心库时，生成 doc 的异常 -->
+                    <additionalJOptions>
+                        <additionalJOption>-Xdoclint:none</additionalJOption>
+                    </additionalJOptions>
+                    <encoding>UTF-8</encoding>
+                    <outputDirectory>${basedir}/doc</outputDirectory>
+                    <reportOutputDirectory>${basedir}/reports</reportOutputDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compile.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>${gpg-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.version}</version>
+            </plugin>
+            <!-- 增加 gmavenplus 插件 允许集成Groovy到Maven-->
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>${gmavenplus.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>addSources</goal>
+                            <goal>addTestSources</goal>
+                            <goal>generateStubs</goal>
+                            <goal>compile</goal>
+                            <goal>generateTestStubs</goal>
+                            <goal>compileTests</goal>
+                            <goal>removeStubs</goal>
+                            <goal>removeTestStubs</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <distributionManagement>

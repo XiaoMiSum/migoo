@@ -31,7 +31,11 @@ import org.apache.hc.client5.http.cookie.BasicCookieStore;
 import org.apache.hc.client5.http.cookie.CookieStore;
 import org.apache.hc.client5.http.impl.cookie.BasicClientCookie;
 import protocol.xyz.migoo.http.util.HTTPConstantsInterface;
-import xyz.migoo.simplehttp.*;
+import xyz.migoo.simplehttp.Form;
+import xyz.migoo.simplehttp.Request;
+import xyz.migoo.simplehttp.RequestEntity;
+
+import java.util.Objects;
 
 /**
  * @author xiaomi
@@ -49,9 +53,10 @@ public class HTTPHCImpl extends Request implements HTTPConstantsInterface {
         return this;
     }
 
-    public HTTPHCImpl body(Object json, Object data) {
-        RequestEntity entity = json != null ? new RequestJsonEntity((JSONObject) json) :
-                data != null ? new RequestFormEntity((JSONObject) data) : null;
+    public HTTPHCImpl body(byte[] bytes, Object json, Object data, String contentType) {
+        RequestEntity entity = Objects.nonNull(bytes) ? RequestEntity.bytes(bytes, contentType) :
+                Objects.nonNull(json) ? RequestEntity.json((JSONObject) json) :
+                        Objects.nonNull(data) ? RequestEntity.form((JSONObject) data) : null;
         if (entity != null) {
             super.body(entity);
         }

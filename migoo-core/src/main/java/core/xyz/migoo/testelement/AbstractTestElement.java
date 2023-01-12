@@ -32,6 +32,7 @@ import core.xyz.migoo.variable.VariableStateListener;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author xiaomi
@@ -94,6 +95,12 @@ public abstract class AbstractTestElement implements TestElement, VariableStateL
     public Object removeProperty(String key) {
         String lowerKey = key.toLowerCase();
         return propMap.remove(lowerKey);
+    }
+
+    @Override
+    public byte[] getPropertyAsByteArray(String key) {
+        Object obj = get(key);
+        return Objects.isNull(obj) || !obj.getClass().isArray() ? null : (byte[]) obj;
     }
 
     @Override

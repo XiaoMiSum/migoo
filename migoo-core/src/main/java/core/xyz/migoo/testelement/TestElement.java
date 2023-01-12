@@ -81,6 +81,14 @@ public interface TestElement {
     Object removeProperty(String key);
 
     /**
+     * 通过key获取一个ByteArray类型的属性值
+     *
+     * @param key key
+     * @return ByteArray类型的属性值
+     */
+    byte[] getPropertyAsByteArray(String key);
+
+    /**
      * 通过key获取一个boolean类型的属性值
      *
      * @param key key
