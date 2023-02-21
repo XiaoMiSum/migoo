@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://xyz.migoo/schemas/jdbcsampler.json",
+  "title": "migoo jdbc 取样器",
+  "description": "migoo jdbc 取样器-json schema 配置信息",
+  "type": "object",
+  "properties": {
+    "title": {
+      "description": "测试取样器（步骤）名称",
+      "type": "string"
+    },
+    "testclass": {
+      "description": "测试元件类名或别名",
+      "enum": [
+        "jdbcsampler",
+        "JDBCSampler",
+        "JdbcSampler"
+      ]
+    },
+    "variables": {
+      "type": "object",
+      "description": "取样器配置的变量"
+    },
+    "config": {
+      "type": "object",
+      "description": "取样器配置项",
+      "properties": {
+        "datasource": {
+          "description": "JDBCDataSource 数据源名称",
+          "type": "string"
+        },
+        "query_type": {
+          "description": "查询方式",
+          "enum": [
+            "insert",
+            "delete",
+            "update",
+            "select"
+          ]
+        },
+        "statement": {
+          "description": "SQL 语句",
+          "type": "string"
+        }
+      },
+      "message": {
+        "required": "必填"
+      },
+      "required": [
+        "datasource",
+        "statement"
+      ]
+    },
+    "preprocessors": {
+      "type": "array",
+      "description": "取样器配置的前置处理器",
+      "items": {
+        "type": "object"
+      }
+    },
+    "postprocessors": {
+      "type": "array",
+      "description": "取样器配置的后置处理器",
+      "items": {
+        "type": "object"
+      }
+    },
+    "extractors": {
+      "type": "array",
+      "description": "取样器配置的提取器",
+      "items": {
+        "type": "object"
+      }
+    },
+    "validators": {
+      "type": "array",
+      "description": "取样器配置的验证器",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "message": {
+    "required": "必填"
+  },
+  "required": [
+    "title",
+    "testclass",
+    "config"
+  ]
+}

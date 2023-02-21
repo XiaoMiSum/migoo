@@ -27,6 +27,7 @@
 package xyz.migoo.loader;
 
 import com.alibaba.fastjson2.JSON;
+import core.xyz.migoo.engine.TestPlanValidator;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.BufferedInputStream;
@@ -75,7 +76,7 @@ public class Loader {
     }
 
     public static Object toJSON(String path, boolean isClasspath) {
-        String content = isClasspath ? new ResourceReader(path).read() : new FileReader(path).read();
+        String content = isClasspath ? TestPlanValidator.ResourceReader.read(path) : new FileReader(path).read();
         return JSON.toJSON(new Yaml().load(content));
     }
 
@@ -83,21 +84,6 @@ public class Loader {
 
         private String read() {
             try (FileInputStream fis = new FileInputStream(path); InputStream is = new BufferedInputStream(fis)) {
-                byte[] bytes = new byte[is.available()];
-                is.read(bytes);
-                return new String(bytes, StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    private record ResourceReader(String path) {
-
-        private String read() {
-            try {
-                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-                InputStream is = classLoader.getResourceAsStream(path);
                 byte[] bytes = new byte[is.available()];
                 is.read(bytes);
                 return new String(bytes, StandardCharsets.UTF_8);

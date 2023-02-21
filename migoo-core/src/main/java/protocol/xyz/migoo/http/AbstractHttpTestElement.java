@@ -29,6 +29,7 @@ import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.MiGooProperty;
+import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.http.config.HttpDefaults;
 import protocol.xyz.migoo.http.sampler.HTTPHCImpl;
 import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
@@ -50,7 +51,7 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
     public void testStarted() {
         super.convertVariable();
         HttpDefaults other = (HttpDefaults) getVariables().get(HTTP_DEFAULT);
-        if (other != null) {
+        if (Objects.nonNull(other)) {
             setProperty(BASE_PATH, other.getPropertyAsString(BASE_PATH));
             setProperty(PROTOCOL, other.getPropertyAsString(PROTOCOL));
             setProperty(REQUEST_METHOD, other.getPropertyAsString(REQUEST_METHOD));
@@ -107,7 +108,7 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
 
     private String buildUrl() {
         String path = getPropertyAsString(BASE_PATH);
-        if (path == null || path.isEmpty()) {
+        if (StringUtils.isNotBlank(path)) {
             path = get(PORT) == null ? String.format(URL_FORMAT, get(PROTOCOL), get(HOST), "") :
                     String.format(URL_FORMAT, get(PROTOCOL), get(HOST), ":" + get(PORT));
         } else if (path.endsWith(SEPARATOR)) {

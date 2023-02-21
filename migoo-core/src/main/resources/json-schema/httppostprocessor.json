@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://xyz.migoo/schemas/httpprocessor.json",
+  "title": "migoo http 后置处理器",
+  "description": "migoo http 后置处理器-json schema 配置信息",
+  "type": "object",
+  "properties": {
+    "title": {
+      "description": "处理器（步骤）名称",
+      "type": "string"
+    },
+    "testclass": {
+      "description": "测试元件类名或别名",
+      "enum": [
+        "httppostprocessor",
+        "HttpPostProcessor",
+        "HTTPPostProcessor"
+      ]
+    },
+    "variables": {
+      "type": "object",
+      "description": "处理器配置的变量"
+    },
+    "method": {
+      "description": "请求方法",
+      "type": "string"
+    },
+    "protocol": {
+      "description": "请求协议，http/https",
+      "type": "string"
+    },
+    "host": {
+      "description": "请求主机域名/IP",
+      "type": "string"
+    },
+    "port": {
+      "description": "端口",
+      "type": "number"
+    },
+    "api": {
+      "description": "请求接口路径，以 / 开头",
+      "type": "string"
+    },
+    "query": {
+      "description": "请求url参数",
+      "type": "object"
+    },
+    "data": {
+      "description": "请求体信息，key=value&key2=value2",
+      "type": "object"
+    },
+    "body": {
+      "description": "请求体信息，JSON请求",
+      "type": "object"
+    },
+    "extractors": {
+      "type": "array",
+      "description": "取样器配置的提取器",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "message": {
+    "required": "必填"
+  },
+  "required": [
+    "testclass"
+  ]
+}

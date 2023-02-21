@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://xyz.migoo/schemas/testsuite.json",
+  "title": "migoo 测试套件",
+  "description": "migoo 测试套件-json schema 配置信息",
+  "type": "object",
+  "properties": {
+    "title": {
+      "description": "测试套件名称",
+      "type": "string"
+    },
+    "variables": {
+      "type": "object",
+      "description": "公共变量"
+    },
+    "configelements": {
+      "type": "array",
+      "description": "配置元件",
+      "items": {
+        "type": "object"
+      }
+    },
+    "preprocessors": {
+      "type": "array",
+      "description": "前置处理器",
+      "items": {
+        "type": "object"
+      }
+    },
+    "postprocessors": {
+      "type": "array",
+      "description": "后置处理器",
+      "items": {
+        "type": "object"
+      }
+    },
+    "child": {
+      "type": "array"
+    }
+  },
+  "message": {
+    "required": "必填"
+  },
+  "required": [
+    "title",
+    "child"
+  ]
+}

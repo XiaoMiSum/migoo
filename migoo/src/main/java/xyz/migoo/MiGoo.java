@@ -87,15 +87,15 @@ public class MiGoo {
     private JSONObject prepare(Map<String, Object> x) {
         JSONObject json = new JSONObject(x.size());
         x.keySet().forEach(key -> {
-            Object o = x.get(key);
-            if (o instanceof Map) {
-                json.put(key, prepare((Map<String, Object>) o));
-            } else if (o instanceof Iterable) {
-                json.put(key, prepare((List<Object>) o));
-            } else if (o instanceof ITestx) {
-                json.put(key, ((ITestx) o).get());
+            Object value = x.get(key);
+            if (value instanceof Map) {
+                json.put(key, prepare((Map<String, Object>) value));
+            } else if (value instanceof Iterable) {
+                json.put(key, prepare((List<Object>) value));
+            } else if (value instanceof ITestx) {
+                json.put(key, ((ITestx) value).get());
             } else {
-                json.put(key, o);
+                json.put(key, value);
             }
         });
         return json;
