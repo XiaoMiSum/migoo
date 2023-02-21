@@ -79,15 +79,9 @@ public class Loader {
         return JSON.toJSON(new Yaml().load(content));
     }
 
-    private static class FileReader {
+    private record FileReader(String path) {
 
-        private final String path;
-
-        private FileReader(String path) {
-            this.path = path;
-        }
-
-        protected String read() {
+        private String read() {
             try (FileInputStream fis = new FileInputStream(path); InputStream is = new BufferedInputStream(fis)) {
                 byte[] bytes = new byte[is.available()];
                 is.read(bytes);
@@ -98,15 +92,9 @@ public class Loader {
         }
     }
 
-    private static class ResourceReader {
+    private record ResourceReader(String path) {
 
-        private final String path;
-
-        private ResourceReader(String path) {
-            this.path = path;
-        }
-
-        protected String read() {
+        private String read() {
             try {
                 ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
                 InputStream is = classLoader.getResourceAsStream(path);
