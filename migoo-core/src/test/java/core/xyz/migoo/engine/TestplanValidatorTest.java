@@ -48,7 +48,7 @@ public class TestplanValidatorTest {
         data.put("title", "测试验证");
         data.put("method", "1");
         data.put("body", new JSONObject());
-        data.put("va", new JSONObject());
+        data.put("variables", new JSONObject());
         data.put("testclass", "httppreprocessor");
         TestPlanValidator.verify(data, "httppreprocessor");
     }
@@ -59,9 +59,20 @@ public class TestplanValidatorTest {
         data.put("title", "测试验证");
         data.put("method", "1");
         data.put("body", new JSONObject());
-        data.put("va", new JSONObject());
+        data.put("variables", new JSONObject());
         data.put("testclass", "httppostprocessor");
         TestPlanValidator.verify(data, "httppostprocessor");
+    }
+
+    @Test
+    public void testHttpDefaultsJson() {
+        JSONObject data = new JSONObject();
+        data.put("title", "测试验证");
+        data.put("method", "1");
+        data.put("host", "new JSONObject()");
+        data.put("variables", new JSONObject());
+        data.put("testclass", "httpdefault");
+        TestPlanValidator.verify(data, "http_defaults");
     }
 
     @Test
@@ -100,6 +111,17 @@ public class TestplanValidatorTest {
     }
 
     @Test
+    public void testRedisDataSourceJson() {
+        JSONObject data = new JSONObject();
+        data.put("title", "测试验证");
+        data.put("host", "1");
+        data.put("variable_name", "new JSONObject()");
+        data.put("max_idle", 1);
+        data.put("testclass", "redisdatasource");
+        TestPlanValidator.verify(data, "RedisDataSource");
+    }
+
+    @Test
     public void testJdbcSamplerJson() {
         JSONObject data = new JSONObject();
         data.put("title", "测试验证");
@@ -132,5 +154,17 @@ public class TestplanValidatorTest {
         data.put("statement", "new JSONObject()");
         data.put("testclass", "jdbcpreprocessor");
         TestPlanValidator.verify(data, "Jdbcpreprocessor");
+    }
+
+    @Test
+    public void testJdbcDataSourceJson() {
+        JSONObject data = new JSONObject();
+        data.put("title", "测试验证");
+        data.put("url", "1");
+        data.put("variable_name", "new JSONObject()");
+        data.put("username", "222222");
+        data.put("password", "wwww");
+        data.put("testclass", "jdbcdatasource");
+        TestPlanValidator.verify(data, "JdbcDataSource");
     }
 }

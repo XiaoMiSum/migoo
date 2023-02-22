@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "http://xyz.migoo/schemas/httpdefault.json",
+  "$id": "http://xyz.migoo/schemas/httpdefaults.json",
   "title": "migoo http 默认配置",
   "description": "migoo http 默认配置-json schema 配置信息",
   "type": "object",
