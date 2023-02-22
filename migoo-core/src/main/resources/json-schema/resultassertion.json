@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://xyz.migoo/schemas/resultassertion.json",
+  "title": "migoo result 验证器",
+  "description": "migoo result 验证器-json schema 配置信息",
+  "type": "object",
+  "properties": {
+    "testclass": {
+      "description": "测试元件类名或别名",
+      "enum": [
+        "ResultAssertion",
+        "resultassertion",
+        "Result_Assertion",
+        "result_assertion"
+      ]
+    },
+    "expected": {
+      "description": "期望值"
+    },
+    "rule": {
+      "description": "验证规则",
+      "enum": [
+        "contains",
+        "notContains",
+        "==",
+        "!=",
+        "equalsIgnoreCase",
+        ">",
+        "<",
+        ">=",
+        "<=",
+        "isEmpty",
+        "isNull",
+        "isNotEmpty",
+        "isNotNull",
+        "number_equals",
+        "regex"
+      ]
+    }
+  },
+  "message": {
+    "required": "必填"
+  },
+  "required": [
+    "testclass",
+    "rule"
+  ]
+}

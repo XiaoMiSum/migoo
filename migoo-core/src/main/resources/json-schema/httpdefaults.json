@@ -1,20 +1,23 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "http://xyz.migoo/schemas/httpprocessor.json",
-  "title": "migoo http 前置处理器",
-  "description": "migoo http 前置处理器-json schema 配置信息",
+  "$id": "http://xyz.migoo/schemas/httpdefault.json",
+  "title": "migoo http 默认配置",
+  "description": "migoo http 默认配置-json schema 配置信息",
   "type": "object",
   "properties": {
-    "title": {
-      "description": "处理器（步骤）名称",
-      "type": "string"
-    },
     "testclass": {
       "description": "测试元件类名或别名",
       "enum": [
-        "httppreprocessor",
-        "HttpPreProcessor",
-        "HTTPPreProcessor"
+        "http_default",
+        "Http_Default",
+        "HTTP_Default",
+        "HttpDefault",
+        "httpdefault",
+        "http_defaults",
+        "Http_Defaults",
+        "HTTP_Defaults",
+        "HttpDefaults",
+        "httpdefaults"
       ]
     },
     "variables": {
@@ -69,6 +72,7 @@
     "required": "必填"
   },
   "required": [
-    "testclass"
+    "testclass",
+    "host"
   ]
 }

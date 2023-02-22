@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://xyz.migoo/schemas/httpresponseassertion.json",
+  "title": "migoo http 响应验证器",
+  "description": "migoo http 响应验证器-json schema 配置信息",
+  "type": "object",
+  "properties": {
+    "testclass": {
+      "description": "测试元件类名或别名",
+      "enum": [
+        "HTTPAssertion",
+        "HTTP_Assertion",
+        "HTTPResponseAssertion",
+        "HttpAssertion",
+        "Http_Assertion",
+        "http_assertion",
+        "httpassertion"
+      ]
+    },
+    "field": {
+      "type": "string",
+      "description": "验证内容（context、status、header(响应头)）"
+    },
+    "expected": {
+      "description": "期望值"
+    },
+    "rule": {
+      "description": "验证规则",
+      "enum": [
+        "contains",
+        "notContains",
+        "==",
+        "!=",
+        "equalsIgnoreCase",
+        ">",
+        "<",
+        ">=",
+        "<=",
+        "isEmpty",
+        "isNull",
+        "isNotEmpty",
+        "isNotNull",
+        "number_equals",
+        "regex"
+      ]
+    }
+  },
+  "message": {
+    "required": "必填"
+  },
+  "required": [
+    "testclass",
+    "rule"
+  ]
+}

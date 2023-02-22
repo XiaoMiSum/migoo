@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://xyz.migoo/schemas/redisdatasource.json",
+  "title": "migoo redis 数据源",
+  "description": "migoo redis 数据源-json schema 配置信息",
+  "type": "object",
+  "properties": {
+    "testclass": {
+      "description": "测试元件类名或别名",
+      "enum": [
+        "redisdatasource",
+        "RedisDatasource",
+        "RedisDataSource",
+        "Redis_DataSource",
+        "redis_dataSource",
+        "RedisSourceElement",
+        "redissourceelement",
+        "RedisSourceElement"
+      ]
+    },
+    "variables": {
+      "type": "object",
+      "description": "Redis数据源配置的变量"
+    },
+    "variable_name": {
+      "type": "string",
+      "description": "数据源名称，用于取样器设置使用的数据源"
+    },
+    "host": {
+      "type": "string",
+      "description": "主机域名/IP"
+    },
+    "port": {
+      "type": "number",
+      "description": "端口"
+    },
+    "database": {
+      "type": "number",
+      "description": "数据库"
+    },
+    "password": {
+      "type": "string",
+      "description": "密码"
+    },
+    "time_out": {
+      "type": "number",
+      "description": "超时时间（毫秒）"
+    },
+    "max_total": {
+      "type": "number",
+      "description": "max_total"
+    },
+    "max_idle": {
+      "type": "number",
+      "description": "max_idle"
+    },
+    "min_idle": {
+      "type": "number",
+      "description": "min_idle"
+    }
+  },
+  "message": {
+    "required": "必填"
+  },
+  "required": [
+    "testclass",
+    "host",
+    "variable_name"
+  ]
+}

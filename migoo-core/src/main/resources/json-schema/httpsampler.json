@@ -41,6 +41,10 @@
           "description": "端口",
           "type": "number"
         },
+        "header": {
+          "description": "请求头",
+          "type": "object"
+        },
         "api": {
           "description": "请求接口路径，以 / 开头",
           "type": "string"
