@@ -72,7 +72,7 @@ public class TestplanValidatorTest {
         data.put("host", "new JSONObject()");
         data.put("variables", new JSONObject());
         data.put("testclass", "httpdefault");
-        TestPlanValidator.verify(data, "http_defaults");
+        TestPlanValidator.verify(data, "httpdefaults");
     }
 
     @Test

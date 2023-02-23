@@ -58,11 +58,11 @@ public class MiGoo {
     private final JSONObject testcase;
 
 
-    private MiGoo(JSONObject testcase) {
+    public MiGoo(JSONObject testcase) {
         this.testcase = this.prepare(testcase);
     }
 
-    private MiGoo(ITestx x) {
+    public MiGoo(ITestx x) {
         this.testcase = this.prepare(x.get());
     }
 

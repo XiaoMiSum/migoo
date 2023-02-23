@@ -27,6 +27,7 @@ package core.xyz.migoo.engine;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import core.xyz.migoo.testelement.TestElementService;
 import core.xyz.migoo.variable.MiGooVariables;
 import org.apache.commons.lang3.StringUtils;
 
@@ -47,12 +48,13 @@ public class Testplan extends JSONObject {
     public Testplan(JSONObject json) {
         standardSampler = !json.containsKey(CHILDS) && !json.containsKey(CHILD);
         TestPlanValidator.verify(json, !standardSampler ? "testsuite" :
-                StringUtils.isEmpty(json.getString(TEST_CLASS)) ? "" : json.getString(TEST_CLASS).toLowerCase());
-        Object o = json.remove(VARIABLES);
+                StringUtils.isEmpty(json.getString(TEST_CLASS)) ? "ignore" :
+                        TestElementService.getService(json.getString(TEST_CLASS)).getClass().getSimpleName());
+        Object variables = json.remove(VARIABLES);
         boolean isTestElement = json.containsKey(TEST_CLASS) || json.containsKey(CHILDS) || json.containsKey(CHILD);
         // migoo 定义的组件需要添加变量对象
         if (isTestElement) {
-            put(VARIABLES, o instanceof MiGooVariables ? o : new MiGooVariables((JSONObject) o));
+            put(VARIABLES, variables instanceof MiGooVariables ? variables : new MiGooVariables((JSONObject) variables));
         }
         Set<String> keys = json.keySet();
         keys.forEach(key -> {

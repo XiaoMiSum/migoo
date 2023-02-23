@@ -43,15 +43,14 @@ import java.util.Optional;
 
 public class TestPlanValidator {
 
-    public static void verify(JSONObject value, String planType) {
-        if (StringUtils.isEmpty(planType)) {
-            throw new RuntimeException("测试计划校验异常，数据中不包含关键字：testclass");
+    public static void verify(JSONObject value, String element) {
+        if (StringUtils.equals(element, "ignore")) {
+            return;
         }
-        planType = planType.replace("_", "");
-        String schema = ResourceReader.read(String.format("json-schema/%s.json", planType.toLowerCase(Locale.ROOT)));
+        String schema = ResourceReader.read(String.format("json-schema/%s.json", element.toLowerCase(Locale.ROOT)));
         String message = Optional.of(validJson(value, schema)).orElse("");
         if (StringUtils.isNotEmpty(message)) {
-            throw new RuntimeException(planType + " 校验异常, " + message);
+            throw new RuntimeException(element + " 校验异常, " + message);
         }
     }
 
