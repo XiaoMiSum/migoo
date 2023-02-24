@@ -30,10 +30,10 @@ import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.rpc.RpcContext;
+import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.apache.dubbo.rpc.service.GenericService;
 import protocol.xyz.migoo.dubbo.config.DubboDefaults;
 import protocol.xyz.migoo.dubbo.sampler.DubboSampleResult;
@@ -68,7 +68,6 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
         result.setTestClass(this.getClass());
         result.sampleStart();
         try {
-            GenericService service = reference.get();
             if (get(ATTACHMENT_ARGS) != null && !getPropertyAsJSONObject(ATTACHMENT_ARGS).isEmpty()) {
                 Map<String, String> attachments = new HashMap<>(16);
                 getPropertyAsJSONObject(ATTACHMENT_ARGS).forEach((key, value) -> attachments.put(key, value.toString()));
@@ -81,7 +80,7 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
             }
             result.setRequestData(getProperty());
             Object[] parameters = getPropertyAsJSONArray(ARGS_PARAMETERS).toArray();
-            Object response = service.$invoke(getPropertyAsString(METHOD), parameterTypes, parameters);
+            Object response = reference.get().$invoke(getPropertyAsString(METHOD), parameterTypes, parameters);
             result.setResponseData(JSON.toJSONBytes(response));
         } finally {
             result.sampleEnd();
@@ -95,8 +94,10 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
 
         ReferenceConfig<GenericService> reference = new ReferenceConfig<>();
         reference.setGeneric("true");
-        reference.setApplication(new ApplicationConfig(StringUtils.isEmpty(registerCenter.getString(APP_NAME)) ?
-                "migoo-dubbo-consumer" : registerCenter.getString(APP_NAME)));
+        ApplicationModel application = ApplicationModel.defaultModel();
+        application.setModelName(StringUtils.isEmpty(registerCenter.getString(APP_NAME)) ?
+                "migoo-dubbo-consumer" : registerCenter.getString(APP_NAME));
+        reference.setScopeModel(application);
         reference.setVersion(referenceConfig.getString(VERSION));
         reference.setGroup(referenceConfig.getString(GROUP));
         reference.setRetries(referenceConfig.get(RETRIES) != null ? referenceConfig.getIntValue(RETRIES) : 2);

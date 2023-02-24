@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://xyz.migoo/schemas/dubbodefaults.json",
+  "title": "migoo dubbo 默认配置",
+  "description": "migoo dubbo 默认配置-json schema 配置信息",
+  "type": "object",
+  "properties": {
+    "testclass": {
+      "description": "测试元件类名或别名",
+      "enum": [
+        "dubbodefaults",
+        "DubboDefaults",
+        "dubboDefaults",
+        "Dubbo_Defaults",
+        "dubbo_defaults",
+        "dubbo_Defaults",
+        "dubbodefault",
+        "DubboDefault",
+        "dubboDefault",
+        "Dubbo_Default",
+        "dubbo_default",
+        "dubbo_Default"
+      ]
+    },
+    "variables": {
+      "type": "object",
+      "description": "取样器配置的变量"
+    },
+    "registry_center": {
+      "type": "object",
+      "description": "注册中心配置",
+      "properties": {
+        "protocol": {
+          "description": "注册中心协议",
+          "type": "string"
+        },
+        "address": {
+          "description": "注册中心地址，host:port",
+          "type": "string"
+        },
+        "app_name": {
+          "description": "应用名称",
+          "type": "string"
+        },
+        "username": {
+          "description": "用户名",
+          "type": "string"
+        },
+        "password": {
+          "description": "密码",
+          "type": "string"
+        },
+        "version": {
+          "description": "版本",
+          "type": "string"
+        }
+      }
+    },
+    "reference_config": {
+      "type": "object",
+      "description": "reference 配置",
+      "properties": {
+        "version": {
+          "description": "版本，1.0.0",
+          "type": "string"
+        },
+        "retries": {
+          "description": "重试次数",
+          "type": "integer"
+        },
+        "timeout": {
+          "description": "超时时间",
+          "type": "integer"
+        },
+        "async": {
+          "description": "是否异步",
+          "type": "string"
+        },
+        "load_balance": {
+          "description": "负载均衡",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "message": {
+    "required": "必填"
+  },
+  "required": [
+    "testclass",
+    "registry_center",
+    "reference_config"
+  ]
+}
