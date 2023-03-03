@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://xyz.migoo/schemas/kafkadefaults.json",
+  "title": "migoo kafka 默认配置",
+  "description": "migoo kafka 默认配置-json schema 配置信息",
+  "type": "object",
+  "properties": {
+    "testclass": {
+      "description": "测试元件类名或别名",
+      "enum": [
+        "KafkaDefaults",
+        "kafkaDefaults",
+        "Kafkadefaults",
+        "kafkadefaults",
+        "kafka_defaults",
+        "Kafka_defaults",
+        "Kafka_Defaults",
+        "kafka_Defaults",
+        "KafkaDefault",
+        "kafkaDefault",
+        "Kafkadefault",
+        "kafkadefault",
+        "Kafka_Default",
+        "Kafka_default",
+        "kafka_Default",
+        "Kafka_default"
+      ]
+    },
+    "variables": {
+      "type": "object",
+      "description": "取样器配置的变量"
+    },
+    "bootstrap.servers": {
+      "type": "string",
+      "description": "kafka bootstrap.servers"
+    },
+    "acks": {
+      "type": "string",
+      "description": "kafka acks"
+    },
+    "retries": {
+      "type": "number",
+      "description": "kafka retries"
+    },
+    "linger.ms": {
+      "type": "number",
+      "description": "kafka linger.ms"
+    },
+    "key.serializer": {
+      "type": "number",
+      "description": "kafka key.serializer"
+    },
+    "value.serializer": {
+      "type": "number",
+      "description": "kafka value.serializer"
+    },
+    "message": {
+      "description": "要发送的消息体，可以时字符串、对象等"
+    },
+    "topic": {
+      "type": "string",
+      "description": "kafka topic"
+    },
+    "key": {
+      "type": "string",
+      "description": "kafka key"
+    }
+  },
+  "message": {
+    "required": "必填"
+  },
+  "required": [
+    "testclass"
+  ]
+}

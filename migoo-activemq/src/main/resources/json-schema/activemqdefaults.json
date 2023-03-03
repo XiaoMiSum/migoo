@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://xyz.migoo/schemas/activemqdefaults.json",
+  "title": "migoo active mq 默认配置",
+  "description": "migoo active mq 默认配置-json schema 配置信息",
+  "type": "object",
+  "properties": {
+    "testclass": {
+      "description": "测试元件类名或别名",
+      "enum": [
+        "activemqdefaults",
+        "ActiveMqDefaults",
+        "activeMqDefaults",
+        "ActivemqDefaults",
+        "activemq_Defaults",
+        "Activemq_Defaults",
+        "ActiveMq_Defaults",
+        "activemq_Default",
+        "activemq_Def",
+        "activemq_def",
+        "activemqdef",
+        "activemqDef"
+      ]
+    },
+    "variables": {
+      "type": "object",
+      "description": "取样器配置的变量"
+    },
+    "username": {
+      "type": "string",
+      "description": "active mq 用户名"
+    },
+    "password": {
+      "type": "string",
+      "description": "active mq 密码"
+    },
+    "broker.url": {
+      "type": "string",
+      "description": "active mq broker url"
+    },
+    "message": {
+      "description": "要发送的消息体，可以时字符串、对象等"
+    },
+    "topic": {
+      "type": "string",
+      "description": "active mq topic"
+    },
+    "queue": {
+      "type": "string",
+      "description": "active mq queue"
+    }
+  },
+  "message": {
+    "required": "必填"
+  },
+  "required": [
+    "testclass"
+  ]
+}

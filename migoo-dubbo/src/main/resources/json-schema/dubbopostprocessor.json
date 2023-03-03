@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "http://xyz.migoo/schemas/dubbopreprocessor.json",
+  "$id": "http://xyz.migoo/schemas/dubbopostprocessor.json",
   "title": "migoo dubbo 后置处理器",
   "description": "migoo dubbo 后置处理器-json schema 配置信息",
   "type": "object",

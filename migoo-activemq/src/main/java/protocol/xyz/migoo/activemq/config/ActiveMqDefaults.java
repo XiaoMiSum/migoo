@@ -25,11 +25,9 @@
 
 package protocol.xyz.migoo.activemq.config;
 
-import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestStateListener;
-import org.apache.activemq.ActiveMQConnectionFactory;
 import protocol.xyz.migoo.activemq.util.ActiveMqConstantsInterface;
 
 /**
@@ -39,9 +37,6 @@ import protocol.xyz.migoo.activemq.util.ActiveMqConstantsInterface;
 @Alias({"activemq_Defaults", "activemq_Default", "activemq_Def", "activemqDef", "activemqDefault"})
 public class ActiveMqDefaults extends AbstractTestElement implements TestStateListener, ActiveMqConstantsInterface {
 
-    @JSONField(serialize = false)
-    private ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory();
-
     @Override
     public void testStarted() {
         super.convertVariable();
@@ -50,8 +45,5 @@ public class ActiveMqDefaults extends AbstractTestElement implements TestStateLi
 
     @Override
     public void testEnded() {
-        if (factory != null) {
-            factory = null;
-        }
     }
 }
