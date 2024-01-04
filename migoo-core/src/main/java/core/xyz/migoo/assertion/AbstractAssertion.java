@@ -74,7 +74,8 @@ public abstract class AbstractAssertion extends AbstractTestElement implements S
                 }
                 getProperty().put(EXPECTED, objects.isEmpty() ? null : objects);
                 result.setContext(result.isSuccessful() ? this.propToString() :
-                        String.format("expected value '%s', but found '%s', rule: '%s'", objects, get(ACTUAL), ruleStr));
+                        String.format("expected value '%s', but found '%s'%s, rule: '%s'", objects, get(ACTUAL),
+                                Objects.isNull(get(FIELD)) ? "" : (", field: " + get(FIELD)), ruleStr));
             } catch (Exception e) {
                 result.setFailureMessage(e);
             }
@@ -82,9 +83,10 @@ public abstract class AbstractAssertion extends AbstractTestElement implements S
     }
 
     private void prepare() {
-        if (!(get(EXPECTED) instanceof String expected)) {
+        if (!(get(EXPECTED) instanceof String)) {
             return;
         }
+        String expected = getPropertyAsString(EXPECTED);
         if (JSON.isValidArray(expected) || JSON.isValidObject(expected) || !expected.contains(",")) {
             return;
         }

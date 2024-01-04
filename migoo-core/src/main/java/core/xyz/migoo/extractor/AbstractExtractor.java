@@ -25,7 +25,7 @@
 
 package core.xyz.migoo.extractor;
 
-import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 
@@ -40,10 +40,11 @@ public abstract class AbstractExtractor extends AbstractTestElement implements E
     public static final String VALUE = "value";
 
     protected SampleResult getResult(SampleResult result) {
-        JSONArray items = new JSONArray();
-        items.add("Extractor: " + this.getClass());
-        items.add(FIELD + ": " + get(FIELD));
-        items.add("Result: " + get(VALUE));
+        JSONObject items = new JSONObject();
+        items.put("Extractor", this.getClass());
+        items.put(FIELD, get(FIELD));
+        items.put(MATCH_NUM, get(MATCH_NUM));
+        items.put("Result", get(VALUE));
         result.setSamplerData(items.toJSONString());
         return result;
     }
