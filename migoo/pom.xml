@@ -60,7 +60,6 @@
     </developers>
 
     <properties>
-        <yaml.version>1.33</yaml.version>
         <reports.version>5.1.1</reports.version>
         <migoo-core.version>5.0.1-SNAPSHOT</migoo-core.version>
         <junit.version>5.9.0</junit.version>
@@ -96,12 +95,6 @@
                     <groupId>org.projectlombok</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>${yaml.version}</version>
         </dependency>
 
         <dependency>

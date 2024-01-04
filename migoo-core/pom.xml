@@ -61,6 +61,7 @@
     </developers>
 
     <properties>
+        <yaml.version>1.33</yaml.version>
         <junit.version>5.9.0</junit.version>
         <redis.version>5.1.0</redis.version>
         <mysql.version>8.2.0</mysql.version>
@@ -69,7 +70,7 @@
         <groovy.version>4.0.7</groovy.version>
         <reports.version>5.0.9</reports.version>
         <fastjson.version>2.0.44</fastjson.version>
-        <simplehttp.version>2.1.0</simplehttp.version>
+        <simplehttp.version>2.1.1</simplehttp.version>
         <commons-codec.version>1.16.0</commons-codec.version>
         <commons-lang3.version>3.14.0</commons-lang3.version>
         <json-schema-validator.version>2.2.14</json-schema-validator.version>
@@ -111,6 +112,12 @@
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>${commons-codec.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${yaml.version}</version>
         </dependency>
 
 
