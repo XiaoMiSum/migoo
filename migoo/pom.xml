@@ -61,16 +61,16 @@
 
     <properties>
         <yaml.version>1.33</yaml.version>
-        <reports.version>5.0.9</reports.version>
+        <reports.version>5.1.1</reports.version>
         <migoo-core.version>5.0.1-SNAPSHOT</migoo-core.version>
         <junit.version>5.9.0</junit.version>
         <compile.version>3.10.1</compile.version>
-        <javadoc.version>3.2.0</javadoc.version>
+        <javadoc.version>3.5.0</javadoc.version>
         <surefire.version>2.22.2</surefire.version>
         <gpg-plugin.version>3.0.1</gpg-plugin.version>
         <gmavenplus.version>1.13.1</gmavenplus.version>
         <plugin.version>3.3.0</plugin.version>
-        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -184,43 +184,11 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${compile.version}</version>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>${gpg-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.version}</version>
-            </plugin>
-            <!-- 增加 gmavenplus 插件 允许集成Groovy到Maven-->
-            <plugin>
-                <groupId>org.codehaus.gmavenplus</groupId>
-                <artifactId>gmavenplus-plugin</artifactId>
-                <version>${gmavenplus.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>addSources</goal>
-                            <goal>addTestSources</goal>
-                            <goal>generateStubs</goal>
-                            <goal>compile</goal>
-                            <goal>generateTestStubs</goal>
-                            <goal>compileTests</goal>
-                            <goal>removeStubs</goal>
-                            <goal>removeTestStubs</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
