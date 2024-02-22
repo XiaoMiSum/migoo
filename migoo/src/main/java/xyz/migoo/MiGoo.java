@@ -27,12 +27,11 @@ package xyz.migoo;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import core.xyz.migoo.engine.TestEngineService;
+import core.xyz.migoo.engine.TestEngine;
 import core.xyz.migoo.engine.Testplan;
 import core.xyz.migoo.report.Report;
 import core.xyz.migoo.report.Result;
-import itestx.xyz.migoo.logic.ITestx;
-import xyz.migoo.loader.Loader;
+import util.xyz.migoo.loader.Loader;
 import xyz.migoo.report.StandardReport;
 
 import java.util.List;
@@ -57,17 +56,8 @@ public class MiGoo {
 
     private final JSONObject testcase;
 
-
     public MiGoo(JSONObject testcase) {
         this.testcase = this.prepare(testcase);
-    }
-
-    public MiGoo(ITestx x) {
-        this.testcase = this.prepare(x.get());
-    }
-
-    public static Result start(ITestx x) {
-        return new MiGoo(x).runTest();
     }
 
     public static Result start(String filePath) {
@@ -84,30 +74,33 @@ public class MiGoo {
         return new MiGoo(new JSONObject(testcase)).runTest();
     }
 
-    private JSONObject prepare(Map<String, Object> x) {
+    private JSONObject prepare(Map<?, ?> x) {
         JSONObject json = new JSONObject(x.size());
         x.keySet().forEach(key -> {
+            String keyString = (String) key;
             Object value = x.get(key);
-            if (value instanceof Map) {
-                json.put(key, prepare((Map<String, Object>) value));
-            } else if (value instanceof Iterable) {
-                json.put(key, prepare((List<Object>) value));
-            } else if (value instanceof ITestx) {
-                json.put(key, ((ITestx) value).get());
+            if (value instanceof Map<?, ?>) {
+                json.put(keyString, prepare((Map<?, ?>) value));
+            } else if (value instanceof List<?>) {
+                json.put(keyString, prepare((List<?>) value));
+            } else if (value instanceof String) {
+                json.put(keyString, prepare((String) value));
             } else {
-                json.put(key, value);
+                json.put(keyString, value);
             }
         });
         return json;
     }
 
-    private JSONArray prepare(List<Object> x) {
+    private JSONArray prepare(List<?> x) {
         JSONArray xs = new JSONArray(x.size());
         x.forEach(item -> {
-            if (item instanceof ITestx) {
-                xs.add(prepare(((ITestx) item).get()));
+            if (item instanceof List<?>) {
+                xs.add(prepare((List<?>) item));
             } else if (item instanceof Map) {
-                xs.add(prepare((Map<String, Object>) item));
+                xs.add(prepare((Map<?, ?>) item));
+            } else if (item instanceof String) {
+                xs.add(prepare((String) item));
             } else {
                 xs.add(item);
             }
@@ -118,50 +111,22 @@ public class MiGoo {
     private Result runTest() {
         Report report;
         try {
-            boolean flag = Boolean.parseBoolean(System.getProperty(REPORT_ENABLE, "true"));
-            report = flag ? (Report) Class.forName(System.getProperty(REPORT_CLASS, "xyz.migoo.report.StandardReport"))
-                    .getConstructor().newInstance() : null;
+            report = Boolean.parseBoolean(System.getProperty(REPORT_ENABLE, "true")) ?
+                    (Report) Class.forName(System.getProperty(REPORT_CLASS, "xyz.migoo.report.StandardReport"))
+                            .getConstructor().newInstance() : null;
         } catch (Exception e) {
             report = new StandardReport();
         }
-        return TestEngineService.runTest(new Testplan(testcase), report);
+        return TestEngine.runTest(new Testplan(testcase), report);
     }
 
-    private JSONObject prepare(JSONObject testcase) {
-        JSONObject newCase = new JSONObject();
-        for (String key : testcase.keySet()) {
-            Object value = testcase.get(key);
-            if (value instanceof JSONArray) {
-                newCase.put(key, prepare((JSONArray) value));
-            } else if (value instanceof JSONObject) {
-                newCase.put(key, prepare((JSONObject) value));
-            } else {
-                newCase.put(key, value instanceof String ? prepare((String) value) : value);
-            }
-        }
-        return newCase;
-    }
-
-    private JSONArray prepare(JSONArray value) {
-        JSONArray array = new JSONArray();
-        for (Object object : value) {
-            if (object instanceof JSONArray) {
-                array.add(prepare((JSONArray) object));
-            } else if (object instanceof JSONObject) {
-                array.add(prepare((JSONObject) object));
-            } else {
-                array.add(object instanceof String ? prepare((String) object) : object);
-            }
-        }
-        return array;
-    }
 
     private Object prepare(String value) {
         Matcher matcher = FILE_PATTERN.matcher(value);
         if (matcher.find()) {
             Object result = Loader.toJSON(matcher.group(1));
-            return result instanceof JSONArray ? prepare((JSONArray) result) :
-                    result instanceof JSONObject ? prepare((JSONObject) result) : result;
+            return result instanceof List<?> ? prepare((List<?>) result) :
+                    result instanceof Map<?, ?> ? prepare((Map<?, ?>) result) : result;
         }
         return value;
     }

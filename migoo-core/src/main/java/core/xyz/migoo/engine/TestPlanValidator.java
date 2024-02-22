@@ -26,25 +26,26 @@
 package core.xyz.migoo.engine;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jackson.JsonLoader;
-import com.github.fge.jsonschema.core.report.LogLevel;
-import com.github.fge.jsonschema.core.report.ProcessingReport;
-import com.github.fge.jsonschema.main.JsonSchema;
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.networknt.schema.JsonSchema;
+import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.SpecVersion;
+import com.networknt.schema.ValidationMessage;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 
 public class TestPlanValidator {
 
+    private static final ObjectMapper mapper = new ObjectMapper();
+
     public static void verify(JSONObject value, String element) {
-        if (StringUtils.equals(element, "ignore")) {
+        if (StringUtils.isBlank(element)) {
             return;
         }
         String schema = ResourceReader.read(String.format("json-schema/%s.json", element.toLowerCase(Locale.ROOT)));
@@ -63,37 +64,29 @@ public class TestPlanValidator {
      */
     public static String validJson(JSONObject object, String validParam) {
         try {
-            JsonNode schema = JsonLoader.fromString(validParam);
-            JsonNode data = JsonLoader.fromString(object.toJSONString());
-            final JsonSchema jsonSchema = JsonSchemaFactory.byDefault().getJsonSchema(schema);
-            ProcessingReport report = jsonSchema.validate(data);
-            StringBuilder sBuilder = new StringBuilder();
-            report.forEach(pm -> {
-                if (LogLevel.ERROR.equals(pm.getLogLevel())) {
-                    JsonNode jsonNode = pm.asJson();
-                    JsonNode key = Optional.ofNullable(jsonNode)
-                            .map(o -> o.get("instance"))
-                            .map(r -> r.get("pointer"))
-                            .orElse(null);
-                    if (Objects.nonNull(key) && StringUtils.isNotEmpty(key.asText())) {
-                        sBuilder.append("errorKey: ")
-                                .append(key.asText()).append("; ");
-                    }
-                    sBuilder.append("errorMessage: ").append(pm.getMessage());
-                }
-            });
-            return sBuilder.toString();
+            JsonSchemaFactory factory = JsonSchemaFactory
+                    .builder(JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012))
+                    .objectMapper(mapper)
+                    .build();
+            JsonSchema schema = factory.getSchema(validParam);
+            Iterator<ValidationMessage> messages = schema.validate(mapper.readTree(object.toJSONString())).iterator();
+            StringBuilder message = new StringBuilder();
+            while (messages.hasNext()) {
+                message.append(message.length() == 0 ? "errorMessage: " : ", ")
+                        .append(messages.next().getMessage());
+            }
+            return message.toString();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public record ResourceReader() {
+    public static class ResourceReader {
 
         public static String read(String path) {
-            try {
-                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-                InputStream is = classLoader.getResourceAsStream(path);
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            try (InputStream is = classLoader.getResourceAsStream(path)) {
+                assert is != null;
                 byte[] bytes = new byte[is.available()];
                 is.read(bytes);
                 return new String(bytes, StandardCharsets.UTF_8);

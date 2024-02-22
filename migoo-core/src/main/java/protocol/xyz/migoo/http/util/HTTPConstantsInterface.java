@@ -42,7 +42,8 @@ public interface HTTPConstantsInterface {
     String PORT = "port";
     String PROTOCOL = "protocol";
     String BASE_PATH = "base_path";
-    String API_PATH = "api";
+    String API = "api";
+    String PATH = "path";
     String REQUEST_METHOD = "method";
     String BYTES = "bytes";
     String BODY = "body";

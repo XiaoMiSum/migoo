@@ -72,7 +72,6 @@
     "required": "必填"
   },
   "required": [
-    "testclass",
-    "host"
+    "testclass"
   ]
 }

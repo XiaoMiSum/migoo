@@ -27,6 +27,7 @@ package core.xyz.migoo.testelement;
 
 import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.assertion.Assertion;
+import core.xyz.migoo.assertion.VerifyResult;
 import core.xyz.migoo.extractor.Extractor;
 import core.xyz.migoo.processor.Processor;
 import core.xyz.migoo.report.Result;
@@ -35,9 +36,7 @@ import core.xyz.migoo.sampler.Sampler;
 import core.xyz.migoo.variable.MiGooVariables;
 import core.xyz.migoo.variable.VariableStateListener;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ServiceLoader;
+import java.util.*;
 
 /**
  * @author xiaomi
@@ -53,8 +52,8 @@ public class TestElementService {
     }
 
     public static TestElement getService(String key) {
-        Class<? extends TestElement> clazz = SERVICES.get(key.toLowerCase());
-        if (clazz == null) {
+        Class<? extends TestElement> clazz = getServiceClass(key);
+        if (Objects.isNull(clazz)) {
             throw new RuntimeException("No matching test element: " + key.toLowerCase());
         }
         try {
@@ -62,6 +61,10 @@ public class TestElementService {
         } catch (Exception e) {
             throw new RuntimeException("Get test element instance error. ", e);
         }
+    }
+
+    public static Class<? extends TestElement> getServiceClass(String key) {
+        return SERVICES.get(Optional.ofNullable(key).orElse("").toLowerCase());
     }
 
     public static void addService(Class<? extends TestElement> clazz) {
@@ -79,16 +82,18 @@ public class TestElementService {
         return new HashMap<>(SERVICES);
     }
 
-    public static Result runTest(TestElement el, SampleResult... sResult) {
+    public static Result runTest(TestElement el, SampleResult... sampleResults) {
         Result result = null;
         if (el instanceof Sampler) {
             result = ((Sampler) el).sample();
         } else if (el instanceof Processor) {
             result = ((Processor) el).process();
         } else if (el instanceof Extractor) {
-            result = ((Extractor) el).process(sResult[0]);
+            result = ((Extractor) el).process(sampleResults[0]);
         } else if (el instanceof Assertion) {
-            // nothing to do
+            VerifyResult aResult = ((Assertion) el).getResult(sampleResults[0]);
+            sampleResults[0].setSuccessful(!sampleResults[0].isSuccessful() ? sampleResults[0].isSuccessful() : aResult.isSuccessful());
+            sampleResults[0].getAssertionResults().add(aResult);
         }
         return result;
     }

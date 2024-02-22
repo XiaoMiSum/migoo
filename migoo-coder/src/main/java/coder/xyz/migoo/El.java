@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2022.  Lorem XiaoMiSum (mi_xiao@qq.com)
+ * Copyright (c) 2024.  Lorem XiaoMiSum (mi_xiao@qq.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,15 +23,40 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package itestx.xyz.migoo.logic;
+package coder.xyz.migoo;
+
+import com.alibaba.fastjson2.JSONObject;
+import com.google.common.base.Strings;
 
 import java.util.Map;
 
-/**
- * @author xiaomi
- * Created at 2022/8/23 23:17
- */
-public interface ITestx {
+public abstract class El {
 
-    Map<String, Object> get();
+    protected final JSONObject properties = new JSONObject();
+
+    protected El() {
+    }
+
+    protected El(String testClass) {
+        if (!Strings.isNullOrEmpty(testClass)) {
+            p("testclass", testClass);
+        }
+    }
+
+    protected El(Map<String, Object> properties) {
+        p(properties);
+    }
+
+    public JSONObject customize() {
+        return properties;
+    }
+
+    protected void p(String key, Object value) {
+        properties.put(key, value);
+    }
+
+    protected void p(Map<String, Object> properties) {
+        this.properties.putAll(properties);
+    }
+
 }

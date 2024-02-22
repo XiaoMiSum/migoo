@@ -26,52 +26,50 @@
 package core.xyz.migoo.engine;
 
 import core.xyz.migoo.report.Result;
+import core.xyz.migoo.sampler.SampleResult;
+import core.xyz.migoo.variable.MiGooVariables;
 
 import java.util.ArrayList;
-
-import static core.xyz.migoo.testelement.AbstractTestElement.CHILD;
-import static core.xyz.migoo.testelement.AbstractTestElement.TITLE;
+import java.util.Objects;
 
 /**
  * @author xiaomi
  */
 public class LoopEngine extends AbstractTestEngine {
 
-    public LoopEngine(Testplan plan) {
-        super(plan);
+    public LoopEngine(MiGooContext context) {
+        super(context, new Result(context.getId(), context.getTitle()));
+    }
+
+    public LoopEngine(MiGooContext context, MiGooVariables other) {
+        super(context, new Result(context.getId(), context.getTitle()), other);
     }
 
     @Override
-    public Result runTest() {
-        Result result = new Result(plan.getString(TITLE));
-        result.setVariables(plan.getVariables());
-        result.sampleStart();
-        try {
-            prepare(result);
-            preprocess(result);
-            execute(result);
-            postprocess(result);
-        } catch (Exception e) {
-            result.setThrowable(e);
-        } finally {
-            result.sampleEnd();
-            close();
-        }
-        return result;
-    }
-
-    protected void execute(Result result) {
+    protected void runTest(Result result) {
         result.setSubResults(new ArrayList<>());
-        for (Object element : plan.getJSONArray(CHILD)) {
-            Testplan plan = (Testplan) element;
-            Result sResult = TestEngineService.runTest(plan, this.plan.getVariables());
+        for (MiGooContext child : context.getChildren()) {
+            // 如果当前是取样器执行，且父节点标记失败的，直接标记测试失败
+            if (Objects.nonNull(child.getSampler()) && !result.isSuccessful()) {
+                SampleResult sResult = new SampleResult(child.getTitle());
+                sResult.setSuccessful(false);
+                sResult.setTestClass(child.getSampler().getClass());
+                sResult.sampleStart();
+                sResult.setSamplerData("前置步骤测试失败，当前跳过执行");
+                sResult.setResponseData("前置步骤测试失败，当前跳过执行");
+                sResult.sampleEnd();
+                result.getSubResults().add(sResult);
+                continue;
+            }
+            TestEngine engine = Objects.isNull(child.getSampler()) ? new LoopEngine(child, context.getVariables())
+                    : new StandardEngine(child, context.getVariables());
+            Result sResult = engine.runTest();
             result.getSubResults().add(sResult);
-            result.setSuccessful(!result.isSuccessful() ? result.isSuccessful() : sResult.isSuccessful());
-            if (plan.isStandardSampler()) {
-                // 标准引擎 需要将变量传递到子测试元素里面，并且如果测试结果失败的，后续也没必要再执行了
-                this.plan.getVariables().mergeVariable(plan.getVariables());
-                if (!result.isSuccessful()) {
-                    break;
+            result.setSuccessful(result.isSuccessful() ? sResult.isSuccessful() : result.isSuccessful());
+            if (engine instanceof StandardEngine) {
+                if (result.isSuccessful()) {
+                    // 标准引擎 将子节点里面的变量合并到当前父节点中，以便传递给其他子节点
+                    context.getVariables().mergeVariable(child.getVariables());
                 }
             }
         }

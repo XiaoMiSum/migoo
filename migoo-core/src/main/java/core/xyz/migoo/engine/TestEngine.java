@@ -25,13 +25,38 @@
 
 package core.xyz.migoo.engine;
 
+import core.xyz.migoo.report.Report;
 import core.xyz.migoo.report.Result;
-import core.xyz.migoo.variable.MiGooVariables;
+import core.xyz.migoo.testelement.TestElementService;
+
+import java.util.Objects;
+
+import static core.xyz.migoo.testelement.AbstractTestElement.TEST_CLASS;
 
 /**
+ * 脚本引擎 用于执行 testsuite 、sampler
+ *
  * @author xiaomi
  */
 public interface TestEngine {
+
+    /**
+     * 脚本引擎执行测试
+     *
+     * @param plan   测试计划
+     * @param report 测试报告生成器
+     * @return 测试结果
+     */
+    static Result runTest(Testplan plan, Report report) {
+        MiGooContext context = !plan.isSampler() ? MiGooContext.create(plan) :
+                MiGooContext.create(plan, TestElementService.getService(plan.getString(TEST_CLASS)));
+        TestEngine engine = plan.isSampler() ? new StandardEngine(context) : new LoopEngine(context);
+        Result result = engine.runTest();
+        if (Objects.nonNull(report)) {
+            report.generateReport(result);
+        }
+        return result;
+    }
 
     /**
      * 测试引擎执行，返回执行结果
@@ -39,11 +64,4 @@ public interface TestEngine {
      * @return 执行结果
      */
     Result runTest();
-
-    /**
-     * 将传入变量合并到当前引擎保存的变量中
-     *
-     * @param other 其他变量
-     */
-    void mergeVariable(MiGooVariables other);
 }

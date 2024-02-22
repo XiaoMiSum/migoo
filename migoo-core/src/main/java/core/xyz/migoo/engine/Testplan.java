@@ -27,14 +27,15 @@ package core.xyz.migoo.engine;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import core.xyz.migoo.sampler.Sampler;
+import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestElementService;
 import core.xyz.migoo.variable.MiGooVariables;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
 
 import static core.xyz.migoo.testelement.AbstractTestElement.*;
 
@@ -43,28 +44,24 @@ import static core.xyz.migoo.testelement.AbstractTestElement.*;
  */
 public class Testplan extends JSONObject {
 
-    private final boolean standardSampler;
+    private final boolean sampler;
 
     public Testplan(JSONObject json) {
-        standardSampler = !json.containsKey(CHILDS) && !json.containsKey(CHILD);
-        TestPlanValidator.verify(json, !standardSampler ? "testsuite" :
-                StringUtils.isEmpty(json.getString(TEST_CLASS)) ? "ignore" :
-                        TestElementService.getService(json.getString(TEST_CLASS)).getClass().getSimpleName());
-        Object variables = json.remove(VARIABLES);
-        boolean isTestElement = json.containsKey(TEST_CLASS) || json.containsKey(CHILDS) || json.containsKey(CHILD);
-        // migoo 定义的组件需要添加变量对象
-        if (isTestElement) {
-            put(VARIABLES, variables instanceof MiGooVariables ? variables : new MiGooVariables((JSONObject) variables));
-        }
-        Set<String> keys = json.keySet();
-        keys.forEach(key -> {
-            // 先取出原始数据，然后将 migoo定义的组件 key转换为小写
-            Object obj = json.get(key);
-            String newKey = isTestElement ? key.toLowerCase(Locale.ROOT) : key;
-            newKey = CHILDS.equals(newKey) ? CHILD : newKey;
-            if (obj instanceof Map) {
+        boolean isMiGooSuite = json.containsKey(CHILDREN) && json.containsKey(TITLE);
+        Class<? extends TestElement> clazz = TestElementService.getServiceClass(json.getString(TEST_CLASS));
+        sampler = Objects.nonNull(clazz) && Sampler.class.isAssignableFrom(clazz);
+        TestPlanValidator.verify(json, isMiGooSuite ? sampler ? clazz.getSimpleName() : "testsuite" : "");
+        initialize(json, isMiGooSuite || sampler);
+    }
+
+    private void initialize(JSONObject json, boolean isMiGoo) {
+        // 1、先删除 MiGoo组件中的变量，减少一次遍历
+        Object variables = isMiGoo ? json.remove(VARIABLES) : null;
+        json.forEach((key, value) -> {
+            String newKey = isMiGoo ? key.toLowerCase(Locale.ROOT) : key;
+            if (value instanceof Map) {
                 put(newKey, new Testplan(json.getJSONObject(key)));
-            } else if (obj instanceof List) {
+            } else if (value instanceof List) {
                 JSONArray array = json.getJSONArray(key);
                 JSONArray newValue = new JSONArray(array.size());
                 for (int i = 0; i < array.size(); i++) {
@@ -72,13 +69,18 @@ public class Testplan extends JSONObject {
                 }
                 put(newKey, newValue);
             } else {
-                put(newKey, obj);
+                put(newKey, value);
             }
         });
+        if (isMiGoo) {
+            // 3、重新添加变量到MiGoo组件
+            put(VARIABLES, Objects.isNull(variables) ? new MiGooVariables() :
+                    variables instanceof MiGooVariables ? variables : new MiGooVariables((JSONObject) variables));
+        }
     }
 
-    public boolean isStandardSampler() {
-        return standardSampler;
+    public boolean isSampler() {
+        return sampler;
     }
 
     public MiGooVariables getVariables() {

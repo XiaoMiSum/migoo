@@ -25,116 +25,117 @@
 
 package core.xyz.migoo.engine;
 
-import core.xyz.migoo.processor.Processor;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.sampler.SampleResult;
-import core.xyz.migoo.testelement.MiGooProperty;
 import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestElementService;
 import core.xyz.migoo.variable.MiGooVariables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Vector;
 
-import static core.xyz.migoo.testelement.AbstractTestElement.*;
+import static core.xyz.migoo.testelement.AbstractTestElement.EXTRACTORS;
+import static core.xyz.migoo.testelement.AbstractTestElement.TEST_CLASS;
 
 /**
  * @author xiaomi
  */
 public abstract class AbstractTestEngine implements TestEngine {
+    protected final MiGooContext context;
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Result result;
 
-    protected final Testplan plan;
-
-    protected final Vector<TestElement> configElements = new Vector<>(10);
-
-    protected final Vector<TestElement> preprocessors = new Vector<>(10);
-
-    protected final Vector<TestElement> postprocessors = new Vector<>(10);
-
-
-    public AbstractTestEngine(Testplan plan) {
-        this.plan = plan;
-        this.plan.getVariables().convertVariable();
-        addChildrenElements(CONFIG_ELEMENTS, configElements);
-        addChildrenElements(PREPROCESSORS, preprocessors);
-        addChildrenElements(POSTPROCESSORS, postprocessors);
+    public AbstractTestEngine(MiGooContext context, Result result) {
+        this.context = context;
+        this.result = result;
     }
 
-    protected void addChildrenElements(String key, Vector<TestElement> elements) {
-        if (Objects.nonNull(plan.get(key))) {
-            for (Object element : plan.getJSONArray(key)) {
-                TestElement el = TestElementService.getService(((Testplan) element).getString(TEST_CLASS));
-                TestElementService.prepare(el, ((Testplan) element), plan.getVariables());
-                elements.add(el);
-            }
-        }
+    public AbstractTestEngine(MiGooContext context, Result result, MiGooVariables other) {
+        // 合并父节点变量
+        context.getVariables().mergeVariable(other);
+        this.context = context;
+        this.result = result;
     }
 
     @Override
-    public void mergeVariable(MiGooVariables other) {
-        plan.getVariables().mergeVariable(other);
+    public Result runTest() {
+        logger.info("开始执行测试, ID: {}, TITLE, {}", context.getId(), context.getTitle());
+        result.setVariables(context.getVariables());
+        result.sampleStart();
+        // 全局变量计算 - 替换变量集本身使用的函数&变量
+        context.getVariables().convertVariable();
+        logger.info("当前集合变量: " + context.getVariables().getProperty());
+        try {
+            // 准备配置元件
+            prepareConfigurations();
+            // 执行前置处理器
+            runPreprocessors();
+            // 执行子节点
+            runTest(result);
+            // 执行后置处理器
+            runPostprocessors();
+        } catch (Exception e) {
+            result.setThrowable(e);
+        } finally {
+            testEnded();
+        }
+        return result;
     }
 
-    protected void preprocess(Result result) {
-        // 前置处理器执行
-        List<SampleResult> results = process(preprocessors);
-        result.setPreprocessorResults(results);
-    }
+    protected abstract void runTest(Result result);
 
-    protected void postprocess(Result result) {
-        // 后置处理器执行
-        List<SampleResult> results = process(postprocessors);
-        result.setPostprocessorResults(results);
-    }
-
-    protected void prepare(Result result) {
-        List<SampleResult> results = new ArrayList<>(configElements.size());
-        for (TestElement element : configElements) {
-            TestElementService.testStarted(element);
+    private void prepareConfigurations() {
+        List<SampleResult> results = new ArrayList<>(context.getConfigurations().size());
+        context.getConfigurations().forEach(element -> {
             SampleResult sr = new SampleResult(element.getPropertyAsString(TEST_CLASS));
             sr.sampleStart();
+            TestElementService.testStarted(element);
             sr.setTestClass(element.getClass());
-            MiGooProperty property = new MiGooProperty(element.getProperty());
-            property.remove(VARIABLES);
-            property.remove(TEST_CLASS);
-            sr.setSamplerData(property.toString());
+            sr.setSamplerData(element.toString());
             sr.sampleEnd();
             results.add(sr);
-        }
-        if (!results.isEmpty()) {
-            result.setConfigElementResults(results);
-        }
+        });
+        result.setConfigElementResults(results);
     }
 
-    protected void close() {
-        for (TestElement element : configElements) {
+    private void runPreprocessors() {
+        result.setPreprocessorResults(runProcessors(context.getPreprocessors()));
+    }
+
+    private void runPostprocessors() {
+        result.setPostprocessorResults(runProcessors(context.getPostprocessors()));
+    }
+
+    private void testEnded() {
+        result.sampleEnd();
+        for (TestElement element : context.getConfigurations()) {
             TestElementService.testEnded(element);
         }
     }
 
-    protected List<SampleResult> process(Vector<TestElement> elements) {
+    private List<SampleResult> runProcessors(Vector<TestElement> elements) {
         List<SampleResult> results = new ArrayList<>();
-        for (TestElement element : elements) {
-            if (element instanceof Processor) {
-                TestElementService.testStarted(element);
-                SampleResult result = (SampleResult) TestElementService.runTest(element);
-                result.setSubResults(new ArrayList<>());
-                if (element.getProperty().containsKey(EXTRACTORS)) {
-                    List<SampleResult> ex = new ArrayList<>();
-                    for (int i = 0; i < element.getPropertyAsJSONArray(EXTRACTORS).size(); i++) {
-                        Testplan plan = (Testplan) element.getPropertyAsJSONArray(EXTRACTORS).get(i);
-                        TestElement el = TestElementService.getService(plan.getString(TEST_CLASS));
-                        TestElementService.prepare(el, plan, element.getVariables());
-                        ex.add((SampleResult) TestElementService.runTest(el, result));
-                    }
-                    result.setExtractorResults(ex);
+        elements.forEach(element -> {
+            TestElementService.testStarted(element);
+            SampleResult result = (SampleResult) TestElementService.runTest(element);
+            result.setSubResults(new ArrayList<>());
+            if (element.getProperty().containsKey(EXTRACTORS)) {
+                List<SampleResult> extractorResults = new ArrayList<>();
+                for (int i = 0; i < element.getPropertyAsJSONArray(EXTRACTORS).size(); i++) {
+                    Testplan plan = (Testplan) element.getPropertyAsJSONArray(EXTRACTORS).get(i);
+                    TestElement el = TestElementService.getService(plan.getString(TEST_CLASS));
+                    TestElementService.prepare(el, plan, element.getVariables());
+                    extractorResults.add((SampleResult) TestElementService.runTest(el, result));
+                    context.getVariables().convertVariables(el.getVariables().getProperty());
                 }
-                TestElementService.testEnded(element);
-                results.add(result);
+                result.setExtractorResults(extractorResults);
             }
-        }
+            TestElementService.testEnded(element);
+            results.add(result);
+        });
         return results;
     }
 }

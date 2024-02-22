@@ -26,20 +26,16 @@
 package core.xyz.migoo.engine;
 
 import core.xyz.migoo.assertion.Assertion;
-import core.xyz.migoo.assertion.VerifyResult;
 import core.xyz.migoo.extractor.Extractor;
+import core.xyz.migoo.report.Result;
 import core.xyz.migoo.sampler.SampleResult;
-import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestElementService;
+import core.xyz.migoo.variable.MiGooVariables;
 import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 import protocol.xyz.migoo.http.sampler.HttpSampler;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
-
-import static core.xyz.migoo.testelement.AbstractTestElement.*;
 
 /**
  * 标准引擎，用于执行最小的一个测试用例
@@ -48,72 +44,50 @@ import static core.xyz.migoo.testelement.AbstractTestElement.*;
  */
 public class StandardEngine extends AbstractTestEngine {
 
-    private final Vector<TestElement> validators = new Vector<>(10);
-    private final Vector<TestElement> extractors = new Vector<>(10);
+    public StandardEngine(MiGooContext context) {
+        super(context, new SampleResult(context.getTitle()));
+    }
 
-    public StandardEngine(Testplan plan) {
-        super(plan);
-        addChildrenElements(VALIDATORS, validators);
-        addChildrenElements(EXTRACTORS, extractors);
+    public StandardEngine(MiGooContext context, MiGooVariables other) {
+        super(context, context.getSampler() instanceof HttpSampler ?
+                new HTTPSampleResult(context.getTitle()) : new SampleResult(context.getTitle()), other);
     }
 
     @Override
-    public SampleResult runTest() {
-        TestElement sampler = TestElementService.getService(plan.getString(TEST_CLASS));
-        TestElementService.prepare(sampler, plan.getJSONObject(CONFIG), plan.getVariables());
-        SampleResult result = sampler instanceof HttpSampler ? new HTTPSampleResult(plan.getString(TITLE)) :
-                new SampleResult(plan.getString(TITLE));
-        try {
-            prepare(result);
-            preprocess(result);
-            execute(sampler, result);
-            verify(result);
-            extract(result);
-            postprocess(result);
-        } catch (Exception e) {
-            result.setThrowable(e);
-        } finally {
-            close();
-        }
-        return result;
+    protected void runTest(Result result) {
+        TestElementService.testStarted(context.getSampler());
+        ((SampleResult) result).setSamplerData((SampleResult) TestElementService.runTest(context.getSampler()));
+        TestElementService.testEnded(context.getSampler());
+        runAssertions((SampleResult) result);
+        runExtractors((SampleResult) result);
     }
 
-    private void verify(SampleResult result) {
-        if (!result.isSuccessful()) {
+
+    private void runAssertions(SampleResult result) {
+        if (!result.isSuccessful() || context.getValidators().isEmpty()) {
             return;
         }
-        Iterator<TestElement> iterators = validators.iterator();
-        result.setAssertionResults(new ArrayList<>(validators.size()));
-        while (iterators.hasNext()) {
-            TestElement element = iterators.next();
+        result.setAssertionResults(new ArrayList<>(context.getValidators().size()));
+        context.getValidators().forEach(element -> {
             if (element instanceof Assertion) {
-                VerifyResult aResult = ((Assertion) element).getResult(result);
-                result.setSuccessful(!result.isSuccessful() ? result.isSuccessful() : aResult.isSuccessful());
-                result.getAssertionResults().add(aResult);
-                iterators.remove();
+                element.getVariables().mergeVariable(context.getVariables());
+                TestElementService.runTest(element, result);
             }
-        }
+        });
     }
 
-    private void execute(TestElement sampler, SampleResult result) {
-        TestElementService.testStarted(sampler);
-        result.setSamplerData((SampleResult) TestElementService.runTest(sampler));
-        TestElementService.testEnded(sampler);
-    }
-
-    private void extract(SampleResult result) {
-        if (!result.isSuccessful() || extractors.isEmpty()) {
+    private void runExtractors(SampleResult result) {
+        if (!result.isSuccessful() || context.getExtractors().isEmpty()) {
             return;
         }
-        List<SampleResult> ex = new ArrayList<>(extractors.size());
-        Iterator<TestElement> iterators = extractors.iterator();
-        while (iterators.hasNext()) {
-            TestElement element = iterators.next();
+        List<SampleResult> ex = new ArrayList<>(context.getExtractors().size());
+        context.getExtractors().forEach(element -> {
             if (element instanceof Extractor) {
+                element.getVariables().mergeVariable(context.getVariables());
                 ex.add((SampleResult) TestElementService.runTest(element, result));
-                iterators.remove();
+                context.getVariables().mergeVariable(element.getVariables());
             }
-        }
+        });
         result.setExtractorResults(ex);
     }
 }

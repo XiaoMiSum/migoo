@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2022.  Lorem XiaoMiSum (mi_xiao@qq.com)
+ * Copyright (c) 2023.  Lorem XiaoMiSum (mi_xiao@qq.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,18 +23,13 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package example.xyz.migoo.itx.repository;
-
-import itestx.xyz.migoo.element.Validators;
+package util.xyz.migoo.reader;
 
 /**
  * @author xiaomi
- * Created at 2022/9/25 16:16
+ * Created at 2023/9/9 22:51
  */
-public class ValidatorRepository {
+public interface Reader {
 
-    public final static Validators VERIFY_HTTP_STATUS = Validators.builder().httpResponse().expected("200");
-
-    public final static Validators DATA_NOT_EMPTY = Validators.builder().json().jsonPath("$.data").rule("notNull");
-
+    String read();
 }

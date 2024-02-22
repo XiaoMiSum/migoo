@@ -40,6 +40,7 @@ import java.util.List;
 public class Result implements Serializable {
 
 
+    private final String id;
     private final String title;
     private boolean success = true;
     private LocalDateTime startTime;
@@ -59,6 +60,11 @@ public class Result implements Serializable {
     private MiGooVariables variables;
 
     public Result(String title) {
+        this(null, title);
+    }
+
+    public Result(String id, String title) {
+        this.id = id;
         this.title = title;
     }
 
@@ -157,5 +163,9 @@ public class Result implements Serializable {
 
     public void setConfigElementResults(List<SampleResult> configElementResults) {
         this.configElementResults = configElementResults;
+    }
+
+    public String getId() {
+        return id;
     }
 }

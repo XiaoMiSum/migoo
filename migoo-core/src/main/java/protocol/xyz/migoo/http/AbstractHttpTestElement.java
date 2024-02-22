@@ -38,6 +38,7 @@ import xyz.migoo.simplehttp.Request;
 import xyz.migoo.simplehttp.Response;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author xiaomi
@@ -57,7 +58,8 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
             setProperty(REQUEST_METHOD, other.getPropertyAsString(REQUEST_METHOD));
             setProperty(HOST, other.getPropertyAsString(HOST));
             setProperty(PORT, Objects.nonNull(other.get(PORT)) ? other.getPropertyAsInt(PORT) : null);
-            setProperty(API_PATH, other.getPropertyAsString(API_PATH));
+            setProperty(PATH,
+                    Optional.ofNullable(other.getPropertyAsString(API)).orElse(other.getPropertyAsString(PATH)));
             setProperty(COOKIE, other.get(COOKIE));
             this.setHeader(other.getProperty());
         }
@@ -71,7 +73,7 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
 
     private void setHeader(MiGooProperty other) {
         JSONObject otherHeaders = other.getJSONObject(HEADERS);
-        if (otherHeaders != null && otherHeaders.size() > 0) {
+        if (otherHeaders != null && !otherHeaders.isEmpty()) {
             MiGooProperty thisHeaders = getPropertyAsMiGooProperty(HEADERS);
             if (thisHeaders == null) {
                 thisHeaders = new MiGooProperty();
@@ -90,7 +92,7 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
         HTTPSampleResult result = (HTTPSampleResult) sample;
         result.setTestClass(this.getClass());
         try {
-            JSONObject headers = getPropertyAsJSONObject(HEADERS);
+            JSONObject headers = Optional.ofNullable(getPropertyAsJSONObject(HEADERS)).orElse(new JSONObject());
             Request request = new HTTPHCImpl(getPropertyAsString(REQUEST_METHOD), buildUrl())
                     .headers(headers)
                     .cookie(getPropertyAsJSONObject(COOKIE))
@@ -108,13 +110,13 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
 
     private String buildUrl() {
         String path = getPropertyAsString(BASE_PATH);
-        if (StringUtils.isNotBlank(path)) {
+        if (StringUtils.isBlank(path)) {
             path = get(PORT) == null ? String.format(URL_FORMAT, get(PROTOCOL), get(HOST), "") :
                     String.format(URL_FORMAT, get(PROTOCOL), get(HOST), ":" + get(PORT));
         } else if (path.endsWith(SEPARATOR)) {
             path = path.substring(0, path.length() - 1);
         }
-        String api = getPropertyAsString(API_PATH);
+        String api = Optional.ofNullable(getPropertyAsString(API)).orElse(getPropertyAsString(PATH));
         api = api == null ? "" : !api.startsWith(SEPARATOR) ? SEPARATOR + api : api;
         return path + api;
     }

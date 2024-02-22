@@ -30,8 +30,6 @@ package xyz.migoo;
  * Created at 2022/8/24 15:36
  */
 public class Constants {
-
-    public static final String CLASSPATH = "classpath:";
     public static final String REPORT_ENABLE = "migoo.report.enable";
     public static final String REPORT_THEME = "migoo.report.theme";
     public static final String TIMELINE_ENABLED = "migoo.report.timeline.enabled";

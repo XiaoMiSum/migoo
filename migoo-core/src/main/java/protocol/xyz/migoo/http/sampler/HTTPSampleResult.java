@@ -179,7 +179,8 @@ public class HTTPSampleResult extends SampleResult {
     @Override
     public void setSamplerData(SampleResult result) {
         super.setSamplerData(result);
-        if (result instanceof HTTPSampleResult hResult) {
+        if (result instanceof HTTPSampleResult) {
+            HTTPSampleResult hResult = (HTTPSampleResult) result;
             setQueryString(hResult.getQueryString());
             setMethod(hResult.getMethod());
             setCookies(getCookies());

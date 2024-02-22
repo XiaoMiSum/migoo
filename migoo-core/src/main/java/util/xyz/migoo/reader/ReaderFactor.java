@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2022.  Lorem XiaoMiSum (mi_xiao@qq.com)
+ * Copyright (c) 2023.  Lorem XiaoMiSum (mi_xiao@qq.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,46 +23,15 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package itestx.xyz.migoo.element;
-
-import itestx.xyz.migoo.logic.ITestx;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
+package util.xyz.migoo.reader;
 
 /**
  * @author xiaomi
- * Created at 2022/8/27 09:54
+ * Created at 2023/9/9 22:53
  */
-public class Timers {
+public class ReaderFactor {
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static class Builder {
-
-        public SyncTimer syncTimer() {
-            return new SyncTimer();
-        }
-    }
-
-    public static class SyncTimer extends Timers implements ITestx {
-
-        private final Map<String, Object> props = new LinkedHashMap<>(16);
-
-        private SyncTimer() {
-            props.put("testclass", "SyncTimer");
-        }
-
-        public SyncTimer timeout(int seconds) {
-            props.put("timeout", seconds);
-            return this;
-        }
-
-        @Override
-        public Map<String, Object> get() {
-            return props;
-        }
+    public static Reader getReader(boolean isClasspath, String path) {
+        return isClasspath ? new ResourceReader(path) : new FileReader(path);
     }
 }

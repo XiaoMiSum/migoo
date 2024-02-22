@@ -40,15 +40,14 @@ import java.util.Objects;
 public abstract class AbstractTestElement implements TestElement, VariableStateListener, Serializable {
 
     public static final String VARIABLES = "variables";
-    public static final String TEST_ELEMENTS = "testelements";
     public static final String CONFIG_ELEMENTS = "configelements";
     public static final String PREPROCESSORS = "preprocessors";
     public static final String POSTPROCESSORS = "postprocessors";
     public static final String TEST_CLASS = "testclass";
     public static final String EXTRACTORS = "extractors";
     public static final String VALIDATORS = "validators";
-    public static final String CHILDS = "childs";
-    public static final String CHILD = "child";
+    public static final String CHILDREN = "children";
+    public static final String ID = "id";
     public static final String TITLE = "title";
     public static final String SLEEP = "sleep";
     public static final String CONFIG = "config";
@@ -75,7 +74,7 @@ public abstract class AbstractTestElement implements TestElement, VariableStateL
 
     @Override
     public void setProperties(Map<String, Object> props) {
-        if (props != null && props.size() > 0) {
+        if (props != null && !props.isEmpty()) {
             props.forEach((key, value) -> propMap.putIfAbsent(key.toLowerCase(), value));
         }
     }

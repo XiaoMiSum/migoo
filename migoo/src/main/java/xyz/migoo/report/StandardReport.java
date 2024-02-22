@@ -83,8 +83,8 @@ public class StandardReport implements Report {
         writeGlobals(node, result.getVariables());
         writeConfigs(node, result.getConfigElementResults());
         writeProcessors(node, result.getPreprocessorResults(), "PRE.PROCESSORS");
-        writeProcessors(node, result.getPostprocessorResults(), "POST.PROCESSORS");
-        if (result instanceof SampleResult sResult) {
+        if (result instanceof SampleResult) {
+            SampleResult sResult = (SampleResult) result;
             ExtentTest sNode = node instanceof ExtentTest ? ((ExtentTest) node).createNode(result.getTitle())
                     : extent.createTest(result.getTitle());
             writeSampleResult(sNode, sResult);
@@ -100,7 +100,8 @@ public class StandardReport implements Report {
                     for (Result sr : result.getSubResults()) {
                         ExtentTest sNode = node instanceof ExtentTest ? ((ExtentTest) node).createNode(sr.getTitle())
                                 : extent.createTest(sr.getTitle());
-                        if (sr instanceof SampleResult sResult) {
+                        if (sr instanceof SampleResult) {
+                            SampleResult sResult = (SampleResult) sr;
                             writeSampleResult(sNode, sResult);
                         } else {
                             writeResult(sNode, sr);
@@ -109,26 +110,28 @@ public class StandardReport implements Report {
                 }
             }
         }
+        writeProcessors(node, result.getPostprocessorResults(), "POST.PROCESSORS");
     }
 
     private void writeGlobals(Object f, MiGooVariables variables) {
         if (Objects.nonNull(variables) && !variables.getProperty().isEmpty()) {
             Markup markup = MarkupHelper.createCodeBlock(variables.toString(), CodeLanguage.JSON);
-            if (f instanceof ExtentReports reports) {
+            if (f instanceof ExtentReports) {
+                ExtentReports reports = (ExtentReports) f;
                 reports.createTest("GLOBAL.VARIABLES").info(markup);
             }
-            if (f instanceof ExtentTest node) {
+            if (f instanceof ExtentTest) {
+                ExtentTest node = (ExtentTest) f;
                 node.createNode("VARIABLES").info(markup);
             }
         }
     }
 
     private void writeConfigs(Object f, List<SampleResult> results) {
-        if (Objects.nonNull(results)) {
+        if (Objects.nonNull(results) && !results.isEmpty()) {
             ExtentTest feature = f instanceof ExtentTest ? ((ExtentTest) f).createNode("CONFIG.ELEMENTS")
                     : extent.createTest("CONFIG.ELEMENTS");
-            results.forEach(result -> feature.createNode(result.getTitle())
-                    .info(result.getTestClass())
+            results.forEach(result -> feature.createNode(result.getTestClass())
                     .info(MarkupHelper.createCodeBlock(result.getSamplerData(), CodeLanguage.JSON)));
         }
     }
@@ -149,32 +152,35 @@ public class StandardReport implements Report {
 
     private void writeSampleResult(ExtentTest node, SampleResult result) {
         node.getModel().setStartTime(DateUtils.toDate(result.getStartTime()));
-        node.info(MarkupHelper.createLabel("TEST.CLASS: " + result.getTestClass(), WHITE));
-        buildSampleResult(result, node);
+        writeProcessors(node, result.getPreprocessorResults(), "PRE.PROCESSORS");
+        buildSampleResult(result, node.createNode("TEST.CLASS: " + result.getTestClass()));
         writeExtractorResults(node, result.getExtractorResults());
         writeThrowable(node, result.getThrowable());
         node.getModel().setStatus(result.isSuccessful() ? PASS : FAIL);
         if (result.getAssertionResults() != null) {
-            node.info(MarkupHelper.createLabel("TEST.VALIDATORS", WHITE));
+            ExtentTest v = node.createNode("TEST.VALIDATORS");
             for (VerifyResult subResult : result.getAssertionResults()) {
-                node.log(subResult.isSuccessful() ? PASS : FAIL, convertValidator(subResult));
+                v.log(subResult.isSuccessful() ? PASS : FAIL, convertValidator(subResult));
             }
         }
+        writeProcessors(node, result.getPostprocessorResults(), "POST.PROCESSORS");
         node.getModel().setEndTime(DateUtils.toDate(result.getEndTime()));
     }
 
     private void buildSampleResult(Result result, ExtentTest node) {
-        if (result instanceof SampleResult sResult) {
-            if (sResult instanceof HTTPSampleResult hResult) {
+        if (result instanceof SampleResult) {
+            SampleResult sResult = (SampleResult) result;
+            if (sResult instanceof HTTPSampleResult) {
+                HTTPSampleResult hResult = (HTTPSampleResult) sResult;
                 node.info(MarkupHelper.createLabel("REQUEST.URL:  " + hResult.getMethod() + " " + sResult.getUrl(), TRANSPARENT));
                 if (!hResult.getCookies().isEmpty()) {
                     node.info(MarkupHelper.createLabel("REQUEST.COOKIES", WHITE))
                             .info(MarkupHelper.createCodeBlock(hResult.getCookies()));
                 }
                 if (Objects.nonNull(hResult.getRequestHeaders()) && !hResult.getRequestHeaders().isEmpty()) {
-                    node.info(MarkupHelper.createLabel("REQUEST.HEADERS", WHITE));
                     JSONArray array = convertHeaders(hResult.getRequestHeaders());
-                    node.info(MarkupHelper.createCodeBlock(array.toJSONString(), CodeLanguage.JSON));
+                    node.createNode("REQUEST.HEADERS")
+                            .info(MarkupHelper.createCodeBlock(array.toJSONString(), CodeLanguage.JSON));
                 }
                 if (!hResult.getQueryString().isEmpty()) {
                     node.info(MarkupHelper.createLabel("REQUEST.QUERY", WHITE))
@@ -184,30 +190,29 @@ public class StandardReport implements Report {
                 node.info(MarkupHelper.createCodeBlock(sResult.getUrl()));
             }
             if (!sResult.getSamplerData().isEmpty()) {
-                node.info(MarkupHelper.createLabel("REQUEST.DATA", WHITE))
+                node.createNode("REQUEST.DATA")
                         .info(MarkupHelper.createCodeBlock(sResult.getSamplerData(), CodeLanguage.JSON));
             }
-            if (sResult instanceof HTTPSampleResult hResult) {
+            if (sResult instanceof HTTPSampleResult) {
+                HTTPSampleResult hResult = (HTTPSampleResult) sResult;
                 if (Objects.nonNull(hResult.getResponseHeaders()) && !hResult.getResponseHeaders().isEmpty()) {
-                    node.info(MarkupHelper.createLabel("RESPONSE.HEADERS", WHITE));
                     JSONArray array = convertHeaders(hResult.getResponseHeaders());
-                    node.info(MarkupHelper.createCodeBlock(array.toJSONString(), CodeLanguage.JSON));
+                    node.createNode("RESPONSE.HEADERS")
+                            .info(MarkupHelper.createCodeBlock(array.toJSONString(), CodeLanguage.JSON));
                 }
             }
             if (!sResult.getResponseDataAsString().isEmpty()) {
-                node.info(MarkupHelper.createLabel("RESPONSE.DATA", WHITE));
-                if (JSON.isValid(sResult.getResponseDataAsString())) {
-                    node.info(MarkupHelper.createCodeBlock(sResult.getResponseDataAsString(), CodeLanguage.JSON));
-                } else {
-                    node.info(MarkupHelper.createCodeBlock(getResponseString(sResult.getResponseDataAsString().trim())));
-                }
+                node.createNode("RESPONSE.DATA").info(JSON.isValid(sResult.getResponseDataAsString()) ?
+                        MarkupHelper.createCodeBlock(sResult.getResponseDataAsString(), CodeLanguage.JSON)
+                        : MarkupHelper.createCodeBlock(getResponseString(sResult.getResponseDataAsString().trim())));
+
             }
         }
     }
 
     private void writeExtractorResults(ExtentTest node, List<SampleResult> results) {
         if (Objects.nonNull(results) && !results.isEmpty()) {
-            ExtentTest ex = node.info(MarkupHelper.createLabel("EXTRACTOR", WHITE));
+            ExtentTest ex = node.createNode("EXTRACTORS");
             results.forEach(result -> ex.info(MarkupHelper.createCodeBlock(result.getSamplerData(), CodeLanguage.JSON)));
         }
 

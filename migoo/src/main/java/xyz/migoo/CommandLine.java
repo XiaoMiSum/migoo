@@ -30,8 +30,8 @@ import core.xyz.migoo.function.Function;
 import core.xyz.migoo.function.FunctionService;
 import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestElementService;
+import util.xyz.migoo.loader.Loader;
 import xyz.migoo.convert.ConvertFactory;
-import xyz.migoo.loader.Loader;
 
 import java.io.File;
 import java.net.URL;

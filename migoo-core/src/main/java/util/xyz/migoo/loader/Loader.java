@@ -24,24 +24,18 @@
  */
 
 
-package xyz.migoo.loader;
+package util.xyz.migoo.loader;
 
 import com.alibaba.fastjson2.JSON;
-import core.xyz.migoo.engine.TestPlanValidator;
 import org.yaml.snakeyaml.Yaml;
-
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-
-import static xyz.migoo.Constants.CLASSPATH;
+import util.xyz.migoo.reader.ReaderFactor;
 
 /**
  * @author xiaomi
  */
 public class Loader {
+
+    public static final String CLASSPATH = "classpath:";
 
     /**
      * 将文件内容反序列化为java对象
@@ -76,21 +70,7 @@ public class Loader {
     }
 
     public static Object toJSON(String path, boolean isClasspath) {
-        String content = isClasspath ? TestPlanValidator.ResourceReader.read(path) : new FileReader(path).read();
+        String content = ReaderFactor.getReader(isClasspath, path).read();
         return JSON.toJSON(new Yaml().load(content));
     }
-
-    private record FileReader(String path) {
-
-        private String read() {
-            try (FileInputStream fis = new FileInputStream(path); InputStream is = new BufferedInputStream(fis)) {
-                byte[] bytes = new byte[is.available()];
-                is.read(bytes);
-                return new String(bytes, StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
 }

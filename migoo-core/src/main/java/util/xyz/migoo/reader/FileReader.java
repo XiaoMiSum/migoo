@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2022.  Lorem XiaoMiSum (mi_xiao@qq.com)
+ * Copyright (c) 2023.  Lorem XiaoMiSum (mi_xiao@qq.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,32 +23,30 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package core.xyz.migoo.engine;
+package util.xyz.migoo.reader;
 
-import core.xyz.migoo.report.Report;
-import core.xyz.migoo.report.Result;
-import core.xyz.migoo.variable.MiGooVariables;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
-import java.util.Objects;
+public class FileReader implements Reader {
 
-/**
- * @author xiaomi
- * Created at 2022/8/24 17:44
- */
-public class TestEngineService {
+    private final String path;
 
-    public static Result runTest(Testplan plan, Report report) {
-        TestEngine engine = plan.isStandardSampler() ? new StandardEngine(plan) : new LoopEngine(plan);
-        Result result = engine.runTest();
-        if (Objects.nonNull(report)) {
-            report.generateReport(result);
-        }
-        return result;
+    public FileReader(String path) {
+        this.path = path;
     }
 
-    public static Result runTest(Testplan plan, MiGooVariables variables) {
-        TestEngine engine = plan.isStandardSampler() ? new StandardEngine(plan) : new LoopEngine(plan);
-        engine.mergeVariable(variables);
-        return engine.runTest();
+    @Override
+    public String read() {
+        try (FileInputStream fis = new FileInputStream(path); InputStream is = new BufferedInputStream(fis)) {
+            byte[] bytes = new byte[is.available()];
+            is.read(bytes);
+            return new String(bytes, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

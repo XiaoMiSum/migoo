@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2022.  Lorem XiaoMiSum (mi_xiao@qq.com)
+ * Copyright (c) 2023.  Lorem XiaoMiSum (mi_xiao@qq.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,25 +23,29 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package xyz.migoo.convert;
+package util.xyz.migoo.reader;
 
-import com.alibaba.fastjson2.JSONObject;
-import util.xyz.migoo.loader.Loader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
-import java.io.File;
+public class ResourceReader implements Reader {
 
-/**
- * @author mi.xiao
- * @date 2021/6/24 15:44
- */
-public class ConvertFactory {
+    private final String path;
 
-    public static void convert(String command, File file) {
-        JSONObject object = Loader.toJavaObject(file.getPath(), JSONObject.class);
-        if ("-h2m".equals(command)) {
-            new Har2Sampler().convert(object, file.getParent());
-        } else if ("-p2m".equals(command)) {
-            new Postman2Sampler().convert(object, file.getParent());
+    public ResourceReader(String path) {
+        this.path = path;
+    }
+
+    public String read() {
+        try {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            InputStream is = classLoader.getResourceAsStream(path);
+            byte[] bytes = new byte[is.available()];
+            is.read(bytes);
+            return new String(bytes, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
