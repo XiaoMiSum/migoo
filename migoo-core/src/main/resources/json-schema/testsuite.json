@@ -34,7 +34,7 @@
         "type": "object"
       }
     },
-    "child": {
+    "children": {
       "type": "array"
     }
   },
@@ -43,6 +43,6 @@
   },
   "required": [
     "title",
-    "child"
+    "children"
   ]
 }
