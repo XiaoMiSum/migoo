@@ -28,12 +28,11 @@ package protocol.xyz.migoo.activemq;
 import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
+import jakarta.jms.*;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import protocol.xyz.migoo.activemq.config.ActiveMqDefaults;
 import protocol.xyz.migoo.activemq.util.ActiveMqConstantsInterface;
-
-import javax.jms.*;
 
 /**
  * @author mi.xiao

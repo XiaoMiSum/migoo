@@ -39,7 +39,7 @@
       "description": "active mq broker url"
     },
     "message": {
-      "description": "要发送的消息体，可以时字符串、对象等"
+      "description": "要发送的消息体，可以是字符串、对象等"
     },
     "topic": {
       "type": "string",
