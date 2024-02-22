@@ -1,0 +1,27 @@
+title: 提取器
+postprocessors:
+  - testclass: debugpostprocessor
+    test: "第一层 后置处理器 测试执行"
+    extractors:
+      - { testclass: jsonextractor, field: '$.test', variable_name: test1 }
+children:
+  - title: Debug 第二层
+    postprocessors:
+      - testclass: debugpostprocessor
+        test: "第二层 后置处理器 测试执行"
+        extractors:
+          - { testclass: jsonextractor, field: '$.test', variable_name: test2 }
+    children:
+      - title: Debug 取样器1
+        testclass: debugsampler
+        postprocessors:
+          - testclass: debugpostprocessor
+            test: "Debug 取样器 后置处理器 测试执行"
+        extractors:
+          - { testclass: jsonextractor, field: '$.test', variable_name: test3 }
+        config:
+          test: '${test1} + ${test2} + ${test3}'
+      - title: Debug 取样器2
+        testclass: debugsampler
+        config:
+          test: '${test1} + ${test2} + ${test3}'

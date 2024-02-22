@@ -1,0 +1,17 @@
+title: 前置处理器
+preprocessors:
+  - testclass: debugpreprocessor
+    test: "第一层 前置处理器 测试执行"
+children:
+  - title: Debug 第二层
+    preprocessors:
+      - testclass: debugpreprocessor
+        test: "第二层 前置处理器 测试执行"
+    children:
+      - title: Debug 取样器
+        testclass: debugsampler
+        preprocessors:
+          - testclass: debugpreprocessor
+            test: "Debug 取样器 前置处理器 测试执行"
+        config:
+          test: 测试数据

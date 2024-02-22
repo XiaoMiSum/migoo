@@ -1,0 +1,21 @@
+title: 多层级变量替换
+variables:
+  name1: migoo
+children:
+  - title: Debug 第二层
+    variables:
+      name2: ${name1}
+    children:
+      - title: Debug 第三层
+        variables:
+          name3: ${name2}
+        children:
+          - title: Debug 取样器
+            variables:
+              name4: ${name3}
+            testclass: debugsampler
+            config:
+              test1: ${name1}
+              test2: ${name2}
+              test3: ${name3}
+              test4: ${name4}

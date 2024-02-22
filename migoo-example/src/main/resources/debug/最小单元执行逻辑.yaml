@@ -1,0 +1,4 @@
+title: 最小单元执行逻辑
+testclass: debugsampler
+config:
+  test: 测试数据

@@ -1,0 +1,10 @@
+title: 多层级执行逻辑
+children:
+  - title: Debug 第二层
+    children:
+      - title: Debug 第三层
+        children:
+          - title: Debug 取样器
+            testclass: debugsampler
+            config:
+              test: 测试数据

@@ -1,0 +1,31 @@
+title: 验证器
+preprocessors:
+  - testclass: debugpreprocessor
+    test: "第一层 前置处理器 测试执行"
+    extractors:
+      - { testclass: jsonextractor, field: '$.test', variable_name: test1 }
+children:
+  - title: Debug 第二层
+    preprocessors:
+      - testclass: debugpreprocessor
+        test: "第二层 前置处理器 测试执行"
+        extractors:
+          - { testclass: jsonextractor, field: '$.test', variable_name: test2 }
+    children:
+      - title: Debug 取样器1
+        testclass: debugsampler
+        preprocessors:
+          - testclass: debugpreprocessor
+            test: "Debug 取样器 前置处理器 测试执行"
+            extractors:
+              - { testclass: jsonextractor, field: '$.test', variable_name: test3 }
+        validators:
+          - { testclass: jsonassertion, field: '$.test1', expected: '${test1}', rule: '==' }
+        config:
+          test: '${test1} + ${test2} + ${test3} + 取样器数据'
+      - title: Debug 取样器2
+        testclass: debugsampler
+        config:
+          test: '${test1} + ${test2} + ${test3}'
+        validators:
+          - { testclass: jsonassertion, field: '$.test3', expected: '${test3}', rule: '==' }
