@@ -13,7 +13,7 @@ preprocessors:
     body: { userName: '${username}', password: '${password}', sign: '__digest(${username}${password})' }
     extractors:
       - { testclass: jsonextractor, field: '$.data.token', variable_name: token }
-child:
+children:
   - '@F(classpath:testsets/get_schedule/testcase/error_token.yaml)'
   - '@F(classpath:testsets/get_schedule/testcase/not_token.yaml)'
   - '@F(classpath:testsets/get_schedule/testcase/get_schedule.yaml)'

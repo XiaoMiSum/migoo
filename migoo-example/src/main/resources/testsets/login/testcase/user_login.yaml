@@ -1,5 +1,5 @@
 title: 正确的用户名密码登录
-child:
+children:
   - title: 登录接口请求执行
     testclass: httpsampler
     variables:

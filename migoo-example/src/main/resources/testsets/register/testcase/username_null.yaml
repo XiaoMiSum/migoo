@@ -1,9 +1,9 @@
 title: 注册用户名为空
-child:
+children:
   - title: 注册接口请求执行
     testclass: httpsampler
     config:
-      body: { password: '123456789'}
+      body: { password: '123456789' }
     validators:
       - { testclass: httpassertion, field: status, expected: 200, rule: == }
       - { testclass: jsonassertion, field: '$.status', expected: 412, rule: '==' }

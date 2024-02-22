@@ -6,13 +6,13 @@ PreProcessors:
     statement: 'select * from users;'
     extractors:
       - { testclass: jsonextractor, field: '$[0].user_name', variable_name: is_exist_user }
-child:
+children:
   - title: 注册接口请求执行
     testclass: httpsampler
     variables:
       username: ${is_exist_user}
     config:
-      body: { userName: '${username}', password: '123456789'}
+      body: { userName: '${username}', password: '123456789' }
     validators:
       - { testclass: httpassertion, field: status, expected: 200, rule: == }
       - { testclass: jsonassertion, field: '$.status', expected: 412, rule: '==' }

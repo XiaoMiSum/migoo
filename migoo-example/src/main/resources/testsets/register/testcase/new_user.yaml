@@ -1,5 +1,5 @@
 title: 新用户注册
-child:
+children:
   - title: 注册接口请求执行
     testclass: httpsampler
     variables:

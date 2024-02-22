@@ -13,7 +13,7 @@ PostProcessors:
     datasource: JDBCDataSource_var
     query_type: select
     statement: 'select * from sys_user;'
-child:
+children:
   - '@F(classpath:example/standardsampler_http.yaml)'
 #  - '@F(classpath:example/standardsampler_jdbc.yaml)'
 #  - '@F(classpath:example/standardsampler_redis.yaml)'

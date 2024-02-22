@@ -2,5 +2,5 @@ title: 标准测试用例项目
 variables:
   test1: 1
 configelements: '@F(classpath:example/configelements.yaml)'
-child:
+children:
   - '@F(classpath:example/standardpackage.yaml)'

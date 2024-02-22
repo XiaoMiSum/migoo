@@ -3,7 +3,7 @@ configelements:
   - testclass: httpdefaults
     method: post
     api: /api/user/register
-child:
+children:
   - '@F(classpath:testsets/register/testcase/new_user.yaml)'
   - '@F(classpath:testsets/register/testcase/exist_user.yaml)'
   - '@F(classpath:testsets/register/testcase/username_null.yaml)'

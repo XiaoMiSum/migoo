@@ -1,5 +1,5 @@
 title: 错误的Token
-child:
+children:
   - title: 获取进度表接口请求执行
     testclass: httpsampler
     config:

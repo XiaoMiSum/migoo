@@ -1,5 +1,5 @@
 title: 未登录时获取进度表
-child:
+children:
   - title: 获取进度表接口请求执行
     testclass: httpsampler
     validators:
