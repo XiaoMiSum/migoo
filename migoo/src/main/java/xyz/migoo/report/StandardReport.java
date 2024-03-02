@@ -83,8 +83,7 @@ public class StandardReport implements Report {
         writeGlobals(node, result.getVariables());
         writeConfigs(node, result.getConfigElementResults());
         writeProcessors(node, result.getPreprocessorResults(), "PRE.PROCESSORS");
-        if (result instanceof SampleResult) {
-            SampleResult sResult = (SampleResult) result;
+        if (result instanceof SampleResult sResult) {
             ExtentTest sNode = node instanceof ExtentTest ? ((ExtentTest) node).createNode(result.getTitle())
                     : extent.createTest(result.getTitle());
             writeSampleResult(sNode, sResult);
@@ -100,8 +99,7 @@ public class StandardReport implements Report {
                     for (Result sr : result.getSubResults()) {
                         ExtentTest sNode = node instanceof ExtentTest ? ((ExtentTest) node).createNode(sr.getTitle())
                                 : extent.createTest(sr.getTitle());
-                        if (sr instanceof SampleResult) {
-                            SampleResult sResult = (SampleResult) sr;
+                        if (sr instanceof SampleResult sResult) {
                             writeSampleResult(sNode, sResult);
                         } else {
                             writeResult(sNode, sr);
@@ -116,12 +114,10 @@ public class StandardReport implements Report {
     private void writeGlobals(Object f, MiGooVariables variables) {
         if (Objects.nonNull(variables) && !variables.getProperty().isEmpty()) {
             Markup markup = MarkupHelper.createCodeBlock(variables.toString(), CodeLanguage.JSON);
-            if (f instanceof ExtentReports) {
-                ExtentReports reports = (ExtentReports) f;
+            if (f instanceof ExtentReports reports) {
                 reports.createTest("GLOBAL.VARIABLES").info(markup);
             }
-            if (f instanceof ExtentTest) {
-                ExtentTest node = (ExtentTest) f;
+            if (f instanceof ExtentTest node) {
                 node.createNode("VARIABLES").info(markup);
             }
         }
@@ -168,10 +164,8 @@ public class StandardReport implements Report {
     }
 
     private void buildSampleResult(Result result, ExtentTest node) {
-        if (result instanceof SampleResult) {
-            SampleResult sResult = (SampleResult) result;
-            if (sResult instanceof HTTPSampleResult) {
-                HTTPSampleResult hResult = (HTTPSampleResult) sResult;
+        if (result instanceof SampleResult sResult) {
+            if (sResult instanceof HTTPSampleResult hResult) {
                 node.info(MarkupHelper.createLabel("REQUEST.URL:  " + hResult.getMethod() + " " + sResult.getUrl(), TRANSPARENT));
                 if (!hResult.getCookies().isEmpty()) {
                     node.info(MarkupHelper.createLabel("REQUEST.COOKIES", WHITE))
@@ -193,8 +187,7 @@ public class StandardReport implements Report {
                 node.createNode("REQUEST.DATA")
                         .info(MarkupHelper.createCodeBlock(sResult.getSamplerData(), CodeLanguage.JSON));
             }
-            if (sResult instanceof HTTPSampleResult) {
-                HTTPSampleResult hResult = (HTTPSampleResult) sResult;
+            if (sResult instanceof HTTPSampleResult hResult) {
                 if (Objects.nonNull(hResult.getResponseHeaders()) && !hResult.getResponseHeaders().isEmpty()) {
                     JSONArray array = convertHeaders(hResult.getResponseHeaders());
                     node.createNode("RESPONSE.HEADERS")
