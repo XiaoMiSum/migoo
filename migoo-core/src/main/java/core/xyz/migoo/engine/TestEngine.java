@@ -27,11 +27,8 @@ package core.xyz.migoo.engine;
 
 import core.xyz.migoo.report.Report;
 import core.xyz.migoo.report.Result;
-import core.xyz.migoo.testelement.TestElementService;
 
 import java.util.Objects;
-
-import static core.xyz.migoo.testelement.AbstractTestElement.TEST_CLASS;
 
 /**
  * 脚本引擎 用于执行 testsuite 、sampler
@@ -48,8 +45,7 @@ public interface TestEngine {
      * @return 测试结果
      */
     static Result runTest(Testplan plan, Report report) {
-        MiGooContext context = !plan.isSampler() ? MiGooContext.create(plan) :
-                MiGooContext.create(plan, TestElementService.getService(plan.getString(TEST_CLASS)));
+        MiGooContext context = MiGooContext.create(plan);
         TestEngine engine = plan.isSampler() ? new StandardEngine(context) : new LoopEngine(context);
         Result result = engine.runTest();
         if (Objects.nonNull(report)) {

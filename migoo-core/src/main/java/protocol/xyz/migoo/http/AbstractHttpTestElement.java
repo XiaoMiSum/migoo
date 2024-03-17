@@ -53,13 +53,13 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
         super.convertVariable();
         HttpDefaults other = (HttpDefaults) getVariables().get(HTTP_DEFAULT);
         if (Objects.nonNull(other)) {
+            setProperty(HTTP2, other.getPropertyAsBoolean(HTTP2));
             setProperty(BASE_PATH, other.getPropertyAsString(BASE_PATH));
             setProperty(PROTOCOL, other.getPropertyAsString(PROTOCOL));
             setProperty(REQUEST_METHOD, other.getPropertyAsString(REQUEST_METHOD));
             setProperty(HOST, other.getPropertyAsString(HOST));
-            setProperty(PORT, Objects.nonNull(other.get(PORT)) ? other.getPropertyAsInt(PORT) : null);
-            setProperty(PATH,
-                    Optional.ofNullable(other.getPropertyAsString(API)).orElse(other.getPropertyAsString(PATH)));
+            setProperty(PORT, Optional.ofNullable(other.get(PORT)).orElse(""));
+            setProperty(PATH, Optional.ofNullable(other.getPropertyAsString(API)).orElse(other.getPropertyAsString(PATH)));
             setProperty(COOKIE, other.get(COOKIE));
             this.setHeader(other.getProperty());
         }
@@ -97,7 +97,10 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
                     .headers(headers)
                     .cookie(getPropertyAsJSONObject(COOKIE))
                     .query(get(QUERY))
-                    .body(getPropertyAsByteArray(BYTES), get(BODY), get(DATA), headers.getString(CONTENT_TYPE));
+                    .body(getPropertyAsByteArray(BYTES), get(BODY), get(DATA), headers.getString(HEADER_CONTENT_TYPE));
+            if (getPropertyAsBoolean(HTTP2)) {
+                request.http2();
+            }
             result.setRequestData(request);
             result.sampleStart();
             Response response = request.execute();
@@ -111,13 +114,13 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
     private String buildUrl() {
         String path = getPropertyAsString(BASE_PATH);
         if (StringUtils.isBlank(path)) {
-            path = get(PORT) == null ? String.format(URL_FORMAT, get(PROTOCOL), get(HOST), "") :
-                    String.format(URL_FORMAT, get(PROTOCOL), get(HOST), ":" + get(PORT));
+            String port = Optional.ofNullable(getPropertyAsString(PORT)).orElse("");
+            path = String.format(URL_FORMAT, get(PROTOCOL), get(HOST), port.isEmpty() ? "" : (":" + port));
         } else if (path.endsWith(SEPARATOR)) {
             path = path.substring(0, path.length() - 1);
         }
         String api = Optional.ofNullable(getPropertyAsString(API)).orElse(getPropertyAsString(PATH));
-        api = api == null ? "" : !api.startsWith(SEPARATOR) ? SEPARATOR + api : api;
+        api = Objects.isNull(api) ? "" : !api.startsWith(SEPARATOR) ? SEPARATOR + api : api;
         return path + api;
     }
 }

@@ -1,5 +1,6 @@
 package core.xyz.migoo.engine;
 
+import com.alibaba.fastjson2.JSONArray;
 import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestElementService;
 import core.xyz.migoo.variable.MiGooVariables;
@@ -27,13 +28,11 @@ public class MiGooContext {
         this.variables = plan.getVariables();
         this.id = plan.getString(ID);
         this.title = plan.getString(TITLE);
-    }
-
-    public MiGooContext(Testplan plan, TestElement sampler) {
-        this(plan);
-        this.sampler = sampler;
-        // 这里的 plan 与 sampler 为同一节点，直接设置变量
-        TestElementService.prepare(sampler, plan.getJSONObject(CONFIG), plan.getVariables());
+        if (plan.isSampler()) {
+            sampler = TestElementService.getService(plan.getString(TEST_CLASS));
+            // 这里的 plan 与 sampler 为同一节点，直接设置变量
+            TestElementService.prepare(sampler, plan.getJSONObject(CONFIG), plan.getVariables());
+        }
     }
 
     public static MiGooContext create(Testplan plan) {
@@ -42,34 +41,26 @@ public class MiGooContext {
         context.addTestElements(PREPROCESSORS, plan, context.getPreprocessors());
         context.addTestElements(POSTPROCESSORS, plan, context.getPostprocessors());
         context.addChildren(plan.getList(CHILDREN, plan.getClass()));
-        return context;
-    }
-
-    public static MiGooContext create(Testplan plan, TestElement sampler) {
-        MiGooContext context = new MiGooContext(plan, sampler);
-        context.addTestElements(CONFIG_ELEMENTS, plan, context.getConfigurations());
-        context.addTestElements(PREPROCESSORS, plan, context.getPreprocessors());
-        context.addTestElements(POSTPROCESSORS, plan, context.getPostprocessors());
         context.addTestElements(VALIDATORS, plan, context.getValidators());
         context.addTestElements(EXTRACTORS, plan, context.getExtractors());
         return context;
     }
 
     public void addChildren(List<? extends Testplan> children) {
-        for (Testplan plan : children) {
-            getChildren().add(!plan.isSampler() ? create(plan) :
-                    create(plan, TestElementService.getService(plan.getString(TEST_CLASS))));
+        if (Objects.nonNull(children)) {
+            children.forEach(item -> this.children.add(create(item)));
         }
     }
 
     private void addTestElements(String key, Testplan plan, Vector<TestElement> elements) {
-        if (Objects.nonNull(plan.get(key))) {
-            for (Object element : plan.getJSONArray(key)) {
+        JSONArray components = plan.getJSONArray(key);
+        if (Objects.nonNull(components)) {
+            components.forEach(item -> {
                 // 配置元件、处理器、提取器、验证器 等测试组件不可单独设置变量，设置这些组件的变量为测试集合或取样器的变量
-                TestElement el = TestElementService.getService(((Testplan) element).getString(TEST_CLASS));
-                TestElementService.prepare(el, ((Testplan) element), plan.getVariables());
+                TestElement el = TestElementService.getService(((Testplan) item).getString(TEST_CLASS));
+                TestElementService.prepare(el, ((Testplan) item), plan.getVariables());
                 elements.add(el);
-            }
+            });
         }
     }
 

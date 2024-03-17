@@ -41,7 +41,7 @@ import static core.xyz.migoo.variable.VariableUtils.*;
 /**
  * @author xiaomi
  */
-public class MiGooVariables implements VariableStateListener, Cloneable {
+public class MiGooVariables implements VariableStateListener {
 
     private final MiGooProperty propMap = new MiGooProperty();
 
@@ -88,22 +88,12 @@ public class MiGooVariables implements VariableStateListener, Cloneable {
 
     public void mergeVariable(MiGooVariables other) {
         if (other != null) {
-            MiGooVariables clone = this.clone();
+            other.convertVariable();
+            MiGooVariables copy = new MiGooVariables(getProperty());
             this.getProperty().clear();
             this.putAll(other);
-            this.putAll(clone);
+            this.putAll(copy);
         }
-    }
-
-    @Override
-    public MiGooVariables clone() {
-        Map<? extends String, ?> variables;
-        try {
-            variables = ((MiGooVariables) super.clone()).getProperty();
-        } catch (CloneNotSupportedException e) {
-            variables = this.getProperty();
-        }
-        return new MiGooVariables(variables);
     }
 
     public JSONObject getRequestBody() {
@@ -136,9 +126,10 @@ public class MiGooVariables implements VariableStateListener, Cloneable {
         }
     }
 
-    private void convertVariables(JSONArray temp) {
-        for (int i = 0; i < temp.size(); i++) {
-            Object item = temp.get(i);
+    private void convertVariables(JSONArray dataMapping) {
+        JSONArray temp = new JSONArray();
+        for (int i = 0; i < dataMapping.size(); i++) {
+            Object item = dataMapping.get(i);
             if (item instanceof String) {
                 item = extractVariables((String) item);
             } else if (item instanceof JSONObject) {
@@ -146,9 +137,10 @@ public class MiGooVariables implements VariableStateListener, Cloneable {
             } else if (item instanceof JSONArray) {
                 convertVariables((JSONArray) item);
             }
-            temp.remove(i);
             temp.add(i, item);
         }
+        dataMapping.clear();
+        dataMapping.addAll(temp);
     }
 
     public Object extractVariables(String value) {
@@ -176,7 +168,14 @@ public class MiGooVariables implements VariableStateListener, Cloneable {
                 // 字符串可以解析为 json 不允许出现在多变量组合的情况
                 return JSON.parse((String) v);
             } else if (v instanceof String) {
-                value = value.replace(temp, evalVariable((String) v));
+                Object result = evalVariable((String) v);
+                if (result instanceof String s) {
+                    // 变量计算结果为字符串时进行变量替换，同时继续判断字符串中是否还存在变量引用
+                    value = value.replace(temp, s);
+                } else {
+                    // 非字符串计算结果，直接返回
+                    return result;
+                }
             } else if (v instanceof Number || v instanceof Boolean) {
                 value = value.replace(temp, v.toString());
             } else {
@@ -187,11 +186,20 @@ public class MiGooVariables implements VariableStateListener, Cloneable {
         return value;
     }
 
-    private String evalVariable(String v) {
+    private Object evalVariable(String v) {
         Matcher func = FUNC_PATTERN.matcher(v);
         while (func.find()) {
-            String result = FunctionService.execute(func.group(1), func.group(2), this).toString();
-            v = v.replace(func.group(), result);
+            Object result = FunctionService.execute(func.group(1), func.group(2), this);
+            if (result instanceof String && (JSON.isValidObject((String) result) || JSON.isValidArray((String) result))) {
+                // 字符串可以解析为 json 不允许出现在多变量组合的情况
+                return JSON.parse((String) result);
+            } else if (result instanceof String || result instanceof Number || result instanceof Boolean) {
+                // 字符串、数字、布尔类型对象，转换为字符串替换（可能存在多个函数，不能return）
+                v = v.replace(func.group(), result.toString());
+            } else {
+                // 其他未知类型，直接返回原始对象
+                return result;
+            }
         }
         return v;
     }

@@ -52,8 +52,7 @@ public class HTTPResponseAssertion extends AbstractAssertion {
     @Override
     public VerifyResult getResult(SampleResult samplerResult) {
         VerifyResult result = new VerifyResult("HTTPAssertion");
-        if (samplerResult instanceof HTTPSampleResult) {
-            HTTPSampleResult httpResult = (HTTPSampleResult) samplerResult;
+        if (samplerResult instanceof HTTPSampleResult httpResult) {
             String field = get(FIELD) == null ? CONTEXT : getPropertyAsString(FIELD).toLowerCase();
             Matcher matcher = PATTERN.matcher(field);
             if (matcher.find()) {
@@ -65,7 +64,7 @@ public class HTTPResponseAssertion extends AbstractAssertion {
             super.assertThat(result);
         } else {
             result.setSuccessful(true);
-            result.setContext(String.format("unsupported %s, assert default true", samplerResult.getClass().getSimpleName()));
+            result.setContext(String.format("HTTPResponseAssertion unsupported %s, assert default true", samplerResult.getClass().getSimpleName()));
         }
         return result;
     }

@@ -45,7 +45,8 @@ import java.util.List;
 public class StandardEngine extends AbstractTestEngine {
 
     public StandardEngine(MiGooContext context) {
-        super(context, new SampleResult(context.getTitle()));
+        super(context, context.getSampler() instanceof HttpSampler ?
+                new HTTPSampleResult(context.getTitle()) : new SampleResult(context.getTitle()));
     }
 
     public StandardEngine(MiGooContext context, MiGooVariables other) {

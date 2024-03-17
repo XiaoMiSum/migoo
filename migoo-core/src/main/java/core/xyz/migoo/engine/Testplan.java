@@ -47,25 +47,34 @@ public class Testplan extends JSONObject {
     private final boolean sampler;
 
     public Testplan(JSONObject json) {
+        // 同时包含 children 和 title 这两个key 即 认为是 migoo 的测试集合
         boolean isMiGooSuite = json.containsKey(CHILDREN) && json.containsKey(TITLE);
         Class<? extends TestElement> clazz = TestElementService.getServiceClass(json.getString(TEST_CLASS));
         sampler = Objects.nonNull(clazz) && Sampler.class.isAssignableFrom(clazz);
         TestPlanValidator.verify(json, isMiGooSuite ? sampler ? clazz.getSimpleName() : "testsuite" : "");
-        initialize(json, isMiGooSuite || sampler);
+        // migoo 测试集合 或者 注册的 test class 都是 migoo 测试组件
+        initialize(json, isMiGooSuite || Objects.nonNull(clazz));
     }
 
     private void initialize(JSONObject json, boolean isMiGoo) {
         // 1、先删除 MiGoo组件中的变量，减少一次遍历
         Object variables = isMiGoo ? json.remove(VARIABLES) : null;
         json.forEach((key, value) -> {
+            // 将 migoo 测试组件 的key 转换为小写
             String newKey = isMiGoo ? key.toLowerCase(Locale.ROOT) : key;
             if (value instanceof Map) {
-                put(newKey, new Testplan(json.getJSONObject(key)));
+                put(newKey, parse(json.getJSONObject(key)));
             } else if (value instanceof List) {
                 JSONArray array = json.getJSONArray(key);
                 JSONArray newValue = new JSONArray(array.size());
                 for (int i = 0; i < array.size(); i++) {
-                    newValue.add(new Testplan(array.getJSONObject(i)));
+                    Object item = array.get(i);
+                    // 这里主要是为了处理 配置的子组件，组件配置一定是Map
+                    if (item instanceof Map) {
+                        newValue.add(parse(array.getJSONObject(i)));
+                    } else {
+                        newValue.add(item);
+                    }
                 }
                 put(newKey, newValue);
             } else {
@@ -76,6 +85,16 @@ public class Testplan extends JSONObject {
             // 3、重新添加变量到MiGoo组件
             put(VARIABLES, Objects.isNull(variables) ? new MiGooVariables() :
                     variables instanceof MiGooVariables ? variables : new MiGooVariables((JSONObject) variables));
+        }
+    }
+
+    private JSONObject parse(JSONObject json) {
+        boolean isMiGooSuite = json.containsKey(CHILDREN) && json.containsKey(TITLE);
+        Class<? extends TestElement> clazz = TestElementService.getServiceClass(json.getString(TEST_CLASS));
+        if (isMiGooSuite || Objects.nonNull(clazz)) {
+            return new Testplan(json);
+        } else {
+            return json;
         }
     }
 
