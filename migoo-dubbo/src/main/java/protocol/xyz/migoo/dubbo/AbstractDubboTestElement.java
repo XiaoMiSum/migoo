@@ -30,10 +30,10 @@ import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.rpc.RpcContext;
-import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.apache.dubbo.rpc.service.GenericService;
 import protocol.xyz.migoo.dubbo.config.DubboDefaults;
 import protocol.xyz.migoo.dubbo.sampler.DubboSampleResult;
@@ -94,14 +94,12 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
 
         ReferenceConfig<GenericService> reference = new ReferenceConfig<>();
         reference.setGeneric("true");
-        ApplicationModel application = ApplicationModel.defaultModel();
-        application.setModelName(StringUtils.isEmpty(registerCenter.getString(APP_NAME)) ?
-                "migoo-dubbo-consumer" : registerCenter.getString(APP_NAME));
-        reference.setScopeModel(application);
+        reference.setApplication(new ApplicationConfig(StringUtils.isEmpty(registerCenter.getString(APP_NAME)) ?
+                "migoo-dubbo-consumer" : registerCenter.getString(APP_NAME)));
         reference.setVersion(referenceConfig.getString(VERSION));
         reference.setGroup(referenceConfig.getString(GROUP));
-        reference.setRetries(referenceConfig.get(RETRIES) != null ? referenceConfig.getIntValue(RETRIES) : 2);
-        reference.setTimeout(referenceConfig.get(TIMEOUT) != null ? referenceConfig.getIntValue(TIMEOUT) : 5000);
+        reference.setRetries(Math.max(referenceConfig.getIntValue(RETRIES), 2));
+        reference.setTimeout(Math.max(referenceConfig.getIntValue(TIMEOUT), 5000));
         reference.setAsync(referenceConfig.getBooleanValue(ASYNC));
         reference.setLoadbalance(referenceConfig.get(LOAD_BALANCE) == null ? "random" : referenceConfig.getString(LOAD_BALANCE));
         RegistryConfig registry = new RegistryConfig();
@@ -112,6 +110,7 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
         registry.setUsername(registerCenter.getString(USERNAME));
         registry.setPassword(registerCenter.getString(PASSWORD));
         registry.setVersion(registerCenter.getString(VERSION));
+        registry.setTimeout(Math.max(registerCenter.getIntValue(TIMEOUT), 5000));
         reference.setRegistry(registry);
         return reference;
     }

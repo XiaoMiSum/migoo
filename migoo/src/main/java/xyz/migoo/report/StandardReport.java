@@ -223,7 +223,7 @@ public class StandardReport implements Report {
 
     private Markup convertValidator(VerifyResult result) {
         JSONArray array = new JSONArray();
-        if (result.isSuccessful()) {
+        if (result.isSuccessful() && JSON.isValidObject(result.getContext())) {
             JSONObject object = JSONObject.parseObject(result.getContext());
             object.forEach((key, value) -> array.add(key + ": " + value));
         } else {
