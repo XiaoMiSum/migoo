@@ -25,18 +25,12 @@
 
 package protocol.xyz.migoo.jdbc.processor;
 
-import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.processor.PostProcessor;
 
 /**
  * @author xiaomi
  */
 public class JDBCPostProcessor extends AbstractJDBCProcessor implements PostProcessor {
-
-    @Override
-    public SampleResult process() {
-        return super.process();
-    }
 
     @Override
     public void testStarted() {

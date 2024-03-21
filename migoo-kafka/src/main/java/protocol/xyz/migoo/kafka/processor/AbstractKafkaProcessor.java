@@ -33,14 +33,4 @@ import protocol.xyz.migoo.kafka.AbstractKafkaTestElement;
  * @date 2021/4/13 20:09
  */
 public abstract class AbstractKafkaProcessor extends AbstractKafkaTestElement implements TestStateListener {
-
-    @Override
-    public void testStarted() {
-        super.testStarted();
-    }
-
-    @Override
-    public void testEnded() {
-        super.testEnded();
-    }
 }

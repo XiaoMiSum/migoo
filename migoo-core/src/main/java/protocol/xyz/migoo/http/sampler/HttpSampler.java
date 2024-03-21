@@ -48,11 +48,6 @@ public class HttpSampler extends AbstractHttpTestElement implements Sampler, Tes
     }
 
     @Override
-    public void testStarted() {
-        super.testStarted();
-    }
-
-    @Override
     public void testEnded() {
         // nothing to do
     }

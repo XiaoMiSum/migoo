@@ -38,11 +38,6 @@ import protocol.xyz.migoo.dubbo.AbstractDubboTestElement;
 public abstract class AbstractDubboProcessor extends AbstractDubboTestElement implements TestStateListener {
 
     @Override
-    public void testStarted() {
-        super.testStarted();
-    }
-
-    @Override
     public void testEnded() {
         // nothing to do
     }

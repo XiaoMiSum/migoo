@@ -26,17 +26,11 @@
 package protocol.xyz.migoo.redis.processor;
 
 import core.xyz.migoo.processor.PreProcessor;
-import core.xyz.migoo.sampler.SampleResult;
 
 /**
  * @author xiaomi
  */
 public class RedisPreProcessor extends AbstractRedisProcessor implements PreProcessor {
-
-    @Override
-    public SampleResult process() {
-        return super.process();
-    }
 
     @Override
     public void testStarted() {

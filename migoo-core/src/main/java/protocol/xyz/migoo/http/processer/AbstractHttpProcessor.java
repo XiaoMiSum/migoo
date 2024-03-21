@@ -25,20 +25,15 @@
 
 package protocol.xyz.migoo.http.processer;
 
-import protocol.xyz.migoo.http.AbstractHttpTestElement;
-import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.TestStateListener;
+import protocol.xyz.migoo.http.AbstractHttpTestElement;
+import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 
 /**
  * @author xiaomi
  */
 public abstract class AbstractHttpProcessor extends AbstractHttpTestElement implements TestStateListener {
-
-    @Override
-    public void testStarted() {
-        super.testStarted();
-    }
 
     @Override
     public void testEnded() {
