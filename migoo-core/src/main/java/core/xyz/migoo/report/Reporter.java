@@ -28,7 +28,7 @@ package core.xyz.migoo.report;
 /**
  * @author xiaomi
  */
-public interface Report {
+public interface Reporter {
 
     /**
      * 通过取样器结果生成测试报告

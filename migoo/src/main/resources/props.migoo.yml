@@ -4,4 +4,4 @@ migoo.report.theme: DARK
 migoo.report.timeline.enabled: false
 migoo.report.offline: false
 migoo.report.output: './out-put'
-migoo.report.class: xyz.migoo.report.StandardReport
+migoo.report.class: xyz.migoo.report.StandardReporter

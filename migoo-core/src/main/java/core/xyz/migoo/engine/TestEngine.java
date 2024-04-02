@@ -25,7 +25,7 @@
 
 package core.xyz.migoo.engine;
 
-import core.xyz.migoo.report.Report;
+import core.xyz.migoo.report.Reporter;
 import core.xyz.migoo.report.Result;
 
 import java.util.Objects;
@@ -40,16 +40,16 @@ public interface TestEngine {
     /**
      * 脚本引擎执行测试
      *
-     * @param plan   测试计划
-     * @param report 测试报告生成器
+     * @param plan     测试计划
+     * @param reporter 测试报告生成器
      * @return 测试结果
      */
-    static Result runTest(Testplan plan, Report report) {
+    static Result runTest(Testplan plan, Reporter reporter) {
         MiGooContext context = MiGooContext.create(plan);
         TestEngine engine = plan.isSampler() ? new StandardEngine(context) : new LoopEngine(context);
         Result result = engine.runTest();
-        if (Objects.nonNull(report)) {
-            report.generateReport(result);
+        if (Objects.nonNull(reporter)) {
+            reporter.generateReport(result);
         }
         return result;
     }

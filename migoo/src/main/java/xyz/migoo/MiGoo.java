@@ -29,10 +29,10 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.engine.TestEngine;
 import core.xyz.migoo.engine.Testplan;
-import core.xyz.migoo.report.Report;
+import core.xyz.migoo.report.Reporter;
 import core.xyz.migoo.report.Result;
 import util.xyz.migoo.loader.Loader;
-import xyz.migoo.report.StandardReport;
+import xyz.migoo.report.StandardReporter;
 
 import java.util.List;
 import java.util.Map;
@@ -109,15 +109,15 @@ public class MiGoo {
     }
 
     private Result runTest() {
-        Report report;
+        Reporter reporter;
         try {
-            report = Boolean.parseBoolean(System.getProperty(REPORT_ENABLE, "true")) ?
-                    (Report) Class.forName(System.getProperty(REPORT_CLASS, "xyz.migoo.report.StandardReport"))
+            reporter = Boolean.parseBoolean(System.getProperty(REPORT_ENABLE, "true")) ?
+                    (Reporter) Class.forName(System.getProperty(REPORT_CLASS, "xyz.migoo.report.StandardReporter"))
                             .getConstructor().newInstance() : null;
         } catch (Exception e) {
-            report = new StandardReport();
+            reporter = new StandardReporter();
         }
-        return TestEngine.runTest(new Testplan(testcase), report);
+        return TestEngine.runTest(new Testplan(testcase), reporter);
     }
 
 

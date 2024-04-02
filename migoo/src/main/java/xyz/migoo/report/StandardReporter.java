@@ -36,7 +36,7 @@ import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 import core.xyz.migoo.assertion.VerifyResult;
-import core.xyz.migoo.report.Report;
+import core.xyz.migoo.report.Reporter;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.variable.MiGooVariables;
@@ -59,11 +59,11 @@ import static xyz.migoo.Constants.*;
 /**
  * @author xiaomi
  */
-public class StandardReport implements Report {
+public class StandardReporter implements Reporter {
 
     private final ExtentReports extent;
 
-    public StandardReport() {
+    public StandardReporter() {
         extent = new ExtentReports();
         extent.setSystemInfo("os.name", System.getProperty("os.name"));
         extent.setSystemInfo("java.runtime.name", System.getProperty("java.runtime.name"));
