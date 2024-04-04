@@ -26,9 +26,10 @@
 package coder.xyz.migoo;
 
 import coder.xyz.migoo.protocol.Protocol;
-import com.alibaba.fastjson2.JSONArray;
 import com.google.common.collect.Lists;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class Processor extends El {
@@ -38,8 +39,10 @@ public class Processor extends El {
         super(testClass);
         p(protocol.customize());
         if (Objects.nonNull(extractors) && extractors.length > 0) {
-            JSONArray extractor = new JSONArray();
-            extractor.addAll(Lists.newArrayList(extractor));
+            List<Map<String, Object>> extractor = Lists.newArrayList();
+            for (Extractor item : extractors) {
+                extractor.add(item.customize());
+            }
             p("extractors", extractor);
         }
     }

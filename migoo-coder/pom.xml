@@ -61,7 +61,6 @@
 
     <properties>
         <guava.version>33.0.0-jre</guava.version>
-        <fastjson.version>2.0.44</fastjson.version>
 
         <compile.version>3.10.1</compile.version>
         <javadoc.version>3.2.0</javadoc.version>
@@ -75,11 +74,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.alibaba.fastjson2</groupId>
-            <artifactId>fastjson2</artifactId>
-            <version>${fastjson.version}</version>
-        </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
         <dependency>

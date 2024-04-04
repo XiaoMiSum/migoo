@@ -28,7 +28,6 @@ package coder.xyz.migoo.suite;
 import coder.xyz.migoo.Configurer;
 import coder.xyz.migoo.Processor;
 import coder.xyz.migoo.Sampler;
-import com.alibaba.fastjson2.JSONObject;
 
 import java.util.Map;
 
@@ -68,5 +67,5 @@ public interface Suite {
         return new Testcase(title, variables, children, configurers, preprocessors, postprocessors);
     }
 
-    JSONObject customize();
+    Map<String, Object> customize();
 }

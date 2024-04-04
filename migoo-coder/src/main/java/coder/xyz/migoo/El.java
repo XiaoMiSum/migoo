@@ -25,14 +25,14 @@
 
 package coder.xyz.migoo;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 
 import java.util.Map;
 
 public abstract class El {
 
-    protected final JSONObject properties = new JSONObject();
+    protected final Map<String, Object> properties = Maps.newHashMap();
 
     protected El() {
     }
@@ -47,7 +47,7 @@ public abstract class El {
         p(properties);
     }
 
-    public JSONObject customize() {
+    public Map<String, Object> customize() {
         return properties;
     }
 

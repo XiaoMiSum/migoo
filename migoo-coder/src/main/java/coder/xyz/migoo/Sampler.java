@@ -26,8 +26,9 @@
 package coder.xyz.migoo;
 
 import coder.xyz.migoo.protocol.Protocol;
-import com.alibaba.fastjson2.JSONArray;
+import com.google.common.collect.Lists;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -105,7 +106,7 @@ public class Sampler extends El {
 
     private void el(String key, El[] els) {
         if (Objects.nonNull(els) && els.length > 0) {
-            JSONArray v = new JSONArray();
+            List<Map<String, Object>> v = Lists.newArrayList();
             for (El el : els) {
                 v.add(el.customize());
             }
