@@ -63,7 +63,7 @@
         <migoo.version>5.0.1-SNAPSHOT</migoo.version>
         <junit.version>5.9.0</junit.version>
         <mysql.version>8.0.30</mysql.version>
-        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
