@@ -4,8 +4,8 @@ import coder.xyz.migoo.protocol.Protocol
 
 class Sampler extends El {
 
-    Sampler(String title, String testClass, Map<String, Object> variables, El config, Validator[] validators,
-            Processor[] preprocessors, Processor[] postprocessors, Extractor[] extractors) {
+    private Sampler(String title, String testClass, Map<String, Object> variables, El config, Validator[] validators,
+                    Processor[] preprocessors, Processor[] postprocessors, Extractor[] extractors) {
         super(testClass)
         p("title", title)
         p("variables", variables)

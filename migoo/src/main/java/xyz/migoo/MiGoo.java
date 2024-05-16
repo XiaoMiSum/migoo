@@ -56,7 +56,7 @@ public class MiGoo {
 
     private final JSONObject testcase;
 
-    public MiGoo(JSONObject testcase) {
+    public MiGoo(Map<String, Object> testcase) {
         this.testcase = this.prepare(testcase);
     }
 
@@ -71,7 +71,7 @@ public class MiGoo {
     }
 
     public static Result start(Map<String, Object> testcase) {
-        return new MiGoo(new JSONObject(testcase)).runTest();
+        return new MiGoo(testcase).runTest();
     }
 
     private JSONObject prepare(Map<?, ?> x) {

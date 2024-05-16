@@ -2,7 +2,7 @@ package coder.xyz.migoo
 
 class Timer extends El {
 
-    Timer(String testClass, int timeout) {
+    private Timer(String testClass, int timeout) {
         super(testClass)
         assert timeout > 0
         p("timeout", timeout)

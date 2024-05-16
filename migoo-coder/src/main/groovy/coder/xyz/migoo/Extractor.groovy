@@ -9,8 +9,8 @@ class Extractor extends El {
         p("match_num", matchNo)
     }
 
-    static Extractor withJSONExtractor(String referenceName, String jsonPath, Integer matchNo = null) {
-        return new Extractor("JSONExtractor", referenceName, jsonPath, matchNo)
+    static Extractor withJSONExtractor(String referenceName, String jsonPath) {
+        return new Extractor("JSONExtractor", referenceName, jsonPath)
     }
 
     static Extractor withRegexExtractor(String referenceName, String regex, Integer matchNo = null) {

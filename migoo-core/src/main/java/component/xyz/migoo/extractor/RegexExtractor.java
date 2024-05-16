@@ -47,7 +47,7 @@ public class RegexExtractor extends AbstractExtractor {
         int state = 0;
         while (state > -1 && matcher.find()) {
             state = matcher.groupCount() > 0 ? matchNum : state;
-            value = matcher.group(state > 0 ? 1 : 0);
+            value = matcher.group(1);
             state--;
         }
         getVariables().put(getPropertyAsString(VARIABLE_NAME), value);

@@ -4,7 +4,6 @@ import com.google.common.base.Strings
 
 abstract class El {
 
-
     private final def properties = [:]
 
     protected El(String testClass = "") {

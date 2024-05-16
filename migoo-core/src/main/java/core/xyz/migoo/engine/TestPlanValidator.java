@@ -72,8 +72,7 @@ public class TestPlanValidator {
             Iterator<ValidationMessage> messages = schema.validate(mapper.readTree(object.toJSONString())).iterator();
             StringBuilder message = new StringBuilder();
             while (messages.hasNext()) {
-                message.append(message.length() == 0 ? "errorMessage: " : ", ")
-                        .append(messages.next().getMessage());
+                message.append(message.isEmpty() ? "errorMessage: " : ", ").append(messages.next().getMessage());
             }
             return message.toString();
         } catch (Exception e) {

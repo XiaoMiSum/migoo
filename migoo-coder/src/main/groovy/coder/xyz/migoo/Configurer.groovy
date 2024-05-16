@@ -4,7 +4,7 @@ import coder.xyz.migoo.protocol.Protocol
 
 class Configurer extends El {
 
-    Configurer(String testClass, El protocol) {
+    private Configurer(String testClass, El protocol) {
         super(testClass)
         p(protocol.customize())
     }

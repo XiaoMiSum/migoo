@@ -30,7 +30,6 @@ import core.xyz.migoo.extractor.AbstractExtractor;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
 
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -44,10 +43,6 @@ public class JSONExtractor extends AbstractExtractor {
         String jsonStr = result.getResponseDataAsString();
         String path = getPropertyAsString(FIELD);
         Object value = JSONPath.extract(jsonStr, path);
-        if (value instanceof List && Objects.nonNull(get(MATCH_NUM))) {
-            int matchNum = getPropertyAsInt(MATCH_NUM);
-            value = ((List<?>) value).get(Math.max(matchNum, 0));
-        }
         getVariables().put(getPropertyAsString(VARIABLE_NAME), Objects.isNull(value) ? "def_value" : value);
         getProperty().put("value", Objects.isNull(value) ? "def_value" : value);
         return getResult(new SampleResult("JSONExtractor"));

@@ -4,7 +4,7 @@ import coder.xyz.migoo.protocol.Protocol
 
 class Processor extends El {
 
-    Processor(String testClass, El protocol, Extractor... extractors) {
+    private Processor(String testClass, El protocol, Extractor... extractors) {
         super(testClass)
         p(protocol.customize())
         p("extractors", extractors)

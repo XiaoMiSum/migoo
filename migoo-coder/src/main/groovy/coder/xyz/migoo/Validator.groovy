@@ -2,7 +2,7 @@ package coder.xyz.migoo
 
 class Validator extends El {
 
-    Validator(String testClass, String field, String rule, Object... expected) {
+    private Validator(String testClass, String field, String rule, Object... expected) {
         super(testClass)
         p("field", field)
         p("rule", rule)
