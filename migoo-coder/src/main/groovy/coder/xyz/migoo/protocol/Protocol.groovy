@@ -36,7 +36,9 @@ class Protocol {
             p(_def.customize())
         }
 
-        HTTP(String protocol = "http", String host, int port = 80, boolean v2 = false) {
+        private HTTP() {}
+
+        private HTTP(String protocol = "http", String host, int port = 80, boolean v2 = false) {
             p("protocol", protocol)
             p("host", host)
             p("port", port)
@@ -47,37 +49,42 @@ class Protocol {
             return new HTTP(_def)
         }
 
-        HTTP withGet(String path, Map<String, Object> query = null, Map<String, Object> headers = null) {
+        static HTTP withConfig(String protocol = "http", String host, int port = 80, boolean v2 = false) {
+            return new HTTP(protocol, host, port, v2)
+        }
+
+        static HTTP withGet(String path, Map<String, Object> query = null, Map<String, Object> headers = null) {
             return withApi("get", path, query, null, null, null, headers)
         }
 
-        HTTP withPostData(String path, Map<String, Object> data, Map<String, Object> headers = null) {
+        static HTTP withPostData(String path, Map<String, Object> data, Map<String, Object> headers = null) {
             return withPost(path, data, null, null, headers)
         }
 
-        HTTP withPostBody(String path, Map<String, Object> body = null, Map<String, Object> headers = null) {
+        static HTTP withPostBody(String path, Map<String, Object> body = null, Map<String, Object> headers = null) {
             return withPost(path, null, body, null, headers)
         }
 
-        HTTP withPostBytes(String path, byte[] bytes = null, Map<String, Object> headers = null) {
+        static HTTP withPostBytes(String path, byte[] bytes = null, Map<String, Object> headers = null) {
             return withPost(path, null, null, bytes, headers)
         }
 
-        HTTP withPost(String path, Map<String, Object> data = null, Map<String, Object> body = null, byte[] bytes = null,
-                      Map<String, Object> headers = Maps.newHashMap()) {
+        static HTTP withPost(String path, Map<String, Object> data = null, Map<String, Object> body = null,
+                             byte[] bytes = null, Map<String, Object> headers = Maps.newHashMap()) {
             return withApi("post", path, null, data, body, bytes, headers)
         }
 
-        private HTTP withApi(String method, String path, Map<String, Object> query,
-                             Map<String, Object> data, Map<String, Object> body, byte[] bytes, Map<String, Object> headers) {
-            p("method", method)
-            p("path", path)
-            p("headers", headers)
-            p("query", query)
-            p("data", data)
-            p("body", body)
-            p("bytes", bytes)
-            return this
+        private static HTTP withApi(String method, String path, Map<String, Object> query, Map<String, Object> data,
+                                    Map<String, Object> body, byte[] bytes, Map<String, Object> headers) {
+            HTTP http = new HTTP()
+            http.p("method", method)
+            http.p("path", path)
+            http.p("headers", headers)
+            http.p("query", query)
+            http.p("data", data)
+            http.p("body", body)
+            http.p("bytes", bytes)
+            return http
         }
     }
 
@@ -87,14 +94,14 @@ class Protocol {
             p(_def.customize())
         }
 
-        Redis(String datasource, String command, String send) {
+        private Redis(String datasource, String command, String send) {
             p("datasource", datasource)
             p("command", command)
             p("send", send)
         }
 
-        Redis(String name, String host, int port = 6379, int database = 0, String password = null, int timeout = 60, int minIdle = 1,
-              int maxIdle = 5, int maxTotal = 5) {
+        private Redis(String name, String host, int port = 6379, int database = 0, String password = null,
+                      int timeout = 60, int minIdle = 1, int maxIdle = 5, int maxTotal = 5) {
             p("variable_name", name)
             p("host", host)
             p("port", port)
@@ -106,6 +113,37 @@ class Protocol {
             p("max_total", maxTotal)
         }
 
+        /**
+         * 适用于配置Redis默认配置
+         *
+         * @param name 数据源名称
+         * @param host 连接地址
+         * @param port 端口
+         * @param database 数据库
+         * @param password 密码
+         * @param timeout 超时时间
+         * @param minIdle
+         * @param maxIdle
+         * @param maxTotal
+         * @return
+         */
+        static Redis withConfig(String name, String host, int port = 6379, int database = 0, String password = null,
+                                int timeout = 60, int minIdle = 1, int maxIdle = 5, int maxTotal = 5) {
+            return new Redis(name, host, port, database, password, timeout, minIdle, maxIdle, maxTotal)
+        }
+
+        /**
+         * 适用于 处理器、取样器执行配置
+         *
+         * @param datasource 数据源名称
+         * @param command 执行方法
+         * @param send 语句
+         * @return
+         */
+        static Redis withApi(String datasource, String command, String send) {
+            return new Redis(datasource, command, send)
+        }
+
         static Redis copy(Redis _def) {
             return new Redis(_def)
         }
@@ -113,17 +151,17 @@ class Protocol {
 
     static class JDBC extends El {
 
-        JDBC(JDBC _def) {
+        private JDBC(JDBC _def) {
             p(_def.customize())
         }
 
-        JDBC(String datasource, String queryType, String statement) {
+        private JDBC(String datasource, String queryType, String statement) {
             p("datasource", datasource)
             p("queryType", queryType)
             p("statement", statement)
         }
 
-        JDBC(String name, String url, String username, String password, int maxWait = 1, int maxActive = 5) {
+        private JDBC(String name, String url, String username, String password, int maxWait = 1, int maxActive = 5) {
             p("variable_name", name)
             p("url", url)
             p("username", username)
@@ -132,8 +170,36 @@ class Protocol {
             p("max_active", maxActive)
         }
 
+        /**
+         * 适用于配置JDBC默认配置
+         *
+         * @param name 数据源名称
+         * @param url 连接地址
+         * @param username 用户名
+         * @param password 密码
+         * @param maxWait 最大等待
+         * @param maxActive 最大活动
+         * @return
+         */
+        static JDBC withConfig(String name, String url, String username, String password, int maxWait = 1, int maxActive = 5) {
+            return new JDBC(name, url, username, password, maxWait, maxActive)
+        }
+
+        /**
+         * 适用于 处理器、取样器执行配置
+         *
+         * @param datasource 数据源名称
+         * @param queryType 执行方法
+         * @param statement sql语句
+         * @return
+         */
+        static JDBC withApi(String datasource, String queryType, String statement) {
+            return new JDBC(datasource, queryType, statement)
+        }
+
         static JDBC copy(JDBC _def) {
             return new JDBC(_def)
         }
     }
+
 }
