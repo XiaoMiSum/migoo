@@ -34,6 +34,14 @@ class Processor extends El {
         return with("JDBCPostProcessor", config, extractors)
     }
 
+    static Processor withDubboPreprocessor(Protocol.Dubbo config, Extractor... extractors) {
+        return with("DubboPreProcessor", config, extractors)
+    }
+
+    static Processor withDubboPostprocessor(Protocol.Dubbo config, Extractor... extractors) {
+        return with("DubboPostProcessor", config, extractors)
+    }
+
     private static Processor with(String testClass, El config, Extractor... extractors) {
         return new Processor(testClass, config, extractors)
     }
