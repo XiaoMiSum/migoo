@@ -37,13 +37,13 @@ public class Har2Sampler implements Convert2Sampler {
     @Override
     public void convert(JSONObject har, String path) {
         try {
-            JSONArray entries = har.getJSONObject("log").getJSONArray("entries");
+            var entries = har.getJSONObject("log").getJSONArray("entries");
             for (int i = 0; i < entries.size(); i++) {
                 if (!"xhr".equals(entries.getJSONObject(i).getString("_resourceType"))) {
                     continue;
                 }
-                JSONObject request = entries.getJSONObject(i).getJSONObject("request");
-                JSONObject sampler = new JSONObject();
+                var request = entries.getJSONObject(i).getJSONObject("request");
+                var sampler = new JSONObject();
                 sampler.put("title", request.get("url") + " " + request.get("method") + " " + request.get("httpVersion"));
                 sampler.put("testclass", "httpsampler");
                 this.headers(sampler, request);
@@ -61,9 +61,9 @@ public class Har2Sampler implements Convert2Sampler {
         sampler.getJSONObject("config").put("method", request.get("method"));
         sampler.getJSONObject("config").put("base_path", request.get("url"));
         sampler.getJSONObject("config").put("headers", new JSONObject());
-        JSONArray headers = request.getJSONArray("headers");
+        var headers = request.getJSONArray("headers");
         for (int i = 0; i < headers.size(); i++) {
-            JSONObject header = headers.getJSONObject(i);
+            var header = headers.getJSONObject(i);
             if (!"content-Length".equalsIgnoreCase(header.getString("name"))) {
                 sampler.getJSONObject("config").getJSONObject("headers").put(header.getString("name"), header.get("value"));
             }
@@ -71,10 +71,10 @@ public class Har2Sampler implements Convert2Sampler {
     }
 
     private void query(JSONObject sampler, JSONArray queryString) {
-        if (queryString != null && queryString.size() > 0) {
-            JSONObject query = new JSONObject();
+        if (queryString != null && !queryString.isEmpty()) {
+            var query = new JSONObject();
             for (int i = 0; i < queryString.size(); i++) {
-                JSONObject obj = queryString.getJSONObject(i);
+                var obj = queryString.getJSONObject(i);
                 query.put(obj.getString("name"), obj.get("value"));
             }
             sampler.getJSONObject("config").put("query", query);
@@ -83,10 +83,10 @@ public class Har2Sampler implements Convert2Sampler {
 
     private void body(JSONObject sampler, JSONObject postData) {
         if (postData != null) {
-            String mimeType = postData.getString("mimeType");
-            String text = postData.getString("text");
+            var mimeType = postData.getString("mimeType");
+            var text = postData.getString("text");
             if (text.startsWith("{") && text.endsWith("}")) {
-                JSONObject body = new JSONObject();
+                var body = new JSONObject();
                 sampler.put(mimeType.contains("application/json") ? "body" : "data", body);
                 body.putAll(JSONObject.parseObject(text));
             } else if (text.startsWith("[") && text.endsWith("]")) {

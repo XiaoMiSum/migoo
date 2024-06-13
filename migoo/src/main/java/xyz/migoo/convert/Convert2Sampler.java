@@ -50,7 +50,7 @@ public interface Convert2Sampler {
     default void writer(JSONObject sampler, String path) throws IOException {
         if (this instanceof Har2Sampler || this instanceof Postman2Sampler) {
             sampler.put("validators", new JSONArray());
-            JSONObject validator = new JSONObject();
+            var validator = new JSONObject();
             validator.put("testclass", "httpassertion");
             validator.put("field", "status");
             validator.put("expected", 200);
@@ -58,8 +58,8 @@ public interface Convert2Sampler {
             sampler.getJSONArray("validators").add(validator);
         }
         path = StringUtils.isBlank(path) ? System.getProperty("user.dir") : path;
-        File file = new File(path + "/" + this.getClass().getSimpleName() + "_" + System.currentTimeMillis() + ".yaml");
-        try (FileWriter writer = new FileWriter(file)) {
+        var file = new File(path + "/" + this.getClass().getSimpleName() + "_" + System.currentTimeMillis() + ".yaml");
+        try (var writer = new FileWriter(file)) {
             new Yaml().dump(sampler, writer);
         }
         System.out.println("转换完成: " + file.getPath());

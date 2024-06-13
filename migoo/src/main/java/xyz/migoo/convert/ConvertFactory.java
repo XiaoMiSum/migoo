@@ -37,7 +37,7 @@ import java.io.File;
 public class ConvertFactory {
 
     public static void convert(String command, File file) {
-        JSONObject object = Loader.toJavaObject(file.getPath(), JSONObject.class);
+        var object = Loader.toJavaObject(file.getPath(), JSONObject.class);
         if ("-h2m".equals(command)) {
             new Har2Sampler().convert(object, file.getParent());
         } else if ("-p2m".equals(command)) {

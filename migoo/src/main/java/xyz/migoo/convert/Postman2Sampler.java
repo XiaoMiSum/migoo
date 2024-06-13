@@ -36,14 +36,14 @@ public class Postman2Sampler implements Convert2Sampler {
     @Override
     public void convert(JSONObject postman, String path) {
         try {
-            JSONArray entries = postman.getJSONArray("item");
+            var entries = postman.getJSONArray("item");
             for (int i = 0; i < entries.size(); i++) {
-                JSONObject item = entries.getJSONObject(i);
+                var item = entries.getJSONObject(i);
                 if (item.containsKey("item")) {
                     this.convert(item, path);
                 } else {
-                    JSONObject request = entries.getJSONObject(i).getJSONObject("request");
-                    JSONObject sampler = new JSONObject();
+                    var request = entries.getJSONObject(i).getJSONObject("request");
+                    var sampler = new JSONObject();
                     sampler.put("title", entries.getJSONObject(i).get("name"));
                     sampler.put("testclass", "httpsampler");
                     sampler.put("config", new JSONObject());
@@ -61,10 +61,10 @@ public class Postman2Sampler implements Convert2Sampler {
 
     private void body(JSONObject config, JSONObject postData) {
         if (postData != null) {
-            JSONObject body = new JSONObject();
+            var body = new JSONObject();
             if (postData.getJSONArray("urlencoded") != null) {
                 for (int i = 0; i < postData.getJSONArray("urlencoded").size(); i++) {
-                    JSONObject o = postData.getJSONArray("urlencoded").getJSONObject(i);
+                    var o = postData.getJSONArray("urlencoded").getJSONObject(i);
                     body.put(o.getString("key"), o.get("value"));
                 }
             } else {
@@ -77,14 +77,14 @@ public class Postman2Sampler implements Convert2Sampler {
     private void headers(JSONObject config, JSONArray headers) {
         config.put("headers", new JSONObject());
         for (int i = 0; i < headers.size(); i++) {
-            JSONObject header = headers.getJSONObject(i);
+            var header = headers.getJSONObject(i);
             config.getJSONObject("headers").put(header.getString("key"), header.get("value"));
         }
     }
 
     private void url(JSONObject config, JSONObject url) {
         config.put("protocol", url.get("protocol"));
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         for (int i = 0; i < url.getJSONArray("host").size(); i++) {
             if (sb.length() > 0) {
                 sb.append(".");
@@ -98,9 +98,9 @@ public class Postman2Sampler implements Convert2Sampler {
         }
         config.put("api", sb.toString());
         if (url.getJSONArray("query") != null) {
-            JSONObject query = new JSONObject();
+            var query = new JSONObject();
             for (int i = 0; i < url.getJSONArray("query").size(); i++) {
-                JSONObject o = url.getJSONArray("query").getJSONObject(i);
+                var o = url.getJSONArray("query").getJSONObject(i);
                 query.put(o.getString("key"), o.get("value"));
             }
             config.put("query", query);

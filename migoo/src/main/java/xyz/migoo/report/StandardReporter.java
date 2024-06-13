@@ -84,12 +84,12 @@ public class StandardReporter implements Reporter {
         writeConfigs(node, result.getConfigElementResults());
         writeProcessors(node, result.getPreprocessorResults(), "PRE.PROCESSORS");
         if (result instanceof SampleResult sResult) {
-            ExtentTest sNode = node instanceof ExtentTest ? ((ExtentTest) node).createNode(result.getTitle())
+            var sNode = node instanceof ExtentTest ? ((ExtentTest) node).createNode(result.getTitle())
                     : extent.createTest(result.getTitle());
             writeSampleResult(sNode, sResult);
         } else {
             if (result.isException()) {
-                ExtentTest sNode = node instanceof ExtentTest ? ((ExtentTest) node).createNode(result.getTitle())
+                var sNode = node instanceof ExtentTest ? ((ExtentTest) node).createNode(result.getTitle())
                         : extent.createTest(result.getTitle());
                 sNode.getModel().setStartTime(DateUtils.toDate(result.getStartTime()));
                 writeThrowable(sNode, result.getThrowable());
@@ -97,7 +97,7 @@ public class StandardReporter implements Reporter {
             } else {
                 if (result.getSubResults() != null) {
                     for (Result sr : result.getSubResults()) {
-                        ExtentTest sNode = node instanceof ExtentTest ? ((ExtentTest) node).createNode(sr.getTitle())
+                        var sNode = node instanceof ExtentTest ? ((ExtentTest) node).createNode(sr.getTitle())
                                 : extent.createTest(sr.getTitle());
                         if (sr instanceof SampleResult sResult) {
                             writeSampleResult(sNode, sResult);
@@ -113,7 +113,7 @@ public class StandardReporter implements Reporter {
 
     private void writeGlobals(Object f, MiGooVariables variables) {
         if (Objects.nonNull(variables) && !variables.getProperty().isEmpty()) {
-            Markup markup = MarkupHelper.createCodeBlock(variables.toString(), CodeLanguage.JSON);
+            var markup = MarkupHelper.createCodeBlock(variables.toString(), CodeLanguage.JSON);
             if (f instanceof ExtentReports reports) {
                 reports.createTest("GLOBAL.VARIABLES").info(markup);
             }
@@ -125,7 +125,7 @@ public class StandardReporter implements Reporter {
 
     private void writeConfigs(Object f, List<SampleResult> results) {
         if (Objects.nonNull(results) && !results.isEmpty()) {
-            ExtentTest feature = f instanceof ExtentTest ? ((ExtentTest) f).createNode("CONFIG.ELEMENTS")
+            var feature = f instanceof ExtentTest t ? t.createNode("CONFIG.ELEMENTS")
                     : extent.createTest("CONFIG.ELEMENTS");
             results.forEach(result -> feature.createNode(result.getTestClass())
                     .info(MarkupHelper.createCodeBlock(result.getSamplerData(), CodeLanguage.JSON)));
@@ -134,11 +134,10 @@ public class StandardReporter implements Reporter {
 
     private void writeProcessors(Object f, List<SampleResult> results, String name) {
         if (Objects.nonNull(results) && !results.isEmpty()) {
-            ExtentTest feature = f instanceof ExtentTest ? ((ExtentTest) f).createNode(name)
-                    : extent.createTest(name);
+            var feature = f instanceof ExtentTest t ? t.createNode(name) : extent.createTest(name);
             results.forEach(result -> {
-                String title = StringUtils.isEmpty(result.getTitle()) ? result.getTestClass() : result.getTitle();
-                ExtentTest node = feature.createNode(title);
+                var title = StringUtils.isEmpty(result.getTitle()) ? result.getTestClass() : result.getTitle();
+                var node = feature.createNode(title);
                 buildSampleResult(result, node);
                 writeThrowable(node, result.getThrowable());
                 writeExtractorResults(node, result.getExtractorResults());
@@ -154,8 +153,8 @@ public class StandardReporter implements Reporter {
         writeThrowable(node, result.getThrowable());
         node.getModel().setStatus(result.isSuccessful() ? PASS : FAIL);
         if (result.getAssertionResults() != null) {
-            ExtentTest v = node.createNode("TEST.VALIDATORS");
-            for (VerifyResult subResult : result.getAssertionResults()) {
+            var v = node.createNode("TEST.VALIDATORS");
+            for (var subResult : result.getAssertionResults()) {
                 v.log(subResult.isSuccessful() ? PASS : FAIL, convertValidator(subResult));
             }
         }
@@ -172,7 +171,7 @@ public class StandardReporter implements Reporter {
                             .info(MarkupHelper.createCodeBlock(hResult.getCookies()));
                 }
                 if (Objects.nonNull(hResult.getRequestHeaders()) && !hResult.getRequestHeaders().isEmpty()) {
-                    JSONArray array = convertHeaders(hResult.getRequestHeaders());
+                    var array = convertHeaders(hResult.getRequestHeaders());
                     node.createNode("REQUEST.HEADERS")
                             .info(MarkupHelper.createCodeBlock(array.toJSONString(), CodeLanguage.JSON));
                 }
@@ -189,7 +188,7 @@ public class StandardReporter implements Reporter {
             }
             if (sResult instanceof HTTPSampleResult hResult) {
                 if (Objects.nonNull(hResult.getResponseHeaders()) && !hResult.getResponseHeaders().isEmpty()) {
-                    JSONArray array = convertHeaders(hResult.getResponseHeaders());
+                    var array = convertHeaders(hResult.getResponseHeaders());
                     node.createNode("RESPONSE.HEADERS")
                             .info(MarkupHelper.createCodeBlock(array.toJSONString(), CodeLanguage.JSON));
                 }
@@ -205,16 +204,16 @@ public class StandardReporter implements Reporter {
 
     private void writeExtractorResults(ExtentTest node, List<SampleResult> results) {
         if (Objects.nonNull(results) && !results.isEmpty()) {
-            ExtentTest ex = node.createNode("EXTRACTORS");
+            var ex = node.createNode("EXTRACTORS");
             results.forEach(result -> ex.info(MarkupHelper.createCodeBlock(result.getSamplerData(), CodeLanguage.JSON)));
         }
 
     }
 
     private JSONArray convertHeaders(List<Map<String, String>> headers) {
-        JSONArray array = new JSONArray(headers.size());
-        for (Map<String, String> requestHeader : headers) {
-            for (Map.Entry<String, String> entry : requestHeader.entrySet()) {
+        var array = new JSONArray(headers.size());
+        for (var requestHeader : headers) {
+            for (var entry : requestHeader.entrySet()) {
                 array.add(entry.getKey() + ": " + entry.getValue());
             }
         }
@@ -222,9 +221,9 @@ public class StandardReporter implements Reporter {
     }
 
     private Markup convertValidator(VerifyResult result) {
-        JSONArray array = new JSONArray();
+        var array = new JSONArray();
         if (result.isSuccessful() && JSON.isValidObject(result.getContext())) {
-            JSONObject object = JSONObject.parseObject(result.getContext());
+            var object = JSONObject.parseObject(result.getContext());
             object.forEach((key, value) -> array.add(key + ": " + value));
         } else {
             array.add("testclass: " + result.getName());
@@ -247,9 +246,9 @@ public class StandardReporter implements Reporter {
     }
 
     private void prepare(Result result) {
-        Object outputDirectoryName = System.getProperty(REPORT_OUTPUT, "./out-put") + "/"
+        var outputDirectoryName = System.getProperty(REPORT_OUTPUT, "./out-put") + "/"
                 + DateUtils.nowStr() + "/" + result.getTitle();
-        ExtentSparkReporter reporter = new ExtentSparkReporter(outputDirectoryName + "/index.html");
+        var reporter = new ExtentSparkReporter(outputDirectoryName + "/index.html");
         reporter.config().setDocumentTitle(result.getTitle() + " Report - Generated by migoo");
         reporter.config().setReportName(result.getTitle() + " Reports</span></a></li>\n" +
                 "<li><a href='https://github.com/XiaoMiSum/migoo' target=\"_blank\"><span>" +

@@ -37,9 +37,6 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
@@ -54,7 +51,7 @@ public class CommandLine {
             if (args == null || args.length == 0 || "-h".equals(args[0]) || "-ext".equals(args[0])) {
                 CommandLine.printHelp();
             } else {
-                List<String> arrays = Arrays.asList(args);
+                var arrays = Arrays.asList(args);
                 if (!arrays.contains("-h2m") && !arrays.contains("p2m") && !arrays.contains("-f")) {
                     CommandLine.unsupportedCommand();
                 } else {
@@ -100,7 +97,7 @@ public class CommandLine {
 
     public static void convert2Sampler(String command, String param) {
         if ("-h2m".equals(command) || "-p2m".equals(command)) {
-            File file = new File(param);
+            var file = new File(param);
             if (file.exists() && file.isFile()) {
                 ConvertFactory.convert(command, file);
                 System.out.println("取样器转换结束....");
@@ -121,7 +118,7 @@ public class CommandLine {
         if (file == null || file.isEmpty()) {
             CommandLine.printHelp();
         } else {
-            JSONObject yaml = Loader.toJavaObject(file, JSONObject.class);
+            var yaml = Loader.toJavaObject(file, JSONObject.class);
             System.setProperty("migoo.report.output", report);
             System.out.println("用例解析完成....");
             MiGoo.start(yaml);
@@ -134,7 +131,7 @@ public class CommandLine {
         if (dir.exists() && dir.isDirectory()) {
             File[] files = dir.listFiles(file -> file.exists() && file.isFile() && file.getName().endsWith(".jar"));
             if (files != null) {
-                for (File file : files) {
+                for (var file : files) {
                     loadClasspath(file);
                 }
             }
@@ -153,14 +150,14 @@ public class CommandLine {
         }
 
         public void loadClass() throws Exception {
-            Enumeration<JarEntry> entries = new JarFile(file).entries();
+            var entries = new JarFile(file).entries();
             while (entries.hasMoreElements()) {
-                String fullName = entries.nextElement().getName();
+                var fullName = entries.nextElement().getName();
                 if (!fullName.contains("META-INF") && fullName.endsWith(".class")) {
-                    String className = fullName.substring(0, fullName.length() - 6).replace("/", ".");
-                    Class<?> clz = super.loadClass(className);
+                    var className = fullName.substring(0, fullName.length() - 6).replace("/", ".");
+                    var clz = super.loadClass(className);
                     if (Function.class.isAssignableFrom(clz)) {
-                        FunctionService.addService((Function) clz.newInstance());
+                        FunctionService.addService((Function) clz.getConstructor().newInstance());
                     } else if (TestElement.class.isAssignableFrom(clz)) {
                         TestElementService.addService((Class<? extends TestElement>) clz);
                     }
