@@ -53,7 +53,7 @@ public class JsonRead implements Function {
         if (args.getString(0).isEmpty() || args.getString(1).isEmpty()) {
             throw new IllegalArgumentException("json or jsonpath con not be null");
         }
-        return args.get(0) instanceof String ? JSONPath.extract((String) args.get(0), args.getString(1)) :
-                JSONPath.extract(JSON.toJSONString(args.get(0)), args.getString(1));
+        return args.getFirst() instanceof String str ? JSONPath.extract(str, args.getString(1)) :
+                JSONPath.extract(JSON.toJSONString(args.getFirst()), args.getString(1));
     }
 }

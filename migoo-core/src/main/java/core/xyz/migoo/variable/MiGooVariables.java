@@ -33,8 +33,6 @@ import core.xyz.migoo.testelement.MiGooProperty;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.regex.Matcher;
 
 import static core.xyz.migoo.variable.VariableUtils.*;
 
@@ -89,7 +87,7 @@ public class MiGooVariables implements VariableStateListener {
     public void mergeVariable(MiGooVariables other) {
         if (other != null) {
             other.convertVariable();
-            MiGooVariables copy = new MiGooVariables(getProperty());
+            var copy = new MiGooVariables(getProperty());
             this.getProperty().clear();
             this.putAll(other);
             this.putAll(copy);
@@ -110,32 +108,30 @@ public class MiGooVariables implements VariableStateListener {
 
     public void convertVariables(JSONObject dataMapping) {
         if (dataMapping != null) {
-            Set<Map.Entry<String, Object>> entries = dataMapping.entrySet();
-            for (Map.Entry<String, Object> entry : entries) {
-                Object v = entry.getValue();
-                if (v instanceof String) {
-                    dataMapping.put(entry.getKey(), extractVariables((String) v));
-                } else if (v instanceof JSONObject) {
-                    convertVariables((JSONObject) v);
-                } else if (v instanceof JSONArray) {
-                    convertVariables((JSONArray) v);
-                } else if (v instanceof MiGooVariables) {
-                    convertVariables(((MiGooVariables) v).getProperty());
+            var entries = dataMapping.entrySet();
+            for (var entry : entries) {
+                var v = entry.getValue();
+                switch (v) {
+                    case String s -> dataMapping.put(entry.getKey(), extractVariables(s));
+                    case JSONObject en -> convertVariables(en);
+                    case JSONArray en -> convertVariables(en);
+                    case MiGooVariables en -> convertVariables(en.getProperty());
+                    default -> dataMapping.put(entry.getKey(), v);
                 }
             }
         }
     }
 
     private void convertVariables(JSONArray dataMapping) {
-        JSONArray temp = new JSONArray();
+        var temp = new JSONArray();
         for (int i = 0; i < dataMapping.size(); i++) {
-            Object item = dataMapping.get(i);
-            if (item instanceof String) {
-                item = extractVariables((String) item);
-            } else if (item instanceof JSONObject) {
-                convertVariables((JSONObject) item);
-            } else if (item instanceof JSONArray) {
-                convertVariables((JSONArray) item);
+            var item = dataMapping.get(i);
+            if (item instanceof String string) {
+                item = extractVariables(string);
+            } else if (item instanceof JSONObject entry) {
+                convertVariables(entry);
+            } else if (item instanceof JSONArray objects) {
+                convertVariables(objects);
             }
             temp.add(i, item);
         }
@@ -154,13 +150,13 @@ public class MiGooVariables implements VariableStateListener {
     }
 
     private Object extractVariable(String value) {
-        Matcher matcher = VARS_PATTERN.matcher(value);
+        var matcher = VARS_PATTERN.matcher(value);
         int x = 0;
         while (matcher.find(x)) {
             x = matcher.end();
-            String temp = matcher.group();
-            String key = matcher.group(1);
-            Object v = propMap.get(key);
+            var temp = matcher.group();
+            var key = matcher.group(1);
+            var v = propMap.get(key);
             if (Objects.isNull(v)) {
                 continue;
             }
@@ -168,7 +164,7 @@ public class MiGooVariables implements VariableStateListener {
                 // 字符串可以解析为 json 不允许出现在多变量组合的情况
                 return JSON.parse((String) v);
             } else if (v instanceof String) {
-                Object result = evalVariable((String) v);
+                var result = evalVariable((String) v);
                 if (result instanceof String s) {
                     // 变量计算结果为字符串时进行变量替换，同时继续判断字符串中是否还存在变量引用
                     value = value.replace(temp, s);
@@ -187,9 +183,9 @@ public class MiGooVariables implements VariableStateListener {
     }
 
     private Object evalVariable(String v) {
-        Matcher func = FUNC_PATTERN.matcher(v);
+        var func = FUNC_PATTERN.matcher(v);
         while (func.find()) {
-            Object result = FunctionService.execute(func.group(1), func.group(2), this);
+            var result = FunctionService.execute(func.group(1), func.group(2), this);
             if (result instanceof String && (JSON.isValidObject((String) result) || JSON.isValidArray((String) result))) {
                 // 字符串可以解析为 json 不允许出现在多变量组合的情况
                 return JSON.parse((String) result);

@@ -59,21 +59,20 @@ public class TimeShift implements Function {
      */
     @Override
     public String execute(Args args) {
-        String format = args.getString(0);
-        LocalDateTime localDateTimeToShift = LocalDateTime.now(systemDefaultZoneId);
+        var format = args.getString(0);
+        var localDateTimeToShift = LocalDateTime.now(systemDefaultZoneId);
         DateTimeFormatter dateTimeFormatter = null;
         if (!format.isEmpty()) {
             dateTimeFormatter = createFormatter(format, Locale.getDefault());
         }
-        String amount = args.getString(1);
+        var amount = args.getString(1);
         if (!amount.isEmpty()) {
-            Duration duration = Duration.parse(amount);
-            localDateTimeToShift = localDateTimeToShift.plus(duration);
+            localDateTimeToShift = localDateTimeToShift.plus(Duration.parse(amount));
         }
         if (dateTimeFormatter != null) {
             return localDateTimeToShift.format(dateTimeFormatter);
         }
-        ZoneOffset offset = ZoneOffset.systemDefault().getRules().getOffset(localDateTimeToShift);
+        var offset = ZoneOffset.systemDefault().getRules().getOffset(localDateTimeToShift);
         return String.valueOf(localDateTimeToShift.toInstant(offset).toEpochMilli());
     }
 

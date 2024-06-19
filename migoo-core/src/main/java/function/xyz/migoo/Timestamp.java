@@ -47,12 +47,11 @@ public class Timestamp implements Function {
      */
     @Override
     public String execute(Args args) {
-        LocalDateTime localDateTime = LocalDateTime.now(ZoneId.systemDefault());
+        var localDateTime = LocalDateTime.now(ZoneId.systemDefault());
         if (args.getString(0).isEmpty()) {
-            ZoneOffset offset = ZoneOffset.systemDefault().getRules().getOffset(localDateTime);
+            var offset = ZoneOffset.systemDefault().getRules().getOffset(localDateTime);
             return String.valueOf(localDateTime.toInstant(offset).toEpochMilli());
         }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(args.getString(0));
-        return localDateTime.format(formatter);
+        return localDateTime.format(DateTimeFormatter.ofPattern(args.getString(0)));
     }
 }

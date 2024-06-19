@@ -27,16 +27,11 @@ package core.xyz.migoo.engine;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SpecVersion;
-import com.networknt.schema.ValidationMessage;
 import org.apache.commons.lang3.StringUtils;
+import util.xyz.migoo.reader.ReaderFactor;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -48,8 +43,9 @@ public class TestPlanValidator {
         if (StringUtils.isBlank(element)) {
             return;
         }
-        String schema = ResourceReader.read(String.format("json-schema/%s.json", element.toLowerCase(Locale.ROOT)));
-        String message = Optional.of(validJson(value, schema)).orElse("");
+        String path = String.format("json-schema/%s.json", element.toLowerCase(Locale.ROOT));
+        var schema = ReaderFactor.getReader(true, path).read();
+        var message = Optional.of(validJson(value, schema)).orElse("");
         if (StringUtils.isNotEmpty(message)) {
             throw new RuntimeException(element + " 校验异常, " + message);
         }
@@ -64,34 +60,19 @@ public class TestPlanValidator {
      */
     public static String validJson(JSONObject object, String validParam) {
         try {
-            JsonSchemaFactory factory = JsonSchemaFactory
+            var factory = JsonSchemaFactory
                     .builder(JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012))
                     .objectMapper(mapper)
                     .build();
-            JsonSchema schema = factory.getSchema(validParam);
-            Iterator<ValidationMessage> messages = schema.validate(mapper.readTree(object.toJSONString())).iterator();
-            StringBuilder message = new StringBuilder();
+            var schema = factory.getSchema(validParam);
+            var messages = schema.validate(mapper.readTree(object.toJSONString())).iterator();
+            var message = new StringBuilder();
             while (messages.hasNext()) {
                 message.append(message.isEmpty() ? "errorMessage: " : ", ").append(messages.next().getMessage());
             }
             return message.toString();
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    public static class ResourceReader {
-
-        public static String read(String path) {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            try (InputStream is = classLoader.getResourceAsStream(path)) {
-                assert is != null;
-                byte[] bytes = new byte[is.available()];
-                is.read(bytes);
-                return new String(bytes, StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 }

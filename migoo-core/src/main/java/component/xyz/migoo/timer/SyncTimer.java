@@ -51,7 +51,7 @@ public class SyncTimer extends AbstractTestElement implements PostProcessor {
 
     @Override
     public SampleResult process() {
-        SampleResult result = new SampleResult(this.getClass().toString());
+        var result = new SampleResult(this.getClass().toString());
         if (timeout > 0) {
             synchronized (this) {
                 try {

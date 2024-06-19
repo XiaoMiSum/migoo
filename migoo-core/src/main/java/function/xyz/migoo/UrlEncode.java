@@ -28,8 +28,8 @@ package function.xyz.migoo;
 import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author xiaomi
@@ -46,10 +46,6 @@ public class UrlEncode implements Function {
         if (args.getString(0).isEmpty()) {
             throw new IllegalArgumentException("content con not be null");
         }
-        try {
-            return URLEncoder.encode(args.getString(0), "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
-        }
+        return URLEncoder.encode(args.getString(0), StandardCharsets.UTF_8);
     }
 }

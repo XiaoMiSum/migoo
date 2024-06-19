@@ -28,7 +28,6 @@ package component.xyz.migoo.assertion.rule;
 import core.xyz.migoo.assertion.Rule;
 import core.xyz.migoo.testelement.Alias;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -40,8 +39,8 @@ public class Regex extends BaseRule implements Rule {
 
     @Override
     public boolean assertThat(Object actual, Object expected) {
-        Pattern pattern = Pattern.compile(objectToString(expected));
-        Matcher matcher = pattern.matcher(objectToString(actual));
+        var pattern = Pattern.compile(objectToString(expected));
+        var matcher = pattern.matcher(objectToString(actual));
         return matcher.matches();
     }
 }

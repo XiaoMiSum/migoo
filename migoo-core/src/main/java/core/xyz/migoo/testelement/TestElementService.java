@@ -46,7 +46,7 @@ public class TestElementService {
     private static final Map<String, Class<? extends TestElement>> SERVICES = new HashMap<>(20);
 
     static {
-        for (TestElement element : ServiceLoader.load(TestElement.class)) {
+        for (var element : ServiceLoader.load(TestElement.class)) {
             addService(element.getClass());
         }
     }
@@ -71,7 +71,7 @@ public class TestElementService {
         Alias annotation = clazz.getAnnotation(Alias.class);
         if (annotation != null) {
             String[] aliasList = annotation.value();
-            for (String alias : aliasList) {
+            for (var alias : aliasList) {
                 SERVICES.put(alias.toLowerCase(), clazz);
             }
         }
@@ -83,19 +83,18 @@ public class TestElementService {
     }
 
     public static Result runTest(TestElement el, SampleResult... sampleResults) {
-        Result result = null;
-        if (el instanceof Sampler) {
-            result = ((Sampler) el).sample();
-        } else if (el instanceof Processor) {
-            result = ((Processor) el).process();
-        } else if (el instanceof Extractor) {
-            result = ((Extractor) el).process(sampleResults[0]);
-        } else if (el instanceof Assertion) {
-            VerifyResult aResult = ((Assertion) el).getResult(sampleResults[0]);
-            sampleResults[0].setSuccessful(!sampleResults[0].isSuccessful() ? sampleResults[0].isSuccessful() : aResult.isSuccessful());
-            sampleResults[0].getAssertionResults().add(aResult);
-        }
-        return result;
+        return switch (el) {
+            case Sampler s -> s.sample();
+            case Processor p -> p.process();
+            case Extractor e -> e.process(sampleResults[0]);
+            case Assertion a -> {
+                VerifyResult aResult = a.getResult(sampleResults[0]);
+                sampleResults[0].setSuccessful(!sampleResults[0].isSuccessful() ? sampleResults[0].isSuccessful() : aResult.isSuccessful());
+                sampleResults[0].getAssertionResults().add(aResult);
+                yield null;
+            }
+            default -> throw new RuntimeException("不支持的测试元件：" + el.getClass().getName());
+        };
     }
 
     public static void prepare(TestElement el, JSONObject properties, MiGooVariables... variables) {
@@ -103,20 +102,20 @@ public class TestElementService {
         if (variables.length > 0) {
             el.setVariables(variables[0]);
         }
-        if (el instanceof VariableStateListener) {
-            ((VariableStateListener) el).convertVariable();
+        if (el instanceof VariableStateListener vsl) {
+            vsl.convertVariable();
         }
     }
 
     public static void testStarted(TestElement el) {
-        if (el instanceof TestStateListener) {
-            ((TestStateListener) el).testStarted();
+        if (el instanceof TestStateListener tsl) {
+            tsl.testStarted();
         }
     }
 
     public static void testEnded(TestElement el) {
-        if (el instanceof TestStateListener) {
-            ((TestStateListener) el).testEnded();
+        if (el instanceof TestStateListener tsl) {
+            tsl.testEnded();
         }
     }
 

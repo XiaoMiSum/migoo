@@ -32,7 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author xiaomi
@@ -43,7 +42,7 @@ public abstract class BaseRule {
             ThreadLocal.withInitial(BaseRule::createDecimalFormat);
 
     private static DecimalFormat createDecimalFormat() {
-        DecimalFormat decimalFormatter = new DecimalFormat("#.#");
+        var decimalFormatter = new DecimalFormat("#.#");
         // java.text.DecimalFormat.DOUBLE_FRACTION_DIGITS == 340
         decimalFormatter.setMaximumFractionDigits(340);
         decimalFormatter.setMinimumFractionDigits(1);
@@ -55,22 +54,16 @@ public abstract class BaseRule {
     }
 
     public String objectToString(Object subj, String defaultString) {
-        String str;
         defaultString = StringUtils.isEmpty(defaultString) ? "null" : defaultString;
-        if (Objects.isNull(subj)) {
-            str = defaultString;
-        } else if (subj instanceof String) {
-            str = StringUtils.isBlank((String) subj) ? defaultString : (String) subj;
-        } else if (subj instanceof List) {
-            str = ((List<?>) subj).isEmpty() ? defaultString : JSON.toJSONString(subj);
-        } else if (subj instanceof Map) {
-            str = ((Map<?, ?>) subj).isEmpty() ? defaultString : JSON.toJSONString(subj);
-        } else if (subj instanceof Double || subj instanceof Float) {
-            str = FORMAT_THREAD_LOCAL.get().format(subj);
-        } else {
-            str = subj.toString();
-        }
-        return str;
+        return switch (subj) {
+            case String string -> StringUtils.isBlank(string) ? defaultString : string;
+            case List<?> objects -> objects.isEmpty() ? defaultString : JSON.toJSONString(objects);
+            case Map<?, ?> entry -> entry.isEmpty() ? defaultString : JSON.toJSONString(entry);
+            case Double ignored -> FORMAT_THREAD_LOCAL.get().format(subj);
+            case Float ignored -> FORMAT_THREAD_LOCAL.get().format(subj);
+            case null -> defaultString;
+            default -> subj.toString();
+        };
     }
 
 }

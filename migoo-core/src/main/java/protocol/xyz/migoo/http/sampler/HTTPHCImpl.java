@@ -71,7 +71,7 @@ public class HTTPHCImpl extends Request implements HTTPConstantsInterface {
     }
 
     public HTTPHCImpl cookie(JSONObject cookie) {
-        if (cookie != null && cookie.size() > 0) {
+        if (cookie != null && cookie.isEmpty()) {
             CookieStore cookieStore = new BasicCookieStore();
             BasicClientCookie clientCookie = new BasicClientCookie(cookie.getString(COOKIE_NAME), cookie.getString(COOKIE_VALUE));
             clientCookie.setPath(cookie.getString(COOKIE_PATH));

@@ -36,6 +36,7 @@ import protocol.xyz.migoo.http.sampler.HttpSampler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 标准引擎，用于执行最小的一个测试用例
@@ -56,11 +57,12 @@ public class StandardEngine extends AbstractTestEngine {
 
     @Override
     protected void runTest(Result result) {
+        var sr = (SampleResult) result;
         TestElementService.testStarted(context.getSampler());
-        ((SampleResult) result).setSamplerData((SampleResult) TestElementService.runTest(context.getSampler()));
+        sr.setSamplerData((SampleResult) Objects.requireNonNull(TestElementService.runTest(context.getSampler())));
         TestElementService.testEnded(context.getSampler());
-        runAssertions((SampleResult) result);
-        runExtractors((SampleResult) result);
+        runAssertions(sr);
+        runExtractors(sr);
     }
 
 

@@ -36,7 +36,7 @@ public class MiGooContext {
     }
 
     public static MiGooContext create(Testplan plan) {
-        MiGooContext context = new MiGooContext(plan);
+        var context = new MiGooContext(plan);
         context.addTestElements(CONFIG_ELEMENTS, plan, context.getConfigurations());
         context.addTestElements(PREPROCESSORS, plan, context.getPreprocessors());
         context.addTestElements(POSTPROCESSORS, plan, context.getPostprocessors());
@@ -53,7 +53,7 @@ public class MiGooContext {
     }
 
     private void addTestElements(String key, Testplan plan, Vector<TestElement> elements) {
-        JSONArray components = plan.getJSONArray(key);
+        var components = plan.getJSONArray(key);
         if (Objects.nonNull(components)) {
             components.forEach(item -> {
                 // 配置元件、处理器、提取器、验证器 等测试组件不可单独设置变量，设置这些组件的变量为测试集合或取样器的变量

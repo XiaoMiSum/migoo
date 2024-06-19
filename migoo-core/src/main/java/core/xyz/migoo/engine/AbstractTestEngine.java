@@ -67,7 +67,7 @@ public abstract class AbstractTestEngine implements TestEngine {
         result.sampleStart();
         // 全局变量计算 - 替换变量集本身使用的函数&变量
         context.getVariables().convertVariable();
-        logger.info("当前集合变量: " + context.getVariables().getProperty());
+        logger.info("当前集合变量: {}", context.getVariables().getProperty());
         try {
             // 准备配置元件
             prepareConfigurations();
@@ -90,7 +90,7 @@ public abstract class AbstractTestEngine implements TestEngine {
     private void prepareConfigurations() {
         List<SampleResult> results = new ArrayList<>(context.getConfigurations().size());
         context.getConfigurations().forEach(element -> {
-            SampleResult sr = new SampleResult(element.getPropertyAsString(TEST_CLASS));
+            var sr = new SampleResult(element.getPropertyAsString(TEST_CLASS));
             sr.sampleStart();
             TestElementService.testStarted(element);
             sr.setTestClass(element.getClass());
@@ -120,13 +120,13 @@ public abstract class AbstractTestEngine implements TestEngine {
         List<SampleResult> results = new ArrayList<>();
         elements.forEach(element -> {
             TestElementService.testStarted(element);
-            SampleResult result = (SampleResult) TestElementService.runTest(element);
+            var result = (SampleResult) TestElementService.runTest(element);
             result.setSubResults(new ArrayList<>());
             if (element.getProperty().containsKey(EXTRACTORS)) {
                 List<SampleResult> extractorResults = new ArrayList<>();
                 for (int i = 0; i < element.getPropertyAsJSONArray(EXTRACTORS).size(); i++) {
-                    Testplan plan = (Testplan) element.getPropertyAsJSONArray(EXTRACTORS).get(i);
-                    TestElement el = TestElementService.getService(plan.getString(TEST_CLASS));
+                    var plan = (Testplan) element.getPropertyAsJSONArray(EXTRACTORS).get(i);
+                    var el = TestElementService.getService(plan.getString(TEST_CLASS));
                     TestElementService.prepare(el, plan, element.getVariables());
                     extractorResults.add((SampleResult) TestElementService.runTest(el, result));
                     context.getVariables().convertVariables(el.getVariables().getProperty());

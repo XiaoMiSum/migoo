@@ -48,10 +48,10 @@ public class LoopEngine extends AbstractTestEngine {
     @Override
     protected void runTest(Result result) {
         result.setSubResults(new ArrayList<>());
-        for (MiGooContext child : context.getChildren()) {
+        for (var child : context.getChildren()) {
             // 如果当前是取样器执行，且父节点标记失败的，直接标记测试失败
             if (Objects.nonNull(child.getSampler()) && !result.isSuccessful()) {
-                SampleResult sResult = new SampleResult(child.getTitle());
+                var sResult = new SampleResult(child.getTitle());
                 sResult.setSuccessful(false);
                 sResult.setTestClass(child.getSampler().getClass());
                 sResult.sampleStart();
@@ -61,9 +61,9 @@ public class LoopEngine extends AbstractTestEngine {
                 result.getSubResults().add(sResult);
                 continue;
             }
-            TestEngine engine = Objects.isNull(child.getSampler()) ? new LoopEngine(child, context.getVariables())
+            var engine = Objects.isNull(child.getSampler()) ? new LoopEngine(child, context.getVariables())
                     : new StandardEngine(child, context.getVariables());
-            Result sResult = engine.runTest();
+            var sResult = engine.runTest();
             result.getSubResults().add(sResult);
             result.setSuccessful(result.isSuccessful() ? sResult.isSuccessful() : result.isSuccessful());
             if (engine instanceof StandardEngine) {

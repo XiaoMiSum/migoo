@@ -40,9 +40,9 @@ public class JSONExtractor extends AbstractExtractor {
 
     @Override
     public SampleResult process(SampleResult result) {
-        String jsonStr = result.getResponseDataAsString();
-        String path = getPropertyAsString(FIELD);
-        Object value = JSONPath.extract(jsonStr, path);
+        var jsonStr = result.getResponseDataAsString();
+        var path = getPropertyAsString(FIELD);
+        var value = JSONPath.extract(jsonStr, path);
         getVariables().put(getPropertyAsString(VARIABLE_NAME), Objects.isNull(value) ? "def_value" : value);
         getProperty().put("value", Objects.isNull(value) ? "def_value" : value);
         return getResult(new SampleResult("JSONExtractor"));

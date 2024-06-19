@@ -32,7 +32,7 @@ import core.xyz.migoo.variable.VariableStateListener;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author xiaomi
@@ -66,7 +66,7 @@ public abstract class AbstractTestElement implements TestElement, VariableStateL
 
     @Override
     public void convertVariable() {
-        MiGooVariables variables = getVariables();
+        var variables = getVariables();
         if (variables != null) {
             variables.convertVariables(getProperty());
         }
@@ -92,61 +92,61 @@ public abstract class AbstractTestElement implements TestElement, VariableStateL
 
     @Override
     public Object removeProperty(String key) {
-        String lowerKey = key.toLowerCase();
+        var lowerKey = key.toLowerCase();
         return propMap.remove(lowerKey);
     }
 
     @Override
     public byte[] getPropertyAsByteArray(String key) {
-        Object obj = get(key);
-        return Objects.isNull(obj) || !obj.getClass().isArray() ? null : (byte[]) obj;
+        var lowerKey = key.toLowerCase();
+        return propMap.getBytes(lowerKey);
     }
 
     @Override
     public boolean getPropertyAsBoolean(String key) {
-        String lowerKey = key.toLowerCase();
+        var lowerKey = key.toLowerCase();
         return propMap.getBooleanValue(lowerKey);
     }
 
     @Override
     public long getPropertyAsLong(String key) {
-        String lowerKey = key.toLowerCase();
+        var lowerKey = key.toLowerCase();
         return propMap.getLongValue(lowerKey);
     }
 
     @Override
     public int getPropertyAsInt(String key) {
-        String lowerKey = key.toLowerCase();
+        var lowerKey = key.toLowerCase();
         return propMap.getIntValue(lowerKey);
     }
 
     @Override
     public float getPropertyAsFloat(String key) {
-        String lowerKey = key.toLowerCase();
+        var lowerKey = key.toLowerCase();
         return propMap.getFloatValue(lowerKey);
     }
 
     @Override
     public double getPropertyAsDouble(String key) {
-        String lowerKey = key.toLowerCase();
+        var lowerKey = key.toLowerCase();
         return propMap.getDoubleValue(lowerKey);
     }
 
     @Override
     public String getPropertyAsString(String key) {
-        String lowerKey = key.toLowerCase();
+        var lowerKey = key.toLowerCase();
         return propMap.getString(lowerKey);
     }
 
     @Override
     public JSONObject getPropertyAsJSONObject(String key) {
-        String lowerKey = key.toLowerCase();
+        var lowerKey = key.toLowerCase();
         return propMap.getJSONObject(lowerKey);
     }
 
     @Override
     public JSONArray getPropertyAsJSONArray(String key) {
-        String lowerKey = key.toLowerCase();
+        var lowerKey = key.toLowerCase();
         return propMap.getJSONArray(lowerKey);
     }
 
@@ -158,20 +158,18 @@ public abstract class AbstractTestElement implements TestElement, VariableStateL
 
     @Override
     public Object get(String key, Object defaultValue) {
-        String lowerKey = key.toLowerCase();
-        Object obj = propMap.get(lowerKey);
-        return obj == null ? defaultValue : obj;
+        var lowerKey = key.toLowerCase();
+        var obj = propMap.get(lowerKey);
+        return Optional.ofNullable(obj).orElse(defaultValue);
     }
 
     @Override
     public MiGooProperty getPropertyAsMiGooProperty(String key) {
         Object object = get(key);
-        if (object instanceof MiGooProperty) {
-            return (MiGooProperty) object;
-        }
-        if (object instanceof Map) {
-            return new MiGooProperty((Map<String, Object>) object);
-        }
-        return null;
+        return switch (object) {
+            case MiGooProperty property -> property;
+            case Map<?, ?> property -> new MiGooProperty(property);
+            case null, default -> null;
+        };
     }
 }

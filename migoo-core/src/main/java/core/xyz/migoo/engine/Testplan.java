@@ -28,7 +28,6 @@ package core.xyz.migoo.engine;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.sampler.Sampler;
-import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestElementService;
 import core.xyz.migoo.variable.MiGooVariables;
 
@@ -48,8 +47,8 @@ public class Testplan extends JSONObject {
 
     public Testplan(JSONObject json) {
         // 同时包含 children 和 title 这两个key 即 认为是 migoo 的测试集合
-        boolean isMiGooSuite = json.containsKey(CHILDREN) && json.containsKey(TITLE);
-        Class<? extends TestElement> clazz = TestElementService.getServiceClass(json.getString(TEST_CLASS));
+        var isMiGooSuite = json.containsKey(CHILDREN) && json.containsKey(TITLE);
+        var clazz = TestElementService.getServiceClass(json.getString(TEST_CLASS));
         sampler = Objects.nonNull(clazz) && Sampler.class.isAssignableFrom(clazz);
         TestPlanValidator.verify(json, isMiGooSuite ? sampler ? clazz.getSimpleName() : "testsuite" : "");
         // migoo 测试集合 或者 注册的 test class 都是 migoo 测试组件
@@ -58,17 +57,17 @@ public class Testplan extends JSONObject {
 
     private void initialize(JSONObject json, boolean isMiGoo) {
         // 1、先删除 MiGoo组件中的变量，减少一次遍历
-        Object variables = isMiGoo ? json.remove(VARIABLES) : null;
+        var variables = isMiGoo ? json.remove(VARIABLES) : null;
         json.forEach((key, value) -> {
             // 将 migoo 测试组件 的key 转换为小写
-            String newKey = isMiGoo ? key.toLowerCase(Locale.ROOT) : key;
+            var newKey = isMiGoo ? key.toLowerCase(Locale.ROOT) : key;
             if (value instanceof Map) {
                 put(newKey, parse(json.getJSONObject(key)));
             } else if (value instanceof List) {
-                JSONArray array = json.getJSONArray(key);
-                JSONArray newValue = new JSONArray(array.size());
+                var array = json.getJSONArray(key);
+                var newValue = new JSONArray(array.size());
                 for (int i = 0; i < array.size(); i++) {
-                    Object item = array.get(i);
+                    var item = array.get(i);
                     // 这里主要是为了处理 配置的子组件，组件配置一定是Map
                     if (item instanceof Map) {
                         newValue.add(parse(array.getJSONObject(i)));
@@ -89,8 +88,8 @@ public class Testplan extends JSONObject {
     }
 
     private JSONObject parse(JSONObject json) {
-        boolean isMiGooSuite = json.containsKey(CHILDREN) && json.containsKey(TITLE);
-        Class<? extends TestElement> clazz = TestElementService.getServiceClass(json.getString(TEST_CLASS));
+        var isMiGooSuite = json.containsKey(CHILDREN) && json.containsKey(TITLE);
+        var clazz = TestElementService.getServiceClass(json.getString(TEST_CLASS));
         if (isMiGooSuite || Objects.nonNull(clazz)) {
             return new Testplan(json);
         } else {

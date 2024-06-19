@@ -37,6 +37,10 @@ protocol.xyz.migoo.http.config.HttpDefaults
 protocol.xyz.migoo.http.processer.HttpPreProcessor
 protocol.xyz.migoo.http.processer.HttpPostProcessor
 protocol.xyz.migoo.http.sampler.HttpSampler
+protocol.xyz.migoo.debug.coinfig.DebugDefaults
+protocol.xyz.migoo.debug.processer.DebugPreprocessor
+protocol.xyz.migoo.debug.processer.DebugPostprocessor
+protocol.xyz.migoo.debug.sampler.DebugSampler
 component.xyz.migoo.assertion.JSONAssertion
 component.xyz.migoo.assertion.HTTPResponseAssertion
 component.xyz.migoo.assertion.ResultAssertion
@@ -44,5 +48,6 @@ component.xyz.migoo.extractor.JSONExtractor
 component.xyz.migoo.extractor.RegexExtractor
 component.xyz.migoo.extractor.ResultExtractor
 component.xyz.migoo.timer.SyncTimer
+
 
 

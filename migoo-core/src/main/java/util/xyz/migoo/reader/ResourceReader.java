@@ -25,8 +25,6 @@
 
 package util.xyz.migoo.reader;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 public class ResourceReader implements Reader {
@@ -38,13 +36,11 @@ public class ResourceReader implements Reader {
     }
 
     public String read() {
-        try {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            InputStream is = classLoader.getResourceAsStream(path);
+        try (var is = Thread.currentThread().getContextClassLoader().getResourceAsStream(path)) {
             byte[] bytes = new byte[is.available()];
             is.read(bytes);
             return new String(bytes, StandardCharsets.UTF_8);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

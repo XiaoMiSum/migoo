@@ -45,7 +45,7 @@ public class Loader {
      * @return java对象
      */
     public static <T> T toJavaObject(String path, Class<T> clazz) {
-        boolean isClasspath = path.startsWith(CLASSPATH);
+        var isClasspath = path.startsWith(CLASSPATH);
         path = isClasspath ? path.substring(CLASSPATH.length()) : path;
         return toJavaObject(path, isClasspath, clazz);
     }
@@ -59,18 +59,18 @@ public class Loader {
      * @return java对象
      */
     public static <T> T toJavaObject(String path, boolean isClasspath, Class<T> clazz) {
-        Object result = toJSON(path, isClasspath);
+        var result = toJSON(path, isClasspath);
         return JSON.parseObject(result.toString(), clazz);
     }
 
     public static Object toJSON(String path) {
-        boolean isClasspath = path.startsWith(CLASSPATH);
+        var isClasspath = path.startsWith(CLASSPATH);
         path = isClasspath ? path.substring(CLASSPATH.length()) : path;
         return toJSON(path, isClasspath);
     }
 
     public static Object toJSON(String path, boolean isClasspath) {
-        String content = ReaderFactor.getReader(isClasspath, path).read();
+        var content = ReaderFactor.getReader(isClasspath, path).read();
         return JSON.toJSON(new Yaml().load(content));
     }
 }

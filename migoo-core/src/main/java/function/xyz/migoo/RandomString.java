@@ -44,8 +44,8 @@ public class RandomString implements Function {
     @Override
     public String execute(Args args) {
         int length = args.getNumber(0) == null ? 10 : args.getNumber(0).intValue();
-        String charsToUse = args.getString(1);
-        String randomString = charsToUse.isEmpty() ? RandomStringUtils.randomAlphabetic(length)
+        var charsToUse = args.getString(1);
+        var randomString = charsToUse.isEmpty() ? RandomStringUtils.randomAlphabetic(length)
                 : RandomStringUtils.random(length, charsToUse);
         return args.getBooleanValue(2) ? randomString.toUpperCase() : randomString;
     }

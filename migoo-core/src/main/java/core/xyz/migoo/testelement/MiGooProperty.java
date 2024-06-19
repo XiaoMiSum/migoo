@@ -39,7 +39,7 @@ public class MiGooProperty extends JSONObject {
         super(16);
     }
 
-    public MiGooProperty(Map<String, Object> map) {
+    public MiGooProperty(Map<?, ?> map) {
         super(map);
     }
 

@@ -37,7 +37,7 @@ public class ResultExtractor extends AbstractExtractor {
 
     @Override
     public SampleResult process(SampleResult result) {
-        Object value = result.getResponseDataAsString();
+        var value = result.getResponseDataAsString();
         getVariables().put(getPropertyAsString(VARIABLE_NAME), value);
         getProperty().put(VALUE, value);
         return getResult(new SampleResult("ResultExtractor"));

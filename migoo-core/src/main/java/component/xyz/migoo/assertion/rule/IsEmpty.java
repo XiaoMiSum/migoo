@@ -41,7 +41,11 @@ public class IsEmpty extends BaseRule implements Rule {
 
     @Override
     public boolean assertThat(Object actual, Object expected) {
-        return actual == null || (actual instanceof String ? StringUtils.isBlank((String) actual)
-                : actual instanceof Map ? ((Map<?, ?>) actual).isEmpty() : actual instanceof List && ((List<?>) actual).isEmpty());
+        return switch (actual) {
+            case String obj -> StringUtils.isBlank(obj);
+            case Map<?, ?> obj -> obj.isEmpty();
+            case List<?> obj -> obj.isEmpty();
+            case null, default -> true;
+        };
     }
 }

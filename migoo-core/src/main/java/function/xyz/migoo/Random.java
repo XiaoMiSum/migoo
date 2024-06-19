@@ -28,8 +28,6 @@ package function.xyz.migoo;
 import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
 
-import java.math.BigDecimal;
-
 /**
  * @author xiaomi
  */
@@ -43,8 +41,8 @@ public class Random implements Function {
      */
     @Override
     public Integer execute(Args args) {
-        BigDecimal bound = args.getNumber(0);
-        java.util.Random random = new java.util.Random();
+        var bound = args.getNumber(0);
+        var random = new java.util.Random();
         return bound != null && bound.intValue() > 0 ? random.nextInt(bound.intValue()) : random.nextInt();
     }
 }

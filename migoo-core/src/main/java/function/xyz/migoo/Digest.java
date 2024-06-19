@@ -52,14 +52,14 @@ public class Digest implements Function {
             throw new IllegalArgumentException("parameters con not be null");
         }
         if (args.size() == 1) {
-            args.add(0, "md5");
+            args.addFirst("md5");
         }
-        String algorithm = args.getString(0).isEmpty() ? "md5" : args.getString(0).trim();
+        var algorithm = args.getString(0).isEmpty() ? "md5" : args.getString(0).trim();
         if (args.getString(1).isEmpty()) {
             throw new IllegalArgumentException("content is null or empty");
         }
         try {
-            MessageDigest md = MessageDigest.getInstance(algorithm);
+            var md = MessageDigest.getInstance(algorithm);
             md.update(args.getString(1).getBytes(StandardCharsets.UTF_8));
             if (!args.getString(2).isEmpty()) {
                 md.update(args.getString(2).getBytes(StandardCharsets.UTF_8));

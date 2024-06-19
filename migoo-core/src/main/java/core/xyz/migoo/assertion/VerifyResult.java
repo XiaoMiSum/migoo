@@ -59,11 +59,9 @@ public class VerifyResult {
 
     public void setFailureMessage(Throwable throwable) {
         this.success = false;
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter);
-        throwable.printStackTrace(writer);
-        StringBuffer buffer = stringWriter.getBuffer();
-        context = buffer.toString();
+        var stringWriter = new StringWriter();
+        throwable.printStackTrace(new PrintWriter(stringWriter));
+        context = stringWriter.getBuffer().toString();
     }
 
     public String getContext() {

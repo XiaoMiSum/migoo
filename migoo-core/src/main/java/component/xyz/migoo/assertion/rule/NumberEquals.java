@@ -34,13 +34,13 @@ import java.math.BigDecimal;
  * @author xiaomi
  * Created in 2021/10/13 18:41
  */
-@Alias({"number_equals"})
+@Alias({"number_equals", "num_eq", "numeq"})
 public class NumberEquals extends BaseRule implements Rule {
 
     @Override
     public boolean assertThat(Object actual, Object expected) {
-        BigDecimal b1 = new BigDecimal(objectToString(actual, "0"));
-        BigDecimal b2 = new BigDecimal(objectToString(expected, "0"));
+        var b1 = new BigDecimal(objectToString(actual, "0"));
+        var b2 = new BigDecimal(objectToString(expected, "0"));
         return b1.compareTo(b2) == 0;
     }
 }

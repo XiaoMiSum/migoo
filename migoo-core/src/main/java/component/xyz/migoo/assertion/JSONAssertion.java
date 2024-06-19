@@ -36,12 +36,12 @@ import core.xyz.migoo.testelement.Alias;
  */
 @Alias({"JSONAssertion", "json_assertion"})
 public class JSONAssertion extends AbstractAssertion {
-    
+
     @Override
     public VerifyResult getResult(SampleResult samplerResult) {
-        VerifyResult result = new VerifyResult("JSONAssertion");
+        var result = new VerifyResult("JSONAssertion");
         try {
-            String jsonStr = samplerResult.getResponseDataAsString();
+            var jsonStr = samplerResult.getResponseDataAsString();
             setActual(JSONPath.extract(jsonStr, getPropertyAsString(FIELD)));
             super.assertThat(result);
         } catch (Exception e) {

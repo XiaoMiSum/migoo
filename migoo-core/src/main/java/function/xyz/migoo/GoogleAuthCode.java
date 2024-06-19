@@ -63,10 +63,10 @@ public class GoogleAuthCode implements Function {
         private static final int BYTES_PER_SCRATCH_CODE = 4;
 
         public static String generateVerifyCode(String secretKey) {
-            long t = (System.currentTimeMillis() / 1000L) / 30L;
+            var t = (System.currentTimeMillis() / 1000L) / 30L;
             byte[] decodedKey = new Base32().decode(secretKey);
             try {
-                String code = String.valueOf(generateVerifyCode(decodedKey, t));
+                var code = String.valueOf(generateVerifyCode(decodedKey, t));
                 return code.length() == LENGTH ? "0" + code : code;
             } catch (Exception e) {
                 throw new RuntimeException("generateVerifyCode exception", e);
@@ -75,18 +75,18 @@ public class GoogleAuthCode implements Function {
 
         private static int generateVerifyCode(byte[] key, long t) throws NoSuchAlgorithmException, InvalidKeyException {
             byte[] data = new byte[8];
-            long value = t;
-            for (int i = SCRATCH_CODE_LENGTH; i-- > 0; value >>>= SCRATCH_CODE_LENGTH) {
+            var value = t;
+            for (var i = SCRATCH_CODE_LENGTH; i-- > 0; value >>>= SCRATCH_CODE_LENGTH) {
                 data[i] = (byte) value;
             }
-            SecretKeySpec signKey = new SecretKeySpec(key, "HmacSHA1");
-            Mac mac = Mac.getInstance("HmacSHA1");
+            var signKey = new SecretKeySpec(key, "HmacSHA1");
+            var mac = Mac.getInstance("HmacSHA1");
             mac.init(signKey);
             byte[] hash = mac.doFinal(data);
-            int offset = hash[20 - 1] & 0xF;
+            var offset = hash[20 - 1] & 0xF;
             // We're using a long because Java hasn't got unsigned int.
-            long truncatedHash = 0;
-            for (int i = 0; i < BYTES_PER_SCRATCH_CODE; ++i) {
+            var truncatedHash = 0;
+            for (var i = 0; i < BYTES_PER_SCRATCH_CODE; ++i) {
                 truncatedHash <<= 8;
                 // We are dealing with signed bytes:
                 // we just keep the first byte.
@@ -94,7 +94,7 @@ public class GoogleAuthCode implements Function {
             }
             truncatedHash &= 0x7FFFFFFF;
             truncatedHash %= 1000000;
-            return (int) truncatedHash;
+            return truncatedHash;
         }
     }
 }

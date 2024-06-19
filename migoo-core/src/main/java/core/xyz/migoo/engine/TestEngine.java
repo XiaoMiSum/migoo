@@ -45,9 +45,9 @@ public interface TestEngine {
      * @return 测试结果
      */
     static Result runTest(Testplan plan, Reporter reporter) {
-        MiGooContext context = MiGooContext.create(plan);
-        TestEngine engine = plan.isSampler() ? new StandardEngine(context) : new LoopEngine(context);
-        Result result = engine.runTest();
+        var context = MiGooContext.create(plan);
+        var engine = plan.isSampler() ? new StandardEngine(context) : new LoopEngine(context);
+        var result = engine.runTest();
         if (Objects.nonNull(reporter)) {
             reporter.generateReport(result);
         }

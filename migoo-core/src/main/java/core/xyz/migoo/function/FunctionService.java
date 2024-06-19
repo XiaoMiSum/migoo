@@ -46,9 +46,9 @@ public class FunctionService {
     }
 
     public static void addService(Function service) {
-        Alias alias = service.getClass().getAnnotation(Alias.class);
+        var alias = service.getClass().getAnnotation(Alias.class);
         if (alias != null) {
-            for (String key : alias.value()) {
+            for (var key : alias.value()) {
                 SERVICES.put(key.toLowerCase(), service);
             }
         }
@@ -64,7 +64,7 @@ public class FunctionService {
     }
 
     private static Function getService(String fName) {
-        Function function = SERVICES.get(fName.toLowerCase());
+        var function = SERVICES.get(fName.toLowerCase());
         if (function == null) {
             throw new RuntimeException("No matcher the function: " + fName);
         }

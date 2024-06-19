@@ -35,7 +35,6 @@ import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -47,14 +46,16 @@ public class HTTPResponseAssertion extends AbstractAssertion {
     private static final List<String> STATUS = Arrays.asList("line", "status", "code", "statuscode", "statusline", "status_code", "status_line");
 
     private static final String CONTEXT = "context";
-    private static final Pattern PATTERN = Pattern.compile("^header(\\[\\d+])?(\\.\\w+)?");
+    private static final Pattern PATTERN = Pattern.compile("^header(\\[\\d+])?(\\.\\w+.?)?");
+
 
     @Override
     public VerifyResult getResult(SampleResult samplerResult) {
-        VerifyResult result = new VerifyResult("HTTPAssertion");
+        var result = new VerifyResult("HTTPAssertion");
         if (samplerResult instanceof HTTPSampleResult httpResult) {
-            String field = get(FIELD) == null ? CONTEXT : getPropertyAsString(FIELD).toLowerCase();
-            Matcher matcher = PATTERN.matcher(field);
+            var field = get(FIELD) == null ? CONTEXT : getPropertyAsString(FIELD).toLowerCase();
+            getProperty().put(FIELD, field);
+            var matcher = PATTERN.matcher(field);
             if (matcher.find()) {
                 String path = "$" + (matcher.group(1) == null ? "[0]" : matcher.group(1)) + matcher.group(2);
                 setActual(JSONPath.extract(JSON.toJSONString(httpResult.getResponseHeaders()), path));

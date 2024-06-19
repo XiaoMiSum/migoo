@@ -27,7 +27,6 @@ package util.xyz.migoo.reader;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -41,11 +40,11 @@ public class FileReader implements Reader {
 
     @Override
     public String read() {
-        try (FileInputStream fis = new FileInputStream(path); InputStream is = new BufferedInputStream(fis)) {
+        try (var fis = new FileInputStream(path); InputStream is = new BufferedInputStream(fis)) {
             byte[] bytes = new byte[is.available()];
             is.read(bytes);
             return new String(bytes, StandardCharsets.UTF_8);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

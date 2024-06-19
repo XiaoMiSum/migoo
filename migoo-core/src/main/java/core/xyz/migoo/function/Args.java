@@ -33,7 +33,10 @@ import core.xyz.migoo.variable.VariableUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author xiaomi
@@ -48,7 +51,7 @@ public class Args extends ArrayList<Object> {
     }
 
     public static Args newArgs(String origin, MiGooVariables variables) {
-        Args args = new Args(variables);
+        var args = new Args(variables);
         if (StringUtils.isNotBlank(origin)) {
             Collections.addAll(args, origin.split(","));
         }
@@ -57,7 +60,7 @@ public class Args extends ArrayList<Object> {
 
     @Override
     public boolean add(Object parameter) {
-        return super.add(parameter instanceof String ? getParameterValue((String) parameter) : parameter);
+        return super.add(parameter instanceof String s ? getParameterValue(s) : parameter);
     }
 
     private Object getParameterValue(String parameter) {
@@ -76,22 +79,28 @@ public class Args extends ArrayList<Object> {
     }
 
     public JSONObject getJSONObject(int index) {
-        return getString(index).isEmpty() ? null :
-                get(index) instanceof Map ? new JSONObject((Map<String, Object>) get(index)) :
-                        get(index) instanceof String ? JSONObject.parseObject(getString(index))
-                                : JSONObject.parseObject(JSONObject.toJSONString(get(index)));
+        var value = get(index);
+        return switch (value) {
+            case null -> null;
+            case String string -> StringUtils.isBlank(string) ? null : JSON.parseObject(string);
+            case Map<?, ?> entry -> new JSONObject(entry);
+            default -> JSON.parseObject(JSON.toJSONString(value));
+        };
     }
 
     public JSONArray getJSONArray(int index) {
-        return getString(index).isEmpty() ? null :
-                get(index) instanceof List ? new JSONArray((List<Object>) get(index)) :
-                        get(index) instanceof String ? JSONArray.parseArray(getString(index))
-                                : JSONArray.parseArray(JSON.toJSONString(get(index)));
+        var value = get(index);
+        return switch (value) {
+            case null -> null;
+            case String string -> StringUtils.isBlank(string) ? null : JSON.parseArray(string);
+            case List<?> objects -> new JSONArray(objects);
+            default -> JSON.parseArray(JSON.toJSONString(value));
+        };
     }
 
     public boolean getBooleanValue(int index) {
-        return !getString(index).isEmpty() &&
-                (Objects.equals(getString(index), "1") || Objects.equals(getString(index).toLowerCase(), "true"));
+        String value = getString(index);
+        return StringUtils.equalsAnyIgnoreCase(value, "1", "t", "true");
     }
 
     public MiGooVariables getCurrentVars() {
