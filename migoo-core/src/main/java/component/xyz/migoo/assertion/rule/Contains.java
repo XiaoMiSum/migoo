@@ -41,16 +41,11 @@ public class Contains extends BaseRule implements Rule {
 
     @Override
     public boolean assertThat(Object actual, Object expected) {
-        if (actual instanceof String) {
-            return ((String) actual).contains(String.valueOf(expected));
-        }
-        if (actual instanceof Map) {
-            Map map = (Map) actual;
-            return map.containsValue(expected) || map.containsKey(expected);
-        }
-        if (actual instanceof List) {
-            return ((List) actual).contains(expected);
-        }
-        return false;
+        return switch (actual) {
+            case String obj -> obj.contains(String.valueOf(expected));
+            case Map<?, ?> obj -> obj.containsValue(expected) || obj.containsKey(expected);
+            case List<?> obj -> obj.contains(expected);
+            default -> false;
+        };
     }
 }

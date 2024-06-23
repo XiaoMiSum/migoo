@@ -31,7 +31,6 @@ import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.MiGooProperty;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -58,52 +57,37 @@ public abstract class AbstractAssertion extends AbstractTestElement implements S
         convertVariable();
         String ruleStr = get(RULE) == null ? "==" : getPropertyAsString(RULE);
         Rule rule = RULES.get(ruleStr.toLowerCase(Locale.ROOT));
-        if (rule == null) {
+        if (Objects.isNull(rule)) {
             result.setFailureMessage(String.format("assert rule '%s' not found", ruleStr));
         } else {
             try {
-                prepare();
-                List<Object> objects = new ArrayList<>();
-                if (Objects.nonNull(get(EXPECTED)) && get(EXPECTED).getClass().isArray()) {
-                    verifyArray(objects, result, rule);
-                } else {
-                    if (Objects.nonNull(get(EXPECTED))) {
-                        objects.add(get(EXPECTED));
+                Object actual = get(ACTUAL);
+                Object expected = get(EXPECTED);
+                List<?> objects = switch (expected) {
+                    case Object[] os -> List.of(os);
+                    case String s -> of(s);
+                    case List<?> ls -> ls;
+                    default -> List.of(expected);
+                };
+                getProperty().put(EXPECTED, objects);
+                for (Object item : objects) {
+                    if (result.isSuccessful()) {
+                        break;
                     }
-                    result.setSuccessful(rule.assertThat(get(ACTUAL), get(EXPECTED)));
+                    result.setSuccessful(rule.assertThat(actual, item));
                 }
-                getProperty().put(EXPECTED, objects.isEmpty() ? null : objects);
-                result.setContext(result.isSuccessful() ? this.propToString() :
-                        String.format("expected value '%s', but found '%s'%s, rule: '%s'", objects, get(ACTUAL),
-                                Objects.isNull(get(FIELD)) ? "" : (", field: " + get(FIELD)), ruleStr));
+                result.setContext(toString(result.isSuccessful(), ruleStr));
             } catch (Exception e) {
                 result.setFailureMessage(e);
             }
         }
     }
 
-    private void prepare() {
-        if (!(get(EXPECTED) instanceof String)) {
-            return;
-        }
-        String expected = getPropertyAsString(EXPECTED);
+    private List<Object> of(String expected) {
         if (JSON.isValidArray(expected) || JSON.isValidObject(expected) || !expected.contains(",")) {
-            return;
-        }
-        String[] ss = ((String) get(EXPECTED)).split(",");
-        for (int i = 0; i < ss.length; i++) {
-            ss[i] = ss[i].trim();
-        }
-        getProperty().put(EXPECTED, ss);
-    }
-
-    private void verifyArray(List<Object> objects, VerifyResult result, Rule rule) {
-        for (int i = 0; i < Array.getLength(get(EXPECTED)); i++) {
-            Object obj = Array.get(get(EXPECTED), i);
-            objects.add(obj);
-            if (!result.isSuccessful()) {
-                result.setSuccessful(rule.assertThat(get(ACTUAL), obj));
-            }
+            return List.of(expected);
+        } else {
+            return List.of(expected.split(","));
         }
     }
 
@@ -111,9 +95,13 @@ public abstract class AbstractAssertion extends AbstractTestElement implements S
         getProperty().put(ACTUAL, actual);
     }
 
-    public String propToString() {
-        MiGooProperty prop = new MiGooProperty(getProperty());
-        prop.remove(VARIABLES);
-        return prop.toString();
+    public String toString(boolean success, String ruleStr) {
+        if (success) {
+            MiGooProperty prop = new MiGooProperty(getProperty());
+            prop.remove(VARIABLES);
+            return prop.toString();
+        }
+        return String.format("expected value '%s', but found '%s'%s, rule: '%s'", get(EXPECTED), get(ACTUAL),
+                Objects.isNull(get(FIELD)) ? "" : (", field: " + get(FIELD)), ruleStr);
     }
 }

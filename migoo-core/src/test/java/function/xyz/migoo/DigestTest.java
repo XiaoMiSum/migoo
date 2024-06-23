@@ -27,6 +27,8 @@ package function.xyz.migoo;
 
 import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
+import core.xyz.migoo.function.KwArgs;
+import core.xyz.migoo.function.LsArgs;
 import core.xyz.migoo.variable.MiGooVariables;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +47,18 @@ public class DigestTest {
     @Test
     public void testDigest1() {
         // 传入待签名的内容
-        Args args = new Args(new MiGooVariables());
+        KwArgs args = new KwArgs(new MiGooVariables());
+        args.put("content=112233");
+        // 默认使用MD5
+        Function function = new Digest();
+        String result = function.execute(args).toString();
+        assert result.equals(digest("md5", args.getString("content"), null, false));
+    }
+
+    @Test
+    public void testDigest2() {
+        // 传入待签名的内容
+        LsArgs args = new LsArgs(new MiGooVariables());
         args.add("112233");
         // 默认使用MD5
         Function function = new Digest();
@@ -55,9 +68,20 @@ public class DigestTest {
     }
 
     @Test
-    public void testDigest2() {
+    public void testDigest3() {
         // 传入 签名方式, 待签名的内容
-        Args args = new Args(new MiGooVariables());
+        KwArgs args = new KwArgs(new MiGooVariables());
+        args.put("algorithm=md5");
+        args.put("content=112233");
+        Function function = new Digest();
+        String result = function.execute(args).toString();
+        assert result.equals(digest(args.getString("algorithm"), args.getString("content"), null, false));
+    }
+
+    @Test
+    public void testDigest4() {
+        // 传入 签名方式, 待签名的内容
+        LsArgs args = new LsArgs(new MiGooVariables());
         args.add("md5");
         args.add("112233");
         Function function = new Digest();
@@ -66,9 +90,21 @@ public class DigestTest {
     }
 
     @Test
-    public void testDigest3() {
+    public void testDigest5() {
         // 传入 签名方式, 待签名的内容, 盐
-        Args args = new Args(new MiGooVariables());
+        KwArgs args = new KwArgs(new MiGooVariables());
+        args.put("algorithm=md5");
+        args.put("content=112233");
+        args.put("salt=aabbcc");
+        Function function = new Digest();
+        String result = function.execute(args).toString();
+        assert result.equals(digest(args.getString("algorithm"), args.getString("content"), args.getString("salt"), false));
+    }
+
+    @Test
+    public void testDigest6() {
+        // 传入 签名方式, 待签名的内容, 盐
+        LsArgs args = new LsArgs(new MiGooVariables());
         args.add("md5");
         args.add("112233");
         args.add("aabbcc");
@@ -78,9 +114,22 @@ public class DigestTest {
     }
 
     @Test
-    public void testDigest4() {
-        // 传入 签名方式, 待签名的内容, 盐, 结果转换为答谢
-        Args args = new Args(new MiGooVariables());
+    public void testDigest7() {
+        // 传入 签名方式, 待签名的内容, 盐, 结果转换为大写
+        KwArgs args = new KwArgs(new MiGooVariables());
+        args.put("algorithm=md5");
+        args.put("content=112233");
+        args.put("salt=aabbcc");
+        args.put("upper=true");
+        Function function = new Digest();
+        String result = function.execute(args).toString();
+        assert result.equals(digest(args.getString("algorithm"), args.getString("content"), args.getString("salt"), args.getBooleanValue("upper")));
+    }
+
+    @Test
+    public void testDigest8() {
+        // 传入 签名方式, 待签名的内容, 盐, 结果转换为大写
+        LsArgs args = new LsArgs(new MiGooVariables());
         args.add("md5");
         args.add("112233");
         args.add("aabbcc");
@@ -91,9 +140,22 @@ public class DigestTest {
     }
 
     @Test
-    public void testDigest5() {
-        // 传入 签名方式, 待签名的内容, 盐, 结果转换为答谢
-        Args args = new Args(new MiGooVariables());
+    public void testDigest9() {
+        // 传入 SHA-1, 待签名的内容, 盐, 结果转换为大写
+        KwArgs args = new KwArgs(new MiGooVariables());
+        args.put("algorithm=SHA-1");
+        args.put("content=112233");
+        args.put("salt=aabbcc");
+        args.put("upper=true");
+        Function function = new Digest();
+        String result = function.execute(args).toString();
+        assert result.equals(digest(args.getString("algorithm"), args.getString("content"), args.getString("salt"), args.getBooleanValue("upper")));
+    }
+
+    @Test
+    public void testDigest10() {
+        // 传入 SHA-1, 待签名的内容, 盐, 结果转换为大写
+        LsArgs args = new LsArgs(new MiGooVariables());
         args.add("SHA-1");
         //    SHA-256
         args.add("112233");
@@ -105,10 +167,24 @@ public class DigestTest {
     }
 
     @Test
-    public void testDigest6() {
-        // 传入 签名方式, 待签名的内容, 盐, 结果转换为答谢
-        Args args = new Args(new MiGooVariables());
-        args.add("SHA-256");
+    public void testDigest11() {
+        // 传入 SHA-256, 待签名的内容, 盐, 结果转换为大写
+        KwArgs args = new KwArgs(new MiGooVariables());
+        args.put("algorithm=SHA-256");
+        args.put("content=112233");
+        args.put("salt=aabbcc");
+        args.put("upper=true");
+        Function function = new Digest();
+        String result = function.execute(args).toString();
+        assert result.equals(digest(args.getString("algorithm"), args.getString("content"), args.getString("salt"), args.getBooleanValue("upper")));
+    }
+
+    @Test
+    public void testDigest12() {
+        // 传入 SHA-256, 待签名的内容, 盐, 结果转换为大写
+        LsArgs args = new LsArgs(new MiGooVariables());
+        args.add("SHA-1");
+        //    SHA-256
         args.add("112233");
         args.add("aabbcc");
         args.add(true);
@@ -118,8 +194,8 @@ public class DigestTest {
     }
 
     @Test
-    public void testDigest7() {
-        Args args = new Args(new MiGooVariables());
+    public void testDigest13() {
+        Args args = new KwArgs(new MiGooVariables());
         try {
             new Digest().execute(args);
         } catch (Exception e) {
@@ -128,8 +204,29 @@ public class DigestTest {
     }
 
     @Test
-    public void testDigest8() {
-        Args args = new Args(new MiGooVariables());
+    public void testDigest14() {
+        Args args = new LsArgs(new MiGooVariables());
+        try {
+            new Digest().execute(args);
+        } catch (Exception e) {
+            assert "parameters con not be null".equals(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testDigest15() {
+        KwArgs args = new KwArgs(new MiGooVariables());
+        args.put("content=");
+        try {
+            new Digest().execute(args);
+        } catch (Exception e) {
+            assert "content is null or empty".equals(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testDigest16() {
+        LsArgs args = new LsArgs(new MiGooVariables());
         args.add("");
         try {
             new Digest().execute(args);

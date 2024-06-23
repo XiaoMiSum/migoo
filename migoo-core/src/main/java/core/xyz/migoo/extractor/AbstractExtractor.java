@@ -40,7 +40,7 @@ public abstract class AbstractExtractor extends AbstractTestElement implements E
     public static final String VALUE = "value";
 
     protected SampleResult getResult(SampleResult result) {
-        JSONObject items = new JSONObject();
+        var items = new JSONObject();
         items.put("Extractor", this.getClass());
         items.put(FIELD, get(FIELD));
         items.put(MATCH_NUM, get(MATCH_NUM));
