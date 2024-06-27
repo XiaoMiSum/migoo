@@ -29,6 +29,11 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONPath;
 import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
+import core.xyz.migoo.function.KwArgs;
+import core.xyz.migoo.function.LsArgs;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Objects;
 
 /**
  * @author mi.xiao
@@ -48,12 +53,29 @@ public class JsonRead implements Function {
     @Override
     public Object execute(Args args) {
         if (args.isEmpty() || args.size() < 2) {
-            throw new IllegalArgumentException("args is empty or invalid args.");
+            throw new IllegalArgumentException("args is empty or invalid args. require args 'json','path'");
         }
-        if (args.getString(0).isEmpty() || args.getString(1).isEmpty()) {
+        return args instanceof KwArgs kwArgs ? execute(kwArgs) : execute((LsArgs) args);
+    }
+
+    private Object execute(KwArgs args) {
+        return execute(args.get("json"), args.getString("path"));
+    }
+
+    private Object execute(LsArgs args) {
+        return execute(args.getFirst(), args.getString(1));
+    }
+
+    private Object execute(Object json, String path) {
+        if (Objects.isNull(json) || StringUtils.isBlank(path)) {
             throw new IllegalArgumentException("json or jsonpath con not be null");
         }
-        return args.getFirst() instanceof String str ? JSONPath.extract(str, args.getString(1)) :
-                JSONPath.extract(JSON.toJSONString(args.getFirst()), args.getString(1));
+        if (json instanceof String str) {
+            if (str.isBlank()) {
+                throw new IllegalArgumentException("json or jsonpath con not be null");
+            }
+            return JSONPath.extract(str, path);
+        }
+        return JSONPath.extract(JSON.toJSONString(json), path);
     }
 }

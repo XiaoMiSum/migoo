@@ -26,6 +26,9 @@
 package function.xyz.migoo;
 
 import core.xyz.migoo.function.Args;
+import core.xyz.migoo.function.KwArgs;
+import core.xyz.migoo.function.LsArgs;
+import core.xyz.migoo.variable.MiGooVariables;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -40,8 +43,22 @@ import java.util.Map;
 public class JsonReadTest {
 
     @Test
-    public void test4String() {
-        Args args = new Args(null);
+    public void test4String1() {
+        // json 参数为 字符串 使用变量替换
+        MiGooVariables variables = new MiGooVariables();
+        variables.put("map", "{\"key1\": 1, \"key2\": 2}");
+
+        KwArgs args = new KwArgs(variables);
+        args.put("json=${map}");
+        args.put("path=$.key2");
+        Object value = new JsonRead().execute(args);
+        assert value.toString().equals("2");
+    }
+
+    @Test
+    public void test4String2() {
+        // json 参数为 字符串 可直接使用 LsArgs
+        LsArgs args = new LsArgs(null);
         args.add("{\"key1\": 1, \"key2\": 2}");
         args.add("$.key2");
         Object value = new JsonRead().execute(args);
@@ -49,8 +66,23 @@ public class JsonReadTest {
     }
 
     @Test
-    public void test4Map() {
-        Args args = new Args(null);
+    public void test4Map1() {
+        Map<String, Object> map = new HashMap<>(16);
+        map.put("key1", "1");
+        map.put("key2", "2");
+        MiGooVariables variables = new MiGooVariables();
+        variables.put("map", map);
+
+        KwArgs args = new KwArgs(variables);
+        args.put("json=${map}");
+        args.put("path=$.key2");
+        Object value = new JsonRead().execute(args);
+        assert value.toString().equals("2");
+    }
+
+    @Test
+    public void test4Map2() {
+        LsArgs args = new LsArgs(null);
         Map<String, Object> map = new HashMap<>(16);
         map.put("key1", "1");
         map.put("key2", "2");
@@ -61,8 +93,23 @@ public class JsonReadTest {
     }
 
     @Test
-    public void test4List() {
-        Args args = new Args(null);
+    public void test4List1() {
+        List<Object> list = new ArrayList<>();
+        list.add("1");
+        list.add("{\"key1\": 1, \"key2\": 2}");
+        MiGooVariables variables = new MiGooVariables();
+        variables.put("list", list);
+
+        KwArgs args = new KwArgs(variables);
+        args.put("json=${list}");
+        args.put("path=$[0]");
+        Object value = new JsonRead().execute(args);
+        assert value.toString().equals("1");
+    }
+
+    @Test
+    public void test4List2() {
+        LsArgs args = new LsArgs(null);
         List<Object> list = new ArrayList<>();
         list.add("1");
         list.add("{\"key1\": 1, \"key2\": 2}");
@@ -73,8 +120,20 @@ public class JsonReadTest {
     }
 
     @Test
-    public void test4Object() {
-        Args args = new Args(null);
+    public void test4Object1() {
+        MiGooVariables variables = new MiGooVariables();
+        variables.put("map", new TestObj("1", "2"));
+
+        KwArgs args = new KwArgs(variables);
+        args.put("json=${map}");
+        args.put("path=$.key2");
+        Object value = new JsonRead().execute(args);
+        assert value.toString().equals("2");
+    }
+
+    @Test
+    public void test4Object2() {
+        LsArgs args = new LsArgs(null);
         args.add(new TestObj("1", "2"));
         args.add("$.key2");
         Object value = new JsonRead().execute(args);
@@ -83,55 +142,95 @@ public class JsonReadTest {
 
     @Test
     public void test4Exception1() {
+        var i = 0;
         try {
-            Args args = new Args(null);
+            Args args = new KwArgs(null);
             Object value = new JsonRead().execute(args);
         } catch (Exception e) {
-            assert "args is empty or invalid args.".equals(e.getMessage());
+            assert "args is empty or invalid args. require args 'json','path'".equals(e.getMessage());
+            i++;
         }
+        assert i == 1;
     }
 
     @Test
     public void test4Exception2() {
+        var i = 0;
         try {
-            Args args = new Args(null);
-            args.add(new TestObj("1", "2"));
+            Args args = new LsArgs(null);
             Object value = new JsonRead().execute(args);
         } catch (Exception e) {
-            assert "args is empty or invalid args.".equals(e.getMessage());
+            assert "args is empty or invalid args. require args 'json','path'".equals(e.getMessage());
+            i++;
         }
+        assert i == 1;
     }
 
     @Test
     public void test4Exception3() {
+        var i = 0;
         try {
-            Args args = new Args(null);
-            args.add("");
-            args.add("11");
+            KwArgs args = new KwArgs(null);
             Object value = new JsonRead().execute(args);
         } catch (Exception e) {
-            assert "json or jsonpath con not be null".equals(e.getMessage());
+            assert "args is empty or invalid args. require args 'json','path'".equals(e.getMessage());
+            i++;
         }
+        assert i == 1;
     }
 
     @Test
     public void test4Exception4() {
+        var i = 0;
         try {
-            Args args = new Args(null);
-            args.add(null);
-            args.add("11");
+            LsArgs args = new LsArgs(null);
             Object value = new JsonRead().execute(args);
         } catch (Exception e) {
-            assert "json or jsonpath con not be null".equals(e.getMessage());
+            assert "args is empty or invalid args. require args 'json','path'".equals(e.getMessage());
+            i++;
         }
+        assert i == 1;
     }
 
     @Test
     public void test4Exception5() {
+        var i = 0;
         try {
-            Args args = new Args(null);
-            args.add("11");
-            args.add("");
+            MiGooVariables variables = new MiGooVariables();
+            variables.put("map", null);
+
+            KwArgs args = new KwArgs(variables);
+            args.put("json=${map}");
+            args.put("path=$.key2");
+            Object value = new JsonRead().execute(args);
+        } catch (Exception e) {
+            assert "json or jsonpath con not be null".equals(e.getMessage());
+            i++;
+        }
+        assert i == 1;
+    }
+
+    @Test
+    public void test4Exception6() {
+        var i = 0;
+        try {
+            LsArgs args = new LsArgs(null);
+            args.add(null);
+            args.add("$.key2");
+            Object value = new JsonRead().execute(args);
+        } catch (Exception e) {
+            assert "json or jsonpath con not be null".equals(e.getMessage());
+            i++;
+        }
+        assert i == 1;
+    }
+
+    @Test
+    public void test4Exception7() {
+        try {
+            KwArgs args = new KwArgs(null);
+            args.put("json=");
+            args.put("path=$.key2");
             Object value = new JsonRead().execute(args);
         } catch (Exception e) {
             assert "json or jsonpath con not be null".equals(e.getMessage());
@@ -139,34 +238,46 @@ public class JsonReadTest {
     }
 
     @Test
-    public void test4Exception6() {
+    public void test4Exception8() {
         try {
-            Args args = new Args(null);
-            args.add("11");
-            args.add(null);
+            LsArgs args = new LsArgs(null);
+            args.add("");
+            args.add("$.key2");
             Object value = new JsonRead().execute(args);
         } catch (Exception e) {
             assert "json or jsonpath con not be null".equals(e.getMessage());
         }
     }
 
-    private static class TestObj {
-
-        private final String key1;
-        private final String key2;
-
-        public TestObj(String key1, String key2) {
-            this.key1 = key1;
-            this.key2 = key2;
+    @Test
+    public void test4Exception9() {
+        try {
+            MiGooVariables variables = new MiGooVariables();
+            variables.put("map", new TestObj("1", "2"));
+            KwArgs args = new KwArgs(variables);
+            args.put("json=${map}");
+            Object value = new JsonRead().execute(args);
+        } catch (Exception e) {
+            assert "args is empty or invalid args. require args 'json','path'".equals(e.getMessage());
         }
+    }
 
-        public String getKey1() {
-            return key1;
+    @Test
+    public void test4Exception10() {
+        try {
+            MiGooVariables variables = new MiGooVariables();
+            variables.put("map", new TestObj("1", "2"));
+            KwArgs args = new KwArgs(variables);
+            args.put("json=${map}");
+            args.put("path=");
+            Object value = new JsonRead().execute(args);
+        } catch (Exception e) {
+            assert "json or jsonpath con not be null".equals(e.getMessage());
         }
+    }
 
-        public String getKey2() {
-            return key2;
-        }
+    private record TestObj(String key1, String key2) {
+
     }
 
 }

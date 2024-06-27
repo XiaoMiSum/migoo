@@ -26,8 +26,9 @@
 package function.xyz.migoo;
 
 import com.alibaba.fastjson2.JSONObject;
-import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.FunctionService;
+import core.xyz.migoo.function.KwArgs;
+import core.xyz.migoo.function.LsArgs;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -45,9 +46,9 @@ public class JsonTest {
 
     @Test
     public void testJson2() {
-        Args args = new Args(null);
-        args.add("key1=1");
-        args.add("key2=2");
+        KwArgs args = new KwArgs(null);
+        args.put("key1=1");
+        args.put("key2=2");
         JSONObject json = new Json().execute(args);
         assert json.containsKey("key1");
         assert json.containsKey("key2");
@@ -55,11 +56,11 @@ public class JsonTest {
 
     @Test
     public void testJson3() {
-        Args args = new Args(null);
-        try {
-            new Json().execute(args);
-        } catch (Exception e) {
-            assert "parameters con not be null".equals(e.getMessage());
-        }
+        LsArgs args = new LsArgs(null);
+        args.add("key1=1");
+        args.add("key2=2");
+        JSONObject json = new Json().execute(args);
+        assert json.containsKey("key1");
+        assert json.containsKey("key2");
     }
 }

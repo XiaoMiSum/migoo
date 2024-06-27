@@ -25,7 +25,8 @@
 
 package function.xyz.migoo;
 
-import core.xyz.migoo.function.Args;
+import core.xyz.migoo.function.KwArgs;
+import core.xyz.migoo.function.LsArgs;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -35,12 +36,22 @@ import org.junit.jupiter.api.Test;
 public class TimeShiftTest {
 
     @Test
-    public void testTimeShift() {
-        assert new TimeShift().execute(new Args(null)) != null;
-        Args args = new Args(null);
+    public void testTimeShift1() {
+        assert new TimeShift().execute(new LsArgs(null)) != null;
+        LsArgs args = new LsArgs(null);
         args.add("yyyy-MM-dd");
         assert new TimeShift().execute(args) != null;
         args.add("P2D");
+        assert new TimeShift().execute(args) != null;
+    }
+
+    @Test
+    public void testTimeShift2() {
+        assert new TimeShift().execute(new KwArgs(null)) != null;
+        KwArgs args = new KwArgs(null);
+        args.put("format=yyyy-MM-dd");
+        assert new TimeShift().execute(args) != null;
+        args.put("amount=P2D");
         assert new TimeShift().execute(args) != null;
     }
 }

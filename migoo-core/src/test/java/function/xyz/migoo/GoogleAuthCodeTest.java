@@ -25,7 +25,8 @@
 
 package function.xyz.migoo;
 
-import core.xyz.migoo.function.Args;
+import core.xyz.migoo.function.KwArgs;
+import core.xyz.migoo.function.LsArgs;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -38,7 +39,7 @@ public class GoogleAuthCodeTest {
     public void testGoogleAuthCode1() {
         int i = 0;
         try {
-            new GoogleAuthCode().execute(new Args(null));
+            new GoogleAuthCode().execute(new KwArgs(null));
         } catch (Exception e) {
             assert "secretKey con not be null".equals(e.getMessage());
             i++;
@@ -50,7 +51,33 @@ public class GoogleAuthCodeTest {
     public void testGoogleAuthCode2() {
         int i = 0;
         try {
-            Args args = new Args(null);
+            new GoogleAuthCode().execute(new LsArgs(null));
+        } catch (Exception e) {
+            assert "secretKey con not be null".equals(e.getMessage());
+            i++;
+        }
+        assert i > 0;
+    }
+
+    @Test
+    public void testGoogleAuthCode3() {
+        int i = 0;
+        try {
+            KwArgs args = new KwArgs(null);
+            args.put("secret=");
+            new GoogleAuthCode().execute(args);
+        } catch (Exception e) {
+            assert "secretKey con not be null".equals(e.getMessage());
+            i++;
+        }
+        assert i > 0;
+    }
+
+    @Test
+    public void testGoogleAuthCode4() {
+        int i = 0;
+        try {
+            LsArgs args = new LsArgs(null);
             args.add("");
             new GoogleAuthCode().execute(args);
         } catch (Exception e) {
@@ -61,8 +88,15 @@ public class GoogleAuthCodeTest {
     }
 
     @Test
-    public void testGoogleAuthCode3() {
-        Args args = new Args(null);
+    public void testGoogleAuthCode5() {
+        KwArgs args = new KwArgs(null);
+        args.put("secret=aeqeqweqwe");
+        assert new GoogleAuthCode().execute(args) != null;
+    }
+
+    @Test
+    public void testGoogleAuthCode6() {
+        LsArgs args = new LsArgs(null);
         args.add("aeqeqweqwe");
         assert new GoogleAuthCode().execute(args) != null;
     }

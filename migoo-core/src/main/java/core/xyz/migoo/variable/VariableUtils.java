@@ -34,9 +34,11 @@ import java.util.regex.Pattern;
  */
 public class VariableUtils {
 
-    public static final Pattern VARS_PATTERN = Pattern.compile("\\$\\{(\\w+)?\\}");
+    public static final Pattern VARS_PATTERN = Pattern.compile("\\$\\{(\\w+)?}");
 
-    public static final Pattern FUNC_PATTERN = Pattern.compile("__([A-Za-z0-9]+)\\(([\\.]*[^)]*)?\\)");
+    public static final Pattern FUNC_PATTERN = Pattern.compile("__([A-Za-z0-9]+)\\(([.]*[^)]*)?\\)");
+
+    public static final Pattern KWARGS_PATTERN = Pattern.compile("((\\w+)=(.+))+");
 
     public static boolean isVars(String str) {
         return VARS_PATTERN.matcher(str).find();
@@ -44,5 +46,9 @@ public class VariableUtils {
 
     public static boolean isFunc(String str) {
         return !StringUtils.isEmpty(str) && FUNC_PATTERN.matcher(str).find();
+    }
+
+    public static boolean isKwArgs(String str) {
+        return KWARGS_PATTERN.matcher(str).find();
     }
 }

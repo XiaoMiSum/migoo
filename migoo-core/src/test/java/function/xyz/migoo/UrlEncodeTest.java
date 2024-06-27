@@ -25,7 +25,8 @@
 
 package function.xyz.migoo;
 
-import core.xyz.migoo.function.Args;
+import core.xyz.migoo.function.KwArgs;
+import core.xyz.migoo.function.LsArgs;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -35,9 +36,16 @@ import org.junit.jupiter.api.Test;
 public class UrlEncodeTest {
 
     @Test
-    public void testUrlEncode() {
-        Args args = new Args(null);
+    public void testUrlEncode1() {
+        LsArgs args = new LsArgs(null);
         args.add("你好");
-        assert "%E4%BD%A0%E5%A5%BD".equals(new UrlEncode().execute(args));
+        assert "%25E4%25BD%25A0%25E5%25A5%25BD".equals(new UrlEncode().execute(args));
+    }
+
+    @Test
+    public void testUrlEncode2() {
+        KwArgs args = new KwArgs(null);
+        args.put("content=你好");
+        assert "%25E4%25BD%25A0%25E5%25A5%25BD".equals(new UrlEncode().execute(args));
     }
 }

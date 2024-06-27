@@ -25,7 +25,8 @@
 
 package function.xyz.migoo;
 
-import core.xyz.migoo.function.Args;
+import core.xyz.migoo.function.KwArgs;
+import core.xyz.migoo.function.LsArgs;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -36,21 +37,44 @@ public class RandomStringTest {
 
     @Test
     public void testRandomString1() {
-        String value = new RandomString().execute(new Args(null));
+        var value = new RandomString().execute(new KwArgs(null));
         assert value.length() == 10;
     }
 
     @Test
     public void testRandomString2() {
-        Args args = new Args(null);
+        var value = new RandomString().execute(new LsArgs(null));
+        assert value.length() == 10;
+    }
+
+    @Test
+    public void testRandomString3() {
+        KwArgs args = new KwArgs(null);
+        args.put("length=20");
+        String value = new RandomString().execute(args);
+        assert value.length() == 20;
+    }
+
+    @Test
+    public void testRandomString4() {
+        LsArgs args = new LsArgs(null);
         args.add(20);
         String value = new RandomString().execute(args);
         assert value.length() == 20;
     }
 
     @Test
-    public void testRandomString3() {
-        Args args = new Args(null);
+    public void testRandomString5() {
+        KwArgs args = new KwArgs(null);
+        args.put("length=20");
+        args.put("string=ab");
+        String value = new RandomString().execute(args);
+        assert value.contains("a") || value.contains("b");
+    }
+
+    @Test
+    public void testRandomString6() {
+        LsArgs args = new LsArgs(null);
         args.add(20);
         args.add("ab");
         String value = new RandomString().execute(args);
@@ -58,8 +82,18 @@ public class RandomStringTest {
     }
 
     @Test
-    public void testRandomString4() {
-        Args args = new Args(null);
+    public void testRandomString7() {
+        KwArgs args = new KwArgs(null);
+        args.put("length=20");
+        args.put("string=ab");
+        args.put("upper=true");
+        String value = new RandomString().execute(args);
+        assert value.contains("A") || value.contains("B");
+    }
+
+    @Test
+    public void testRandomString8() {
+        LsArgs args = new LsArgs(null);
         args.add(20);
         args.add("ab");
         args.add(true);

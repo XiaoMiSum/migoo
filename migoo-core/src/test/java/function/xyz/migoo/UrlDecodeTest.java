@@ -25,7 +25,8 @@
 
 package function.xyz.migoo;
 
-import core.xyz.migoo.function.Args;
+import core.xyz.migoo.function.KwArgs;
+import core.xyz.migoo.function.LsArgs;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -33,11 +34,18 @@ import org.junit.jupiter.api.Test;
  * Created in 2021/11/3 15:50
  */
 public class UrlDecodeTest {
-    
+
     @Test
-    public void testUrlDecode() {
-        Args args = new Args(null);
-        args.add("%E4%BD%A0%E5%A5%BD");
+    public void testUrlDecode1() {
+        LsArgs args = new LsArgs(null);
+        args.add("%25E4%25BD%25A0%25E5%25A5%25BD");
+        assert "你好".equals(new UrlDecode().execute(args));
+    }
+
+    @Test
+    public void testUrlDecode2() {
+        KwArgs args = new KwArgs(null);
+        args.put("content=%E4%BD%A0%E5%A5%BD");
         assert "你好".equals(new UrlDecode().execute(args));
     }
 }

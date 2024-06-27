@@ -27,6 +27,9 @@ package function.xyz.migoo;
 
 import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
+import core.xyz.migoo.function.KwArgs;
+import core.xyz.migoo.function.LsArgs;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -47,11 +50,17 @@ public class Timestamp implements Function {
      */
     @Override
     public String execute(Args args) {
+        return execute(args instanceof KwArgs kwArgs ? kwArgs.getString("format") : ((LsArgs) args).getString(0));
+    }
+
+
+    public String execute(String format) {
         var localDateTime = LocalDateTime.now(ZoneId.systemDefault());
-        if (args.getString(0).isEmpty()) {
+        if (StringUtils.isBlank(format)) {
             var offset = ZoneOffset.systemDefault().getRules().getOffset(localDateTime);
             return String.valueOf(localDateTime.toInstant(offset).toEpochMilli());
         }
-        return localDateTime.format(DateTimeFormatter.ofPattern(args.getString(0)));
+        return localDateTime.format(DateTimeFormatter.ofPattern(format));
     }
+
 }

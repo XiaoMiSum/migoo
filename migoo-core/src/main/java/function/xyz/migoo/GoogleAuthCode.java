@@ -29,7 +29,10 @@ package function.xyz.migoo;
 
 import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
+import core.xyz.migoo.function.KwArgs;
+import core.xyz.migoo.function.LsArgs;
 import org.apache.commons.codec.binary.Base32;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -41,6 +44,10 @@ import java.security.NoSuchAlgorithmException;
  */
 public class GoogleAuthCode implements Function {
 
+    private static final int LENGTH = 5;
+    private static final int SCRATCH_CODE_LENGTH = 8;
+    private static final int BYTES_PER_SCRATCH_CODE = 4;
+
     /**
      * 获取谷歌验证码，支持一个参数，且不允许为空
      * 参数顺序：
@@ -48,53 +55,51 @@ public class GoogleAuthCode implements Function {
      */
     @Override
     public String execute(Args args) {
-        if (args.isEmpty() || args.getString(0).isEmpty()) {
+        if (args.isEmpty()) {
             throw new IllegalArgumentException("secretKey con not be null");
         }
-        return GoogleAuthenticator.generateVerifyCode(args.getString(0));
+        return execute(args instanceof LsArgs lsArgs ? lsArgs.getString(0) : ((KwArgs) args).getString("secret"));
     }
 
-    public static class GoogleAuthenticator {
-
-        private static final int LENGTH = 5;
-
-        private static final int SCRATCH_CODE_LENGTH = 8;
-
-        private static final int BYTES_PER_SCRATCH_CODE = 4;
-
-        public static String generateVerifyCode(String secretKey) {
-            var t = (System.currentTimeMillis() / 1000L) / 30L;
-            byte[] decodedKey = new Base32().decode(secretKey);
-            try {
-                var code = String.valueOf(generateVerifyCode(decodedKey, t));
-                return code.length() == LENGTH ? "0" + code : code;
-            } catch (Exception e) {
-                throw new RuntimeException("generateVerifyCode exception", e);
-            }
+    private String execute(String secret) {
+        if (StringUtils.isBlank(secret)) {
+            throw new IllegalArgumentException("secretKey con not be null");
         }
+        return generateVerifyCode(secret);
+    }
 
-        private static int generateVerifyCode(byte[] key, long t) throws NoSuchAlgorithmException, InvalidKeyException {
-            byte[] data = new byte[8];
-            var value = t;
-            for (var i = SCRATCH_CODE_LENGTH; i-- > 0; value >>>= SCRATCH_CODE_LENGTH) {
-                data[i] = (byte) value;
-            }
-            var signKey = new SecretKeySpec(key, "HmacSHA1");
-            var mac = Mac.getInstance("HmacSHA1");
-            mac.init(signKey);
-            byte[] hash = mac.doFinal(data);
-            var offset = hash[20 - 1] & 0xF;
-            // We're using a long because Java hasn't got unsigned int.
-            var truncatedHash = 0;
-            for (var i = 0; i < BYTES_PER_SCRATCH_CODE; ++i) {
-                truncatedHash <<= 8;
-                // We are dealing with signed bytes:
-                // we just keep the first byte.
-                truncatedHash |= (hash[offset + i] & 0xFF);
-            }
-            truncatedHash &= 0x7FFFFFFF;
-            truncatedHash %= 1000000;
-            return truncatedHash;
+    private String generateVerifyCode(String secretKey) {
+        var t = (System.currentTimeMillis() / 1000L) / 30L;
+        byte[] decodedKey = new Base32().decode(secretKey);
+        try {
+            var code = String.valueOf(generateVerifyCode(decodedKey, t));
+            return code.length() == LENGTH ? "0" + code : code;
+        } catch (Exception e) {
+            throw new RuntimeException("generateVerifyCode exception", e);
         }
+    }
+
+    private int generateVerifyCode(byte[] key, long t) throws NoSuchAlgorithmException, InvalidKeyException {
+        byte[] data = new byte[8];
+        var value = t;
+        for (var i = SCRATCH_CODE_LENGTH; i-- > 0; value >>>= SCRATCH_CODE_LENGTH) {
+            data[i] = (byte) value;
+        }
+        var signKey = new SecretKeySpec(key, "HmacSHA1");
+        var mac = Mac.getInstance("HmacSHA1");
+        mac.init(signKey);
+        byte[] hash = mac.doFinal(data);
+        var offset = hash[20 - 1] & 0xF;
+        // We're using a long because Java hasn't got unsigned int.
+        var truncatedHash = 0;
+        for (var i = 0; i < BYTES_PER_SCRATCH_CODE; ++i) {
+            truncatedHash <<= 8;
+            // We are dealing with signed bytes:
+            // we just keep the first byte.
+            truncatedHash |= (hash[offset + i] & 0xFF);
+        }
+        truncatedHash &= 0x7FFFFFFF;
+        truncatedHash %= 1000000;
+        return truncatedHash;
     }
 }

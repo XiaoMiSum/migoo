@@ -25,7 +25,8 @@
 
 package function.xyz.migoo;
 
-import core.xyz.migoo.function.Args;
+import core.xyz.migoo.function.KwArgs;
+import core.xyz.migoo.function.LsArgs;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -35,10 +36,18 @@ import org.junit.jupiter.api.Test;
 public class RandomTest {
 
     @Test
-    public void testRandom() {
-        Args args = new Args(null);
+    public void testRandom1() {
+        LsArgs args = new LsArgs(null);
         assert new Random().execute(args) != null;
         args.add(1);
+        assert new Random().execute(args) == 0;
+    }
+
+    @Test
+    public void testRandom2() {
+        KwArgs args = new KwArgs(null);
+        assert new Random().execute(args) != null;
+        args.put("bound=1");
         assert new Random().execute(args) == 0;
     }
 }

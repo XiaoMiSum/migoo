@@ -27,6 +27,9 @@ package function.xyz.migoo;
 
 import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
+import core.xyz.migoo.function.KwArgs;
+import core.xyz.migoo.function.LsArgs;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -59,14 +62,24 @@ public class TimeShift implements Function {
      */
     @Override
     public String execute(Args args) {
-        var format = args.getString(0);
+        return args instanceof KwArgs kwArgs ? execute(kwArgs) : execute((LsArgs) args);
+    }
+
+    private String execute(KwArgs args) {
+        return execute(args.getString("format"), args.getString("amount"));
+    }
+
+    private String execute(LsArgs args) {
+        return execute(args.getString(0), args.getString(1));
+    }
+
+    private String execute(String format, String amount) {
         var localDateTimeToShift = LocalDateTime.now(systemDefaultZoneId);
         DateTimeFormatter dateTimeFormatter = null;
-        if (!format.isEmpty()) {
+        if (!StringUtils.isBlank(format)) {
             dateTimeFormatter = createFormatter(format, Locale.getDefault());
         }
-        var amount = args.getString(1);
-        if (!amount.isEmpty()) {
+        if (!StringUtils.isBlank(amount)) {
             localDateTimeToShift = localDateTimeToShift.plus(Duration.parse(amount));
         }
         if (dateTimeFormatter != null) {

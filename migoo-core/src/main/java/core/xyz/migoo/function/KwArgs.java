@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2022.  Lorem XiaoMiSum (mi_xiao@qq.com)
+ * Copyright (c) 2018 XiaoMiSum (mi_xiao@qq.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,36 +23,35 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package function.xyz.migoo;
+package core.xyz.migoo.function;
 
 import com.alibaba.fastjson2.JSONObject;
-import core.xyz.migoo.function.Args;
-import core.xyz.migoo.function.Function;
-import core.xyz.migoo.function.KwArgs;
-import core.xyz.migoo.function.LsArgs;
+import core.xyz.migoo.variable.MiGooVariables;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author xiaomi
  */
-public class Json implements Function {
+public class KwArgs extends JSONObject implements Args {
 
-    /**
-     * 将传入的参数转换为JSONObject
-     */
+    private final MiGooVariables variables;
+
+    public KwArgs(MiGooVariables variables) {
+        this.variables = variables;
+    }
+
+    public Object put(String parameter) {
+        List<String> array = new ArrayList<>(List.of(parameter.split("=")));
+        if (array.size() == 1) {
+            array.add("");
+        }
+        return this.put(array.getFirst(), getParameterValue(array.getLast()));
+    }
+
     @Override
-    public JSONObject execute(Args args) {
-        if (args.isEmpty()) {
-            throw new IllegalArgumentException("parameters con not be null");
-        }
-        if (args instanceof KwArgs kwArgs) {
-            return kwArgs;
-        }
-        LsArgs lsArgs = (LsArgs) args;
-        JSONObject json = new JSONObject();
-        lsArgs.forEach(item -> {
-            String[] arr = ((String) item).split("=");
-            json.put(arr[0], arr[1]);
-        });
-        return json;
+    public MiGooVariables getCurrentVars() {
+        return this.variables;
     }
 }

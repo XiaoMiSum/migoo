@@ -27,6 +27,11 @@ package function.xyz.migoo;
 
 import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
+import core.xyz.migoo.function.KwArgs;
+import core.xyz.migoo.function.LsArgs;
+
+import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author xiaomi
@@ -41,8 +46,16 @@ public class Random implements Function {
      */
     @Override
     public Integer execute(Args args) {
-        var bound = args.getNumber(0);
-        var random = new java.util.Random();
-        return bound != null && bound.intValue() > 0 ? random.nextInt(bound.intValue()) : random.nextInt();
+        if (args instanceof KwArgs kwArgs) {
+            return execute(kwArgs.getIntValue("bound"));
+        }
+        var bound = ((LsArgs) args).getNumber(0);
+        return execute(Objects.isNull(bound) ? 0 : bound.intValue());
+    }
+
+
+    public Integer execute(int bound) {
+        var random = ThreadLocalRandom.current();
+        return bound > 0 ? random.nextInt(bound) : random.nextInt();
     }
 }

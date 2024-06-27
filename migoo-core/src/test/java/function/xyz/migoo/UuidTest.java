@@ -25,7 +25,8 @@
 
 package function.xyz.migoo;
 
-import core.xyz.migoo.function.Args;
+import core.xyz.migoo.function.KwArgs;
+import core.xyz.migoo.function.LsArgs;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -36,6 +37,7 @@ public class UuidTest {
 
     @Test
     public void testUuid() {
-        assert new Uuid().execute(new Args(null)) != null;
+        assert new Uuid().execute(new LsArgs(null)) != null;
+        assert new Uuid().execute(new KwArgs(null)) != null;
     }
 }

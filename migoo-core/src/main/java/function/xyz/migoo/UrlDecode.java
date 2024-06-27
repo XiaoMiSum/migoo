@@ -27,6 +27,9 @@ package function.xyz.migoo;
 
 import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
+import core.xyz.migoo.function.KwArgs;
+import core.xyz.migoo.function.LsArgs;
+import org.apache.commons.lang3.StringUtils;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -43,9 +46,17 @@ public class UrlDecode implements Function {
      */
     @Override
     public String execute(Args args) {
-        if (args.getString(0).isEmpty()) {
+        if (args.isEmpty()) {
             throw new IllegalArgumentException("content con not be null");
         }
-        return URLDecoder.decode(args.getString(0), StandardCharsets.UTF_8);
+        return execute(args instanceof KwArgs kwArgs ? execute(kwArgs.getString("content"))
+                : execute(((LsArgs) args).getString(0)));
+    }
+
+    public String execute(String content) {
+        if (StringUtils.isBlank(content)) {
+            throw new IllegalArgumentException("content con not be null");
+        }
+        return URLDecoder.decode(content, StandardCharsets.UTF_8);
     }
 }

@@ -61,4 +61,19 @@ public class VariableUtilsTest {
         assert VariableUtils.isFunc("${__test()}");
         assert VariableUtils.isFunc("${__test()}");
     }
+
+    @Test
+    public void testIsKwArgs() {
+        assert !VariableUtils.isKwArgs("");
+        assert !VariableUtils.isKwArgs("test");
+        assert !VariableUtils.isKwArgs("test,test2");
+        assert VariableUtils.isKwArgs("test=1");
+        assert VariableUtils.isKwArgs("test=1,");
+        assert VariableUtils.isKwArgs("test=1,test2=2");
+        assert VariableUtils.isKwArgs("test=1,test2=2,");
+        assert VariableUtils.isKwArgs("test=1,test2=2,test3=3");
+        assert VariableUtils.isKwArgs("test=${vars1},test2=2,test3=3");
+        assert VariableUtils.isKwArgs("test=${vars1},test2=__func1(),test3=3");
+        assert VariableUtils.isKwArgs("test=${vars1},test2=__func1(),test3=__func1()__func2(${vars1})");
+    }
 }

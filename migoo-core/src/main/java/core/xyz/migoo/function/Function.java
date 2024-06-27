@@ -37,4 +37,5 @@ public interface Function {
      * @return 生成的数据
      */
     Object execute(Args args);
+    
 }

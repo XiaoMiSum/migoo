@@ -27,7 +27,10 @@ package function.xyz.migoo;
 
 import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
+import core.xyz.migoo.function.KwArgs;
+import core.xyz.migoo.function.LsArgs;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author xiaomi
@@ -43,10 +46,27 @@ public class RandomString implements Function {
      */
     @Override
     public String execute(Args args) {
-        int length = args.getNumber(0) == null ? 10 : args.getNumber(0).intValue();
+        return args instanceof KwArgs kwArgs ? execute(kwArgs) : execute((LsArgs) args);
+    }
+
+    private String execute(KwArgs args) {
+        var length = args.getIntValue("length");
+        var charsToUse = args.getString("string");
+        var upper = args.getBooleanValue("upper");
+        return execute(length, charsToUse, upper);
+    }
+
+    private String execute(LsArgs args) {
+        var length = args.getString(0).isEmpty() ? 10 : args.getNumber(0).intValue();
         var charsToUse = args.getString(1);
-        var randomString = charsToUse.isEmpty() ? RandomStringUtils.randomAlphabetic(length)
+        var upper = args.getBooleanValue(2);
+        return execute(length, charsToUse, upper);
+    }
+
+    private String execute(int length, String charsToUse, boolean upper) {
+        length = length == 0 ? 10 : length;
+        var randomString = StringUtils.isBlank(charsToUse) ? RandomStringUtils.randomAlphabetic(length)
                 : RandomStringUtils.random(length, charsToUse);
-        return args.getBooleanValue(2) ? randomString.toUpperCase() : randomString;
+        return upper ? randomString.toUpperCase() : randomString;
     }
 }

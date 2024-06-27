@@ -25,7 +25,8 @@
 
 package function.xyz.migoo;
 
-import core.xyz.migoo.function.Args;
+import core.xyz.migoo.function.KwArgs;
+import core.xyz.migoo.function.LsArgs;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -35,10 +36,18 @@ import org.junit.jupiter.api.Test;
 public class TimestampTest {
 
     @Test
-    public void testTimestamp() {
-        assert new Timestamp().execute(new Args(null)) != null;
-        Args args = new Args(null);
+    public void testTimestamp1() {
+        assert new Timestamp().execute(new LsArgs(null)) != null;
+        LsArgs args = new LsArgs(null);
         args.add("yyyy-MM-dd");
+        assert new Timestamp().execute(args) != null;
+    }
+
+    @Test
+    public void testTimestamp2() {
+        assert new Timestamp().execute(new KwArgs(null)) != null;
+        KwArgs args = new KwArgs(null);
+        args.put("format=yyyy-MM-dd");
         assert new Timestamp().execute(args) != null;
     }
 }
