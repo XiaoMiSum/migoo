@@ -25,19 +25,16 @@
 
 package xyz.migoo;
 
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.engine.TestEngine;
 import core.xyz.migoo.engine.Testplan;
 import core.xyz.migoo.report.Reporter;
 import core.xyz.migoo.report.Result;
+import picocli.CommandLine;
 import util.xyz.migoo.loader.Loader;
 import xyz.migoo.report.StandardReporter;
 
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static xyz.migoo.Constants.REPORT_CLASS;
 import static xyz.migoo.Constants.REPORT_ENABLE;
@@ -47,65 +44,44 @@ import static xyz.migoo.Constants.REPORT_ENABLE;
  */
 public class MiGoo {
 
-    private static final Pattern FILE_PATTERN = Pattern.compile("^@F\\((.+)+\\)");
-
     static {
-        JSONObject config = Loader.toJavaObject("props.migoo.yml", true, JSONObject.class);
+        var config = Loader.toJavaObject("props.migoo.yml", true, JSONObject.class);
         config.forEach((key, value) -> System.setProperty(key, String.valueOf(value)));
+        printLogo();
     }
 
     private final JSONObject testcase;
 
     public MiGoo(Map<String, Object> testcase) {
-        this.testcase = this.prepare(testcase);
+        this.testcase = new JSONObject(testcase);
+    }
+
+    public static void main(String[] args) {
+        System.exit(new CommandLine(new Cli()).execute(args));
+    }
+
+    private static void printLogo() {
+        System.out.println("                _                          ");
+        System.out.println("     _ __ ___  (_)  __ _   ___    ___      ");
+        System.out.println("    | '_ ` _ \\ | | / _` | / _ \\  / _ \\     ");
+        System.out.println("    | | | | | || || (_| || (_) || (_) |    ");
+        System.out.println("    |_| |_| |_||_| \\__, | \\___/  \\___/     ");
+        System.out.println("                   |___/     " + System.getProperty("migoo.version"));
+        System.out.println("    GitHub: https://github.com/XiaoMiSum/migoo");
     }
 
     public static Result start(String filePath) {
-        JSONObject testcase = Loader.toJavaObject(filePath, JSONObject.class);
+        var testcase = Loader.toJavaObject(filePath, JSONObject.class);
         return start(testcase);
     }
 
     public static Result start(String filePath, boolean isClassPath) {
-        JSONObject testcase = Loader.toJavaObject(filePath, isClassPath, JSONObject.class);
+        var testcase = Loader.toJavaObject(filePath, isClassPath, JSONObject.class);
         return start(testcase);
     }
 
     public static Result start(Map<String, Object> testcase) {
         return new MiGoo(testcase).runTest();
-    }
-
-    private JSONObject prepare(Map<?, ?> x) {
-        JSONObject json = new JSONObject(x.size());
-        x.keySet().forEach(key -> {
-            String keyString = (String) key;
-            Object value = x.get(key);
-            if (value instanceof Map<?, ?>) {
-                json.put(keyString, prepare((Map<?, ?>) value));
-            } else if (value instanceof List<?>) {
-                json.put(keyString, prepare((List<?>) value));
-            } else if (value instanceof String) {
-                json.put(keyString, prepare((String) value));
-            } else {
-                json.put(keyString, value);
-            }
-        });
-        return json;
-    }
-
-    private JSONArray prepare(List<?> x) {
-        JSONArray xs = new JSONArray(x.size());
-        x.forEach(item -> {
-            if (item instanceof List<?>) {
-                xs.add(prepare((List<?>) item));
-            } else if (item instanceof Map) {
-                xs.add(prepare((Map<?, ?>) item));
-            } else if (item instanceof String) {
-                xs.add(prepare((String) item));
-            } else {
-                xs.add(item);
-            }
-        });
-        return xs;
     }
 
     private Result runTest() {
@@ -118,16 +94,5 @@ public class MiGoo {
             reporter = new StandardReporter();
         }
         return TestEngine.runTest(new Testplan(testcase), reporter);
-    }
-
-
-    private Object prepare(String value) {
-        Matcher matcher = FILE_PATTERN.matcher(value);
-        if (matcher.find()) {
-            Object result = Loader.toJSON(matcher.group(1));
-            return result instanceof List<?> ? prepare((List<?>) result) :
-                    result instanceof Map<?, ?> ? prepare((Map<?, ?>) result) : result;
-        }
-        return value;
     }
 }

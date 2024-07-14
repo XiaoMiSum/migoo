@@ -30,13 +30,13 @@ import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.sampler.Sampler;
 import core.xyz.migoo.testelement.TestElementService;
 import core.xyz.migoo.variable.MiGooVariables;
+import util.xyz.migoo.loader.Loader;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.regex.Matcher;
 
 import static core.xyz.migoo.testelement.AbstractTestElement.*;
+import static core.xyz.migoo.variable.VariableUtils.FILE_PATTERN;
 
 /**
  * @author xiaomi
@@ -45,8 +45,9 @@ public class Testplan extends JSONObject {
 
     private final boolean sampler;
 
-    public Testplan(JSONObject json) {
+    public Testplan(JSONObject testcase) {
         // 同时包含 children 和 title 这两个key 即 认为是 migoo 的测试集合
+        var json = prepare(testcase);
         var isMiGooSuite = json.containsKey(CHILDREN) && json.containsKey(TITLE);
         var clazz = TestElementService.getServiceClass(json.getString(TEST_CLASS));
         sampler = Objects.nonNull(clazz) && Sampler.class.isAssignableFrom(clazz);
@@ -61,40 +62,71 @@ public class Testplan extends JSONObject {
         json.forEach((key, value) -> {
             // 将 migoo 测试组件 的key 转换为小写
             var newKey = isMiGoo ? key.toLowerCase(Locale.ROOT) : key;
-            if (value instanceof Map) {
-                put(newKey, parse(json.getJSONObject(key)));
-            } else if (value instanceof List) {
-                var array = json.getJSONArray(key);
-                var newValue = new JSONArray(array.size());
-                for (int i = 0; i < array.size(); i++) {
-                    var item = array.get(i);
+            if (value instanceof JSONObject object) {
+                put(newKey, parse(object));
+            } else if (value instanceof JSONArray objects) {
+                for (int i = 0; i < objects.size(); i++) {
+                    var item = objects.get(i);
                     // 这里主要是为了处理 配置的子组件，组件配置一定是Map
-                    if (item instanceof Map) {
-                        newValue.add(parse(array.getJSONObject(i)));
-                    } else {
-                        newValue.add(item);
-                    }
+                    objects.set(i, item instanceof Map ? parse(objects.getJSONObject(i)) : item);
                 }
-                put(newKey, newValue);
+                put(newKey, objects);
             } else {
                 put(newKey, value);
             }
         });
         if (isMiGoo) {
             // 3、重新添加变量到MiGoo组件
-            put(VARIABLES, Objects.isNull(variables) ? new MiGooVariables() :
-                    variables instanceof MiGooVariables ? variables : new MiGooVariables((JSONObject) variables));
+            put(VARIABLES, variables instanceof MiGooVariables ? variables :
+                    new MiGooVariables(Optional.ofNullable((JSONObject) variables).orElse(new JSONObject())));
         }
     }
 
     private JSONObject parse(JSONObject json) {
         var isMiGooSuite = json.containsKey(CHILDREN) && json.containsKey(TITLE);
         var clazz = TestElementService.getServiceClass(json.getString(TEST_CLASS));
-        if (isMiGooSuite || Objects.nonNull(clazz)) {
-            return new Testplan(json);
-        } else {
-            return json;
+        return isMiGooSuite || Objects.nonNull(clazz) ? new Testplan(json) : json;
+    }
+
+    private JSONObject prepare(Map<?, ?> object) {
+        JSONObject json = new JSONObject(object.size());
+        object.keySet().forEach(key -> {
+            String keyString = (String) key;
+            Object value = object.get(key);
+            switch (value) {
+                case Map<?, ?> map -> json.put(keyString, prepare(map));
+                case List<?> objects -> json.put(keyString, prepare(objects));
+                case String s -> json.put(keyString, prepare(s));
+                case null, default -> json.put(keyString, value);
+            }
+        });
+        return json;
+    }
+
+    private JSONArray prepare(List<?> items) {
+        JSONArray temp = new JSONArray(items.size());
+        items.forEach(item -> {
+            switch (item) {
+                case List<?> objects -> temp.add(prepare(objects));
+                case Map<?, ?> map -> temp.add(prepare(map));
+                case String s -> temp.add(prepare(s));
+                case null, default -> temp.add(item);
+            }
+        });
+        return temp;
+    }
+
+    private Object prepare(String value) {
+        Matcher matcher = FILE_PATTERN.matcher(value);
+        if (matcher.find()) {
+            Object result = Loader.toJSON(matcher.group(1));
+            return switch (result) {
+                case List<?> objects -> prepare(objects);
+                case Map<?, ?> object -> prepare(object);
+                case null, default -> result;
+            };
         }
+        return value;
     }
 
     public boolean isSampler() {

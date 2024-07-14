@@ -40,6 +40,8 @@ public class VariableUtils {
 
     public static final Pattern KWARGS_PATTERN = Pattern.compile("((\\w+)=(.+))+");
 
+    public static final Pattern FILE_PATTERN = Pattern.compile("^@F\\((.+)+\\)");
+
     public static boolean isVars(String str) {
         return VARS_PATTERN.matcher(str).find();
     }
@@ -51,4 +53,10 @@ public class VariableUtils {
     public static boolean isKwArgs(String str) {
         return KWARGS_PATTERN.matcher(str).find();
     }
+
+    public static boolean isFile(String str) {
+        return FILE_PATTERN.matcher(str).find();
+    }
+
+
 }
