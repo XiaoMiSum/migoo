@@ -1,0 +1,46 @@
+title: R3
+configelements:
+  - testclass: HttpDefaults
+    method: GET
+    protocol: https
+    host: dict-subsidiary.youdao.com
+    path: '/home/historynum'
+    headers:
+      Test: test
+preprocessors:
+  - testclass: httppreprocessor
+    title: 步骤1前置处理器
+    extractors:
+      - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "hhh" }
+children:
+  - title: 步骤1
+    testclass: httpsampler
+    preprocessors:
+      - testclass: httppreprocessor
+        title: 步骤1前置处理器
+        extractors:
+          - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "data_time3" }
+    postprocessors:
+      - testclass: httppostprocessor
+        title: 步骤1后置处理器
+        extractors:
+          - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "data_time5" }
+    validators:
+      - { testclass: "HTTPAssertion", field: status, rule: ==, expected: 200 }
+      - { testclass: "JSONAssertion", field: '$.data', rule: notNull }
+    extractors:
+      - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "data_time4" }
+  - title: 步骤2
+    configelements:
+      - testclass: HttpDefaults
+        method: GET
+        protocol: https
+        host: dict-subsidiary.youdao.com
+        path: '/home/historynum'
+    testclass: httpsampler
+    validators:
+      - { testclass: "HTTPAssertion", field: status, rule: '>', expected: 200 }
+      - { testclass: "JSONAssertion", field: '$.data', rule: notNull }
+postprocessors:
+  - testclass: httppreprocessor
+    title: R3后置处理器

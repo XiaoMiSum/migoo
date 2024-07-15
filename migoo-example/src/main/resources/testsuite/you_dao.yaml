@@ -1,0 +1,6 @@
+title: 项目：有道词典首页
+configelements: '@F(classpath:element/configelements.yaml)'
+children:
+  - '@F(classpath:testsets/account_info/account_info.yaml)'
+  - '@F(classpath:testsets/history_num/history_num.yaml)'
+  - '@F(classpath:testsets/home_content/home_content.yaml)'

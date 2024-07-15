@@ -1,0 +1,14 @@
+title: 接口：获取账号信息接口
+children:
+  - title: 测试用例：未登录时获取账号信息
+    configelements:
+      - testclass: httpDefaults
+        host: dict.youdao.com
+        path: /login/acc/query/accountinfo
+    children:
+      - title: 未登录时获取账号信息
+        testclass: httpsampler
+        validators:
+          - { testclass: HTTPAssertion, field: status, rule: ==, expected: 200 }
+          - { testclass: JSONAssertion, field: '$.code', rule: ==, expected: 2035 }
+          - { testclass: JSONAssertion, field: '$.msg', rule: eq_ic, expected: NO_LOGIN }

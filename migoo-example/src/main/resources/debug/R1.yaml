@@ -1,0 +1,69 @@
+title: R1
+variables:
+  var1: value1
+  var2: value2
+configelements:
+  - testclass: HttpDefaults
+    method: GET
+    protocol: https
+    host: dict-subsidiary.youdao.com
+    path: '/home/historynum'
+preprocessors:
+  - testclass: httppreprocessor
+    extractors:
+      - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "data_time1" }
+postprocessors:
+  - testclass: httppostprocessor
+children:
+  - title: 接口
+    configelements:
+      - testclass: HttpDefaults
+        method: GET
+        protocol: https
+        host: dict-subsidiary.youdao.com
+        path: '/home/historynum'
+    preprocessors:
+      - testclass: httppreprocessor
+        extractors:
+          - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "data_time2" }
+    postprocessors:
+      - testclass: httppostprocessor
+    children:
+      - title: 测试用例
+        configelements:
+          - testclass: HttpDefaults
+            method: GET
+            protocol: https
+            host: dict-subsidiary.youdao.com
+            path: '/home/historynum'
+        children:
+          - title: 步骤1
+            testclass: httpsampler
+            preprocessors:
+              - testclass: httppreprocessor
+                extractors:
+                  - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "data_time3" }
+            postprocessors:
+              - testclass: httppostprocessor
+                extractors:
+                  - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "data_time5" }
+            validators:
+              - { testclass: "HTTPAssertion", field: status, rule: ==, expected: 200 }
+              - { testclass: "JSONAssertion", field: '$.data', rule: isNotNull }
+            extractors:
+              - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "data_time4" }
+          - title: 步骤2
+            configelements:
+              - testclass: HttpDefaults
+                method: GET
+                protocol: https
+                host: dict-subsidiary.youdao.com
+                path: '/home/historynum'
+            testclass: httpsampler
+            validators:
+              - { testclass: "HTTPAssertion", field: status, rule: '>', expected: 200 }
+              - { testclass: "JSONAssertion", field: '$.data', rule: notNull }
+        postprocessors:
+          - testclass: httppostprocessor
+            extractors:
+              - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "TC_POST_1" }

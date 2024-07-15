@@ -15,7 +15,8 @@ public class Debug {
         MiGoo.start("classpath:debug/后置处理器.yaml");
         MiGoo.start("classpath:debug/提取器.yaml");
         MiGoo.start("classpath:debug/验证器.yaml");
-        */
         MiGoo.start("classpath:debug/变量合并逻辑.yaml");
+        */
+        MiGoo.start("classpath:debug/R1.yaml");
     }
 }

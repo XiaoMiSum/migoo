@@ -1,6 +1,0 @@
-title: migoo.xyz 项目接口测试
-configelements: '@F(classpath:element/configelements.yaml)'
-children:
-  - '@F(classpath:testsets/register/testsets.yaml)'
-  - '@F(classpath:testsets/login/testsets.yaml)'
-  - '@F(classpath:testsets/get_schedule/testsets.yaml)'
