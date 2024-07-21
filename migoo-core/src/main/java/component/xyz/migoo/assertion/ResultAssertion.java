@@ -38,7 +38,7 @@ public class ResultAssertion extends AbstractAssertion {
 
     @Override
     public VerifyResult getResult(SampleResult samplerResult) {
-        var result = new VerifyResult("ResultAssertion");
+        var result = new VerifyResult(this.getClass());
         try {
             setActual(samplerResult.getResponseDataAsString());
             super.assertThat(result);

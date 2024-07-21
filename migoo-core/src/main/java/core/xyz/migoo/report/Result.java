@@ -32,6 +32,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author mi.xiao
@@ -39,10 +40,12 @@ import java.util.List;
  */
 public class Result implements Serializable {
 
-
     private final String id;
+
     private final String title;
+
     private boolean success = true;
+
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
@@ -167,5 +170,13 @@ public class Result implements Serializable {
 
     public String getId() {
         return id;
+    }
+
+    public boolean hasConfigurer() {
+        var hasVariables = Objects.nonNull(variables) && !variables.getProperty().isEmpty();
+        var hasConfigElements = Objects.nonNull(configElementResults) && !configElementResults.isEmpty();
+        var hasPreprocessors = Objects.nonNull(preprocessorResults) && !preprocessorResults.isEmpty();
+        var hasPostprocessors = Objects.nonNull(postprocessorResults) && !postprocessorResults.isEmpty();
+        return hasVariables || hasConfigElements || hasPreprocessors || hasPostprocessors;
     }
 }

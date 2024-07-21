@@ -39,7 +39,11 @@ public class VerifyResult {
 
     private boolean success;
 
-    private String context;
+    private String content;
+
+    public VerifyResult(Class<?> testClass) {
+        this(testClass.getName());
+    }
 
     public VerifyResult(String name) {
         this.name = name;
@@ -61,19 +65,19 @@ public class VerifyResult {
         this.success = false;
         var stringWriter = new StringWriter();
         throwable.printStackTrace(new PrintWriter(stringWriter));
-        context = stringWriter.getBuffer().toString();
+        content = stringWriter.getBuffer().toString();
     }
 
-    public String getContext() {
-        return context;
+    public String getContent() {
+        return content;
     }
 
-    public void setContext(String context) {
-        this.context = context;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public void setFailureMessage(String context) {
+    public void setFailureMessage(String content) {
         this.success = false;
-        this.context = context;
+        this.content = content;
     }
 }

@@ -27,11 +27,13 @@ package xyz.migoo.report;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.gherkin.model.Feature;
+import com.aventstack.extentreports.gherkin.model.Given;
+import com.aventstack.extentreports.gherkin.model.Scenario;
 import com.aventstack.extentreports.markuputils.CodeLanguage;
-import com.aventstack.extentreports.markuputils.Markup;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
@@ -41,19 +43,14 @@ import core.xyz.migoo.report.Result;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.variable.MiGooVariables;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.translate.CharSequenceTranslator;
 import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 import xyz.migoo.report.util.DateUtils;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 
-import static com.aventstack.extentreports.Status.FAIL;
-import static com.aventstack.extentreports.Status.PASS;
-import static com.aventstack.extentreports.markuputils.ExtentColor.TRANSPARENT;
-import static com.aventstack.extentreports.markuputils.ExtentColor.WHITE;
+import static com.aventstack.extentreports.Status.*;
 import static xyz.migoo.Constants.*;
 
 /**
@@ -62,6 +59,7 @@ import static xyz.migoo.Constants.*;
 public class StandardReporter implements Reporter {
 
     private final ExtentReports extent;
+    private ReportLevel reportLevel;
 
     public StandardReporter() {
         extent = new ExtentReports();
@@ -72,187 +70,289 @@ public class StandardReporter implements Reporter {
         extent.setSystemInfo("migoo.version", System.getProperty("migoo.version"));
     }
 
+    public static void main(String[] args) {
+        var extent = new ExtentReports();
+        ExtentTest feature = extent.createTest(Feature.class, "Refund item");
+        ExtentTest scenario = feature.createNode(Feature.class, "Jeff returns a faulty microwave");
+        var node1 = scenario.createNode(Given.class, "Jeff has bought a microwave for $100");
+        node1.fail("f");
+        var node2 = scenario.createNode(Given.class, "Jeff has bought a microwave for $100");
+        node2.pass(MarkupHelper.createJsonCodeBlock("{\"key\": 1}"));
+        var reporter = new ExtentSparkReporter("./out-put/index" + DateUtils.nowStr() + ".html");
+        reporter.config().enableOfflineMode(true);
+        extent.attachReporter(reporter);
+        extent.flush();
+
+    }
+
     @Override
     public void generateReport(Result result) {
-        prepare(result);
-        writeResult(extent, result);
-        ended(result);
+        reportLevel = ReportLevel.of(getReportLevel(result, 4));
+        writeResult(extent, result, 1);
+        flush(result);
     }
 
-    private void writeResult(Object node, Result result) {
-        writeGlobals(node, result.getVariables());
-        writeConfigs(node, result.getConfigElementResults());
-        writeProcessors(node, result.getPreprocessorResults(), "PRE.PROCESSORS");
-        if (result instanceof SampleResult sResult) {
-            var sNode = node instanceof ExtentTest ? ((ExtentTest) node).createNode(result.getTitle())
-                    : extent.createTest(result.getTitle());
-            writeSampleResult(sNode, sResult);
-        } else {
-            if (result.isException()) {
-                var sNode = node instanceof ExtentTest ? ((ExtentTest) node).createNode(result.getTitle())
-                        : extent.createTest(result.getTitle());
-                sNode.getModel().setStartTime(DateUtils.toDate(result.getStartTime()));
-                writeThrowable(sNode, result.getThrowable());
-                sNode.getModel().setEndTime(DateUtils.toDate(result.getEndTime()));
-            } else {
-                if (result.getSubResults() != null) {
-                    for (Result sr : result.getSubResults()) {
-                        var sNode = node instanceof ExtentTest ? ((ExtentTest) node).createNode(sr.getTitle())
-                                : extent.createTest(sr.getTitle());
-                        if (sr instanceof SampleResult sResult) {
-                            writeSampleResult(sNode, sResult);
-                        } else {
-                            writeResult(sNode, sr);
-                        }
-                    }
+    private void writeResult(Object feature, Result result, int level) {
+        if (result instanceof SampleResult sr) {
+            // 当前测试报告是取样器级别 或 测试用例节点，则设置所有第一节点为全局
+            var isGlobal = reportLevel.isSampler() || reportLevel.isTestcase();
+            writeVariables(feature, result.getVariables(), isGlobal, true);
+            writeConfigElements(feature, result.getConfigElementResults(), isGlobal, true);
+            writeProcessors(feature, result.getPreprocessorResults(), "前置", isGlobal, true);
+            writeSampler(feature, sr, true, isGlobal);
+            writeValidators(feature, sr);
+            writeThrowable(feature, result);
+            writeExtractors(feature, sr.getExtractorResults(), true);
+            writeProcessors(feature, result.getPostprocessorResults(), "后置", isGlobal, true);
+            if (feature instanceof ExtentTest t) {
+                t.getModel().setStatus(result.isSuccessful() ? PASS : FAIL);
+            }
+            return;
+        }
+        if (result.hasConfigurer()) {
+            var isGlobal = level == 1 && (reportLevel.isSuite() || reportLevel.isSet() || reportLevel.isTestcase());
+            var isLocality = level == 2 && (reportLevel.isSuite() || reportLevel.isSet());
+            String name = isGlobal ? "全局配置" : "局部配置";
+            ExtentTest node = isGlobal || isLocality ? write(feature, name) : (ExtentTest) feature;
+            writeVariables(node, result.getVariables(), isGlobal, false);
+            writeConfigElements(node, result.getConfigElementResults(), isGlobal, false);
+            writeProcessors(node, result.getPreprocessorResults(), "前置", isGlobal, false);
+            writeProcessors(node, result.getPostprocessorResults(), "后置", isGlobal, false);
+            node.getModel().setStatus(INFO);
+        }
+        writeThrowable(feature, result);
+        if (Objects.nonNull(result.getSubResults()) && !result.getSubResults().isEmpty()) {
+            for (Result r : result.getSubResults()) {
+                var node = write(feature, r.getTitle());
+                writeResult(node, r, level + 1);
+                if (reportLevel.isSuite() || reportLevel.isSet()) {
+                    node.getModel().setStatus(r.isSuccessful() ? PASS : FAIL);
                 }
             }
         }
-        writeProcessors(node, result.getPostprocessorResults(), "POST.PROCESSORS");
     }
 
-    private void writeGlobals(Object f, MiGooVariables variables) {
+    private void writeVariables(Object feature, MiGooVariables variables, boolean isGlobal, boolean isSampler) {
         if (Objects.nonNull(variables) && !variables.getProperty().isEmpty()) {
-            var markup = MarkupHelper.createCodeBlock(variables.toString(), CodeLanguage.JSON);
-            if (f instanceof ExtentReports reports) {
-                reports.createTest("GLOBAL.VARIABLES").info(markup);
-            }
-            if (f instanceof ExtentTest node) {
-                node.createNode("VARIABLES").info(markup);
-            }
-        }
-    }
-
-    private void writeConfigs(Object f, List<SampleResult> results) {
-        if (Objects.nonNull(results) && !results.isEmpty()) {
-            var feature = f instanceof ExtentTest t ? t.createNode("CONFIG.ELEMENTS")
-                    : extent.createTest("CONFIG.ELEMENTS");
-            results.forEach(result -> feature.createNode(result.getTestClass())
-                    .info(MarkupHelper.createCodeBlock(result.getSamplerData(), CodeLanguage.JSON)));
-        }
-    }
-
-    private void writeProcessors(Object f, List<SampleResult> results, String name) {
-        if (Objects.nonNull(results) && !results.isEmpty()) {
-            var feature = f instanceof ExtentTest t ? t.createNode(name) : extent.createTest(name);
-            results.forEach(result -> {
-                var title = StringUtils.isEmpty(result.getTitle()) ? result.getTestClass() : result.getTitle();
-                var node = feature.createNode(title);
-                buildSampleResult(result, node);
-                writeThrowable(node, result.getThrowable());
-                writeExtractorResults(node, result.getExtractorResults());
-            });
-        }
-    }
-
-    private void writeSampleResult(ExtentTest node, SampleResult result) {
-        node.getModel().setStartTime(DateUtils.toDate(result.getStartTime()));
-        writeProcessors(node, result.getPreprocessorResults(), "PRE.PROCESSORS");
-        buildSampleResult(result, node.createNode("TEST.CLASS: " + result.getTestClass()));
-        writeExtractorResults(node, result.getExtractorResults());
-        writeThrowable(node, result.getThrowable());
-        node.getModel().setStatus(result.isSuccessful() ? PASS : FAIL);
-        if (result.getAssertionResults() != null) {
-            var v = node.createNode("TEST.VALIDATORS");
-            for (var subResult : result.getAssertionResults()) {
-                v.log(subResult.isSuccessful() ? PASS : FAIL, convertValidator(subResult));
-            }
-        }
-        writeProcessors(node, result.getPostprocessorResults(), "POST.PROCESSORS");
-        node.getModel().setEndTime(DateUtils.toDate(result.getEndTime()));
-    }
-
-    private void buildSampleResult(Result result, ExtentTest node) {
-        if (result instanceof SampleResult sResult) {
-            if (sResult instanceof HTTPSampleResult hResult) {
-                node.info(MarkupHelper.createLabel("REQUEST.URL:  " + hResult.getMethod() + " " + sResult.getUrl(), TRANSPARENT));
-                if (!hResult.getCookies().isEmpty()) {
-                    node.info(MarkupHelper.createLabel("REQUEST.COOKIES", WHITE))
-                            .info(MarkupHelper.createCodeBlock(hResult.getCookies()));
+            // test 为 1级节点 或者 2级节点
+            if (reportLevel.isSuite() && isSampler) {
+                write(feature, "变量定义", true);
+                write(feature, variables.getProperty().toString(), true);
+            } else {
+                ExtentTest test = write(feature, "变量定义", INFO);
+                var node2 = reportLevel.isSampler() ? write(test, "变量定义", INFO) : test;
+                // 如果是全局配置 需要创建一层占位符作为变量内容的容器
+                ExtentTest node = isGlobal ? write(node2, "-") : test;
+                write(node, variables.getProperty().toString(), true);
+                node2.getModel().setStatus(INFO);
+                if (reportLevel.isSampler()) {
+                    test.getModel().setStatus(INFO);
                 }
-                if (Objects.nonNull(hResult.getRequestHeaders()) && !hResult.getRequestHeaders().isEmpty()) {
-                    var array = convertHeaders(hResult.getRequestHeaders());
-                    node.createNode("REQUEST.HEADERS")
-                            .info(MarkupHelper.createCodeBlock(array.toJSONString(), CodeLanguage.JSON));
-                }
-                if (!hResult.getQueryString().isEmpty()) {
-                    node.info(MarkupHelper.createLabel("REQUEST.QUERY", WHITE))
-                            .info(MarkupHelper.createCodeBlock(hResult.getQueryString(), CodeLanguage.JSON));
+            }
+        }
+    }
+
+    private void writeConfigElements(Object feature, List<SampleResult> results, boolean isGlobal, boolean isSampler) {
+        if (Objects.nonNull(results) && !results.isEmpty()) {
+            var node = write(feature, "配置元件", reportLevel.isSuite() && isSampler);
+            if (reportLevel.isSampler()) {
+                // 测试报告级别为取样器，遍历打印配置元件类型 和 配置元件内容
+                results.forEach(item -> {
+                    // 给每一个配置元件增加一层节点展示TestClass
+                    var node2 = write(node, item.getTestClass());
+                    // 加一层占位符作为配置元件内容的容器
+                    write(write(node2, "-"), item.getSamplerData(), true);
+                    node2.getModel().setStatus(INFO);
+                });
+            } else if (reportLevel.isTestcase()) {
+                var node2 = isGlobal ? write(node, "-") : node;
+                results.forEach(item -> write(node2, item.getSamplerData(), true));
+                if (!isGlobal) {
+                    node2.getModel().setStatus(INFO);
                 }
             } else {
-                node.info(MarkupHelper.createCodeBlock(sResult.getUrl()));
+                results.forEach(item -> write(isGlobal ? write(node, "-") : node, item.getSamplerData(), true));
             }
-            if (!sResult.getSamplerData().isEmpty()) {
-                node.createNode("REQUEST.DATA")
-                        .info(MarkupHelper.createCodeBlock(sResult.getSamplerData(), CodeLanguage.JSON));
-            }
-            if (sResult instanceof HTTPSampleResult hResult) {
-                if (Objects.nonNull(hResult.getResponseHeaders()) && !hResult.getResponseHeaders().isEmpty()) {
-                    var array = convertHeaders(hResult.getResponseHeaders());
-                    node.createNode("RESPONSE.HEADERS")
-                            .info(MarkupHelper.createCodeBlock(array.toJSONString(), CodeLanguage.JSON));
-                }
-            }
-            if (!sResult.getResponseDataAsString().isEmpty()) {
-                node.createNode("RESPONSE.DATA").info(JSON.isValid(sResult.getResponseDataAsString()) ?
-                        MarkupHelper.createCodeBlock(sResult.getResponseDataAsString(), CodeLanguage.JSON)
-                        : MarkupHelper.createCodeBlock(getResponseString(sResult.getResponseDataAsString().trim())));
-
-            }
+            node.getModel().setStatus(INFO);
         }
     }
 
-    private void writeExtractorResults(ExtentTest node, List<SampleResult> results) {
+    private void writeProcessors(Object feature, List<SampleResult> results, String prefix, boolean isGlobal, boolean isSampler) {
         if (Objects.nonNull(results) && !results.isEmpty()) {
-            var ex = node.createNode("EXTRACTORS");
-            results.forEach(result -> ex.info(MarkupHelper.createCodeBlock(result.getSamplerData(), CodeLanguage.JSON)));
+            var node1 = write(feature, prefix + "处理器", reportLevel.isSuite() && isSampler);
+            // 测试报告级别为取样器，遍历打印处理器类型 和 处理器元件内容
+            results.forEach(item -> {
+                var node2 = writeSampler(node1, item, false, isGlobal);
+                writeThrowable(node1, item);
+                // 提取器挂到Node2 下面
+                writeExtractors(node2, item.getExtractorResults(), false);
+                if (reportLevel.isSampler()) {
+                    node2.getModel().setStatus(INFO);
+                }
+            });
+            node1.getModel().setStatus(INFO);
         }
-
     }
 
-    private JSONArray convertHeaders(List<Map<String, String>> headers) {
-        var array = new JSONArray(headers.size());
-        for (var requestHeader : headers) {
-            for (var entry : requestHeader.entrySet()) {
-                array.add(entry.getKey() + ": " + entry.getValue());
+    private void writeExtractors(Object feature, List<SampleResult> results, boolean isSampler) {
+        if (Objects.nonNull(results) && !results.isEmpty()) {
+            if (reportLevel.isSampler()) {
+                // 测试报告级别为 Sampler，则再创建一个Node用作打印详情的容器
+                var node = write(feature, "提取器" + (isSampler ? "" : "："));
+                results.forEach(result -> {
+                    if (!isSampler) {
+                        write(node, result.getTestClass(), true);
+                        write(node, result.getSamplerData(), true);
+                    } else {
+                        // 给每一个提取器增加一层节点展示TestClass
+                        var node2 = write(node, result.getTestClass());
+                        // 加一层占位符作为配置元件内容的容器
+                        write(write(node2, "-"), result.getSamplerData(), true);
+                        node2.getModel().setStatus(INFO);
+                        node.getModel().setStatus(INFO);
+                    }
+                });
+            } else if (reportLevel.isTestcase()) {
+                var node = write(feature, "提取器" + (isSampler ? "" : "："), !isSampler);
+                JSONArray json = new JSONArray();
+                results.forEach(item -> json.add(JSON.parseObject(item.getSamplerData())));
+                // 如果是取样器提取，则创建一个占位符Node用作打印详情的容器
+                write(!isSampler ? node : write(node, " - "), json.toJSONString(), true);
+                if (isSampler) {
+                    node.getModel().setStatus(INFO);
+                }
+            } else {
+                JSONArray json = new JSONArray();
+                results.forEach(item -> json.add(JSON.parseObject(item.getSamplerData())));
+                write(write(feature, "提取器：", reportLevel.isSuite() || !isSampler), json.toJSONString(), true);
             }
         }
-        return array;
     }
 
-    private Markup convertValidator(VerifyResult result) {
-        var array = new JSONArray();
-        if (result.isSuccessful() && JSON.isValidObject(result.getContext())) {
-            var object = JSONObject.parseObject(result.getContext());
-            object.forEach((key, value) -> array.add(key + ": " + value));
+    private void writeThrowable(Object feature, Result result) {
+        if (Objects.nonNull(result.getThrowable())) {
+            write(write(feature, result.getTitle(), FAIL), result.getTitle(), true, FAIL);
+        }
+    }
+
+    private ExtentTest writeSampler(Object feature, SampleResult result, boolean isSampler, boolean isGlobal) {
+        var f = feature instanceof ExtentReports r ? write(r, result.getTitle(), INFO) : feature;
+        // 如果 测试报告级别为 Suite 且 isGlobal == true , 则 f为 2级节点
+        // 如果 测试报告级别为 Set 且 (isGlobal == true 或  isSampler == true) , 则 f为 2级节点
+        // 如果 测试报告级别为 Testcase 或 Sampler 时, 则 f 为2级节点
+        var isNodeLevel2 = (reportLevel.isSuite() && isGlobal) || (reportLevel.isSet() && (isSampler || isGlobal)) ||
+                (reportLevel.isSampler() || reportLevel.isTestcase());
+        // 当 f = 2级节点时，需要创建三级节点
+        var node = write(f, (isSampler ? "取样器：" : "处理器：") + result.getTestClass(), !isNodeLevel2, INFO);
+        boolean isNodeLevel3 = !(reportLevel.isTestcase() || reportLevel.isSampler()) || (reportLevel.isTestcase() && !isSampler);
+        if (StringUtils.isNotBlank(result.getUrl())) {
+            write(node, "请求地址：" + result.getUrl(), isNodeLevel3);
+        }
+        if (result instanceof HTTPSampleResult h) {
+            if (Objects.nonNull(h.getCookies()) && !h.getCookies().isEmpty()) {
+                write(write(node, "Cookies：", isNodeLevel3), toJSONString(h.getCookies()), true);
+            }
+            if (Objects.nonNull(h.getRequestHeaders()) && !h.getRequestHeaders().isEmpty()) {
+                write(write(node, "请求头：", isNodeLevel3), toJSONString(h.getRequestHeaders()), true);
+            }
+            if (StringUtils.isNotBlank(h.getQueryString())) {
+                write(write(node, "Query 参数：", isNodeLevel3), h.getQueryString(), true);
+            }
+        }
+        if (StringUtils.isNotBlank(result.getSamplerData())) {
+            write(write(node, "请求数据：", isNodeLevel3), result.getSamplerData(), true);
+        }
+        if (result instanceof HTTPSampleResult h) {
+            if (Objects.nonNull(h.getResponseHeaders()) && !h.getResponseHeaders().isEmpty()) {
+                write(write(node, "响应头：", isNodeLevel3), toJSONString(h.getResponseHeaders()), true);
+            }
+        }
+        if (StringUtils.isNotBlank(result.getResponseDataAsString())) {
+            write(write(node, "响应数据：", isNodeLevel3), result.getResponseDataAsString(), true);
+        }
+        if (reportLevel.isTestcase() || reportLevel.isSampler()) {
+            node.getModel().setStatus(INFO);
+        }
+        if (reportLevel.isSampler()) {
+            ((ExtentTest) f).getModel().setStatus(INFO);
+        }
+        return node;
+    }
+
+    private void writeValidators(Object feature, SampleResult result) {
+        List<VerifyResult> results = result.getAssertionResults();
+        if (Objects.nonNull(results) && !results.isEmpty()) {
+            if (reportLevel.isSampler() || reportLevel.isTestcase()) {
+                // 先以Node打印验证器类型，如果 测试报告级别为 测试报告，则直接以此Node用作打印详情的容器
+                // 如果测试报告级别为 取样器，则再创建一个Node用作打印详情的容器
+                var node = write(feature, "验证器");
+                results.forEach(item -> {
+                    var n = write(node, item.getName(), item.isSuccessful() ? PASS : FAIL);
+                    write(reportLevel.isSampler() ? write(n, "-") : n, item.getContent(), true, item.isSuccessful() ? PASS : FAIL);
+                });
+                return;
+            }
+            // 如果测试报告级别为 Suite，则以 feature 作为打印详情的容器(write 返回 原feature)，否则创建一个新的Node作为打印详情的容器
+            var node = write(feature, "验证器：", reportLevel.isSuite());
+            results.forEach(item -> write(node, item.getContent(), true, item.isSuccessful() ? PASS : FAIL));
+        }
+    }
+
+    private int getReportLevel(Result result, int level) {
+        if (result instanceof SampleResult) {
+            return level;
+        }
+        level--;
+        if (result.getSubResults() != null && !result.getSubResults().isEmpty()) {
+            Result sr = result.getSubResults().getFirst();
+            level = sr instanceof SampleResult ? level : getReportLevel(sr, level);
+        }
+        return level;
+    }
+
+    private ExtentTest write(Object feature, String record, Status... status) {
+        return write(feature, record, false, status);
+    }
+
+    private ExtentTest write(Object feature, String record, boolean isLog, Status... status) {
+        ExtentTest node;
+        if (feature instanceof ExtentReports report) {
+            node = report.createTest(Feature.class, record);
         } else {
-            array.add("testclass: " + result.getName());
-            array.add(result.getContext());
+            var t = (ExtentTest) feature;
+            if (isLog) {
+                Status s = Objects.nonNull(status) && status.length > 0 ? status[0] : PASS;
+                return JSON.isValid(record) ? t.log(s, MarkupHelper.createJsonCodeBlock(JSON.parse(record))) :
+                        isXml(record) ? t.log(s, MarkupHelper.createCodeBlock(record, CodeLanguage.XML)) : t.log(s, record);
+            }
+            node = t.createNode(Scenario.class, record);
         }
-        return MarkupHelper.createCodeBlock(array.toJSONString(), CodeLanguage.JSON);
+        node.getModel().setStatus(Objects.nonNull(status) && status.length > 0 ? status[0] : PASS);
+        return node;
     }
 
-    private void writeThrowable(ExtentTest feature, Throwable content) {
-        if (Objects.nonNull(content)) {
-            feature.fail(content);
-        }
+    private boolean isXml(String text) {
+        text = text.trim();
+        return text.startsWith("<") && text.endsWith(">");
     }
 
-    private String getResponseString(String text) {
-        if (text.startsWith("<") && text.endsWith(">")) {
-            return CharSequenceTranslator.escapeHtml4(text);
+    private String toJSONString(JSONArray objects) {
+        JSONArray strings = new JSONArray(objects.size());
+        for (int i = 0; i < objects.size(); i++) {
+            var item = objects.getJSONObject(i).firstEntry();
+            strings.add(item.getKey() + ": " + item.getValue());
         }
-        return text;
+        return strings.toJSONString();
     }
 
-    private void prepare(Result result) {
+    private void flush(Result result) {
         var outputDirectoryName = System.getProperty(REPORT_OUTPUT, "./out-put") + "/"
-                + DateUtils.nowStr() + "/" + result.getTitle();
+                + result.getTitle() + "_" + DateUtils.nowStr();
         var reporter = new ExtentSparkReporter(outputDirectoryName + "/index.html");
-        reporter.config().setDocumentTitle(result.getTitle() + " Report - Generated by migoo");
-        reporter.config().setReportName(result.getTitle() + " Reports</span></a></li>\n" +
+        reporter.config().setDocumentTitle(result.getTitle() + " 测试报告 - Generated by migoo");
+        reporter.config().setReportName(result.getTitle() + " 测试报告</span></a></li>\n" +
                 "<li><a href='https://github.com/XiaoMiSum/migoo' target=\"_blank\"><span>" +
-                "<img src=\"https://img.shields.io/badge/migoo-xiaomi-yellow.svg?style=social&amp;logo=github\">");
+                "<img src=\"https://img.shields.io/badge/MiGoo-xiaomi-yellow.svg?style=social&amp;logo=github\">");
         reporter.config().setTimeStampFormat("yyyy-MM-dd HH:mm:ss");
         reporter.config().setTheme(Theme.valueOf(System.getProperty(REPORT_THEME, "DARK").toUpperCase(Locale.ROOT)));
         reporter.config().enableOfflineMode(Boolean.parseBoolean(System.getProperty(REPORT_OFFLINE, "true")));
@@ -260,9 +360,6 @@ public class StandardReporter implements Reporter {
         reporter.config().setEncoding("UTF-8");
         extent.attachReporter(reporter);
         extent.getReport().setStartTime(DateUtils.toDate(result.getStartTime()));
-    }
-
-    private void ended(Result result) {
         extent.getReport().setEndTime(DateUtils.toDate(result.getEndTime()));
         extent.flush();
     }
