@@ -60,7 +60,7 @@ public interface Convert2Sampler {
         path = StringUtils.isBlank(path) ? System.getProperty("user.dir") : path;
         var file = new File(path + "/" + this.getClass().getSimpleName() + "_" + System.currentTimeMillis() + ".yaml");
         try (var writer = new FileWriter(file)) {
-            new Yaml().dump(sampler, writer);
+            writer.write(new Yaml().dumpAsMap(sampler));
         }
         System.out.println("转换完成: " + file.getPath());
     }

@@ -38,9 +38,9 @@ public class ConvertFactory {
 
     public static void convert(String command, File file) {
         var object = Loader.toJavaObject(file.getPath(), JSONObject.class);
-        if ("-h2m".equals(command)) {
+        if ("h2m".equals(command)) {
             new Har2Sampler().convert(object, file.getParent());
-        } else if ("-p2m".equals(command)) {
+        } else if ("p2m".equals(command)) {
             new Postman2Sampler().convert(object, file.getParent());
         }
     }
