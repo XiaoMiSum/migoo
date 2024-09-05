@@ -41,7 +41,7 @@ public class HttpDefaults extends AbstractTestElement implements TestStateListen
     @Override
     public void testStarted() {
         super.convertVariable();
-        HttpDefaults httpDefaults = (HttpDefaults) getVariables().get(HTTP_DEFAULT);
+        var httpDefaults = (HttpDefaults) getVariables().get(HTTP_DEFAULT);
         if (Objects.nonNull(httpDefaults)) {
             // 合并已存在的, 重复Key 以当前对象为准
             setProperties(httpDefaults.getProperty());

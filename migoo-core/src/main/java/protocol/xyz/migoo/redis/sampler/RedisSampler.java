@@ -27,7 +27,6 @@ package protocol.xyz.migoo.redis.sampler;
 
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.sampler.Sampler;
-import core.xyz.migoo.testelement.MiGooProperty;
 import core.xyz.migoo.testelement.TestStateListener;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.redis.AbstractRedisTestElement;
@@ -41,9 +40,9 @@ public class RedisSampler extends AbstractRedisTestElement implements Sampler, T
 
     @Override
     public SampleResult sample() {
-        SampleResult result = new SampleResult(getPropertyAsString(TITLE));
-        String dataSourceName = getPropertyAsString("datasource");
-        RedisSourceElement dataSource = (RedisSourceElement) getVariables().get(dataSourceName);
+        var result = new SampleResult(getPropertyAsString(TITLE));
+        var dataSourceName = getPropertyAsString("datasource");
+        var dataSource = (RedisSourceElement) getVariables().get(dataSourceName);
         if (StringUtils.isBlank(dataSourceName) || dataSource == null) {
             result.setSuccessful(false);
             result.setResponseData("DataSourceName is not specified or DataSource is null");
@@ -60,8 +59,7 @@ public class RedisSampler extends AbstractRedisTestElement implements Sampler, T
 
     @Override
     public void testStarted() {
-        super.convertVariable();
-        MiGooProperty property = getPropertyAsMiGooProperty(CONFIG);
+        var property = getPropertyAsMiGooProperty(CONFIG);
         this.setProperties(property);
     }
 

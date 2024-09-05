@@ -36,7 +36,6 @@ import protocol.xyz.migoo.http.sampler.HttpSampler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * 标准引擎，用于执行最小的一个测试用例
@@ -59,7 +58,7 @@ public class StandardEngine extends AbstractTestEngine {
     protected void runTest(Result result) {
         var sr = (SampleResult) result;
         TestElementService.testStarted(context.getSampler());
-        sr.setSamplerData((SampleResult) Objects.requireNonNull(TestElementService.runTest(context.getSampler())));
+        sr.setSamplerData(TestElementService.runTest(context.getSampler()));
         TestElementService.testEnded(context.getSampler());
         runAssertions(sr);
         runExtractors(sr);
@@ -71,12 +70,7 @@ public class StandardEngine extends AbstractTestEngine {
             return;
         }
         result.setAssertionResults(new ArrayList<>(context.getValidators().size()));
-        context.getValidators().forEach(element -> {
-            if (element instanceof Assertion) {
-                element.getVariables().mergeVariable(context.getVariables());
-                TestElementService.runTest(element, result);
-            }
-        });
+        context.getValidators().stream().filter(item -> item instanceof Assertion).forEach(element -> TestElementService.runTest(element, result));
     }
 
     private void runExtractors(SampleResult result) {
@@ -84,13 +78,7 @@ public class StandardEngine extends AbstractTestEngine {
             return;
         }
         List<SampleResult> ex = new ArrayList<>(context.getExtractors().size());
-        context.getExtractors().forEach(element -> {
-            if (element instanceof Extractor) {
-                element.getVariables().mergeVariable(context.getVariables());
-                ex.add((SampleResult) TestElementService.runTest(element, result));
-                context.getVariables().mergeVariable(element.getVariables());
-            }
-        });
+        context.getExtractors().stream().filter(item -> item instanceof Extractor).forEach(element -> ex.add(TestElementService.runTest(element, result)));
         result.setExtractorResults(ex);
     }
 }

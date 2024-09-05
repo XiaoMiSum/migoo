@@ -28,7 +28,6 @@ package core.xyz.migoo.testelement;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.variable.MiGooVariables;
-import core.xyz.migoo.variable.VariableStateListener;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -37,7 +36,7 @@ import java.util.Optional;
 /**
  * @author xiaomi
  */
-public abstract class AbstractTestElement implements TestElement, VariableStateListener, Serializable {
+public abstract class AbstractTestElement implements TestElement, Serializable {
 
     public static final String VARIABLES = "variables";
     public static final String CONFIG_ELEMENTS = "configelements";

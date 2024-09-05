@@ -30,11 +30,9 @@ import core.xyz.migoo.assertion.Assertion;
 import core.xyz.migoo.assertion.VerifyResult;
 import core.xyz.migoo.extractor.Extractor;
 import core.xyz.migoo.processor.Processor;
-import core.xyz.migoo.report.Result;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.sampler.Sampler;
 import core.xyz.migoo.variable.MiGooVariables;
-import core.xyz.migoo.variable.VariableStateListener;
 
 import java.util.*;
 
@@ -82,7 +80,7 @@ public class TestElementService {
         return new HashMap<>(SERVICES);
     }
 
-    public static Result runTest(TestElement el, SampleResult... sampleResults) {
+    public static SampleResult runTest(TestElement el, SampleResult... sampleResults) {
         return switch (el) {
             case Sampler s -> s.sample();
             case Processor p -> p.process();
@@ -91,23 +89,22 @@ public class TestElementService {
                 VerifyResult aResult = a.getResult(sampleResults[0]);
                 sampleResults[0].setSuccessful(!sampleResults[0].isSuccessful() ? sampleResults[0].isSuccessful() : aResult.isSuccessful());
                 sampleResults[0].getAssertionResults().add(aResult);
-                yield null;
+                yield sampleResults[0];
             }
             default -> throw new RuntimeException("不支持的测试元件：" + el.getClass().getName());
         };
     }
 
-    public static void prepare(TestElement el, JSONObject properties, MiGooVariables... variables) {
+    public static void prepare(TestElement el, JSONObject properties, MiGooVariables variables) {
         el.setProperties(properties);
-        if (variables.length > 0) {
-            el.setVariables(variables[0]);
-        }
-        if (el instanceof VariableStateListener vsl) {
-            vsl.convertVariable();
+        if (Objects.nonNull(variables)) {
+            el.setVariables(variables);
         }
     }
 
     public static void testStarted(TestElement el) {
+        // 框架层处理变量替换
+        el.convertVariable();
         if (el instanceof TestStateListener tsl) {
             tsl.testStarted();
         }

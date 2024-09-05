@@ -14,6 +14,7 @@ public abstract class AbstractDebugTestElement extends AbstractTestElement {
         result.setSamplerData(this.getProperty().toString());
         result.sampleEnd();
         System.out.println(this.getProperty().toString());
+        result.setResponseData(this.getProperty().toString());
         return result;
     }
 

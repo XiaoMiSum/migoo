@@ -25,7 +25,8 @@
 
 package protocol.xyz.migoo.http.sampler;
 
-import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.sampler.SampleResult;
 import org.apache.hc.core5.http.Header;
 import xyz.migoo.simplehttp.Request;
@@ -33,10 +34,7 @@ import xyz.migoo.simplehttp.Response;
 
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Arrays;
 
 /**
  * @author xiaomi
@@ -50,11 +48,11 @@ public class HTTPSampleResult extends SampleResult {
 
     private String queryString = "";
 
-    private String cookies = "";
+    private JSONArray cookies;
 
-    private List<Map<String, String>> requestHeaders;
+    private JSONArray requestHeaders;
 
-    private List<Map<String, String>> responseHeaders;
+    private JSONArray responseHeaders;
 
     private String responseCode = "";
 
@@ -80,27 +78,27 @@ public class HTTPSampleResult extends SampleResult {
         this.method = method;
     }
 
-    public String getCookies() {
+    public JSONArray getCookies() {
         return cookies;
     }
 
-    public void setCookies(String cookies) {
+    public void setCookies(JSONArray cookies) {
         this.cookies = cookies;
     }
 
-    public List<Map<String, String>> getRequestHeaders() {
+    public JSONArray getRequestHeaders() {
         return requestHeaders;
     }
 
-    public void setRequestHeaders(List<Map<String, String>> requestHeaders) {
+    public void setRequestHeaders(JSONArray requestHeaders) {
         this.requestHeaders = requestHeaders;
     }
 
-    public List<Map<String, String>> getResponseHeaders() {
+    public JSONArray getResponseHeaders() {
         return responseHeaders;
     }
 
-    public void setResponseHeaders(List<Map<String, String>> responseHeaders) {
+    public void setResponseHeaders(JSONArray responseHeaders) {
         this.responseHeaders = responseHeaders;
     }
 
@@ -119,19 +117,19 @@ public class HTTPSampleResult extends SampleResult {
         if (isResponseCodeOK()) {
             setResponseMessageOK();
         }
-        setCookies(response.cookies() != null ? JSON.toJSONString(response.cookies()) : cookies);
+        if (response.cookies() != null) {
+            JSONArray cookies = new JSONArray();
+            response.cookies().forEach(item -> cookies.add(JSONObject.of(item.getName(), item.getValue())));
+            setCookies(cookies);
+        }
     }
 
-    private List<Map<String, String>> convertHeaders(Header[] headers) {
+    private JSONArray convertHeaders(Header[] headers) {
         if (headers.length == 0) {
             return null;
         }
-        List<Map<String, String>> ls = new ArrayList<>(headers.length);
-        for (Header h : headers) {
-            Map<String, String> header = new HashMap<>(2);
-            header.put(h.getName(), h.getValue());
-            ls.add(header);
-        }
+        JSONArray ls = new JSONArray(headers.length);
+        Arrays.stream(headers).toList().forEach(header -> ls.add(JSONObject.of(header.getName(), header.getValue())));
         return ls;
     }
 
@@ -146,7 +144,6 @@ public class HTTPSampleResult extends SampleResult {
         }
         return url;
     }
-
 
     public void setResponseCodeOK() {
         responseCode = OK_CODE;
@@ -182,13 +179,11 @@ public class HTTPSampleResult extends SampleResult {
         if (result instanceof HTTPSampleResult hResult) {
             setQueryString(hResult.getQueryString());
             setMethod(hResult.getMethod());
-            setCookies(getCookies());
+            setCookies(hResult.getCookies());
             setRequestHeaders(hResult.getRequestHeaders());
             setResponseHeaders(hResult.getResponseHeaders());
             setResponseCode(hResult.getResponseCode());
-            if (hResult.isResponseCodeOK()) {
-                setResponseMessageOK();
-            }
+            setResponseMessage(hResult.getResponseMessage());
         }
     }
 }

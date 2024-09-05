@@ -34,8 +34,6 @@ import protocol.xyz.migoo.http.config.HttpDefaults;
 import protocol.xyz.migoo.http.sampler.HTTPHCImpl;
 import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 import protocol.xyz.migoo.http.util.HTTPConstantsInterface;
-import xyz.migoo.simplehttp.Request;
-import xyz.migoo.simplehttp.Response;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -51,7 +49,7 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
 
     public void testStarted() {
         super.convertVariable();
-        HttpDefaults other = (HttpDefaults) getVariables().get(HTTP_DEFAULT);
+        var other = (HttpDefaults) getVariables().get(HTTP_DEFAULT);
         if (Objects.nonNull(other)) {
             setProperty(HTTP2, other.getPropertyAsBoolean(HTTP2));
             setProperty(BASE_PATH, other.getPropertyAsString(BASE_PATH));
@@ -72,15 +70,15 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
     }
 
     private void setHeader(MiGooProperty other) {
-        JSONObject otherHeaders = other.getJSONObject(HEADERS);
+        var otherHeaders = other.getJSONObject(HEADERS);
         if (otherHeaders != null && !otherHeaders.isEmpty()) {
-            MiGooProperty thisHeaders = getPropertyAsMiGooProperty(HEADERS);
+            var thisHeaders = getPropertyAsMiGooProperty(HEADERS);
             if (thisHeaders == null) {
                 thisHeaders = new MiGooProperty();
                 thisHeaders.putAll(otherHeaders);
                 getProperty().put(HEADERS, thisHeaders);
             } else {
-                MiGooProperty headers = new MiGooProperty();
+                var headers = new MiGooProperty();
                 headers.putAll(otherHeaders);
                 headers.putAll(thisHeaders);
                 getProperty().put(HEADERS, headers);
@@ -89,11 +87,11 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
     }
 
     protected SampleResult execute(SampleResult sample) throws Exception {
-        HTTPSampleResult result = (HTTPSampleResult) sample;
+        var result = (HTTPSampleResult) sample;
         result.setTestClass(this.getClass());
         try {
-            JSONObject headers = Optional.ofNullable(getPropertyAsJSONObject(HEADERS)).orElse(new JSONObject());
-            Request request = new HTTPHCImpl(getPropertyAsString(REQUEST_METHOD), buildUrl())
+            var headers = Optional.ofNullable(getPropertyAsJSONObject(HEADERS)).orElse(new JSONObject());
+            var request = new HTTPHCImpl(getPropertyAsString(REQUEST_METHOD), buildUrl())
                     .headers(headers)
                     .cookie(getPropertyAsJSONObject(COOKIE))
                     .query(get(QUERY))
@@ -103,7 +101,7 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
             }
             result.setRequestData(request);
             result.sampleStart();
-            Response response = request.execute();
+            var response = request.execute();
             result.setResponseData(response);
         } finally {
             result.sampleEnd();
@@ -112,14 +110,14 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
     }
 
     private String buildUrl() {
-        String path = getPropertyAsString(BASE_PATH);
+        var path = getPropertyAsString(BASE_PATH);
         if (StringUtils.isBlank(path)) {
             String port = Optional.ofNullable(getPropertyAsString(PORT)).orElse("");
             path = String.format(URL_FORMAT, get(PROTOCOL), get(HOST), port.isEmpty() ? "" : (":" + port));
         } else if (path.endsWith(SEPARATOR)) {
             path = path.substring(0, path.length() - 1);
         }
-        String api = Optional.ofNullable(getPropertyAsString(API)).orElse(getPropertyAsString(PATH));
+        var api = Optional.ofNullable(getPropertyAsString(API)).orElse(getPropertyAsString(PATH));
         api = Objects.isNull(api) ? "" : !api.startsWith(SEPARATOR) ? SEPARATOR + api : api;
         return path + api;
     }

@@ -52,16 +52,16 @@ public abstract class AbstractJDBCTestElement extends AbstractTestElement {
 
     protected SampleResult execute(Connection conn, SampleResult result) throws SQLException, UnsupportedOperationException {
         result.setTestClass(this.getClass());
-        String sqlQuery = getPropertyAsString(STATEMENT);
+        var sqlQuery = getPropertyAsString(STATEMENT);
         if (StringUtils.isBlank(sqlQuery)) {
             throw new UnsupportedOperationException("Incorrect SQL statement: statement is empty");
         }
         sqlQuery = sqlQuery.trim();
-        String queryType = getPropertyAsString(QUERY_TYPE);
+        var queryType = getPropertyAsString(QUERY_TYPE);
         result.sampleStart();
         result.setSamplerData(sqlQuery);
         if (sqlQuery.startsWith(SELECT) || SELECT.equalsIgnoreCase(queryType)) {
-            try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sqlQuery)) {
+            try (var stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sqlQuery)) {
                 result.sampleEnd();
                 String results = this.rsToJSONString(rs);
                 result.setResponseData(results);
@@ -69,11 +69,11 @@ public abstract class AbstractJDBCTestElement extends AbstractTestElement {
             }
         } else if (isUpdate(sqlQuery, queryType)) {
             sqlQuery = sqlQuery.trim();
-            try (Statement stmt = conn.createStatement()) {
+            try (var stmt = conn.createStatement()) {
                 stmt.executeUpdate(sqlQuery);
                 result.sampleEnd();
-                int updateCount = stmt.getUpdateCount();
-                String results = updateCount + " updates";
+                var updateCount = stmt.getUpdateCount();
+                var results = updateCount + " updates";
                 result.setResponseData(results);
                 return result;
             }
@@ -87,12 +87,12 @@ public abstract class AbstractJDBCTestElement extends AbstractTestElement {
     }
 
     protected String rsToJSONString(ResultSet rs) throws SQLException {
-        JSONArray results = new JSONArray();
-        ResultSetMetaData resultSetMetaData = rs.getMetaData();
+        var results = new JSONArray();
+        var resultSetMetaData = rs.getMetaData();
         int rowCount = 0;
         int fieldCount = resultSetMetaData.getColumnCount();
         while (rs.next()) {
-            JSONObject result = new JSONObject();
+            var result = new JSONObject();
             for (int i = 1; i <= fieldCount; i++) {
                 String key = resultSetMetaData.getColumnName(i);
                 result.put(key, rs.getString(key));

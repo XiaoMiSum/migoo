@@ -25,6 +25,7 @@
 
 package protocol.xyz.migoo.kafka.processor;
 
+import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.kafka.AbstractKafkaTestElement;
 
@@ -33,4 +34,13 @@ import protocol.xyz.migoo.kafka.AbstractKafkaTestElement;
  * @date 2021/4/13 20:09
  */
 public abstract class AbstractKafkaProcessor extends AbstractKafkaTestElement implements TestStateListener {
+
+    public SampleResult process() {
+        SampleResult result = new SampleResult(getPropertyAsString(TITLE));
+        try {
+            return super.execute(result);
+        } catch (Exception e) {
+            throw new RuntimeException(getClass().getSimpleName() + " error", e);
+        }
+    }
 }

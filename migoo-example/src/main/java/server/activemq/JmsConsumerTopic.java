@@ -25,9 +25,9 @@
 
 package server.activemq;
 
+import jakarta.jms.*;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
-import javax.jms.*;
 import java.io.IOException;
 
 public class JmsConsumerTopic {
@@ -52,8 +52,7 @@ public class JmsConsumerTopic {
             MessageConsumer messageConsumer = session.createConsumer(topic);
             // 通过监听的方式来消费消息 MessageConsumer messageConsumer = session.createConsumer(queue)
             messageConsumer.setMessageListener((message) -> {
-                if (message instanceof TextMessage) {
-                    TextMessage textMessage = (TextMessage) message;
+                if (message instanceof TextMessage textMessage) {
                     try {
                         System.out.println("****** 消费者接收到Topic消息 ****** ：" + textMessage.getText());
                     } catch (JMSException e) {

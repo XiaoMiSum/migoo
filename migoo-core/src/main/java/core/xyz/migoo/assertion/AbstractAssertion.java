@@ -29,6 +29,7 @@ import com.alibaba.fastjson2.JSON;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.MiGooProperty;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.*;
@@ -56,6 +57,7 @@ public abstract class AbstractAssertion extends AbstractTestElement implements S
     protected void assertThat(VerifyResult result) {
         convertVariable();
         String ruleStr = get(RULE) == null ? "==" : getPropertyAsString(RULE);
+        setProperty("rule", ruleStr);
         Rule rule = RULES.get(ruleStr.toLowerCase(Locale.ROOT));
         if (Objects.isNull(rule)) {
             result.setFailureMessage(String.format("assert rule '%s' not found", ruleStr));
@@ -67,20 +69,21 @@ public abstract class AbstractAssertion extends AbstractTestElement implements S
                     case Object[] os -> List.of(os);
                     case String s -> of(s);
                     case List<?> ls -> ls;
+                    case null -> List.of("");
                     default -> List.of(expected);
                 };
-                getProperty().put(EXPECTED, objects);
+                Object o = Objects.isNull(expected) ? getProperty().remove(EXPECTED) : getProperty().put(EXPECTED, objects);
                 for (Object item : objects) {
                     if (result.isSuccessful()) {
                         break;
                     }
                     result.setSuccessful(rule.assertThat(actual, item));
                 }
-                result.setContext(toString(result.isSuccessful(), ruleStr));
             } catch (Exception e) {
                 result.setFailureMessage(e);
             }
         }
+        setContent(result);
     }
 
     private List<Object> of(String expected) {
@@ -95,13 +98,17 @@ public abstract class AbstractAssertion extends AbstractTestElement implements S
         getProperty().put(ACTUAL, actual);
     }
 
-    public String toString(boolean success, String ruleStr) {
-        if (success) {
-            MiGooProperty prop = new MiGooProperty(getProperty());
-            prop.remove(VARIABLES);
-            return prop.toString();
-        }
-        return String.format("expected value '%s', but found '%s'%s, rule: '%s'", get(EXPECTED), get(ACTUAL),
-                Objects.isNull(get(FIELD)) ? "" : (", field: " + get(FIELD)), ruleStr);
+    protected void setContent(VerifyResult result) {
+        String content = StringUtils.isNotEmpty(result.getContent()) ? result.getContent() : result.isSuccessful() ? "true" :
+                String.format("expected value '%s', but found '%s'%s, rule: '%s'",
+                        get(EXPECTED), get(ACTUAL), Objects.isNull(get(FIELD)) ? "" : (", field: " + get(FIELD)), get(RULE));
+        setContent(result, content);
+    }
+
+    protected void setContent(VerifyResult result, String content) {
+        MiGooProperty prop = new MiGooProperty(getProperty());
+        prop.remove(VARIABLES);
+        prop.put("result", content);
+        result.setContent(prop.toString());
     }
 }

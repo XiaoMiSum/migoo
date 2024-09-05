@@ -26,21 +26,10 @@
 package protocol.xyz.migoo.kafka.processor;
 
 import core.xyz.migoo.processor.PostProcessor;
-import core.xyz.migoo.sampler.SampleResult;
 
 /**
  * @author mi.xiao
  * @date 2021/4/13 20:08
  */
 public class KafkaPreProcessor extends AbstractKafkaProcessor implements PostProcessor {
-
-    @Override
-    public SampleResult process() {
-        SampleResult result = new SampleResult(getPropertyAsString(TITLE));
-        try {
-            return super.execute(result);
-        } catch (Exception e) {
-            throw new RuntimeException("KafkaPreProcessor error", e);
-        }
-    }
 }

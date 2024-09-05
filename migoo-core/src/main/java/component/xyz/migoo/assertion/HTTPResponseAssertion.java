@@ -51,7 +51,7 @@ public class HTTPResponseAssertion extends AbstractAssertion {
 
     @Override
     public VerifyResult getResult(SampleResult samplerResult) {
-        var result = new VerifyResult("HTTPAssertion");
+        var result = new VerifyResult(this.getClass());
         if (samplerResult instanceof HTTPSampleResult httpResult) {
             var field = get(FIELD) == null ? CONTEXT : getPropertyAsString(FIELD).toLowerCase();
             getProperty().put(FIELD, field);
@@ -65,7 +65,7 @@ public class HTTPResponseAssertion extends AbstractAssertion {
             super.assertThat(result);
         } else {
             result.setSuccessful(true);
-            result.setContext(String.format("HTTPResponseAssertion unsupported %s, assert default true", samplerResult.getClass().getSimpleName()));
+            setContent(result, String.format("HTTPResponseAssertion unsupported %s, assert default true", samplerResult.getClass().getSimpleName()));
         }
         return result;
     }

@@ -43,7 +43,7 @@ public abstract class AbstractRedisTestElement extends AbstractTestElement {
     private static final String SEND = "send";
 
     public static String listToString(Collection<?> list) {
-        StringBuilder sb = new StringBuilder("[");
+        var sb = new StringBuilder("[");
         list.forEach(item -> {
             if (sb.length() > 1) {
                 sb.append(",");
@@ -61,13 +61,13 @@ public abstract class AbstractRedisTestElement extends AbstractTestElement {
         sample.setTestClass(this.getClass());
         try {
             sample.sampleStart();
-            String command = getPropertyAsString(COMMAND);
+            var command = getPropertyAsString(COMMAND);
             if (StringUtils.isBlank(command)) {
                 throw new UnsupportedOperationException("unsupported command: " + command);
             }
-            Object result = conn.sendCommand(Protocol.Command.valueOf(command.toUpperCase(Locale.ROOT)), getPropertyAsString(SEND).split(","));
+            var result = conn.sendCommand(Protocol.Command.valueOf(command.toUpperCase(Locale.ROOT)), getPropertyAsString(SEND).split(","));
             sample.setSamplerData("{\"command\": \"" + command + "\", \"send\": \"" + getPropertyAsString(SEND) + "\"}");
-            sample.setResponseData(result == null ? "" : result instanceof Collection ? listToString((Collection) result) : result.toString());
+            sample.setResponseData(result == null ? "" : result instanceof Collection ? listToString((Collection<?>) result) : result.toString());
         } finally {
             sample.sampleEnd();
         }

@@ -41,7 +41,7 @@ public abstract class AbstractHttpProcessor extends AbstractHttpTestElement impl
     }
 
     public SampleResult process() {
-        HTTPSampleResult result = new HTTPSampleResult(getPropertyAsString(TITLE));
+        var result = new HTTPSampleResult(getPropertyAsString(TITLE));
         try {
             return super.execute(result);
         } catch (Exception e) {

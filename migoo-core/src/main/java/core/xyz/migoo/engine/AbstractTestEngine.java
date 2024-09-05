@@ -25,27 +25,25 @@
 
 package core.xyz.migoo.engine;
 
+import core.xyz.migoo.processor.Processor;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestElementService;
 import core.xyz.migoo.variable.MiGooVariables;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import static core.xyz.migoo.testelement.AbstractTestElement.EXTRACTORS;
-import static core.xyz.migoo.testelement.AbstractTestElement.TEST_CLASS;
+import static core.xyz.migoo.testelement.AbstractTestElement.*;
 
 /**
  * @author xiaomi
  */
 public abstract class AbstractTestEngine implements TestEngine {
+
     protected final MiGooContext context;
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final Result result;
 
     public AbstractTestEngine(MiGooContext context, Result result) {
@@ -62,12 +60,10 @@ public abstract class AbstractTestEngine implements TestEngine {
 
     @Override
     public Result runTest() {
-        logger.info("开始执行测试, ID: {}, TITLE, {}", context.getId(), context.getTitle());
         result.setVariables(context.getVariables());
         result.sampleStart();
         // 全局变量计算 - 替换变量集本身使用的函数&变量
         context.getVariables().convertVariable();
-        logger.info("当前集合变量: {}", context.getVariables().getProperty());
         try {
             // 准备配置元件
             prepareConfigurations();
@@ -94,7 +90,8 @@ public abstract class AbstractTestEngine implements TestEngine {
             sr.sampleStart();
             TestElementService.testStarted(element);
             sr.setTestClass(element.getClass());
-            sr.setSamplerData(element.toString());
+            element.getProperty().remove(VARIABLES);
+            sr.setSamplerData(element.getProperty().toString());
             sr.sampleEnd();
             results.add(sr);
         });
@@ -118,9 +115,9 @@ public abstract class AbstractTestEngine implements TestEngine {
 
     private List<SampleResult> runProcessors(Vector<TestElement> elements) {
         List<SampleResult> results = new ArrayList<>();
-        elements.forEach(element -> {
+        elements.stream().filter(item -> item instanceof Processor).forEach(element -> {
             TestElementService.testStarted(element);
-            var result = (SampleResult) TestElementService.runTest(element);
+            var result = TestElementService.runTest(element);
             result.setSubResults(new ArrayList<>());
             if (element.getProperty().containsKey(EXTRACTORS)) {
                 List<SampleResult> extractorResults = new ArrayList<>();
@@ -128,8 +125,7 @@ public abstract class AbstractTestEngine implements TestEngine {
                     var plan = (Testplan) element.getPropertyAsJSONArray(EXTRACTORS).get(i);
                     var el = TestElementService.getService(plan.getString(TEST_CLASS));
                     TestElementService.prepare(el, plan, element.getVariables());
-                    extractorResults.add((SampleResult) TestElementService.runTest(el, result));
-                    context.getVariables().convertVariables(el.getVariables().getProperty());
+                    extractorResults.add(TestElementService.runTest(el, result));
                 }
                 result.setExtractorResults(extractorResults);
             }

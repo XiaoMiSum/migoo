@@ -29,7 +29,6 @@ import core.xyz.migoo.extractor.AbstractExtractor;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -40,10 +39,10 @@ public class RegexExtractor extends AbstractExtractor {
 
     @Override
     public SampleResult process(SampleResult result) {
-        Pattern pattern = Pattern.compile(getPropertyAsString(FIELD));
-        Matcher matcher = pattern.matcher(result.getResponseDataAsString());
+        var pattern = Pattern.compile(getPropertyAsString(FIELD));
+        var matcher = pattern.matcher(result.getResponseDataAsString());
         int matchNum = get(MATCH_NUM) == null || getPropertyAsInt(MATCH_NUM) < 0 ? 0 : getPropertyAsInt(MATCH_NUM);
-        Object value = "def_value";
+        var value = "def_value";
         int state = 0;
         while (state > -1 && matcher.find()) {
             state = matcher.groupCount() > 0 ? matchNum : state;

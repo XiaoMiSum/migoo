@@ -45,7 +45,9 @@ public abstract class AbstractExtractor extends AbstractTestElement implements E
         items.put(FIELD, get(FIELD));
         items.put(MATCH_NUM, get(MATCH_NUM));
         items.put("Result", get(VALUE));
+        items.put(VARIABLE_NAME, get(VARIABLE_NAME));
         result.setSamplerData(items.toJSONString());
+        result.setTestClass(this.getClass());
         return result;
     }
 

@@ -1,6 +1,5 @@
 package core.xyz.migoo.engine;
 
-import com.alibaba.fastjson2.JSONArray;
 import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestElementService;
 import core.xyz.migoo.variable.MiGooVariables;
@@ -31,7 +30,7 @@ public class MiGooContext {
         if (plan.isSampler()) {
             sampler = TestElementService.getService(plan.getString(TEST_CLASS));
             // 这里的 plan 与 sampler 为同一节点，直接设置变量
-            TestElementService.prepare(sampler, plan.getJSONObject(CONFIG), plan.getVariables());
+            TestElementService.prepare(sampler, plan.getJSONObject(CONFIG), variables);
         }
     }
 
@@ -58,7 +57,7 @@ public class MiGooContext {
             components.forEach(item -> {
                 // 配置元件、处理器、提取器、验证器 等测试组件不可单独设置变量，设置这些组件的变量为测试集合或取样器的变量
                 TestElement el = TestElementService.getService(((Testplan) item).getString(TEST_CLASS));
-                TestElementService.prepare(el, ((Testplan) item), plan.getVariables());
+                TestElementService.prepare(el, ((Testplan) item), variables);
                 elements.add(el);
             });
         }

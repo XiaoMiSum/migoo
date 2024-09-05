@@ -39,7 +39,7 @@ public class JSONAssertion extends AbstractAssertion {
 
     @Override
     public VerifyResult getResult(SampleResult samplerResult) {
-        var result = new VerifyResult("JSONAssertion");
+        var result = new VerifyResult(this.getClass());
         try {
             var jsonStr = samplerResult.getResponseDataAsString();
             setActual(JSONPath.extract(jsonStr, getPropertyAsString(FIELD)));

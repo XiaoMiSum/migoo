@@ -63,6 +63,7 @@ public class LoopEngine extends AbstractTestEngine {
             }
             var engine = Objects.isNull(child.getSampler()) ? new LoopEngine(child, context.getVariables())
                     : new StandardEngine(child, context.getVariables());
+
             var sResult = engine.runTest();
             result.getSubResults().add(sResult);
             result.setSuccessful(result.isSuccessful() ? sResult.isSuccessful() : result.isSuccessful());

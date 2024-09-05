@@ -39,7 +39,7 @@ import static core.xyz.migoo.variable.VariableUtils.*;
 /**
  * @author xiaomi
  */
-public class MiGooVariables implements VariableStateListener {
+public class MiGooVariables {
 
     private final MiGooProperty propMap = new MiGooProperty();
 
@@ -79,14 +79,12 @@ public class MiGooVariables implements VariableStateListener {
         return propMap.remove(key);
     }
 
-    @Override
     public void convertVariable() {
         this.convertVariables(getProperty());
     }
 
     public void mergeVariable(MiGooVariables other) {
         if (other != null) {
-            other.convertVariable();
             var copy = new MiGooVariables(getProperty());
             this.getProperty().clear();
             this.putAll(other);
@@ -116,14 +114,13 @@ public class MiGooVariables implements VariableStateListener {
                     case JSONObject en -> convertVariables(en);
                     case JSONArray en -> convertVariables(en);
                     case MiGooVariables en -> convertVariables(en.getProperty());
-                    default -> dataMapping.put(entry.getKey(), v);
+                    case null, default -> dataMapping.put(entry.getKey(), v);
                 }
             }
         }
     }
 
     private void convertVariables(JSONArray dataMapping) {
-        var temp = new JSONArray();
         for (int i = 0; i < dataMapping.size(); i++) {
             var item = dataMapping.get(i);
             if (item instanceof String string) {
@@ -133,10 +130,8 @@ public class MiGooVariables implements VariableStateListener {
             } else if (item instanceof JSONArray objects) {
                 convertVariables(objects);
             }
-            temp.add(i, item);
+            dataMapping.set(i, item);
         }
-        dataMapping.clear();
-        dataMapping.addAll(temp);
     }
 
     public Object extractVariables(String value) {

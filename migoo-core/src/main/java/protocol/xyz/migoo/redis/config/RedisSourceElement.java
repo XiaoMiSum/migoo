@@ -56,15 +56,15 @@ public class RedisSourceElement extends AbstractTestElement implements TestState
 
     @Override
     public void testStarted() {
-        JedisPoolConfig poolConfig = new JedisPoolConfig();
+        var poolConfig = new JedisPoolConfig();
         poolConfig.setMaxTotal(getPropertyAsInt(MAX_TOTAL_KEY) > 0 ? getPropertyAsInt(MAX_TOTAL_KEY) : 10);
         poolConfig.setMaxIdle(getPropertyAsInt(MAX_IDLE_KEY) > 0 ? getPropertyAsInt(MAX_IDLE_KEY) : 5);
         poolConfig.setMinIdle(getPropertyAsInt(MIN_IDLE_KEY) > 0 ? getPropertyAsInt(MIN_IDLE_KEY) : 1);
-        int timeout = getPropertyAsInt(TIME_OUT_KEY) > 0 ? getPropertyAsInt(TIME_OUT_KEY) : 10000;
-        String host = getPropertyAsString(HOST_KEY);
-        int port = get(PORT_KEY) == null ? 6379 : getPropertyAsInt(PORT_KEY);
-        int database = get(DATABASE_KEY) == null ? 0 : getPropertyAsInt(DATABASE_KEY);
-        String password = getPropertyAsString(PASSWORD_KEY);
+        var timeout = getPropertyAsInt(TIME_OUT_KEY) > 0 ? getPropertyAsInt(TIME_OUT_KEY) : 10000;
+        var host = getPropertyAsString(HOST_KEY);
+        var port = get(PORT_KEY) == null ? 6379 : getPropertyAsInt(PORT_KEY);
+        var database = get(DATABASE_KEY) == null ? 0 : getPropertyAsInt(DATABASE_KEY);
+        var password = getPropertyAsString(PASSWORD_KEY);
         jedisPool = new JedisPool(poolConfig, host, port, timeout, password, database);
         getVariables().put(getPropertyAsString(VARIABLE_NAME_KEY), this);
         url = String.format("redis://%s:%s/%s", host, port, database);

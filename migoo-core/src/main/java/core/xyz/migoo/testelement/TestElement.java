@@ -37,6 +37,11 @@ import java.util.Map;
 public interface TestElement {
 
     /**
+     * 替换属性中的变量
+     */
+    void convertVariable();
+
+    /**
      * 获取当前测试元素的变量
      *
      * @return 变量

@@ -28,7 +28,6 @@ package protocol.xyz.migoo.http.sampler;
 import com.alibaba.fastjson2.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.cookie.BasicCookieStore;
-import org.apache.hc.client5.http.cookie.CookieStore;
 import org.apache.hc.client5.http.impl.cookie.BasicClientCookie;
 import protocol.xyz.migoo.http.util.HTTPConstantsInterface;
 import xyz.migoo.simplehttp.Form;
@@ -54,7 +53,7 @@ public class HTTPHCImpl extends Request implements HTTPConstantsInterface {
     }
 
     public HTTPHCImpl body(byte[] bytes, Object json, Object data, String contentType) {
-        RequestEntity entity = Objects.nonNull(bytes) ? RequestEntity.bytes(bytes, contentType) :
+        var entity = Objects.nonNull(bytes) ? RequestEntity.bytes(bytes, contentType) :
                 Objects.nonNull(json) ? RequestEntity.json((JSONObject) json) :
                         Objects.nonNull(data) ? RequestEntity.form((JSONObject) data) : null;
         if (entity != null) {
@@ -72,8 +71,8 @@ public class HTTPHCImpl extends Request implements HTTPConstantsInterface {
 
     public HTTPHCImpl cookie(JSONObject cookie) {
         if (cookie != null && cookie.isEmpty()) {
-            CookieStore cookieStore = new BasicCookieStore();
-            BasicClientCookie clientCookie = new BasicClientCookie(cookie.getString(COOKIE_NAME), cookie.getString(COOKIE_VALUE));
+            var cookieStore = new BasicCookieStore();
+            var clientCookie = new BasicClientCookie(cookie.getString(COOKIE_NAME), cookie.getString(COOKIE_VALUE));
             clientCookie.setPath(cookie.getString(COOKIE_PATH));
             clientCookie.setDomain(cookie.getString(COOKIE_DOMAIN));
             cookieStore.addCookie(clientCookie);
