@@ -42,6 +42,7 @@ import protocol.xyz.migoo.dubbo.util.DubboConstantsInterface;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author mi.xiao
@@ -55,7 +56,7 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
     public void testStarted() {
         super.convertVariable();
         DubboDefaults other = (DubboDefaults) getVariables().get(DUBBO_DEFAULT);
-        reference = other == null ? buildReferenceConfig() : (ReferenceConfig<GenericService>) other.get(DUBBO_REFERENCE);
+        reference = Objects.isNull(other) ? buildReferenceConfig() : (ReferenceConfig<GenericService>) other.get(DUBBO_REFERENCE);
         if (other != null) {
             setProperty(REGISTRY_CENTER, other.get(REGISTRY_CENTER));
             setProperty(REFERENCE_CONFIG, other.get(REFERENCE_CONFIG));
@@ -94,8 +95,7 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
 
         ReferenceConfig<GenericService> reference = new ReferenceConfig<>();
         reference.setGeneric("true");
-        reference.setApplication(new ApplicationConfig(StringUtils.isEmpty(registerCenter.getString(APP_NAME)) ?
-                "migoo-dubbo-consumer" : registerCenter.getString(APP_NAME)));
+        reference.setApplication(new ApplicationConfig("migoo-dubbo-consumer"));
         reference.setVersion(referenceConfig.getString(VERSION));
         reference.setGroup(referenceConfig.getString(GROUP));
         reference.setRetries(Math.max(referenceConfig.getIntValue(RETRIES), 2));
