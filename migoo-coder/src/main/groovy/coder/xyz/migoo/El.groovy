@@ -21,7 +21,9 @@ abstract class El {
     }
 
     protected void p(String key, Object value) {
-        properties[key] = value
+        if (Objects.nonNull(value)) {
+            properties[key] = value
+        }
     }
 
     protected void p(Map<String, Object> properties) {

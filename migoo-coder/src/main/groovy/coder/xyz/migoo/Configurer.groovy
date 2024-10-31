@@ -9,15 +9,15 @@ class Configurer extends El {
         p(protocol.customize())
     }
 
-    static Configurer withHttpDefaults(Protocol.HTTP config) {
+    static Configurer defaults(Protocol.HTTP config) {
         return new Configurer("HttpDefaults", config)
     }
 
-    static Configurer withJDBCDatasource(Protocol.JDBC config) {
+    static Configurer datasource(Protocol.JDBC config) {
         return new Configurer("JDBCDatasource", config)
     }
 
-    static Configurer withRedisDatasource(Protocol.Redis config) {
+    static Configurer datasource(Protocol.Redis config) {
         return new Configurer("RedisDatasource", config)
     }
 }

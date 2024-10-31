@@ -6,18 +6,18 @@ class Validator extends El {
         super(testClass)
         p("field", field)
         p("rule", rule)
-        p("expected", expected)
+        p("expected", (Object) expected)
     }
 
-    static Validator withHTTPResponseValidator(String field = "status", String rule = "==", Object... expected) {
+    static Validator response(String field = "status", String rule = "==", Object... expected) {
         return new Validator("HTTPAssertion", field, rule, expected)
     }
 
-    static Validator withJSONValidator(String jsonPath, String rule = "==", Object... expected) {
+    static Validator json(String jsonPath, String rule = "==", Object... expected) {
         return new Validator("JSONAssertion", jsonPath, rule, expected)
     }
 
-    static Validator withResultValidator(String rule = "==", Object... expected) {
+    static Validator result(String rule = "==", Object... expected) {
         return new Validator("ResultAssertion", null, rule, expected)
     }
 }
