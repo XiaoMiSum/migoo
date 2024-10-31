@@ -39,7 +39,6 @@ public class KafkaDefaults extends AbstractTestElement implements TestStateListe
 
     @Override
     public void testStarted() {
-        super.convertVariable();
         getVariables().put(KAFKA_DEFAULT, this);
     }
 

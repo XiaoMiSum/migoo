@@ -39,7 +39,6 @@ public class ActiveMqDefaults extends AbstractTestElement implements TestStateLi
 
     @Override
     public void testStarted() {
-        super.convertVariable();
         getVariables().put(ACTIVEMQ_DEFAULT, this);
     }
 

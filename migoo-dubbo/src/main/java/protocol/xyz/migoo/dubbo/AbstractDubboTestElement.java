@@ -54,7 +54,6 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
     protected ReferenceConfig<GenericService> reference;
 
     public void testStarted() {
-        super.convertVariable();
         DubboDefaults other = (DubboDefaults) getVariables().get(DUBBO_DEFAULT);
         reference = Objects.isNull(other) ? buildReferenceConfig() : (ReferenceConfig<GenericService>) other.get(DUBBO_REFERENCE);
         if (other != null) {

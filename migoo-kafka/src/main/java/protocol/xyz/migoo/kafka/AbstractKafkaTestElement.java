@@ -57,7 +57,6 @@ public abstract class AbstractKafkaTestElement extends AbstractTestElement imple
     }
 
     public void testStarted() {
-        super.convertVariable();
         KafkaDefaults other = (KafkaDefaults) getVariables().get(KAFKA_DEFAULT);
         if (other != null) {
             setProperty(BOOTSTRAP_SERVERS_CONFIG, other.get(BOOTSTRAP_SERVERS_CONFIG));

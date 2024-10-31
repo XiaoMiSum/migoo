@@ -48,7 +48,6 @@ public abstract class AbstractActiveMqTestElement extends AbstractTestElement im
     private MessageProducer producer;
 
     public void testStarted() {
-        super.convertVariable();
         ActiveMqDefaults other = (ActiveMqDefaults) getVariables().get(ACTIVEMQ_DEFAULT);
         if (other != null) {
             setProperty(ACTIVEMQ_USERNAME, other.get(ACTIVEMQ_USERNAME));

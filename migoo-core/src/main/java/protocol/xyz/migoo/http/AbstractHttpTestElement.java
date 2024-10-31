@@ -48,7 +48,6 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
     protected final String name = this.getClass().getSimpleName().toLowerCase();
 
     public void testStarted() {
-        super.convertVariable();
         var other = (HttpDefaults) getVariables().get(HTTP_DEFAULT);
         if (Objects.nonNull(other)) {
             setProperty(HTTP2, other.getPropertyAsBoolean(HTTP2));
