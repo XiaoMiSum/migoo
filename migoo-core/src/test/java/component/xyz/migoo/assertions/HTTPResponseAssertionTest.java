@@ -25,6 +25,7 @@
 
 package component.xyz.migoo.assertions;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import component.xyz.migoo.assertion.HTTPResponseAssertion;
 import core.xyz.migoo.assertion.Assertion;
@@ -37,9 +38,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,7 +48,7 @@ import java.util.Map;
 public class HTTPResponseAssertionTest {
 
     private static final JSONObject JSON = new JSONObject();
-    private static final List<Map<String, String>> ARRAY = new ArrayList<>();
+    private static final JSONArray ARRAY = new JSONArray();
     private Assertion assertion;
     private SampleResult sampleResult;
 
@@ -85,7 +84,7 @@ public class HTTPResponseAssertionTest {
         ((TestElement) assertion).setProperty("field", "context");
         ((TestElement) assertion).setProperty("expected", JSON.toJSONString());
         VerifyResult result = assertion.getResult(sampleResult);
-        Assertions.assertTrue(result.isSuccessful(), result.getContext());
+        Assertions.assertTrue(result.isSuccessful(), result.getContent());
     }
 
     @Test
@@ -149,7 +148,7 @@ public class HTTPResponseAssertionTest {
         VerifyResult result = assertion.getResult(sampleResult);
         assert "HTTPAssertion".equals(result.getName());
         assert result.isSuccessful();
-        assert result.getContext().equals(String.format("unsupported %s, assert default true", sampleResult.getClass().getSimpleName()));
+        assert result.getContent().equals(String.format("unsupported %s, assert default true", sampleResult.getClass().getSimpleName()));
     }
 
     @Test

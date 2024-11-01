@@ -61,6 +61,11 @@ public class TestElementServiceTest {
     public void testReportService1() {
         TestElementService.addService(new TestElement() {
             @Override
+            public void convertVariable() {
+
+            }
+
+            @Override
             public MiGooVariables getVariables() {
                 return null;
             }

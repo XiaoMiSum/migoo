@@ -38,10 +38,10 @@ public class ComponentResultTest {
     @Test
     public void testAssertionResult1() {
         VerifyResult result = new VerifyResult("test");
-        result.setContext("test context");
+        result.setContent("test context");
         result.setSuccessful(true);
         assert result.getName().equals("test");
-        assert result.getContext().equals("test context");
+        assert result.getContent().equals("test context");
         assert result.isSuccessful();
     }
 
@@ -58,7 +58,7 @@ public class ComponentResultTest {
         VerifyResult result = new VerifyResult("test");
         result.setFailureMessage("test false");
         assert result.getName().equals("test");
-        assert Objects.equals(result.getContext(), "test false");
+        assert Objects.equals(result.getContent(), "test false");
         assert !result.isSuccessful();
     }
 
@@ -67,7 +67,7 @@ public class ComponentResultTest {
         VerifyResult result = new VerifyResult("test");
         result.setFailureMessage(new Exception("test Exception"));
         assert result.getName().equals("test");
-        assert result.getContext().contains("java.lang.Exception: test Exception");
+        assert result.getContent().contains("java.lang.Exception: test Exception");
         assert !result.isSuccessful();
     }
 
@@ -75,7 +75,7 @@ public class ComponentResultTest {
     public void testAssertionResult5() {
         VerifyResult result = new VerifyResult("test");
         assert !result.isSuccessful();
-        assert result.getContext() == null;
+        assert result.getContent() == null;
     }
 
 }

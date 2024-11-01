@@ -41,7 +41,7 @@ public class ArgsTest {
     @Test
     public void testArgs1() {
         MiGooVariables variables = new MiGooVariables();
-        Args args = Args.newArgs("1,haha,{},[], xixi  ", variables);
+        LsArgs args = (LsArgs) Args.newArgs("1,haha,{},[], xixi  ", variables);
         assert args.getCurrentVars().equals(variables);
         assert args.getBooleanValue(0);
         assert args.getNumber(0).compareTo(BigDecimal.ONE) == 0;
@@ -59,7 +59,7 @@ public class ArgsTest {
         map.put("test1", "test1");
         map.put("test2", "test2");
         variables.put("map", map);
-        Args args = Args.newArgs("1,haha,${map},[]", variables);
+        LsArgs args = (LsArgs) Args.newArgs("1,haha,{},[], xixi  ", variables);
         assert args.getCurrentVars().equals(variables);
         assert args.getBooleanValue(0);
         assert args.getNumber(0).compareTo(BigDecimal.ONE) == 0;
@@ -70,12 +70,12 @@ public class ArgsTest {
 
     @Test
     public void testArgs3() {
-        Args args = Args.newArgs("1", new MiGooVariables());
+        LsArgs args = (LsArgs) Args.newArgs("1", new MiGooVariables());
         assert args.getBooleanValue(0);
         assert args.getNumber(0).compareTo(BigDecimal.ONE) == 0;
         assert args.getString(0).equals("1");
         // 超出范围 字符串 解析为""， boolean 解析为 false，其他类型解析为 null
-        assert args.getString(1).equals("");
+        assert args.getString(1).isEmpty();
         assert !args.getBooleanValue(1);
         assert args.getNumber(2) == null;
         assert args.getJSONObject(2) == null;
