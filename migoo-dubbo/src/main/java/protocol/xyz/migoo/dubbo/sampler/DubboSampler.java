@@ -37,13 +37,6 @@ import protocol.xyz.migoo.dubbo.AbstractDubboTestElement;
 public class DubboSampler extends AbstractDubboTestElement implements Sampler, TestStateListener {
 
     @Override
-    public void testStarted() {
-        var property = getPropertyAsMiGooProperty(CONFIG);
-        this.setProperties(property);
-        super.testStarted();
-    }
-
-    @Override
     public SampleResult sample() {
         var result = new DubboSampleResult(getPropertyAsString(TITLE));
         try {

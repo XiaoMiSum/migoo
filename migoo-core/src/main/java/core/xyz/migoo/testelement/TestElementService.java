@@ -36,6 +36,8 @@ import core.xyz.migoo.variable.MiGooVariables;
 
 import java.util.*;
 
+import static core.xyz.migoo.testelement.AbstractTestElement.CONFIG;
+
 /**
  * @author xiaomi
  */
@@ -105,6 +107,11 @@ public class TestElementService {
     public static void testStarted(TestElement el) {
         // 框架层处理变量替换
         el.convertVariable();
+        // 支持协议（工具）相关取样器\处理器 配置信息存放在 config中
+        if (el instanceof Processor || el instanceof Sampler) {
+            var property = el.getPropertyAsMiGooProperty(CONFIG);
+            el.setProperties(property);
+        }
         if (el instanceof TestStateListener tsl) {
             tsl.testStarted();
         }

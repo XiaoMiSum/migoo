@@ -37,13 +37,6 @@ import protocol.xyz.migoo.kafka.AbstractKafkaTestElement;
 public class KafkaSampler extends AbstractKafkaTestElement implements Sampler, TestStateListener {
 
     @Override
-    public void testStarted() {
-        var property = getPropertyAsMiGooProperty(CONFIG);
-        this.setProperties(property);
-        super.testStarted();
-    }
-
-    @Override
     public SampleResult sample() {
         var result = new SampleResult(getPropertyAsString(TITLE));
         try {

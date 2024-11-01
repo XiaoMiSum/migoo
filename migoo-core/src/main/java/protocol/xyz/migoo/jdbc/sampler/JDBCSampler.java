@@ -60,8 +60,6 @@ public class JDBCSampler extends AbstractJDBCTestElement implements Sampler, Tes
 
     @Override
     public void testStarted() {
-        var property = getPropertyAsMiGooProperty(CONFIG);
-        this.setProperties(property);
     }
 
     @Override

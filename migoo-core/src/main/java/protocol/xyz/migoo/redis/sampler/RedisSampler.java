@@ -59,8 +59,7 @@ public class RedisSampler extends AbstractRedisTestElement implements Sampler, T
 
     @Override
     public void testStarted() {
-        var property = getPropertyAsMiGooProperty(CONFIG);
-        this.setProperties(property);
+        
     }
 
     @Override

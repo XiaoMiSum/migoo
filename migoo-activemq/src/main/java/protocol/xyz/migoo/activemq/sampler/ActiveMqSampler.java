@@ -39,13 +39,6 @@ import protocol.xyz.migoo.activemq.AbstractActiveMqTestElement;
 public class ActiveMqSampler extends AbstractActiveMqTestElement implements Sampler, TestStateListener {
 
     @Override
-    public void testStarted() {
-        var property = getPropertyAsMiGooProperty(CONFIG);
-        this.setProperties(property);
-        super.testStarted();
-    }
-
-    @Override
     public SampleResult sample() {
         var result = new SampleResult(getPropertyAsString(TITLE));
         try {
