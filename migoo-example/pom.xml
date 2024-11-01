@@ -44,6 +44,7 @@
         </license>
     </licenses>
 
+
     <scm>
         <connection>scm:git:git@github.com:XiaoMiSum/migoo.git</connection>
         <developerConnection>scm:git:git@github.com:XiaoMiSum/migoo.git</developerConnection>
@@ -61,6 +62,7 @@
 
     <properties>
         <migoo.version>5.0.1-SNAPSHOT</migoo.version>
+        <spring.boot.version>3.3.3</spring.boot.version>
         <junit.version>5.9.0</junit.version>
         <mysql.version>8.0.30</mysql.version>
         <maven.compiler.source>21</maven.compiler.source>

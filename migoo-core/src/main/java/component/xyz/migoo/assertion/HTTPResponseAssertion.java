@@ -25,7 +25,6 @@
 
 package component.xyz.migoo.assertion;
 
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONPath;
 import core.xyz.migoo.assertion.AbstractAssertion;
 import core.xyz.migoo.assertion.VerifyResult;
@@ -58,7 +57,7 @@ public class HTTPResponseAssertion extends AbstractAssertion {
             var matcher = PATTERN.matcher(field);
             if (matcher.find()) {
                 var path = "$" + (matcher.group(1) == null ? "[0]" : matcher.group(1)) + matcher.group(2);
-                setActual(JSONPath.extract(JSON.toJSONString(httpResult.getResponseHeaders()), path));
+                setActual(JSONPath.extract(httpResult.getResponseHeaders().toJSONString(), path));
             } else {
                 setActual(STATUS.contains(field) ? httpResult.getResponseCode() : httpResult.getResponseDataAsString());
             }

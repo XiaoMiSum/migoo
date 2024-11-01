@@ -1,0 +1,16 @@
+title: 复杂HTTP取样器
+testclass: httpsampler
+variables: # 变量
+  username: migoo
+config:
+  method: post
+  protocol: http
+  host: migoo.xyz
+  api: /api/login
+  body: { userName: '${username}', password: '123456qq', sign: '__digest(${username}123456qq)' }
+extractors: ## 提取器
+  - { testclass: jsonextractor, field: '$.status', variable_name: status }
+  - { testclass: jsonextractor, field: '$.data', variable_name: message }
+validators: ## 验证器
+  - { testclass: httpassertion, field: status, expected: 200, rule: == }
+  - { testclass: jsonassertion, field: '$.status', expected: 200, rule: '==' }

@@ -52,9 +52,8 @@ migoo 是一个Java语言开发的测试框架，适用于HTTP(S)、Dubbo、JDBC
 在Main方法中调用 MiGoo
 
 ``` java
-public static void main(String[] args) throws ReaderException {
-    JSONObject yaml = (JSONObject) ReaderFactory.getReader("classpath:example/standardproject.yaml").read();
-    Result result = new MiGoo(yaml).run();
+public static void main(String[] args) {
+    Result result = MiGoo.start("classpath:example/demo.yaml");
 }
 ``` 
 

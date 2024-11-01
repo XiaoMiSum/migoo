@@ -1,0 +1,48 @@
+title: 测试用例 # 包含配置原件、前置处理器、后置处理器、多个取样器（执行步骤）
+configelements:
+  - testclass: HttpDefaults  # 该用例下所有http取样器将使用该配置
+    protocol: http
+    host: localhost
+PreProcessors: # 前置处理器
+  - testclass: jdbcpreprocessor
+    datasource: JDBCDataSource_var
+    query_type: select
+    statement: 'select * from sys_user;'
+    extractors:
+      - { testclass: jsonextractor, field: '$.user_name', variable_name: user_name }
+      - { testclass: resultextractor, variable_name: result }
+      - { testclass: regexextractor, field: '"id":"([0-9]+)","create_', variable_name: r_total, match_num: 0 }
+PostProcessors: # 后置处理器
+  - testclass: jdbcpostprocessor
+    datasource: JDBCDataSource_var
+    query_type: select
+    statement: 'select * from sys_user;'
+children: # 执行步骤
+  - title: 步骤1
+    testclass: httpsampler
+    variables: # 变量
+      username: migoo
+    config:
+      method: post
+      api: /api/login
+      body: { userName: '${username}', password: '123456qq', sign: '__digest(${username}123456qq)' }
+    extractors: ## 提取器
+      - { testclass: jsonextractor, field: '$.status', variable_name: status }
+      - { testclass: jsonextractor, field: '$.data', variable_name: message }
+    validators: ## 验证器
+      - { testclass: httpassertion, field: status, expected: 200, rule: == }
+      - { testclass: jsonassertion, field: '$.status', expected: 200, rule: '==' }
+  - title: 步骤2
+    testclass: httpsampler
+    variables: # 变量
+      username: migoo
+    config:
+      method: post
+      api: /api/login
+      body: { userName: '${username}', password: '123456qq', sign: '__digest(${username}123456qq)' }
+    extractors: ## 提取器
+      - { testclass: jsonextractor, field: '$.status', variable_name: status }
+      - { testclass: jsonextractor, field: '$.data', variable_name: message }
+    validators: ## 验证器
+      - { testclass: httpassertion, field: status, expected: 200, rule: == }
+      - { testclass: jsonassertion, field: '$.status', expected: 200, rule: '==' }

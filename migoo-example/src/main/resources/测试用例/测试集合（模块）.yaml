@@ -1,0 +1,24 @@
+title: 测试用例集合
+configelements:
+  - testclass: HttpDefaults  # 该用例集合下所有http取样器将使用该配置
+    protocol: http
+    host: localhost
+    method: post
+    api: /api/login
+PreProcessors: # 前置处理器
+  - testclass: jdbcpreprocessor
+    datasource: JDBCDataSource_var
+    query_type: select
+    statement: 'select * from sys_user;'
+    extractors:
+      - { testclass: jsonextractor, field: '$.user_name', variable_name: user_name }
+      - { testclass: resultextractor, variable_name: result }
+      - { testclass: regexextractor, field: '"id":"([0-9]+)","create_', variable_name: r_total, match_num: 0 }
+PostProcessors: # 后置处理器
+  - testclass: jdbcpostprocessor
+    datasource: JDBCDataSource_var
+    query_type: select
+    statement: 'select * from sys_user;'
+children: # 测试集合 或 测试用例列表，为了方便查看，可通过 @F(filepath) 将外部文件引入
+  - '@F(classpath:测试用例/测试用例.yaml)'
+  - '@F(classpath:测试用例/测试用例.yaml)'

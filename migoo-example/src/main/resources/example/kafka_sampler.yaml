@@ -1,8 +1,0 @@
-title: 标准kafka取样器
-testclass: kafkaSampler
-config:
-  topic: migoo.topic
-  bootstrap.servers: 192.168.1.7:9092
-  message: # 可以是任意json对象、字符串、数字等
-    name: test
-    age: 18
