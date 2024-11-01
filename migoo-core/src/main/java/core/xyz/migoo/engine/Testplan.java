@@ -33,7 +33,6 @@ import core.xyz.migoo.variable.MiGooVariables;
 import util.xyz.migoo.loader.Loader;
 
 import java.util.*;
-import java.util.regex.Matcher;
 
 import static core.xyz.migoo.testelement.AbstractTestElement.*;
 import static core.xyz.migoo.variable.VariableUtils.FILE_PATTERN;
@@ -89,10 +88,10 @@ public class Testplan extends JSONObject {
     }
 
     private JSONObject prepare(Map<?, ?> object) {
-        JSONObject json = new JSONObject(object.size());
+        var json = new JSONObject(object.size());
         object.keySet().forEach(key -> {
-            String keyString = (String) key;
-            Object value = object.get(key);
+            var keyString = (String) key;
+            var value = object.get(key);
             switch (value) {
                 case Map<?, ?> map -> json.put(keyString, prepare(map));
                 case List<?> objects -> json.put(keyString, prepare(objects));
@@ -104,7 +103,7 @@ public class Testplan extends JSONObject {
     }
 
     private JSONArray prepare(List<?> items) {
-        JSONArray temp = new JSONArray(items.size());
+        var temp = new JSONArray(items.size());
         items.forEach(item -> {
             switch (item) {
                 case List<?> objects -> temp.add(prepare(objects));
@@ -117,9 +116,9 @@ public class Testplan extends JSONObject {
     }
 
     private Object prepare(String value) {
-        Matcher matcher = FILE_PATTERN.matcher(value);
+        var matcher = FILE_PATTERN.matcher(value);
         if (matcher.find()) {
-            Object result = Loader.toJSON(matcher.group(1));
+            var result = Loader.toJSON(matcher.group(1));
             return switch (result) {
                 case List<?> objects -> prepare(objects);
                 case Map<?, ?> object -> prepare(object);

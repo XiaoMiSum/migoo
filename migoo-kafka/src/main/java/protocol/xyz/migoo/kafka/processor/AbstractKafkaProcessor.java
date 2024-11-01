@@ -36,7 +36,7 @@ import protocol.xyz.migoo.kafka.AbstractKafkaTestElement;
 public abstract class AbstractKafkaProcessor extends AbstractKafkaTestElement implements TestStateListener {
 
     public SampleResult process() {
-        SampleResult result = new SampleResult(getPropertyAsString(TITLE));
+        var result = new SampleResult(getPropertyAsString(TITLE));
         try {
             return super.execute(result);
         } catch (Exception e) {

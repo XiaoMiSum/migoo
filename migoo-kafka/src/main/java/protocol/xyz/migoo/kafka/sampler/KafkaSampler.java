@@ -27,7 +27,6 @@ package protocol.xyz.migoo.kafka.sampler;
 
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.sampler.Sampler;
-import core.xyz.migoo.testelement.MiGooProperty;
 import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.kafka.AbstractKafkaTestElement;
 
@@ -39,24 +38,19 @@ public class KafkaSampler extends AbstractKafkaTestElement implements Sampler, T
 
     @Override
     public void testStarted() {
-        MiGooProperty property = getPropertyAsMiGooProperty(CONFIG);
+        var property = getPropertyAsMiGooProperty(CONFIG);
         this.setProperties(property);
         super.testStarted();
     }
 
     @Override
     public SampleResult sample() {
-        SampleResult result = new SampleResult(getPropertyAsString(TITLE));
+        var result = new SampleResult(getPropertyAsString(TITLE));
         try {
             super.execute(result);
         } catch (Exception e) {
             result.setThrowable(e);
         }
         return result;
-    }
-
-    @Override
-    public void testEnded() {
-        super.testEnded();
     }
 }

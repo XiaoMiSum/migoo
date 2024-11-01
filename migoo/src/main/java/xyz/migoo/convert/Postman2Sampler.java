@@ -37,7 +37,7 @@ public class Postman2Sampler implements Convert2Sampler {
     public void convert(JSONObject postman, String path) {
         try {
             var entries = postman.getJSONArray("item");
-            for (int i = 0; i < entries.size(); i++) {
+            for (var i = 0; i < entries.size(); i++) {
                 var item = entries.getJSONObject(i);
                 if (item.containsKey("item")) {
                     this.convert(item, path);
@@ -63,7 +63,7 @@ public class Postman2Sampler implements Convert2Sampler {
         if (postData != null) {
             var body = new JSONObject();
             if (postData.getJSONArray("urlencoded") != null) {
-                for (int i = 0; i < postData.getJSONArray("urlencoded").size(); i++) {
+                for (var i = 0; i < postData.getJSONArray("urlencoded").size(); i++) {
                     var o = postData.getJSONArray("urlencoded").getJSONObject(i);
                     body.put(o.getString("key"), o.get("value"));
                 }
@@ -76,7 +76,7 @@ public class Postman2Sampler implements Convert2Sampler {
 
     private void headers(JSONObject config, JSONArray headers) {
         config.put("headers", new JSONObject());
-        for (int i = 0; i < headers.size(); i++) {
+        for (var i = 0; i < headers.size(); i++) {
             var header = headers.getJSONObject(i);
             config.getJSONObject("headers").put(header.getString("key"), header.get("value"));
         }
@@ -85,7 +85,7 @@ public class Postman2Sampler implements Convert2Sampler {
     private void url(JSONObject config, JSONObject url) {
         config.put("protocol", url.get("protocol"));
         var sb = new StringBuilder();
-        for (int i = 0; i < url.getJSONArray("host").size(); i++) {
+        for (var i = 0; i < url.getJSONArray("host").size(); i++) {
             if (sb.length() > 0) {
                 sb.append(".");
             }
@@ -93,13 +93,13 @@ public class Postman2Sampler implements Convert2Sampler {
         }
         config.put("host", sb.toString());
         sb.delete(0, sb.length());
-        for (int i = 0; i < url.getJSONArray("path").size(); i++) {
+        for (var i = 0; i < url.getJSONArray("path").size(); i++) {
             sb.append("/").append(url.getJSONArray("path").getString(i));
         }
         config.put("api", sb.toString());
         if (url.getJSONArray("query") != null) {
             var query = new JSONObject();
-            for (int i = 0; i < url.getJSONArray("query").size(); i++) {
+            for (var i = 0; i < url.getJSONArray("query").size(); i++) {
                 var o = url.getJSONArray("query").getJSONObject(i);
                 query.put(o.getString("key"), o.get("value"));
             }

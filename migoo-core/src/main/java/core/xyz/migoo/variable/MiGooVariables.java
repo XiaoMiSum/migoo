@@ -155,14 +155,14 @@ public class MiGooVariables {
             if (Objects.isNull(v)) {
                 continue;
             }
-            if (v instanceof String && (JSON.isValidObject((String) v) || JSON.isValidArray((String) v))) {
+            if (v instanceof String && JSON.isValid((String) v)) {
                 // 字符串可以解析为 json 不允许出现在多变量组合的情况
                 return JSON.parse((String) v);
             } else if (v instanceof String) {
                 var result = evalVariable((String) v);
-                if (result instanceof String s) {
+                if (result instanceof String string) {
                     // 变量计算结果为字符串时进行变量替换，同时继续判断字符串中是否还存在变量引用
-                    value = value.replace(temp, s);
+                    value = value.replace(temp, string);
                 } else {
                     // 非字符串计算结果，直接返回
                     return result;
@@ -181,9 +181,9 @@ public class MiGooVariables {
         var func = FUNC_PATTERN.matcher(v);
         while (func.find()) {
             var result = FunctionService.execute(func.group(1), func.group(2), this);
-            if (result instanceof String && (JSON.isValidObject((String) result) || JSON.isValidArray((String) result))) {
+            if (result instanceof String string && JSON.isValid(string)) {
                 // 字符串可以解析为 json 不允许出现在多变量组合的情况
-                return JSON.parse((String) result);
+                return JSON.parse(string);
             } else if (result instanceof String || result instanceof Number || result instanceof Boolean) {
                 // 字符串、数字、布尔类型对象，转换为字符串替换（可能存在多个函数，不能return）
                 v = v.replace(func.group(), result.toString());

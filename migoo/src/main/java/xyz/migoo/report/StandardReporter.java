@@ -31,13 +31,11 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.gherkin.model.Feature;
-import com.aventstack.extentreports.gherkin.model.Given;
 import com.aventstack.extentreports.gherkin.model.Scenario;
 import com.aventstack.extentreports.markuputils.CodeLanguage;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
-import core.xyz.migoo.assertion.VerifyResult;
 import core.xyz.migoo.report.Reporter;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.sampler.SampleResult;
@@ -70,21 +68,6 @@ public class StandardReporter implements Reporter {
         extent.setSystemInfo("migoo.version", System.getProperty("migoo.version"));
     }
 
-    public static void main(String[] args) {
-        var extent = new ExtentReports();
-        ExtentTest feature = extent.createTest(Feature.class, "Refund item");
-        ExtentTest scenario = feature.createNode(Feature.class, "Jeff returns a faulty microwave");
-        var node1 = scenario.createNode(Given.class, "Jeff has bought a microwave for $100");
-        node1.fail("f");
-        var node2 = scenario.createNode(Given.class, "Jeff has bought a microwave for $100");
-        node2.pass(MarkupHelper.createJsonCodeBlock("{\"key\": 1}"));
-        var reporter = new ExtentSparkReporter("./out-put/index" + DateUtils.nowStr() + ".html");
-        reporter.config().enableOfflineMode(true);
-        extent.attachReporter(reporter);
-        extent.flush();
-
-    }
-
     @Override
     public void generateReport(Result result) {
         reportLevel = ReportLevel.of(getReportLevel(result, 4));
@@ -112,8 +95,8 @@ public class StandardReporter implements Reporter {
         if (result.hasConfigurer()) {
             var isGlobal = level == 1 && (reportLevel.isSuite() || reportLevel.isSet() || reportLevel.isTestcase());
             var isLocality = level == 2 && (reportLevel.isSuite() || reportLevel.isSet());
-            String name = isGlobal ? "全局配置" : "局部配置";
-            ExtentTest node = isGlobal || isLocality ? write(feature, name) : (ExtentTest) feature;
+            var name = isGlobal ? "全局配置" : "局部配置";
+            var node = isGlobal || isLocality ? write(feature, name) : (ExtentTest) feature;
             writeVariables(node, result.getVariables(), isGlobal, false);
             writeConfigElements(node, result.getConfigElementResults(), isGlobal, false);
             writeProcessors(node, result.getPreprocessorResults(), "前置", isGlobal, false);
@@ -122,7 +105,7 @@ public class StandardReporter implements Reporter {
         }
         writeThrowable(feature, result);
         if (Objects.nonNull(result.getSubResults()) && !result.getSubResults().isEmpty()) {
-            for (Result r : result.getSubResults()) {
+            for (var r : result.getSubResults()) {
                 var node = write(feature, r.getTitle());
                 writeResult(node, r, level + 1);
                 if (reportLevel.isSuite() || reportLevel.isSet()) {
@@ -139,10 +122,10 @@ public class StandardReporter implements Reporter {
                 write(feature, "变量定义", true);
                 write(feature, variables.getProperty().toString(), true);
             } else {
-                ExtentTest test = write(feature, "变量定义", INFO);
+                var test = write(feature, "变量定义", INFO);
                 var node2 = reportLevel.isSampler() ? write(test, "变量定义", INFO) : test;
                 // 如果是全局配置 需要创建一层占位符作为变量内容的容器
-                ExtentTest node = isGlobal ? write(node2, "-") : test;
+                var node = isGlobal ? write(node2, "-") : test;
                 write(node, variables.getProperty().toString(), true);
                 node2.getModel().setStatus(INFO);
                 if (reportLevel.isSampler()) {
@@ -214,7 +197,7 @@ public class StandardReporter implements Reporter {
                 });
             } else if (reportLevel.isTestcase()) {
                 var node = write(feature, "提取器" + (isSampler ? "" : "："), !isSampler);
-                JSONArray json = new JSONArray();
+                var json = new JSONArray();
                 results.forEach(item -> json.add(JSON.parseObject(item.getSamplerData())));
                 // 如果是取样器提取，则创建一个占位符Node用作打印详情的容器
                 write(!isSampler ? node : write(node, " - "), json.toJSONString(), true);
@@ -222,7 +205,7 @@ public class StandardReporter implements Reporter {
                     node.getModel().setStatus(INFO);
                 }
             } else {
-                JSONArray json = new JSONArray();
+                var json = new JSONArray();
                 results.forEach(item -> json.add(JSON.parseObject(item.getSamplerData())));
                 write(write(feature, "提取器：", reportLevel.isSuite() || !isSampler), json.toJSONString(), true);
             }
@@ -244,7 +227,7 @@ public class StandardReporter implements Reporter {
                 (reportLevel.isSampler() || reportLevel.isTestcase());
         // 当 f = 2级节点时，需要创建三级节点
         var node = write(f, (isSampler ? "取样器：" : "处理器：") + result.getTestClass(), !isNodeLevel2, INFO);
-        boolean isNodeLevel3 = !(reportLevel.isTestcase() || reportLevel.isSampler()) || (reportLevel.isTestcase() && !isSampler);
+        var isNodeLevel3 = !(reportLevel.isTestcase() || reportLevel.isSampler()) || (reportLevel.isTestcase() && !isSampler);
         if (StringUtils.isNotBlank(result.getUrl())) {
             write(node, "请求地址：" + result.getUrl(), isNodeLevel3);
         }
@@ -280,7 +263,7 @@ public class StandardReporter implements Reporter {
     }
 
     private void writeValidators(Object feature, SampleResult result) {
-        List<VerifyResult> results = result.getAssertionResults();
+        var results = result.getAssertionResults();
         if (Objects.nonNull(results) && !results.isEmpty()) {
             if (reportLevel.isSampler() || reportLevel.isTestcase()) {
                 // 先以Node打印验证器类型，如果 测试报告级别为 测试报告，则直接以此Node用作打印详情的容器
@@ -304,7 +287,7 @@ public class StandardReporter implements Reporter {
         }
         level--;
         if (result.getSubResults() != null && !result.getSubResults().isEmpty()) {
-            Result sr = result.getSubResults().getFirst();
+            var sr = result.getSubResults().getFirst();
             level = sr instanceof SampleResult ? level : getReportLevel(sr, level);
         }
         return level;
@@ -321,7 +304,7 @@ public class StandardReporter implements Reporter {
         } else {
             var t = (ExtentTest) feature;
             if (isLog) {
-                Status s = Objects.nonNull(status) && status.length > 0 ? status[0] : PASS;
+                var s = Objects.nonNull(status) && status.length > 0 ? status[0] : PASS;
                 return JSON.isValid(record) ? t.log(s, MarkupHelper.createJsonCodeBlock(JSON.parse(record))) :
                         isXml(record) ? t.log(s, MarkupHelper.createCodeBlock(record, CodeLanguage.XML)) : t.log(s, record);
             }
@@ -337,8 +320,8 @@ public class StandardReporter implements Reporter {
     }
 
     private String toJSONString(JSONArray objects) {
-        JSONArray strings = new JSONArray(objects.size());
-        for (int i = 0; i < objects.size(); i++) {
+        var strings = new JSONArray(objects.size());
+        for (var i = 0; i < objects.size(); i++) {
             var item = objects.getJSONObject(i).firstEntry();
             strings.add(item.getKey() + ": " + item.getValue());
         }

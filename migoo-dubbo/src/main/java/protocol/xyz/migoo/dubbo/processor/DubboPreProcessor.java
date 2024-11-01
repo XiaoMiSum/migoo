@@ -37,7 +37,7 @@ public class DubboPreProcessor extends AbstractDubboProcessor implements PostPro
 
     @Override
     public SampleResult process() {
-        DubboSampleResult result = new DubboSampleResult(getPropertyAsString(TITLE));
+        var result = new DubboSampleResult(getPropertyAsString(TITLE));
         try {
             return super.execute(result);
         } catch (Exception e) {

@@ -38,7 +38,7 @@ public class Har2Sampler implements Convert2Sampler {
     public void convert(JSONObject har, String path) {
         try {
             var entries = har.getJSONObject("log").getJSONArray("entries");
-            for (int i = 0; i < entries.size(); i++) {
+            for (var i = 0; i < entries.size(); i++) {
                 if (!"xhr".equals(entries.getJSONObject(i).getString("_resourceType"))) {
                     continue;
                 }
@@ -62,7 +62,7 @@ public class Har2Sampler implements Convert2Sampler {
         sampler.getJSONObject("config").put("base_path", request.get("url"));
         sampler.getJSONObject("config").put("headers", new JSONObject());
         var headers = request.getJSONArray("headers");
-        for (int i = 0; i < headers.size(); i++) {
+        for (var i = 0; i < headers.size(); i++) {
             var header = headers.getJSONObject(i);
             if (!"content-Length".equalsIgnoreCase(header.getString("name"))) {
                 sampler.getJSONObject("config").getJSONObject("headers").put(header.getString("name"), header.get("value"));
@@ -73,7 +73,7 @@ public class Har2Sampler implements Convert2Sampler {
     private void query(JSONObject sampler, JSONArray queryString) {
         if (queryString != null && !queryString.isEmpty()) {
             var query = new JSONObject();
-            for (int i = 0; i < queryString.size(); i++) {
+            for (var i = 0; i < queryString.size(); i++) {
                 var obj = queryString.getJSONObject(i);
                 query.put(obj.getString("name"), obj.get("value"));
             }

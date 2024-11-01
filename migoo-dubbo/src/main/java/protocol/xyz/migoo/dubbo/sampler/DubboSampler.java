@@ -27,7 +27,6 @@ package protocol.xyz.migoo.dubbo.sampler;
 
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.sampler.Sampler;
-import core.xyz.migoo.testelement.MiGooProperty;
 import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.dubbo.AbstractDubboTestElement;
 
@@ -39,14 +38,14 @@ public class DubboSampler extends AbstractDubboTestElement implements Sampler, T
 
     @Override
     public void testStarted() {
-        MiGooProperty property = getPropertyAsMiGooProperty(CONFIG);
+        var property = getPropertyAsMiGooProperty(CONFIG);
         this.setProperties(property);
         super.testStarted();
     }
 
     @Override
     public SampleResult sample() {
-        DubboSampleResult result = new DubboSampleResult(getPropertyAsString(TITLE));
+        var result = new DubboSampleResult(getPropertyAsString(TITLE));
         try {
             super.execute(result);
         } catch (Exception e) {

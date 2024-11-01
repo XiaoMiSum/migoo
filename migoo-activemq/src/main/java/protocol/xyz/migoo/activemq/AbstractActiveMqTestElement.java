@@ -28,11 +28,16 @@ package protocol.xyz.migoo.activemq;
 import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
-import jakarta.jms.*;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import protocol.xyz.migoo.activemq.config.ActiveMqDefaults;
 import protocol.xyz.migoo.activemq.util.ActiveMqConstantsInterface;
+
+import java.util.Objects;
 
 /**
  * @author mi.xiao
@@ -48,8 +53,8 @@ public abstract class AbstractActiveMqTestElement extends AbstractTestElement im
     private MessageProducer producer;
 
     public void testStarted() {
-        ActiveMqDefaults other = (ActiveMqDefaults) getVariables().get(ACTIVEMQ_DEFAULT);
-        if (other != null) {
+        var other = (ActiveMqDefaults) getVariables().get(ACTIVEMQ_DEFAULT);
+        if (Objects.nonNull(other)) {
             setProperty(ACTIVEMQ_USERNAME, other.get(ACTIVEMQ_USERNAME));
             setProperty(ACTIVEMQ_PASSWORD, other.get(ACTIVEMQ_PASSWORD));
             setProperty(BROKER_URL, other.get(BROKER_URL));
@@ -67,10 +72,10 @@ public abstract class AbstractActiveMqTestElement extends AbstractTestElement im
             connection = factory.createConnection();
             connection.start();
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Destination destination = get(ACTIVEMQ_QUEUE) != null ? session.createQueue(getPropertyAsString(ACTIVEMQ_QUEUE))
+            var destination = get(ACTIVEMQ_QUEUE) != null ? session.createQueue(getPropertyAsString(ACTIVEMQ_QUEUE))
                     : session.createTopic(getPropertyAsString(ACTIVEMQ_TOPIC));
             producer = session.createProducer(destination);
-            TextMessage textMessage = session.createTextMessage(getPropertyAsString(ACTIVEMQ_MESSAGE));
+            var textMessage = session.createTextMessage(getPropertyAsString(ACTIVEMQ_MESSAGE));
             producer.send(textMessage);
             result.setSamplerData(getRequestString());
         } finally {
@@ -80,9 +85,9 @@ public abstract class AbstractActiveMqTestElement extends AbstractTestElement im
     }
 
     private void buildConnectionFactory() {
-        String username = (String) get(ACTIVEMQ_USERNAME, ActiveMQConnection.DEFAULT_USER);
-        String password = (String) get(ACTIVEMQ_PASSWORD, ActiveMQConnection.DEFAULT_PASSWORD);
-        String url = (String) get(BROKER_URL, ActiveMQConnection.DEFAULT_BROKER_URL);
+        var username = (String) get(ACTIVEMQ_USERNAME, ActiveMQConnection.DEFAULT_USER);
+        var password = (String) get(ACTIVEMQ_PASSWORD, ActiveMQConnection.DEFAULT_PASSWORD);
+        var url = (String) get(BROKER_URL, ActiveMQConnection.DEFAULT_BROKER_URL);
         factory = new ActiveMQConnectionFactory(username, password, url);
     }
 
@@ -108,7 +113,7 @@ public abstract class AbstractActiveMqTestElement extends AbstractTestElement im
     }
 
     private String getRequestString() {
-        JSONObject data = new JSONObject();
+        var data = new JSONObject();
         data.put(ACTIVEMQ_USERNAME, get(ACTIVEMQ_USERNAME));
         data.put(ACTIVEMQ_PASSWORD, get(ACTIVEMQ_PASSWORD));
         data.put(BROKER_URL, get(BROKER_URL));

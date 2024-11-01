@@ -37,7 +37,7 @@ public class ResourceReader implements Reader {
 
     public String read() {
         try (var is = Thread.currentThread().getContextClassLoader().getResourceAsStream(path)) {
-            byte[] bytes = new byte[is.available()];
+            var bytes = new byte[is.available()];
             is.read(bytes);
             return new String(bytes, StandardCharsets.UTF_8);
         } catch (Exception e) {

@@ -46,8 +46,8 @@ public abstract class AbstractAssertion extends AbstractTestElement implements S
     private static final String RULE = "rule";
 
     static {
-        ServiceLoader<Rule> loaders = ServiceLoader.load(Rule.class);
-        for (Rule function : loaders) {
+        var loaders = ServiceLoader.load(Rule.class);
+        for (var function : loaders) {
             for (String alias : function.getClass().getAnnotation(Alias.class).value()) {
                 RULES.put(alias.toLowerCase(), function);
             }
@@ -56,24 +56,24 @@ public abstract class AbstractAssertion extends AbstractTestElement implements S
 
     protected void assertThat(VerifyResult result) {
         convertVariable();
-        String ruleStr = get(RULE) == null ? "==" : getPropertyAsString(RULE);
+        var ruleStr = get(RULE) == null ? "==" : getPropertyAsString(RULE);
         setProperty("rule", ruleStr);
-        Rule rule = RULES.get(ruleStr.toLowerCase(Locale.ROOT));
+        var rule = RULES.get(ruleStr.toLowerCase(Locale.ROOT));
         if (Objects.isNull(rule)) {
             result.setFailureMessage(String.format("assert rule '%s' not found", ruleStr));
         } else {
             try {
-                Object actual = get(ACTUAL);
-                Object expected = get(EXPECTED);
-                List<?> objects = switch (expected) {
+                var actual = get(ACTUAL);
+                var expected = get(EXPECTED);
+                var objects = switch (expected) {
                     case Object[] os -> List.of(os);
                     case String s -> of(s);
                     case List<?> ls -> ls;
-                    case null -> List.of("");
+                    case null -> List.of(""); // 这里要给个值，以便进入循环
                     default -> List.of(expected);
                 };
-                Object o = Objects.isNull(expected) ? getProperty().remove(EXPECTED) : getProperty().put(EXPECTED, objects);
-                for (Object item : objects) {
+                var o = Objects.isNull(expected) ? getProperty().remove(EXPECTED) : getProperty().put(EXPECTED, objects);
+                for (var item : objects) {
                     if (result.isSuccessful()) {
                         break;
                     }
@@ -87,7 +87,7 @@ public abstract class AbstractAssertion extends AbstractTestElement implements S
     }
 
     private List<Object> of(String expected) {
-        if (JSON.isValidArray(expected) || JSON.isValidObject(expected) || !expected.contains(",")) {
+        if (JSON.isValid(expected) || !expected.contains(",")) {
             return List.of(expected);
         } else {
             return List.of(expected.split(","));

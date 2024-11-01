@@ -26,7 +26,6 @@
 package protocol.xyz.migoo.dubbo;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
@@ -41,7 +40,6 @@ import protocol.xyz.migoo.dubbo.util.DubboConstantsInterface;
 
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -54,9 +52,9 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
     protected ReferenceConfig<GenericService> reference;
 
     public void testStarted() {
-        DubboDefaults other = (DubboDefaults) getVariables().get(DUBBO_DEFAULT);
+        var other = (DubboDefaults) getVariables().get(DUBBO_DEFAULT);
         reference = Objects.isNull(other) ? buildReferenceConfig() : (ReferenceConfig<GenericService>) other.get(DUBBO_REFERENCE);
-        if (other != null) {
+        if (Objects.nonNull(other)) {
             setProperty(REGISTRY_CENTER, other.get(REGISTRY_CENTER));
             setProperty(REFERENCE_CONFIG, other.get(REFERENCE_CONFIG));
         }
@@ -69,18 +67,18 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
         result.sampleStart();
         try {
             if (get(ATTACHMENT_ARGS) != null && !getPropertyAsJSONObject(ATTACHMENT_ARGS).isEmpty()) {
-                Map<String, String> attachments = new HashMap<>(16);
+                var attachments = new HashMap<String, String>(16);
                 getPropertyAsJSONObject(ATTACHMENT_ARGS).forEach((key, value) -> attachments.put(key, value.toString()));
                 RpcContext.getContext().setAttachments(attachments);
                 getVariables().put("migoo_protocol_dubbo_attachment_args", get(ATTACHMENT_ARGS));
             }
-            String[] parameterTypes = new String[getPropertyAsJSONArray(ARGS_PARAMETER_TYPES).size()];
+            var parameterTypes = new String[getPropertyAsJSONArray(ARGS_PARAMETER_TYPES).size()];
             for (int i = 0; i < getPropertyAsJSONArray(ARGS_PARAMETER_TYPES).size(); i++) {
                 parameterTypes[i] = getPropertyAsJSONArray(ARGS_PARAMETER_TYPES).getString(i);
             }
             result.setRequestData(getProperty());
-            Object[] parameters = getPropertyAsJSONArray(ARGS_PARAMETERS).toArray();
-            Object response = reference.get().$invoke(getPropertyAsString(METHOD), parameterTypes, parameters);
+            var parameters = getPropertyAsJSONArray(ARGS_PARAMETERS).toArray();
+            var response = reference.get().$invoke(getPropertyAsString(METHOD), parameterTypes, parameters);
             result.setResponseData(JSON.toJSONBytes(response));
         } finally {
             result.sampleEnd();
@@ -89,10 +87,10 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
     }
 
     protected ReferenceConfig<GenericService> buildReferenceConfig() {
-        JSONObject registerCenter = getPropertyAsJSONObject(REGISTRY_CENTER);
-        JSONObject referenceConfig = getPropertyAsJSONObject(REFERENCE_CONFIG);
+        var registerCenter = getPropertyAsJSONObject(REGISTRY_CENTER);
+        var referenceConfig = getPropertyAsJSONObject(REFERENCE_CONFIG);
 
-        ReferenceConfig<GenericService> reference = new ReferenceConfig<>();
+        var reference = new ReferenceConfig<GenericService>();
         reference.setGeneric("true");
         reference.setApplication(new ApplicationConfig("migoo-dubbo-consumer"));
         reference.setVersion(referenceConfig.getString(VERSION));
@@ -102,7 +100,7 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
         reference.setAsync(referenceConfig.getBooleanValue(ASYNC));
         reference.setLoadbalance(referenceConfig.get(LOAD_BALANCE) == null ? "random" : referenceConfig.getString(LOAD_BALANCE));
         RegistryConfig registry = new RegistryConfig();
-        Protocol protocol = Enum.valueOf(Protocol.class, StringUtils.isEmpty(registerCenter.getString(PROTOCOL)) ? "ZOOKEEPER" :
+        Protocol protocol = Protocol.valueOf(StringUtils.isEmpty(registerCenter.getString(PROTOCOL)) ? "ZOOKEEPER" :
                 registerCenter.getString(PROTOCOL).toUpperCase(Locale.ROOT));
         registry.setAddress(protocol.getProtocol() + registerCenter.getString(ADDRESS));
         registry.setGroup(registerCenter.getString(GROUP));

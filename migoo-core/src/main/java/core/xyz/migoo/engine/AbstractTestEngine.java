@@ -84,7 +84,7 @@ public abstract class AbstractTestEngine implements TestEngine {
     protected abstract void runTest(Result result);
 
     private void prepareConfigurations() {
-        List<SampleResult> results = new ArrayList<>(context.getConfigurations().size());
+        var results = new ArrayList<SampleResult>(context.getConfigurations().size());
         context.getConfigurations().forEach(element -> {
             var sr = new SampleResult(element.getPropertyAsString(TEST_CLASS));
             sr.sampleStart();
@@ -114,7 +114,7 @@ public abstract class AbstractTestEngine implements TestEngine {
     }
 
     private List<SampleResult> runProcessors(Vector<TestElement> elements) {
-        List<SampleResult> results = new ArrayList<>();
+        var results = new ArrayList<SampleResult>();
         elements.stream().filter(item -> item instanceof Processor).forEach(element -> {
             TestElementService.testStarted(element);
             var result = TestElementService.runTest(element);

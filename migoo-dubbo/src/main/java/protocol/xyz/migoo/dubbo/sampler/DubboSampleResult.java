@@ -41,7 +41,7 @@ public class DubboSampleResult extends SampleResult implements DubboConstantsInt
     }
 
     public void setRequestData(MiGooProperty property) {
-        JSONObject data = new JSONObject();
+        var data = new JSONObject();
         data.put(REGISTRY_CENTER, property.getJSONObject(REGISTRY_CENTER));
         data.put(REFERENCE_CONFIG, property.getJSONObject(REFERENCE_CONFIG));
         data.put("config", property.getJSONObject("config"));

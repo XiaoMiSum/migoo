@@ -57,7 +57,7 @@ public class HTTPResponseAssertion extends AbstractAssertion {
             getProperty().put(FIELD, field);
             var matcher = PATTERN.matcher(field);
             if (matcher.find()) {
-                String path = "$" + (matcher.group(1) == null ? "[0]" : matcher.group(1)) + matcher.group(2);
+                var path = "$" + (matcher.group(1) == null ? "[0]" : matcher.group(1)) + matcher.group(2);
                 setActual(JSONPath.extract(JSON.toJSONString(httpResult.getResponseHeaders()), path));
             } else {
                 setActual(STATUS.contains(field) ? httpResult.getResponseCode() : httpResult.getResponseDataAsString());

@@ -63,15 +63,13 @@ public class LoopEngine extends AbstractTestEngine {
             }
             var engine = Objects.isNull(child.getSampler()) ? new LoopEngine(child, context.getVariables())
                     : new StandardEngine(child, context.getVariables());
-
             var sResult = engine.runTest();
             result.getSubResults().add(sResult);
+            // 如果 父级结果为 true，则使用子级的结果替换父级结果，否则保持父级结果
             result.setSuccessful(result.isSuccessful() ? sResult.isSuccessful() : result.isSuccessful());
-            if (engine instanceof StandardEngine) {
-                if (result.isSuccessful()) {
-                    // 标准引擎 将子节点里面的变量合并到当前父节点中，以便传递给其他子节点
-                    context.getVariables().mergeVariable(child.getVariables());
-                }
+            if (engine instanceof StandardEngine && result.isSuccessful()) {
+                // 标准引擎 将子节点里面的变量合并到当前父节点中，以便传递给其他子节点
+                context.getVariables().mergeVariable(child.getVariables());
             }
         }
     }

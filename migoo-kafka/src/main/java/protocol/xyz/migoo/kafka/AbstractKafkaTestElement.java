@@ -34,6 +34,7 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import protocol.xyz.migoo.kafka.config.KafkaDefaults;
 import protocol.xyz.migoo.kafka.util.KafkaConstantsInterface;
 
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Future;
 
@@ -46,7 +47,7 @@ public abstract class AbstractKafkaTestElement extends AbstractTestElement imple
     private KafkaProducer<String, String> producer;
 
     private void buildKafkaProducer() {
-        Properties props = new Properties();
+        var props = new Properties();
         props.put(BOOTSTRAP_SERVERS_CONFIG, get(BOOTSTRAP_SERVERS_CONFIG));
         props.put(ACKS_CONFIG, get(ACKS_CONFIG, "1"));
         props.put(RETRIES_CONFIG, get(RETRIES_CONFIG, 5));
@@ -57,8 +58,8 @@ public abstract class AbstractKafkaTestElement extends AbstractTestElement imple
     }
 
     public void testStarted() {
-        KafkaDefaults other = (KafkaDefaults) getVariables().get(KAFKA_DEFAULT);
-        if (other != null) {
+        var other = (KafkaDefaults) getVariables().get(KAFKA_DEFAULT);
+        if (Objects.nonNull(other)) {
             setProperty(BOOTSTRAP_SERVERS_CONFIG, other.get(BOOTSTRAP_SERVERS_CONFIG));
             setProperty(ACKS_CONFIG, other.get(ACKS_CONFIG));
             setProperty(RETRIES_CONFIG, other.get(RETRIES_CONFIG));
@@ -84,7 +85,7 @@ public abstract class AbstractKafkaTestElement extends AbstractTestElement imple
     }
 
     private String getSamplerData() {
-        JSONObject json = new JSONObject(16);
+        var json = new JSONObject(16);
         json.put(BOOTSTRAP_SERVERS_CONFIG, get(BOOTSTRAP_SERVERS_CONFIG));
         json.put(ACKS_CONFIG, get(ACKS_CONFIG));
         json.put(RETRIES_CONFIG, get(RETRIES_CONFIG));

@@ -43,7 +43,7 @@ public class TestPlanValidator {
         if (StringUtils.isBlank(element)) {
             return;
         }
-        String path = String.format("json-schema/%s.json", element.toLowerCase(Locale.ROOT));
+        var path = String.format("json-schema/%s.json", element.toLowerCase(Locale.ROOT));
         var schema = ReaderFactor.getReader(true, path).read();
         var message = Optional.of(validJson(value, schema)).orElse("");
         if (StringUtils.isNotEmpty(message)) {
