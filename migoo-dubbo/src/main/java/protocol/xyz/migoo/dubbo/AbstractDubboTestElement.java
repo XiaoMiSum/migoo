@@ -64,14 +64,14 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
         getVariables().put("migoo_protocol_dubbo_request_agrs", get(ARGS_PARAMETERS));
     }
 
-    protected SampleResult execute(DubboSampleResult result) throws Exception {
+    protected SampleResult execute(DubboSampleResult result) {
         result.setTestClass(this.getClass());
         result.sampleStart();
         try {
             if (get(ATTACHMENT_ARGS) != null && !getPropertyAsJSONObject(ATTACHMENT_ARGS).isEmpty()) {
                 var attachments = new HashMap<String, String>(16);
                 getPropertyAsJSONObject(ATTACHMENT_ARGS).forEach((key, value) -> attachments.put(key, value.toString()));
-                RpcContext.getContext().setAttachments(attachments);
+                RpcContext.getClientAttachment().setAttachments(attachments);
                 getVariables().put("migoo_protocol_dubbo_attachment_args", get(ATTACHMENT_ARGS));
             }
             var parameterTypes = new String[getPropertyAsJSONArray(ARGS_PARAMETER_TYPES).size()];
@@ -96,7 +96,7 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
 
         var reference = new ReferenceConfig<GenericService>();
         reference.setGeneric("true");
-        reference.setApplication(new ApplicationConfig("migoo-dubbo-consumer"));
+        reference.getApplicationModel().getApplicationConfigManager().setApplication(new ApplicationConfig("migoo-dubbo-consumer"));
         reference.setVersion(referenceConfig.getString(VERSION));
         reference.setGroup(referenceConfig.getString(GROUP));
         reference.setRetries(Math.max(referenceConfig.getIntValue(RETRIES), 2));
