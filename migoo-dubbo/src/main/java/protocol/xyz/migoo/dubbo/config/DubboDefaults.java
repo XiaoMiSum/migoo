@@ -39,7 +39,7 @@ public class DubboDefaults extends AbstractDubboTestElement implements TestState
 
     @Override
     public void testStarted() {
-        setProperty(DUBBO_REFERENCE, super.buildReferenceConfig());
+        setProperty(REFERENCE_OBJECT, super.buildReferenceConfig());
         getVariables().put(DUBBO_DEFAULT, this);
     }
 

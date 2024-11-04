@@ -34,11 +34,17 @@ public interface DubboConstantsInterface {
 
     String DUBBO_DEFAULT = "migoo_protocol_dubbo_element_defaults";
 
+    @Deprecated(since = "5.1.0")
     String REGISTRY_CENTER = "registry_center";
 
+    String REGISTRY = "registry";
+
+    @Deprecated(since = "5.1.0")
     String REFERENCE_CONFIG = "reference_config";
 
-    String DUBBO_REFERENCE = "reference";
+    String REFERENCE = "reference";
+
+    String REFERENCE_OBJECT = "inner_reference_object";
 
     String PROTOCOL = "protocol";
 

@@ -28,10 +28,15 @@ class Sampler extends El {
         return new Sampler(title, "JDBCSampler", variables, config, validators, preprocessors, postprocessors, extractors)
     }
 
-
     static Sampler sampler(String title, Map<String, Object> variables = null, Protocol.Redis config,
                            Object[] validators = null, Object[] preprocessors = null,
                            Object[] postprocessors = null, Object[] extractors = null) {
         return new Sampler(title, "RedisSampler", variables, config, validators, preprocessors, postprocessors, extractors)
+    }
+
+    static Sampler sampler(String title, Map<String, Object> variables = null, Protocol.Dubbo config,
+                           Object[] validators = null, Object[] preprocessors = null,
+                           Object[] postprocessors = null, Object[] extractors = null) {
+        return new Sampler(title, "DubboSampler", variables, config, validators, preprocessors, postprocessors, extractors)
     }
 }

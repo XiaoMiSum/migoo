@@ -26,6 +26,7 @@
 package protocol.xyz.migoo.dubbo;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +42,7 @@ import protocol.xyz.migoo.dubbo.util.DubboConstantsInterface;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author mi.xiao
@@ -53,10 +55,10 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
 
     public void testStarted() {
         var other = (DubboDefaults) getVariables().get(DUBBO_DEFAULT);
-        reference = Objects.isNull(other) ? buildReferenceConfig() : (ReferenceConfig<GenericService>) other.get(DUBBO_REFERENCE);
+        reference = Objects.isNull(other) ? buildReferenceConfig() : (ReferenceConfig<GenericService>) other.get(REFERENCE_OBJECT);
         if (Objects.nonNull(other)) {
-            setProperty(REGISTRY_CENTER, other.get(REGISTRY_CENTER));
-            setProperty(REFERENCE_CONFIG, other.get(REFERENCE_CONFIG));
+            setProperty(REGISTRY, other.get(REGISTRY));
+            setProperty(REFERENCE, other.get(REFERENCE));
         }
         reference.setInterface(getPropertyAsString(INTERFACE));
         getVariables().put("migoo_protocol_dubbo_request_agrs", get(ARGS_PARAMETERS));
@@ -87,8 +89,10 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
     }
 
     protected ReferenceConfig<GenericService> buildReferenceConfig() {
-        var registerCenter = getPropertyAsJSONObject(REGISTRY_CENTER);
-        var referenceConfig = getPropertyAsJSONObject(REFERENCE_CONFIG);
+        var registerCenter = Optional.ofNullable((JSONObject) removeProperty(REGISTRY_CENTER)).orElse(getPropertyAsJSONObject(REGISTRY));
+        var referenceConfig = Optional.ofNullable((JSONObject) removeProperty(REFERENCE_CONFIG)).orElse(getPropertyAsJSONObject(REFERENCE));
+        setProperty(REGISTRY, registerCenter);
+        setProperty(REFERENCE, referenceConfig);
 
         var reference = new ReferenceConfig<GenericService>();
         reference.setGeneric("true");

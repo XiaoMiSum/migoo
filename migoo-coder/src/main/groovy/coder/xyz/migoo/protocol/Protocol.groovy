@@ -53,30 +53,33 @@ class Protocol {
             return new HTTP(protocol, host, port, v2)
         }
 
-        static HTTP withGet(String path, Map<String, Object> query = null, Map<String, Object> headers = null) {
-            return withApi("get", path, query, null, null, null, headers)
+        static HTTP withGet(HTTP config = null, String path, Map<String, Object> query = null, Map<String, Object> headers = null) {
+            return withApi(config, "get", path, query, null, null, null, headers)
         }
 
-        static HTTP withPostData(String path, Map<String, Object> data, Map<String, Object> headers = null) {
-            return withPost(path, data, null, null, headers)
+        static HTTP withPostData(HTTP config = null, String path, Map<String, Object> data, Map<String, Object> headers = null) {
+            return withPost(config, path, data, null, null, headers)
         }
 
-        static HTTP withPostBody(String path, Map<String, Object> body = null, Map<String, Object> headers = null) {
-            return withPost(path, null, body, null, headers)
+        static HTTP withPostBody(HTTP config = null, String path, Map<String, Object> body = null, Map<String, Object> headers = null) {
+            return withPost(config, path, null, body, null, headers)
         }
 
-        static HTTP withPostBytes(String path, byte[] bytes = null, Map<String, Object> headers = null) {
-            return withPost(path, null, null, bytes, headers)
+        static HTTP withPostBytes(HTTP config = null, String path, byte[] bytes = null, Map<String, Object> headers = null) {
+            return withPost(config, path, null, null, bytes, headers)
         }
 
-        static HTTP withPost(String path, Map<String, Object> data = null, Map<String, Object> body = null,
+        static HTTP withPost(HTTP config = null, String path, Map<String, Object> data = null, Map<String, Object> body = null,
                              byte[] bytes = null, Map<String, Object> headers = Maps.newHashMap()) {
-            return withApi("post", path, null, data, body, bytes, headers)
+            return withApi(config, "post", path, null, data, body, bytes, headers)
         }
 
-        private static HTTP withApi(String method, String path, Map<String, Object> query, Map<String, Object> data,
+        private static HTTP withApi(HTTP config = null, String method, String path, Map<String, Object> query, Map<String, Object> data,
                                     Map<String, Object> body, byte[] bytes, Map<String, Object> headers) {
             HTTP http = new HTTP()
+            if (Objects.nonNull(config)) {
+                http.p(config.customize())
+            }
             http.p("method", method)
             http.p("path", path)
             http.p("headers", headers)
@@ -202,4 +205,53 @@ class Protocol {
         }
     }
 
+    static class Dubbo extends El {
+
+        private Dubbo(Dubbo _def) {
+            p(_def.customize())
+        }
+
+        private Dubbo(Map registry, Map reference, String interfaceClass, String method, List parameterTypes,
+                      List parameters, Map attachmentArgs) {
+            p("registry", registry)
+            p("reference", reference)
+            p("interface", interfaceClass)
+            p("method", method)
+            p("parameter_types", parameterTypes)
+            p("parameters", parameters)
+            p("attachment_args", attachmentArgs)
+        }
+
+        /**
+         * 适用于配置Dubbo默认配置
+         *
+         * @param registry 注册中心配置：protocol、address、username、password、version
+         * @param reference reference配置：version、retries、group、timeout、async、load_balance
+         * @return
+         */
+        static Dubbo withConfig(Map registry, Map reference) {
+            return new Dubbo(registry, reference, null, null, null, null, null)
+        }
+
+        /**
+         * 适用于 处理器、取样器执行配置
+         *
+         * @param registry 注册中心配置，可空
+         * @param reference reference配置，可空
+         * @param interfaceClass 接口类名全称
+         * @param method 接口方法
+         * @param parameterTypes 方法参数类型，根据接口定义
+         * @param parameters 接口方法参数名称
+         * @param attachmentArgs 附加参数 keyword形式，可空
+         * @return
+         */
+        static Dubbo withApi(Map registry = null, Map reference = null, String interfaceClass, String method,
+                             List parameterTypes = null, List parameters = null, Map attachmentArgs = null) {
+            return new Dubbo(registry, reference, interfaceClass, method, parameterTypes, parameters, attachmentArgs)
+        }
+
+        static Dubbo copy(Dubbo _def) {
+            return new Dubbo(_def)
+        }
+    }
 }
