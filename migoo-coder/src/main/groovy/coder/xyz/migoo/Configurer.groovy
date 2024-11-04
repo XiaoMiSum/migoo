@@ -6,7 +6,7 @@ class Configurer extends El {
 
     private Configurer(String testClass, El protocol) {
         super(testClass)
-        p(protocol.customize())
+        p("config", protocol.customize())
     }
 
     static Configurer defaults(Protocol.HTTP config) {

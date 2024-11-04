@@ -6,7 +6,7 @@ class Processor extends El {
 
     private Processor(String testClass, El protocol, Extractor... extractors) {
         super(testClass)
-        p(protocol.customize())
+        p("config", protocol.customize())
         p("extractors", extractors)
     }
 

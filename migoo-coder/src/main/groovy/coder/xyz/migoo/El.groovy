@@ -22,6 +22,9 @@ abstract class El {
 
     protected void p(String key, Object value) {
         if (Objects.nonNull(value)) {
+            if (value instanceof Map) {
+                ((Map) value).remove("testclass")
+            }
             properties[key] = value
         }
     }
