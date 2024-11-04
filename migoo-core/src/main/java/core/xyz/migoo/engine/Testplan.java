@@ -50,7 +50,6 @@ public class Testplan extends JSONObject {
         var isMiGooSuite = json.containsKey(CHILDREN) && json.containsKey(TITLE);
         var clazz = TestElementService.getServiceClass(json.getString(TEST_CLASS));
         sampler = Objects.nonNull(clazz) && Sampler.class.isAssignableFrom(clazz);
-        TestPlanValidator.verify(json, isMiGooSuite ? sampler ? clazz.getSimpleName() : "testsuite" : "");
         // migoo 测试集合 或者 注册的 test class 都是 migoo 测试组件
         initialize(json, isMiGooSuite || Objects.nonNull(clazz));
     }
