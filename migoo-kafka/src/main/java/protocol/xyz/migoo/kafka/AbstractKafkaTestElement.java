@@ -76,7 +76,8 @@ public abstract class AbstractKafkaTestElement extends AbstractTestElement imple
         result.sampleStart();
         try {
             result.setSamplerData(getSamplerData());
-            Future<RecordMetadata> future = producer.send(new ProducerRecord<>(getPropertyAsString(KAFKA_TOPIC), (String) get(KAFKA_KEY), get(KAFKA_MESSAGE).toString()));
+            var record = new ProducerRecord<>(getPropertyAsString(KAFKA_TOPIC), (String) get(KAFKA_KEY), getPropertyAsString(KAFKA_MESSAGE));
+            Future<RecordMetadata> future = producer.send(record);
             result.setResponseData("offset: " + future.get().offset());
         } finally {
             result.sampleEnd();

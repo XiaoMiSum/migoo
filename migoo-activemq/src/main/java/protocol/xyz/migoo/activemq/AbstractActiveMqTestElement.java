@@ -44,9 +44,7 @@ import java.util.Objects;
  * @date 2021/4/10 20:35
  */
 public abstract class AbstractActiveMqTestElement extends AbstractTestElement implements ActiveMqConstantsInterface {
-
-    protected final String name = this.getClass().getSimpleName().toLowerCase();
-
+    
     private ConnectionFactory factory;
     private Connection connection;
     private Session session;
