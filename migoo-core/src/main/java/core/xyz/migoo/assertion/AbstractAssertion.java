@@ -26,6 +26,7 @@
 package core.xyz.migoo.assertion;
 
 import com.alibaba.fastjson2.JSON;
+import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.MiGooProperty;
@@ -54,8 +55,19 @@ public abstract class AbstractAssertion extends AbstractTestElement implements S
         }
     }
 
+    public VerifyResult getResult(SampleResult samplerResult) {
+        var result = new VerifyResult(this.getClass());
+        super.convertVariable();
+        try {
+            setActual(samplerResult);
+            assertThat(result);
+        } catch (Exception e) {
+            result.setFailureMessage(e);
+        }
+        return result;
+    }
+
     protected void assertThat(VerifyResult result) {
-        convertVariable();
         var ruleStr = get(RULE) == null ? "==" : getPropertyAsString(RULE);
         setProperty("rule", ruleStr);
         var rule = RULES.get(ruleStr.toLowerCase(Locale.ROOT));
@@ -93,6 +105,8 @@ public abstract class AbstractAssertion extends AbstractTestElement implements S
             return List.of(expected.split(","));
         }
     }
+
+    protected abstract void setActual(SampleResult result);
 
     protected void setActual(Object actual) {
         getProperty().put(ACTUAL, actual);

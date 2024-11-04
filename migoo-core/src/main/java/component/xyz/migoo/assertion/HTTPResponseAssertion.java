@@ -27,7 +27,6 @@ package component.xyz.migoo.assertion;
 
 import com.alibaba.fastjson2.JSONPath;
 import core.xyz.migoo.assertion.AbstractAssertion;
-import core.xyz.migoo.assertion.VerifyResult;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
 import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
@@ -47,11 +46,9 @@ public class HTTPResponseAssertion extends AbstractAssertion {
     private static final String CONTEXT = "context";
     private static final Pattern PATTERN = Pattern.compile("^header(\\[\\d+])?(\\.\\w+.?)?");
 
-
     @Override
-    public VerifyResult getResult(SampleResult samplerResult) {
-        var result = new VerifyResult(this.getClass());
-        if (samplerResult instanceof HTTPSampleResult httpResult) {
+    protected void setActual(SampleResult result) {
+        if (result instanceof HTTPSampleResult httpResult) {
             var field = get(FIELD) == null ? CONTEXT : getPropertyAsString(FIELD).toLowerCase();
             getProperty().put(FIELD, field);
             var matcher = PATTERN.matcher(field);
@@ -61,11 +58,8 @@ public class HTTPResponseAssertion extends AbstractAssertion {
             } else {
                 setActual(STATUS.contains(field) ? httpResult.getResponseCode() : httpResult.getResponseDataAsString());
             }
-            super.assertThat(result);
         } else {
-            result.setSuccessful(true);
-            setContent(result, String.format("HTTPResponseAssertion unsupported %s, assert default true", samplerResult.getClass().getSimpleName()));
+            setActual(String.format("HTTPResponseAssertion unsupported %s, assert default true", result.getClass().getSimpleName()));
         }
-        return result;
     }
 }

@@ -26,7 +26,6 @@
 package component.xyz.migoo.assertion;
 
 import core.xyz.migoo.assertion.AbstractAssertion;
-import core.xyz.migoo.assertion.VerifyResult;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
 
@@ -37,14 +36,7 @@ import core.xyz.migoo.testelement.Alias;
 public class ResultAssertion extends AbstractAssertion {
 
     @Override
-    public VerifyResult getResult(SampleResult samplerResult) {
-        var result = new VerifyResult(this.getClass());
-        try {
-            setActual(samplerResult.getResponseDataAsString());
-            super.assertThat(result);
-        } catch (Exception e) {
-            result.setFailureMessage(e);
-        }
-        return result;
+    protected void setActual(SampleResult result) {
+        setActual(result.getResponseDataAsString());
     }
 }

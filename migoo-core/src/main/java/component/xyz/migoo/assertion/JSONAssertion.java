@@ -27,7 +27,6 @@ package component.xyz.migoo.assertion;
 
 import com.alibaba.fastjson2.JSONPath;
 import core.xyz.migoo.assertion.AbstractAssertion;
-import core.xyz.migoo.assertion.VerifyResult;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
 
@@ -38,15 +37,8 @@ import core.xyz.migoo.testelement.Alias;
 public class JSONAssertion extends AbstractAssertion {
 
     @Override
-    public VerifyResult getResult(SampleResult samplerResult) {
-        var result = new VerifyResult(this.getClass());
-        try {
-            var jsonStr = samplerResult.getResponseDataAsString();
-            setActual(JSONPath.extract(jsonStr, getPropertyAsString(FIELD)));
-            super.assertThat(result);
-        } catch (Exception e) {
-            result.setFailureMessage(e);
-        }
-        return result;
+    protected void setActual(SampleResult result) {
+        var jsonStr = result.getResponseDataAsString();
+        setActual(JSONPath.extract(jsonStr, getPropertyAsString(FIELD)));
     }
 }
