@@ -111,8 +111,9 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
     private String buildUrl() {
         var path = getPropertyAsString(BASE_PATH);
         if (StringUtils.isBlank(path)) {
-            String port = Optional.ofNullable(getPropertyAsString(PORT)).orElse("");
-            path = String.format(URL_FORMAT, get(PROTOCOL), get(HOST), port.isEmpty() ? "" : (":" + port));
+            var port = Optional.ofNullable(getPropertyAsString(PORT)).orElse("");
+            var protocol = Optional.ofNullable(getPropertyAsString(PROTOCOL)).orElse("");
+            path = String.format(URL_FORMAT, protocol, get(HOST), port.isEmpty() ? "" : (":" + port));
         } else if (path.endsWith(SEPARATOR)) {
             path = path.substring(0, path.length() - 1);
         }

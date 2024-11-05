@@ -24,7 +24,7 @@ children: # 执行步骤
       username: migoo
     config:
       method: post
-      api: /api/login
+      path: /api/login
       body: { userName: '${username}', password: '123456qq', sign: '__digest(${username}123456qq)' }
     extractors: ## 提取器
       - { testclass: jsonextractor, field: '$.status', variable_name: status }
@@ -38,7 +38,7 @@ children: # 执行步骤
       username: migoo
     config:
       method: post
-      api: /api/login
+      path: /api/login
       body: { userName: '${username}', password: '123456qq', sign: '__digest(${username}123456qq)' }
     extractors: ## 提取器
       - { testclass: jsonextractor, field: '$.status', variable_name: status }

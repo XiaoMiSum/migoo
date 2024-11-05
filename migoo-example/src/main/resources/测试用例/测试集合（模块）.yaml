@@ -4,7 +4,7 @@ configelements:
     protocol: http
     host: localhost
     method: post
-    api: /api/login
+    path: /api/login
 PreProcessors: # 前置处理器
   - testclass: jdbcpreprocessor
     datasource: JDBCDataSource_var

@@ -6,7 +6,7 @@ config:
   method: post
   protocol: http
   host: migoo.xyz
-  api: /api/login
+  path: /api/login
   body: { userName: '${username}', password: '123456qq', sign: '__digest(${username}123456qq)' }
 extractors: ## 提取器
   - { testclass: jsonextractor, field: '$.status', variable_name: status }
