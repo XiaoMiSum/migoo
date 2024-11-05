@@ -1,5 +1,0 @@
-# Http 默认配置，各配置项的优先级为：取样器 > 默认配置
-testclass: HttpDefaults
-method: GET
-protocol: http
-host: localhost
