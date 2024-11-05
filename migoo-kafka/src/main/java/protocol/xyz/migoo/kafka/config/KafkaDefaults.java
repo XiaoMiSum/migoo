@@ -30,6 +30,8 @@ import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.kafka.util.KafkaConstantsInterface;
 
+import java.util.Objects;
+
 /**
  * @author xiaomi
  * Created in 2021/11/11 11:06
@@ -39,6 +41,11 @@ public class KafkaDefaults extends AbstractTestElement implements TestStateListe
 
     @Override
     public void testStarted() {
+        var defaults = (KafkaDefaults) getVariables().get(KAFKA_DEFAULT);
+        if (Objects.nonNull(defaults)) {
+            // 合并已存在的, 重复Key 以当前对象为准
+            setProperties(defaults.getProperty());
+        }
         getVariables().put(KAFKA_DEFAULT, this);
     }
 

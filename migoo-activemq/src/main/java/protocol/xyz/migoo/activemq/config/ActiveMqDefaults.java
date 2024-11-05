@@ -30,6 +30,8 @@ import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.activemq.util.ActiveMqConstantsInterface;
 
+import java.util.Objects;
+
 /**
  * @author mi.xiao
  * @date 2021/4/10 20:38
@@ -39,6 +41,11 @@ public class ActiveMqDefaults extends AbstractTestElement implements TestStateLi
 
     @Override
     public void testStarted() {
+        var defaults = (ActiveMqDefaults) getVariables().get(ACTIVEMQ_DEFAULT);
+        if (Objects.nonNull(defaults)) {
+            // 合并已存在的, 重复Key 以当前对象为准
+            setProperties(defaults.getProperty());
+        }
         getVariables().put(ACTIVEMQ_DEFAULT, this);
     }
 

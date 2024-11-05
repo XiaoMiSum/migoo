@@ -55,12 +55,11 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
 
     public void testStarted() {
         var other = (DubboDefaults) getVariables().get(DUBBO_DEFAULT);
-        reference = Objects.isNull(other) ? buildReferenceConfig() : (ReferenceConfig<GenericService>) other.get(REFERENCE_OBJECT);
         if (Objects.nonNull(other)) {
             setProperty(REGISTRY, other.get(REGISTRY));
             setProperty(REFERENCE, other.get(REFERENCE));
         }
-        reference.setInterface(getPropertyAsString(INTERFACE));
+        reference = buildReferenceConfig();
         getVariables().put("migoo_protocol_dubbo_request_agrs", get(ARGS_PARAMETERS));
     }
 
@@ -103,6 +102,7 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
         reference.setTimeout(Math.max(referenceConfig.getIntValue(TIMEOUT), 5000));
         reference.setAsync(referenceConfig.getBooleanValue(ASYNC));
         reference.setLoadbalance(referenceConfig.get(LOAD_BALANCE) == null ? "random" : referenceConfig.getString(LOAD_BALANCE));
+        reference.setInterface(getPropertyAsString(INTERFACE));
         RegistryConfig registry = new RegistryConfig();
         Protocol protocol = Protocol.valueOf(StringUtils.isEmpty(registerCenter.getString(PROTOCOL)) ? "ZOOKEEPER" :
                 registerCenter.getString(PROTOCOL).toUpperCase(Locale.ROOT));

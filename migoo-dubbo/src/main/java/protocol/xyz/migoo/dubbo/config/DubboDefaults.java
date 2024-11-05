@@ -25,21 +25,27 @@
 
 package protocol.xyz.migoo.dubbo.config;
 
+import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestStateListener;
-import protocol.xyz.migoo.dubbo.AbstractDubboTestElement;
 import protocol.xyz.migoo.dubbo.util.DubboConstantsInterface;
+
+import java.util.Objects;
 
 /**
  * @author mi.xiao
  * @date 2021/4/10 20:38
  */
 @Alias(value = {"Dubbo_Default", "DubboDefault", "Dubbo_Defaults"})
-public class DubboDefaults extends AbstractDubboTestElement implements TestStateListener, DubboConstantsInterface {
+public class DubboDefaults extends AbstractTestElement implements TestStateListener, DubboConstantsInterface {
 
     @Override
     public void testStarted() {
-        setProperty(REFERENCE_OBJECT, super.buildReferenceConfig());
+        var defaults = (DubboDefaults) getVariables().get(DUBBO_DEFAULT);
+        if (Objects.nonNull(defaults)) {
+            // 合并已存在的, 重复Key 以当前对象为准
+            setProperties(defaults.getProperty());
+        }
         getVariables().put(DUBBO_DEFAULT, this);
     }
 
