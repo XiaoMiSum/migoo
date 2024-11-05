@@ -62,11 +62,11 @@ public abstract class AbstractRedisTestElement extends AbstractTestElement {
         try {
             sample.sampleStart();
             var command = getPropertyAsString(COMMAND);
+            sample.setSamplerData("{\"command\": \"" + command + "\", \"send\": \"" + getPropertyAsString(SEND) + "\"}");
             if (StringUtils.isBlank(command)) {
                 throw new UnsupportedOperationException("unsupported command: " + command);
             }
             var result = conn.sendCommand(Protocol.Command.valueOf(command.toUpperCase(Locale.ROOT)), getPropertyAsString(SEND).split(","));
-            sample.setSamplerData("{\"command\": \"" + command + "\", \"send\": \"" + getPropertyAsString(SEND) + "\"}");
             sample.setResponseData(result == null ? "" : result instanceof Collection ? listToString((Collection<?>) result) : result.toString());
         } finally {
             sample.sampleEnd();

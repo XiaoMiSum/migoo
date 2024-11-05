@@ -44,7 +44,7 @@ import java.util.Objects;
  * @date 2021/4/10 20:35
  */
 public abstract class AbstractActiveMqTestElement extends AbstractTestElement implements ActiveMqConstantsInterface {
-    
+
     private ConnectionFactory factory;
     private Connection connection;
     private Session session;
@@ -66,6 +66,7 @@ public abstract class AbstractActiveMqTestElement extends AbstractTestElement im
     protected SampleResult execute(SampleResult result) throws Exception {
         result.setTestClass(this.getClass());
         result.sampleStart();
+        result.setSamplerData(getRequestString());
         try {
             connection = factory.createConnection();
             connection.start();
@@ -75,7 +76,6 @@ public abstract class AbstractActiveMqTestElement extends AbstractTestElement im
             producer = session.createProducer(destination);
             var textMessage = session.createTextMessage(getPropertyAsString(ACTIVEMQ_MESSAGE));
             producer.send(textMessage);
-            result.setSamplerData(getRequestString());
         } finally {
             result.sampleEnd();
         }
