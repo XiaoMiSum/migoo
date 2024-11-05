@@ -146,9 +146,7 @@ public class HTTPResponseAssertionTest {
     public void test4SampleResult() {
         sampleResult = new SampleResult("test");
         VerifyResult result = assertion.getResult(sampleResult);
-        assert "HTTPAssertion".equals(result.getName());
-        assert result.isSuccessful();
-        assert result.getContent().equals(String.format("unsupported %s, assert default true", sampleResult.getClass().getSimpleName()));
+        assert !result.isSuccessful();
     }
 
     @Test

@@ -31,7 +31,7 @@
 
     <groupId>xyz.migoo</groupId>
     <artifactId>migoo-coder</artifactId>
-    <version>5.0.1-SNAPSHOT</version>
+    <version>5.0.1</version>
 
     <name>${project.artifactId}</name>
     <description>coder for migoo</description>

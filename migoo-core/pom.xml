@@ -32,7 +32,7 @@
 
     <groupId>xyz.migoo</groupId>
     <artifactId>migoo-core</artifactId>
-    <version>5.0.1-SNAPSHOT</version>
+    <version>5.0.1</version>
 
     <name>${project.artifactId}</name>
     <description>core of migoo</description>

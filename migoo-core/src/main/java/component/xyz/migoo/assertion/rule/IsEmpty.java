@@ -45,7 +45,8 @@ public class IsEmpty extends BaseRule implements Rule {
             case String obj -> StringUtils.isBlank(obj);
             case Map<?, ?> obj -> obj.isEmpty();
             case List<?> obj -> obj.isEmpty();
-            case null, default -> true;
+            case null -> true;
+            default -> false;
         };
     }
 }

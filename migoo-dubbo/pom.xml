@@ -31,7 +31,7 @@
 
     <artifactId>migoo-dubbo</artifactId>
     <groupId>xyz.migoo</groupId>
-    <version>5.0.1-SNAPSHOT</version>
+    <version>5.0.1</version>
 
     <name>${project.artifactId}</name>
     <description>dubbo sampler for migoo</description>
@@ -61,7 +61,7 @@
     </developers>
 
     <properties>
-        <migoo-core.version>5.0.1-SNAPSHOT</migoo-core.version>
+        <migoo-core.version>5.0.1</migoo-core.version>
         <dubbo-serialization-protobuf.version>1.0.1</dubbo-serialization-protobuf.version>
         <dubbo.version>3.2.10</dubbo.version>
         <javadoc.version>3.2.0</javadoc.version>

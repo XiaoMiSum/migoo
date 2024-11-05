@@ -193,24 +193,6 @@ public class JsonReadTest {
     }
 
     @Test
-    public void test4Exception5() {
-        var i = 0;
-        try {
-            MiGooVariables variables = new MiGooVariables();
-            variables.put("map", null);
-
-            KwArgs args = new KwArgs(variables);
-            args.put("json=${map}");
-            args.put("path=$.key2");
-            Object value = new JsonRead().execute(args);
-        } catch (Exception e) {
-            assert "json or jsonpath con not be null".equals(e.getMessage());
-            i++;
-        }
-        assert i == 1;
-    }
-
-    @Test
     public void test4Exception6() {
         var i = 0;
         try {

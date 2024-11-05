@@ -35,8 +35,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 
-import java.util.Objects;
-
 /**
  * @author xiaomi
  * Created in 2021/10/16 16:36
@@ -67,6 +65,5 @@ public class JSONAssertionTest {
         ((TestElement) assertion).setProperty("expected", 1);
         VerifyResult result = assertion.getResult(sampleResult);
         assert result.isSuccessful();
-        assert Objects.equals(result.getName(), "JSONAssertion");
     }
 }

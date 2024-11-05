@@ -59,7 +59,7 @@ public class ArgsTest {
         map.put("test1", "test1");
         map.put("test2", "test2");
         variables.put("map", map);
-        LsArgs args = (LsArgs) Args.newArgs("1,haha,{},[], xixi  ", variables);
+        LsArgs args = (LsArgs) Args.newArgs("1,haha,${map},[], xixi  ", variables);
         assert args.getCurrentVars().equals(variables);
         assert args.getBooleanValue(0);
         assert args.getNumber(0).compareTo(BigDecimal.ONE) == 0;

@@ -33,6 +33,9 @@ public class LsArgs extends ArrayList<Object> implements Args {
     }
 
     public JSONObject getJSONObject(int index) {
+        if (index > size()) {
+            return null;
+        }
         var value = get(index);
         return switch (value) {
             case null -> null;
@@ -43,6 +46,9 @@ public class LsArgs extends ArrayList<Object> implements Args {
     }
 
     public JSONArray getJSONArray(int index) {
+        if (index > size()) {
+            return null;
+        }
         var value = get(index);
         return switch (value) {
             case null -> null;

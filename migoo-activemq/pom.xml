@@ -31,7 +31,7 @@
 
     <groupId>xyz.migoo</groupId>
     <artifactId>migoo-activemq</artifactId>
-    <version>5.0.1-SNAPSHOT</version>
+    <version>5.0.1</version>
 
     <name>${project.artifactId}</name>
     <description>activemq sampler for migoo</description>
@@ -60,7 +60,7 @@
     </developers>
 
     <properties>
-        <migoo-core.version>5.0.1-SNAPSHOT</migoo-core.version>
+        <migoo-core.version>5.0.1</migoo-core.version>
         <activemq.version>6.0.1</activemq.version>
         <compile.version>3.10.1</compile.version>
         <javadoc.version>3.2.0</javadoc.version>

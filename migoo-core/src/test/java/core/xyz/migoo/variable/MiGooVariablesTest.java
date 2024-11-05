@@ -93,7 +93,7 @@ public class MiGooVariablesTest {
         variables.convertVariables(data);
 
         Assertions.assertEquals(data.get("username"), variables.get("username"));
-        Assertions.assertEquals(data.get("password"), variables.get("password"));
+        Assertions.assertEquals(data.get("password").toString(), variables.get("password"));
         Assertions.assertTrue(data.getString("uuid").contains("-"));
         Assertions.assertNotEquals("__uuid()", data.get("uuid"));
     }

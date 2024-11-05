@@ -31,7 +31,7 @@
 
     <artifactId>migoo-kafka</artifactId>
     <groupId>xyz.migoo</groupId>
-    <version>5.0.1-SNAPSHOT</version>
+    <version>5.0.1</version>
 
     <name>${project.artifactId}</name>
     <description>kafka sampler for migoo</description>
@@ -60,7 +60,7 @@
     </developers>
 
     <properties>
-        <migoo-core.version>5.0.1-SNAPSHOT</migoo-core.version>
+        <migoo-core.version>5.0.1</migoo-core.version>
         <kafka.version>3.6.1</kafka.version>
         <compile.version>3.10.1</compile.version>
         <javadoc.version>3.2.0</javadoc.version>
