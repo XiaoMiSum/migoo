@@ -6,3 +6,5 @@ host: localhost
 port: 8080 # 端口，默认 80
 path: /test # 接口路径，可空
 http/2: false # 是否 http2， ture、false，可空，默认 false
+headers: # 请求头，可空
+  h1: 1

@@ -6,3 +6,5 @@ acks: 1 # 可空
 retries: 5  # 可空
 linger.ms: 20   # 可空
 bootstrap.servers: 192.168.1.7:9092 # 服务器地址
+topic: xxxx  # ProducerRecord 中的 topic
+key: xxxx # ProducerRecord 中的 key

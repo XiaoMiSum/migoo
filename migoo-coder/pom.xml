@@ -60,14 +60,14 @@
     </developers>
 
     <properties>
-        <groovy.version>4.0.21</groovy.version>
+        <groovy.version>4.0.23</groovy.version>
         <guava.version>33.0.0-jre</guava.version>
 
         <compile.version>3.10.1</compile.version>
         <javadoc.version>3.2.0</javadoc.version>
         <surefire.version>2.22.2</surefire.version>
         <gpg-plugin.version>3.0.1</gpg-plugin.version>
-        <gmavenplus.version>3.0.2</gmavenplus.version>
+        <gmavenplus.version>4.0.1</gmavenplus.version>
 
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
@@ -79,6 +79,13 @@
         <dependency>
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
+            <version>${groovy.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.groovy/groovy-groovydoc -->
+        <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy-groovydoc</artifactId>
             <version>${groovy.version}</version>
         </dependency>
 
@@ -100,28 +107,6 @@
         </resources>
 
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${javadoc.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <!-- 解决 java8 下发布到 maven 中心库时，生成 doc 的异常 -->
-                    <additionalJOptions>
-                        <additionalJOption>-Xdoclint:none</additionalJOption>
-                    </additionalJOptions>
-                    <encoding>UTF-8</encoding>
-                    <outputDirectory>${basedir}/doc</outputDirectory>
-                    <reportOutputDirectory>${basedir}/reports</reportOutputDirectory>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -152,6 +137,7 @@
                 <version>${gmavenplus.version}</version>
                 <executions>
                     <execution>
+                        <phase>install</phase>
                         <goals>
                             <goal>addSources</goal>
                             <goal>addTestSources</goal>
@@ -161,6 +147,7 @@
                             <goal>compileTests</goal>
                             <goal>removeStubs</goal>
                             <goal>removeTestStubs</goal>
+                            <goal>groovydoc-jar</goal>
                         </goals>
                     </execution>
                 </executions>

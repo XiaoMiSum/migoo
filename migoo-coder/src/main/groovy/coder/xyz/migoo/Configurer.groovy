@@ -20,4 +20,12 @@ class Configurer extends El {
     static Configurer datasource(Protocol.Redis config) {
         return new Configurer("RedisDatasource", config)
     }
+
+    static Configurer defaults(Protocol.ActiveMQ config) {
+        return new Configurer("ActiveMQ_Defaults", config)
+    }
+
+    static Configurer defaults(Protocol.Kafka config) {
+        return new Configurer("Kafka_Defaults", config)
+    }
 }

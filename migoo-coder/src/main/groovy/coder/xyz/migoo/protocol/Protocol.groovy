@@ -38,51 +38,62 @@ class Protocol {
 
         private HTTP() {}
 
-        private HTTP(String protocol = "http", String host, int port = 80, boolean v2 = false) {
+        private HTTP(String protocol = "http", String method, String host, int port = 80, boolean v2 = false,
+                     String path = null, Map headers = null) {
             p("protocol", protocol)
             p("host", host)
             p("port", port)
             p("http/2", v2)
+            p("path", path)
+            p("method", method)
+            p("headers", headers)
         }
 
         static HTTP copy(HTTP _def) {
             return new HTTP(_def)
         }
 
-        static HTTP withConfig(String protocol = "http", String host, int port = 80, boolean v2 = false) {
-            return new HTTP(protocol, host, port, v2)
+        static HTTP withConfig(String protocol = "http", String method, String host, int port = 80, boolean v2 = false,
+                               String path = null, Map headers = null) {
+            return new HTTP(protocol, method, host, port, v2, path, headers)
         }
 
-        static HTTP withGet(HTTP config = null, String path, Map<String, Object> query = null, Map<String, Object> headers = null) {
+        static HTTP withGet(HTTP config = null, String path, Map query = null, Map headers = null) {
             return withApi(config, "get", path, query, null, null, null, headers)
         }
 
-        static HTTP withPostData(HTTP config = null, String path, Map<String, Object> data, Map<String, Object> headers = null) {
+        static HTTP withPostData(HTTP config = null, String path, Map data, Map headers = null) {
             return withPost(config, path, data, null, null, headers)
         }
 
-        static HTTP withPostBody(HTTP config = null, String path, Map<String, Object> body = null, Map<String, Object> headers = null) {
+        static HTTP withPostBody(HTTP config = null, String path, Map body = null, Map headers = null) {
             return withPost(config, path, null, body, null, headers)
         }
 
-        static HTTP withPostBytes(HTTP config = null, String path, byte[] bytes = null, Map<String, Object> headers = null) {
+        static HTTP withPostBytes(HTTP config = null, String path, byte[] bytes = null, Map headers = null) {
             return withPost(config, path, null, null, bytes, headers)
         }
 
-        static HTTP withPost(HTTP config = null, String path, Map<String, Object> data = null, Map<String, Object> body = null,
-                             byte[] bytes = null, Map<String, Object> headers = Maps.newHashMap()) {
+        static HTTP withPost(HTTP config = null, String path, Map data = null, Map body = null,
+                             byte[] bytes = null, Map headers = Maps.newHashMap()) {
             return withApi(config, "post", path, null, data, body, bytes, headers)
         }
 
-        private static HTTP withApi(HTTP config = null, String method, String path, Map<String, Object> query, Map<String, Object> data,
-                                    Map<String, Object> body, byte[] bytes, Map<String, Object> headers) {
-            HTTP http = new HTTP()
+        private static HTTP withApi(HTTP config = null, String method, String path, Map query, Map data,
+                                    Map body, byte[] bytes, Map headers) {
+            def http = new HTTP()
+            def header = config.customize().get("headers") as Map
             if (Objects.nonNull(config)) {
                 http.p(config.customize())
             }
+            if (Objects.nonNull(headers)) {
+                if (Objects.nonNull(header)) {
+                    headers.putAll(header)
+                }
+                http.p("headers", headers)
+            }
             http.p("method", method)
             http.p("path", path)
-            http.p("headers", headers)
             http.p("query", query)
             http.p("data", data)
             http.p("body", body)
@@ -252,6 +263,118 @@ class Protocol {
 
         static Dubbo copy(Dubbo _def) {
             return new Dubbo(_def)
+        }
+    }
+
+    static class ActiveMQ extends El {
+
+        private ActiveMQ(ActiveMQ _def) {
+            p(_def.customize())
+        }
+
+        private ActiveMQ(String username, String password, String brokerUrl, String queue, String topic, def message) {
+            p("username", username)
+            p("password", password)
+            p("broker.url", brokerUrl)
+            p("queue", queue)
+            p("topic", topic)
+            p("message", message)
+        }
+
+        /**
+         * 适用于配置ActiveMQ默认配置
+         *
+         * @param username 用户名
+         * @param password 密码
+         * @param brokerUrl broker url
+         * @param queue 订阅模式 优先级高于 topic，根据实际选择使用
+         * @param topic 广播模式
+         * @return
+         */
+        static ActiveMQ withConfig(String username, String password, String brokerUrl, String queue = null,
+                                   String topic = null) {
+            return new ActiveMQ(username, password, brokerUrl, queue, topic, null)
+        }
+
+        /**
+         * 适用于 处理器、取样器执行配置
+         *
+         * @param username 用户名
+         * @param password 密码
+         * @param brokerUrl broker url
+         * @param queue 订阅模式 优先级高于 topic，根据实际选择使用
+         * @param topic 广播模式
+         * @param message 发送的消息，可以是任意json对象、字符串、数字等
+         * @return
+         */
+        static ActiveMQ withApi(String username, String password, String brokerUrl, String queue, String topic, def message) {
+            return new ActiveMQ(username, password, brokerUrl, queue, topic, message)
+        }
+
+        static ActiveMQ copy(ActiveMQ _def) {
+            return new ActiveMQ(_def)
+        }
+    }
+
+    static class Kafka extends El {
+
+        private Kafka(Kafka _def) {
+            p(_def.customize())
+        }
+
+        private Kafka(String bootstrapServers, String topic, String key, def message, String keySerializer,
+                      String valueSerializer, Integer acks, Integer retries, Integer lingerMs) {
+            p("bootstrap.servers", bootstrapServers)
+            p("topic", topic)
+            p("key", key)
+            p("keySerializer", keySerializer)
+            p("valueSerializer", valueSerializer)
+            p("message", message)
+            p("acks", acks)
+            p("retries", retries)
+            p("lingerMs", lingerMs)
+        }
+
+        /**
+         * 适用于配置Kafka默认配置
+         *
+         * @param bootstrapServers 服务器地址
+         * @param topic
+         * @param key
+         * @param keySerializer
+         * @param valueSerializer
+         * @param acks
+         * @param retries
+         * @param lingerMs
+         * @return
+         */
+        static Kafka withConfig(String bootstrapServers, String topic = null, String key = null, String keySerializer = null,
+                                String valueSerializer = null, Integer acks = null, Integer retries = null, Integer lingerMs = null) {
+            return new Kafka(bootstrapServers, topic, key, null, keySerializer, valueSerializer, acks, retries, lingerMs)
+        }
+
+        /**
+         * 适用于 处理器、取样器执行配置
+         *
+         * @param bootstrapServers 服务器地址
+         * @param topic
+         * @param key
+         * @param keySerializer
+         * @param valueSerializer
+         * @param acks
+         * @param retries
+         * @param lingerMs
+         * @param message 消息体
+         * @return
+         */
+        static Kafka withApi(String bootstrapServers = null, String topic = null, String key = null, String keySerializer = null,
+                             String valueSerializer = null, Integer acks = null, Integer retries = null, Integer lingerMs = null,
+                             def message) {
+            return new Kafka(bootstrapServers, topic, key, message, keySerializer, valueSerializer, acks, retries, lingerMs)
+        }
+
+        static Kafka copy(Kafka _def) {
+            return new Kafka(_def)
         }
     }
 }

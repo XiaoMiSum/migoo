@@ -42,6 +42,22 @@ class Processor extends El {
         return with("DubboPostProcessor", config, extractors)
     }
 
+    static Processor preprocessor(Protocol.ActiveMQ config, Extractor... extractors) {
+        return with("ActiveMQPreprocessor", config, extractors)
+    }
+
+    static Processor postprocessor(Protocol.ActiveMQ config, Extractor... extractors) {
+        return with("ActiveMQPostprocessor", config, extractors)
+    }
+
+    static Processor preprocessor(Protocol.Kafka config, Extractor... extractors) {
+        return with("KafkaPreprocessor", config, extractors)
+    }
+
+    static Processor postprocessor(Protocol.Kafka config, Extractor... extractors) {
+        return with("KafkaPostprocessor", config, extractors)
+    }
+
     private static Processor with(String testClass, El config, Extractor... extractors) {
         return new Processor(testClass, config, extractors)
     }
