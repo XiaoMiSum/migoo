@@ -31,20 +31,16 @@ import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * @author xiaomi
  */
 public abstract class AbstractJDBCTestElement extends AbstractTestElement {
 
-    static final String SELECT = "select";
-    static final String UPDATE = "update";
-    static final String DELETE = "delete";
-    static final String INSERT = "insert";
     static final String STATEMENT = "statement";
-    static final String QUERY_TYPE = "query_type";
-
 
     protected SampleResult execute(Connection conn) throws SQLException, UnsupportedOperationException {
         return execute(conn, new SampleResult(getPropertyAsString(TITLE)));
@@ -52,38 +48,20 @@ public abstract class AbstractJDBCTestElement extends AbstractTestElement {
 
     protected SampleResult execute(Connection conn, SampleResult result) throws SQLException, UnsupportedOperationException {
         result.setTestClass(this.getClass());
-        var sqlQuery = getPropertyAsString(STATEMENT);
-        if (StringUtils.isBlank(sqlQuery)) {
-            throw new UnsupportedOperationException("Incorrect SQL statement: statement is empty");
+        var sql = getPropertyAsString(STATEMENT);
+        if (StringUtils.isBlank(sql)) {
+            throw new UnsupportedOperationException("Incorrect SQL statement: sql statement can not empty");
         }
-        sqlQuery = sqlQuery.trim();
-        var queryType = getPropertyAsString(QUERY_TYPE);
+        sql = sql.trim();
         result.sampleStart();
-        result.setSamplerData(sqlQuery);
-        if (sqlQuery.startsWith(SELECT) || SELECT.equalsIgnoreCase(queryType)) {
-            try (var stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sqlQuery)) {
-                result.sampleEnd();
-                String results = this.rsToJSONString(rs);
-                result.setResponseData(results);
-                return result;
-            }
-        } else if (isUpdate(sqlQuery, queryType)) {
-            sqlQuery = sqlQuery.trim();
-            try (var stmt = conn.createStatement()) {
-                stmt.executeUpdate(sqlQuery);
-                result.sampleEnd();
-                var updateCount = stmt.getUpdateCount();
-                var results = updateCount + " updates";
-                result.setResponseData(results);
-                return result;
-            }
-        } else { // User provided incorrect query type
-            throw new UnsupportedOperationException("Unexpected query type or Incorrect SQL statement");
+        result.setSamplerData(sql);
+        try (var stmt = conn.createStatement()) {
+            boolean bool = stmt.execute(sql);
+            result.sampleEnd();
+            String results = bool ? this.rsToJSONString(stmt.getResultSet()) : "Affected rows: " + stmt.getUpdateCount();
+            result.setResponseData(results);
+            return result;
         }
-    }
-
-    private boolean isUpdate(String sqlQuery, String queryType) {
-        return sqlQuery.startsWith(UPDATE) || sqlQuery.startsWith(DELETE) || sqlQuery.startsWith(INSERT) || UPDATE.equalsIgnoreCase(queryType);
     }
 
     protected String rsToJSONString(ResultSet rs) throws SQLException {
@@ -101,8 +79,9 @@ public abstract class AbstractJDBCTestElement extends AbstractTestElement {
             rowCount++;
         }
         if (rowCount == 1) {
-            return results.get(0).toString();
+            return results.getFirst().toString();
         }
+        rs.close();
         return results.toJSONString();
     }
 }
