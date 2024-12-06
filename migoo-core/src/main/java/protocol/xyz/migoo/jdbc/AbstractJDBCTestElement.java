@@ -55,33 +55,27 @@ public abstract class AbstractJDBCTestElement extends AbstractTestElement {
         sql = sql.trim();
         result.sampleStart();
         result.setSamplerData(sql);
-        try (var stmt = conn.createStatement()) {
-            boolean bool = stmt.execute(sql);
+        try (var statement = conn.createStatement()) {
+            boolean bool = statement.execute(sql);
             result.sampleEnd();
-            String results = bool ? this.rsToJSONString(stmt.getResultSet()) : "Affected rows: " + stmt.getUpdateCount();
+            String results = bool ? toJSONString(statement.getResultSet()) : "Affected rows: " + statement.getUpdateCount();
             result.setResponseData(results);
             return result;
         }
     }
 
-    protected String rsToJSONString(ResultSet rs) throws SQLException {
+    protected String toJSONString(ResultSet result) throws SQLException {
         var results = new JSONArray();
-        var resultSetMetaData = rs.getMetaData();
-        int rowCount = 0;
-        int fieldCount = resultSetMetaData.getColumnCount();
-        while (rs.next()) {
-            var result = new JSONObject();
-            for (int i = 1; i <= fieldCount; i++) {
-                String key = resultSetMetaData.getColumnName(i);
-                result.put(key, rs.getString(key));
+        var meta = result.getMetaData();
+        while (result.next()) {
+            var item = new JSONObject();
+            for (int i = 1; i <= meta.getColumnCount(); i++) {
+                String key = meta.getColumnName(i);
+                item.put(key, result.getString(key));
             }
-            results.add(result);
-            rowCount++;
+            results.add(item);
         }
-        if (rowCount == 1) {
-            return results.getFirst().toString();
-        }
-        rs.close();
-        return results.toJSONString();
+        result.close();
+        return (results.size() == 1 ? results.getFirst() : results).toString();
     }
 }
