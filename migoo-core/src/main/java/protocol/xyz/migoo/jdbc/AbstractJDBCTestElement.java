@@ -30,24 +30,25 @@ import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
+import protocol.xyz.migoo.jdbc.config.DataSourceElement;
+import protocol.xyz.migoo.jdbc.util.JDBCConstantsInterface;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
  * @author xiaomi
  */
-public abstract class AbstractJDBCTestElement extends AbstractTestElement {
+public abstract class AbstractJDBCTestElement extends AbstractTestElement implements JDBCConstantsInterface {
 
-    static final String STATEMENT = "statement";
 
-    protected SampleResult execute(Connection conn) throws SQLException, UnsupportedOperationException {
-        return execute(conn, new SampleResult(getPropertyAsString(TITLE)));
+    protected SampleResult execute(DataSourceElement datasource) throws Exception {
+        return execute(datasource, new SampleResult(getPropertyAsString(TITLE)));
     }
 
-    protected SampleResult execute(Connection conn, SampleResult result) throws SQLException, UnsupportedOperationException {
+    protected SampleResult execute(DataSourceElement datasource, SampleResult result) throws Exception {
         result.setTestClass(this.getClass());
+        result.setUrl(datasource.getUrl());
         var sql = getPropertyAsString(STATEMENT);
         if (StringUtils.isBlank(sql)) {
             throw new UnsupportedOperationException("Incorrect SQL statement: sql statement can not empty");
@@ -55,7 +56,9 @@ public abstract class AbstractJDBCTestElement extends AbstractTestElement {
         sql = sql.trim();
         result.sampleStart();
         result.setSamplerData(sql);
-        try (var statement = conn.createStatement()) {
+        try (var conn = datasource.getConnection(); var statement = conn.createStatement()) {
+            var driver = datasource.getProperty().containsKey(DRIVER) ? datasource.getPropertyAsString(DRIVER) : "com.mysql.cj.jdbc.Driver";
+            Class.forName(driver);
             boolean bool = statement.execute(sql);
             result.sampleEnd();
             String results = bool ? toJSONString(statement.getResultSet()) : "Affected rows: " + statement.getUpdateCount();

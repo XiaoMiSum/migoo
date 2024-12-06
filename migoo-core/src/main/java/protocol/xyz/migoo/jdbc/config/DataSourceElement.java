@@ -30,6 +30,7 @@ import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestStateListener;
+import protocol.xyz.migoo.jdbc.util.JDBCConstantsInterface;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -38,25 +39,14 @@ import java.sql.SQLException;
  * @author xiaomi
  */
 @Alias({"jdbcdatasource", "jdbc_datasource"})
-public class DataSourceElement extends AbstractTestElement implements TestStateListener {
+public class DataSourceElement extends AbstractTestElement implements TestStateListener, JDBCConstantsInterface {
 
-    private static final String DRIVER = "driver";
-    private static final String URL_KEY = "url";
-    private static final String USERNAME_KEY = "username";
-    private static final String PASSWORD_KEY = "password";
-    private static final String MAX_ACTIVE_KEY = "max_active";
-    private static final String MAX_WAIT_KEY = "max_wait";
-    private static final String VARIABLE_NAME_KEY = "variable_name";
+
     @JSONField(serialize = false)
     private final DruidDataSource dataSource = new DruidDataSource();
 
     @Override
     public void testStarted() {
-        try {
-            var driver = getProperty().containsKey(DRIVER) ? getPropertyAsString(DRIVER) : "com.mysql.cj.jdbc.Driver";
-            Class.forName(driver);
-        } catch (Exception ignored) {
-        }
         dataSource.setUrl(getPropertyAsString(URL_KEY));
         dataSource.setUsername(getPropertyAsString(USERNAME_KEY));
         dataSource.setPassword(getPropertyAsString(PASSWORD_KEY));

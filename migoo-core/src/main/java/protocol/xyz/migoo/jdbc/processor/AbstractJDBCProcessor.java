@@ -37,16 +37,12 @@ public abstract class AbstractJDBCProcessor extends AbstractJDBCTestElement {
 
     public SampleResult process() {
         // 1. 获取当前处理器设置的数据源变量名称
-        var dataSourceName = getPropertyAsString("datasource");
+        var dataSourceName = getPropertyAsString(DATASOURCE);
         if (StringUtils.isBlank(dataSourceName)) {
             throw new IllegalArgumentException("DataSource Name must not be null in datasource");
         }
-        // 2. 从变量中取出保存的连接池
-        var dataSource = (DataSourceElement) getVariables().get(dataSourceName);
-        try (var conn = dataSource.getConnection()) {
-            var result = execute(conn);
-            result.setUrl(dataSource.getUrl());
-            return result;
+        try {
+            return execute((DataSourceElement) getVariables().get(dataSourceName));
         } catch (Exception e) {
             throw new RuntimeException(getClass().getSimpleName() + " error.", e);
         }

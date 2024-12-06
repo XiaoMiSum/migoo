@@ -32,8 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.jdbc.AbstractJDBCTestElement;
 import protocol.xyz.migoo.jdbc.config.DataSourceElement;
 
-import java.sql.Connection;
-
 /**
  * @author xiaomi
  */
@@ -42,15 +40,14 @@ public class JDBCSampler extends AbstractJDBCTestElement implements Sampler, Tes
     @Override
     public SampleResult sample() {
         var result = new SampleResult(getPropertyAsString(TITLE));
-        var dataSourceName = getPropertyAsString("datasource");
+        var dataSourceName = getPropertyAsString(DATASOURCE);
         var dataSource = (DataSourceElement) getVariables().get(dataSourceName);
         if (StringUtils.isBlank(dataSourceName) || dataSource == null) {
             result.setSuccessful(false);
             result.setResponseData("DataSourceName is not specified or DataSource is null");
         } else {
-            result.setUrl(dataSource.getUrl());
-            try (Connection conn = dataSource.getConnection()) {
-                return execute(conn, result);
+            try {
+                return execute(dataSource, result);
             } catch (Exception e) {
                 result.setThrowable(e);
             }
