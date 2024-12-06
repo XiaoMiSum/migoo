@@ -8,7 +8,7 @@ class Timers extends El {
         p("timeout", timeout)
     }
 
-    static Timers syncTime(int seconds = 1) {
+    static Timers syncTimer(int seconds = 1) {
         return new Timers("SyncTimer", seconds)
     }
 }
