@@ -36,7 +36,7 @@ import redis.clients.jedis.JedisPoolConfig;
 /**
  * @author xiaomi
  */
-@Alias({"RedisDataSource", "Redis_DataSource"})
+@Alias({"RedisDataSource", "Redis_DataSource", "RedisSource", "Redis_Source"})
 public class RedisSourceElement extends AbstractTestElement implements TestStateListener {
 
     private static final String HOST_KEY = "host";

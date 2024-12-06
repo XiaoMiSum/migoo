@@ -38,7 +38,7 @@ import java.sql.SQLException;
 /**
  * @author xiaomi
  */
-@Alias({"jdbcdatasource", "jdbc_datasource"})
+@Alias({"JDBCDatasource", "jdbc_datasource", "datasource", "data_source", "JDBCSource", "jdbc_source"})
 public class DataSourceElement extends AbstractTestElement implements TestStateListener, JDBCConstantsInterface {
 
 
