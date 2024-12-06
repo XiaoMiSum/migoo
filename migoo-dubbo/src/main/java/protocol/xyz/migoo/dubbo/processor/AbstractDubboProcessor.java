@@ -28,14 +28,24 @@
 
 package protocol.xyz.migoo.dubbo.processor;
 
+import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.dubbo.AbstractDubboTestElement;
+import protocol.xyz.migoo.dubbo.sampler.DubboSampleResult;
 
 /**
  * @author mi.xiao
  * @date 2021/4/13 20:09
  */
 public abstract class AbstractDubboProcessor extends AbstractDubboTestElement implements TestStateListener {
+
+    public SampleResult process() {
+        try {
+            return super.execute(new DubboSampleResult(getPropertyAsString(TITLE)));
+        } catch (Exception e) {
+            throw new RuntimeException(this.getClass().getSimpleName() + " error", e);
+        }
+    }
 
     @Override
     public void testEnded() {

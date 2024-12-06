@@ -26,22 +26,11 @@
 package protocol.xyz.migoo.dubbo.processor;
 
 import core.xyz.migoo.processor.PostProcessor;
-import core.xyz.migoo.sampler.SampleResult;
-import protocol.xyz.migoo.dubbo.sampler.DubboSampleResult;
 
 /**
  * @author mi.xiao
  * @date 2021/4/13 20:08
  */
-public class DubboPreProcessor extends AbstractDubboProcessor implements PostProcessor {
+public class DubboPostprocessor extends AbstractDubboProcessor implements PostProcessor {
 
-    @Override
-    public SampleResult process() {
-        var result = new DubboSampleResult(getPropertyAsString(TITLE));
-        try {
-            return super.execute(result);
-        } catch (Exception e) {
-            throw new RuntimeException("DubboPreProcessor error", e);
-        }
-    }
 }

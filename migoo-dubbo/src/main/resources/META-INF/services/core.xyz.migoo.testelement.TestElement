@@ -27,5 +27,5 @@
 
 protocol.xyz.migoo.dubbo.config.DubboDefaults
 protocol.xyz.migoo.dubbo.sampler.DubboSampler
-protocol.xyz.migoo.dubbo.processor.DubboPostProcessor
-protocol.xyz.migoo.dubbo.processor.DubboPreProcessor
+protocol.xyz.migoo.dubbo.processor.DubboPostprocessor
+protocol.xyz.migoo.dubbo.processor.DubboPreprocessor
