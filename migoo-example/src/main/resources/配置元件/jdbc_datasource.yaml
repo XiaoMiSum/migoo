@@ -1,6 +1,6 @@
 # jdbc取样器、处理器必须引用一个jdbc数据源
 testclass: JDBCDataSource # 配置元件类型
-driver: com.mysql.cj.bc.Driver # jdbc驱动，为空时 默认 com.mysql.cj.bc.Driver
+driver: com.mysql.cj.bc.Driver # jdbc驱动，jdbc版本没支持 SPI时必填
 variable_name: JDBCDataSource_var  # 数据源名称
 url: 'jdbc:mysql://127.0.0.1:3306/db-template?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2b8&failOverReadOnly=false'
 username: 'root'

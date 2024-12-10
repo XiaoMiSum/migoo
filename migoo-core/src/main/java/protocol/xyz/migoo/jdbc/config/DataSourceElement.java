@@ -48,8 +48,10 @@ public class DataSourceElement extends AbstractTestElement implements TestStateL
     @Override
     public void testStarted() {
         try {
-            var driver = getProperty().containsKey(DRIVER) ? getPropertyAsString(DRIVER) : "com.mysql.cj.bc.Driver";
-            Class.forName(driver);
+            // 兼容 没有使用 SPI 的 JDBC驱动
+            if (getProperty().containsKey(DRIVER)) {
+                Class.forName(getPropertyAsString(DRIVER));
+            }
         } catch (Exception ignored) {
         }
         dataSource.setUrl(getPropertyAsString(URL_KEY));
