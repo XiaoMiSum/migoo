@@ -25,8 +25,6 @@
 
 package coder.xyz.migoo.protocol;
 
-import java.util.Map;
-
 public class Protocols {
 
     public static HTTP http() {
@@ -63,41 +61,14 @@ public class Protocols {
         return new Redis().datasource(datasource).command(command).send(send);
     }
 
-    public static Dubbo dubbo(Map<String, Object> registry, Map<String, Object> reference) {
-        return new Dubbo().registry(registry).reference(reference);
+    public static Dubbo dubbo() {
+        return new Dubbo();
     }
 
-    public static Dubbo dubbo(String interfaceClass, String method) {
-        return new Dubbo().interfaceClass(interfaceClass).method(method);
-    }
-
-    public static Dubbo dubbo(Dubbo registryAndReference, String interfaceClass, String method) {
-        return new Dubbo().registry(registryAndReference.registry()).reference(registryAndReference.reference())
-                .interfaceClass(interfaceClass).method(method);
-    }
-
-    public static Dubbo dubbo(String interfaceClass, String method, String[] parameterTypes, Object[] parameters) {
-        return new Dubbo().interfaceClass(interfaceClass).method(method).parameterTypes(parameterTypes)
-                .parameters(parameters);
-    }
-
-    public static Dubbo dubbo(Dubbo registryAndReference, String interfaceClass, String method, String[] parameterTypes,
-                              Object[] parameters) {
-        return new Dubbo().registry(registryAndReference.registry()).reference(registryAndReference.reference())
-                .interfaceClass(interfaceClass).method(method).parameterTypes(parameterTypes).parameters(parameters);
-    }
-
-    public static Dubbo dubbo(String interfaceClass, String method, String[] parameterTypes,
-                              Object[] parameters, Map<String, Object> attachmentArgs) {
-        return new Dubbo().interfaceClass(interfaceClass).method(method).parameterTypes(parameterTypes)
-                .parameters(parameters).attachmentArgs(attachmentArgs);
-    }
-
-    public static Dubbo dubbo(Dubbo registryAndReference, String interfaceClass, String method, String[] parameterTypes,
-                              Object[] parameters, Map<String, Object> attachmentArgs) {
-        return new Dubbo().registry(registryAndReference.registry()).reference(registryAndReference.reference())
-                .interfaceClass(interfaceClass).method(method).parameterTypes(parameterTypes).parameters(parameters)
-                .attachmentArgs(attachmentArgs);
+    public static Dubbo copy(Dubbo copy) {
+        Dubbo dubbo = new Dubbo();
+        dubbo.properties().putAll(copy.properties());
+        return dubbo;
     }
 
     public static ActiveMQ activeMQ() {
