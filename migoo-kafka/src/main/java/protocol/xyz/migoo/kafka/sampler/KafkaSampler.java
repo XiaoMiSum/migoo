@@ -27,6 +27,7 @@ package protocol.xyz.migoo.kafka.sampler;
 
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.sampler.Sampler;
+import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.kafka.AbstractKafkaTestElement;
 
@@ -34,6 +35,7 @@ import protocol.xyz.migoo.kafka.AbstractKafkaTestElement;
  * @author mi.xiao
  * @date 2021/4/10 21:10
  */
+@Alias({"kafka_sampler", "kafka"})
 public class KafkaSampler extends AbstractKafkaTestElement implements Sampler, TestStateListener {
 
     @Override

@@ -25,12 +25,14 @@
 
 package protocol.xyz.migoo.activemq.processor;
 
-import core.xyz.migoo.processor.PostProcessor;
+import core.xyz.migoo.processor.PreProcessor;
+import core.xyz.migoo.testelement.Alias;
 
 /**
  * @author mi.xiao
  * @date 2021/4/13 20:08
  */
-public class ActiveMqPreProcessor extends AbstractActiveMqProcessor implements PostProcessor {
-    
+@Alias({"activemq_preprocessor", "active_mq_preprocessor", "active_mq_pre_processor"})
+public class ActiveMqPreProcessor extends AbstractActiveMqProcessor implements PreProcessor {
+
 }

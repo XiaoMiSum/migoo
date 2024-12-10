@@ -26,10 +26,12 @@
 package protocol.xyz.migoo.http.processer;
 
 import core.xyz.migoo.processor.PreProcessor;
+import core.xyz.migoo.testelement.Alias;
 
 /**
  * @author xiaomi
  */
+@Alias({"http_preprocessor", "http_pre_processor"})
 public class HttpPreProcessor extends AbstractHttpProcessor implements PreProcessor {
 
 }

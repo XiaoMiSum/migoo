@@ -27,6 +27,7 @@ package protocol.xyz.migoo.jdbc.sampler;
 
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.sampler.Sampler;
+import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestStateListener;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.jdbc.AbstractJDBCTestElement;
@@ -35,6 +36,7 @@ import protocol.xyz.migoo.jdbc.config.DataSourceElement;
 /**
  * @author xiaomi
  */
+@Alias({"jdbc", "jdbc_sampler"})
 public class JDBCSampler extends AbstractJDBCTestElement implements Sampler, TestStateListener {
 
     @Override

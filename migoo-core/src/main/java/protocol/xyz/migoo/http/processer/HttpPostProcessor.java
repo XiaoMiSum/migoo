@@ -26,10 +26,12 @@
 package protocol.xyz.migoo.http.processer;
 
 import core.xyz.migoo.processor.PostProcessor;
+import core.xyz.migoo.testelement.Alias;
 
 /**
  * @author xiaomi
  */
+@Alias({"http_postprocessor", "http_post_processor"})
 public class HttpPostProcessor extends AbstractHttpProcessor implements PostProcessor {
 
 }

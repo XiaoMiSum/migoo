@@ -32,7 +32,7 @@ import core.xyz.migoo.testelement.Alias;
  * @author mi.xiao
  * @date 2024/11/04 20:09
  */
-@Alias({"rocketmq_postprocessor"})
+@Alias({"rabbitmq_postprocessor", "rabbit_mq_postprocessor", "rabbit_mq_post_processor"})
 public class RabbitMqPostprocessor extends AbstractRabbitMqProcessor implements PostProcessor {
 
 }

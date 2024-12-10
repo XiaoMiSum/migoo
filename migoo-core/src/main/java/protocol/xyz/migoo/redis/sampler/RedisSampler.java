@@ -27,6 +27,7 @@ package protocol.xyz.migoo.redis.sampler;
 
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.sampler.Sampler;
+import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestStateListener;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.redis.AbstractRedisTestElement;
@@ -36,6 +37,7 @@ import redis.clients.jedis.Jedis;
 /**
  * @author xiaomi
  */
+@Alias({"redis", "redis_sampler"})
 public class RedisSampler extends AbstractRedisTestElement implements Sampler, TestStateListener {
 
     @Override
@@ -59,7 +61,7 @@ public class RedisSampler extends AbstractRedisTestElement implements Sampler, T
 
     @Override
     public void testStarted() {
-        
+
     }
 
     @Override

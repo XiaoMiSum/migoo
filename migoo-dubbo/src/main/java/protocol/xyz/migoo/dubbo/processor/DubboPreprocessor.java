@@ -25,12 +25,14 @@
 
 package protocol.xyz.migoo.dubbo.processor;
 
-import core.xyz.migoo.processor.PostProcessor;
+import core.xyz.migoo.processor.PreProcessor;
+import core.xyz.migoo.testelement.Alias;
 
 /**
  * @author mi.xiao
  * @date 2021/4/13 20:08
  */
-public class DubboPreprocessor extends AbstractDubboProcessor implements PostProcessor {
+@Alias({"dubbo_preprocessor", "dubbo_pre_processor"})
+public class DubboPreprocessor extends AbstractDubboProcessor implements PreProcessor {
 
 }

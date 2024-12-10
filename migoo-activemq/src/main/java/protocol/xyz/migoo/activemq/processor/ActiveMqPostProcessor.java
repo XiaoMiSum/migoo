@@ -26,11 +26,13 @@
 package protocol.xyz.migoo.activemq.processor;
 
 import core.xyz.migoo.processor.PostProcessor;
+import core.xyz.migoo.testelement.Alias;
 
 /**
  * @author mi.xiao
  * @date 2021/4/13 20:08
  */
+@Alias({"activemq_postprocessor", "active_mq_postprocessor", "active_mq_post_processor"})
 public class ActiveMqPostProcessor extends AbstractActiveMqProcessor implements PostProcessor {
 
 }

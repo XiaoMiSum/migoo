@@ -26,10 +26,12 @@
 package protocol.xyz.migoo.redis.processor;
 
 import core.xyz.migoo.processor.PostProcessor;
+import core.xyz.migoo.testelement.Alias;
 
 /**
  * @author xiaomi
  */
+@Alias({"redis_postprocessor", "redis_post_processor"})
 public class RedisPostProcessor extends AbstractRedisProcessor implements PostProcessor {
 
     @Override

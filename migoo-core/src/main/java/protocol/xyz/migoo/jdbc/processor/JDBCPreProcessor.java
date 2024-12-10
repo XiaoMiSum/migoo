@@ -26,10 +26,12 @@
 package protocol.xyz.migoo.jdbc.processor;
 
 import core.xyz.migoo.processor.PreProcessor;
+import core.xyz.migoo.testelement.Alias;
 
 /**
  * @author xiaomi
  */
+@Alias({"jdbc_preprocessor", "jdbc_pre_processor"})
 public class JDBCPreProcessor extends AbstractJDBCProcessor implements PreProcessor {
 
     @Override

@@ -26,11 +26,13 @@
 package protocol.xyz.migoo.dubbo.processor;
 
 import core.xyz.migoo.processor.PostProcessor;
+import core.xyz.migoo.testelement.Alias;
 
 /**
  * @author mi.xiao
  * @date 2021/4/13 20:08
  */
+@Alias({"dubbo_postprocessor", "dubbo_post_processor"})
 public class DubboPostprocessor extends AbstractDubboProcessor implements PostProcessor {
 
 }

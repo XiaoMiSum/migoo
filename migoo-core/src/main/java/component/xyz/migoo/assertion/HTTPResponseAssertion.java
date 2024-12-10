@@ -43,13 +43,13 @@ public class HTTPResponseAssertion extends AbstractAssertion {
 
     private static final List<String> STATUS = Arrays.asList("line", "status", "code", "statuscode", "statusline", "status_code", "status_line");
 
-    private static final String CONTEXT = "context";
+    private static final String BODY = "body";
     private static final Pattern PATTERN = Pattern.compile("^header(\\[\\d+])?(\\.\\w+.?)?");
 
     @Override
     protected void setActual(SampleResult result) {
         if (result instanceof HTTPSampleResult httpResult) {
-            var field = get(FIELD) == null ? CONTEXT : getPropertyAsString(FIELD).toLowerCase();
+            var field = get(FIELD) == null ? BODY : getPropertyAsString(FIELD).toLowerCase();
             getProperty().put(FIELD, field);
             var matcher = PATTERN.matcher(field);
             if (matcher.find()) {

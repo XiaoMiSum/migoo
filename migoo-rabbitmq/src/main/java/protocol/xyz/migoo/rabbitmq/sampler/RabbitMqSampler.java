@@ -35,7 +35,7 @@ import protocol.xyz.migoo.rabbitmq.AbstractRabbitMQTestElement;
  * @author mi.xiao
  * @date 2024/11/04 21:10
  */
-@Alias({"activemq", "rocketMqSampler", "rocketMq_Sampler"})
+@Alias({"rabbitmq", "rabbitmq_sampler", "rabbit_mq_sampler"})
 public class RabbitMqSampler extends AbstractRabbitMQTestElement implements Sampler, TestStateListener {
 
     @Override

@@ -26,10 +26,12 @@
 package protocol.xyz.migoo.jdbc.processor;
 
 import core.xyz.migoo.processor.PostProcessor;
+import core.xyz.migoo.testelement.Alias;
 
 /**
  * @author xiaomi
  */
+@Alias({"jdbc_postprocessor", "jdbc_post_processor"})
 public class JDBCPostProcessor extends AbstractJDBCProcessor implements PostProcessor {
 
     @Override

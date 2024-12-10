@@ -25,14 +25,14 @@
 
 package protocol.xyz.migoo.rabbitmq.processor;
 
-import core.xyz.migoo.processor.PostProcessor;
+import core.xyz.migoo.processor.PreProcessor;
 import core.xyz.migoo.testelement.Alias;
 
 /**
  * @author mi.xiao
  * @date 2024/11/04 20:09
  */
-@Alias({"rocketmq_preprocessor"})
-public class RabbitMqPreprocessor extends AbstractRabbitMqProcessor implements PostProcessor {
+@Alias({"rabbitmq_preprocessor", "rabbit_mq_preprocessor", "rabbit_mq_pre_processor"})
+public class RabbitMqPreprocessor extends AbstractRabbitMqProcessor implements PreProcessor {
 
 }

@@ -27,6 +27,7 @@ package protocol.xyz.migoo.dubbo.sampler;
 
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.sampler.Sampler;
+import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.dubbo.AbstractDubboTestElement;
 
@@ -34,6 +35,7 @@ import protocol.xyz.migoo.dubbo.AbstractDubboTestElement;
  * @author mi.xiao
  * @date 2021/4/10 21:10
  */
+@Alias({"dubbo", "dubbo_sampler"})
 public class DubboSampler extends AbstractDubboTestElement implements Sampler, TestStateListener {
 
     @Override

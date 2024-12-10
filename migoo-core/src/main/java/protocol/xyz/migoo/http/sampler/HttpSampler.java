@@ -27,6 +27,7 @@ package protocol.xyz.migoo.http.sampler;
 
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.sampler.Sampler;
+import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.http.AbstractHttpTestElement;
 import protocol.xyz.migoo.http.util.HTTPConstantsInterface;
@@ -34,6 +35,7 @@ import protocol.xyz.migoo.http.util.HTTPConstantsInterface;
 /**
  * @author xiaomi
  */
+@Alias({"http", "http_sampler"})
 public class HttpSampler extends AbstractHttpTestElement implements Sampler, TestStateListener, HTTPConstantsInterface {
 
     @Override

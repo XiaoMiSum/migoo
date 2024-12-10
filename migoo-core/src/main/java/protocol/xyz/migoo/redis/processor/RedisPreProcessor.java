@@ -26,10 +26,12 @@
 package protocol.xyz.migoo.redis.processor;
 
 import core.xyz.migoo.processor.PreProcessor;
+import core.xyz.migoo.testelement.Alias;
 
 /**
  * @author xiaomi
  */
+@Alias({"redis_preprocessor", "redis_pre_processor"})
 public class RedisPreProcessor extends AbstractRedisProcessor implements PreProcessor {
 
     @Override

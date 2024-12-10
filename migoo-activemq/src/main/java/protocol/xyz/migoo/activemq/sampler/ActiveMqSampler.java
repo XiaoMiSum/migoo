@@ -35,7 +35,7 @@ import protocol.xyz.migoo.activemq.AbstractActiveMqTestElement;
  * @author mi.xiao
  * @date 2021/4/10 21:10
  */
-@Alias({"activemq", "ActiveMqSampler", "ActiveMq_Sampler"})
+@Alias({"activemq", "activemq_sampler", "active_mq_sampler"})
 public class ActiveMqSampler extends AbstractActiveMqTestElement implements Sampler, TestStateListener {
 
     @Override

@@ -26,10 +26,12 @@
 package protocol.xyz.migoo.kafka.processor;
 
 import core.xyz.migoo.processor.PostProcessor;
+import core.xyz.migoo.testelement.Alias;
 
 /**
  * @author mi.xiao
  * @date 2021/4/13 20:08
  */
+@Alias({"kafka_postprocessor", "kafka_post_processor"})
 public class KafkaPostProcessor extends AbstractKafkaProcessor implements PostProcessor {
 }
