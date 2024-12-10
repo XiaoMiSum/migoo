@@ -57,8 +57,6 @@ public abstract class AbstractJDBCTestElement extends AbstractTestElement implem
         result.sampleStart();
         result.setSamplerData(sql);
         try (var conn = datasource.getConnection(); var statement = conn.createStatement()) {
-            var driver = datasource.getProperty().containsKey(DRIVER) ? datasource.getPropertyAsString(DRIVER) : "com.mysql.cj.jdbc.Driver";
-            Class.forName(driver);
             boolean bool = statement.execute(sql);
             result.sampleEnd();
             String results = bool ? toJSONString(statement.getResultSet()) : "Affected rows: " + statement.getUpdateCount();

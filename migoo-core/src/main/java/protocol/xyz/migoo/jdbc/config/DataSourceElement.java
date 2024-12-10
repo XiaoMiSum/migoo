@@ -47,6 +47,11 @@ public class DataSourceElement extends AbstractTestElement implements TestStateL
 
     @Override
     public void testStarted() {
+        try {
+            var driver = getProperty().containsKey(DRIVER) ? getPropertyAsString(DRIVER) : "com.mysql.cj.bc.Driver";
+            Class.forName(driver);
+        } catch (Exception ignored) {
+        }
         dataSource.setUrl(getPropertyAsString(URL_KEY));
         dataSource.setUsername(getPropertyAsString(USERNAME_KEY));
         dataSource.setPassword(getPropertyAsString(PASSWORD_KEY));
