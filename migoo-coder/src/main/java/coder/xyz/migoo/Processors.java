@@ -58,6 +58,14 @@ public class Processors extends El {
         return with("kafka_post_processor", config, extractors);
     }
 
+    public static Processors preprocessor(Mongo config, Extractors... extractors) {
+        return with("mongo_pre_processor", config, extractors);
+    }
+
+    public static Processors postprocessor(Mongo config, Extractors... extractors) {
+        return with("mongo_post_processor", config, extractors);
+    }
+
     private static Processors with(String testClass, El config, Extractors... extractors) {
         return new Processors(testClass, config, extractors);
     }

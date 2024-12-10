@@ -114,10 +114,34 @@ public class Protocols {
         return new Kafka();
     }
 
-    public static Kafka kafka(Kafka copy) {
+    public static Kafka copy(Kafka copy) {
         Kafka kafka = new Kafka();
         kafka.properties().putAll(copy.properties());
         return kafka;
+    }
+
+    public static Mongo mongo(String name, String url) {
+        return new Mongo(name).url(url);
+    }
+
+    public static Mongo mongo(String name, String url, String database, String collection) {
+        return new Mongo(name).url(url).database(database).collection(collection);
+    }
+
+    public static Mongo mongo(String datasource, String action, Map<String, Object> data, Map<String, Object> condition) {
+        return new Mongo().datasource(datasource).action(action).data(data).condition(condition);
+    }
+
+    public static Mongo mongo(String datasource, String database, String collection, String action,
+                              Map<String, Object> data, Map<String, Object> condition) {
+        return new Mongo().datasource(datasource).database(database).collection(collection).action(action)
+                .data(data).condition(condition);
+    }
+
+    public static Mongo copy(Mongo copy) {
+        Mongo mongo = new Mongo();
+        mongo.properties().putAll(copy.properties());
+        return mongo;
     }
 
 }

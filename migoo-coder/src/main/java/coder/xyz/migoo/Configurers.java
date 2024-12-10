@@ -28,4 +28,8 @@ public class Configurers extends El {
     public static Configurers defaults(Kafka config) {
         return new Configurers("Kafka_Defaults", config);
     }
+
+    public static Configurers datasource(Mongo config) {
+        return new Configurers("mongo_data_source", config);
+    }
 }

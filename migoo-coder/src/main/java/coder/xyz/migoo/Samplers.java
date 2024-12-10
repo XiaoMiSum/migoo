@@ -379,4 +379,64 @@ public class Samplers extends El {
         return new Samplers(title, "kafka_sampler", variables, config, validators, preprocessors, postprocessors, extractors);
     }
 
+    /**
+     * 最简单的取样器配置
+     *
+     * @param title      描述
+     * @param config     kafka配置
+     * @param validators 验证器
+     * @return 取样器配置
+     */
+    public static Samplers sampler(String title, Mongo config, Validators... validators) {
+        return new Samplers(title, "kafka_sampler", new HashMap<>(), config, validators, new Processors[]{},
+                new Processors[]{}, new Extractors[]{});
+    }
+
+    /**
+     * 有变量的取样器
+     *
+     * @param title      描述
+     * @param variables  变量
+     * @param config     mongo 配置
+     * @param validators 验证器
+     * @return 取样器配置
+     */
+    public static Samplers sampler(String title, Map<String, Object> variables, Mongo config, Validators... validators) {
+        return new Samplers(title, "mongo_sampler", variables, config, validators, new Processors[]{},
+                new Processors[]{}, new Extractors[]{});
+    }
+
+    /**
+     * 有验证器和提取器的取样器
+     *
+     * @param title      描述
+     * @param variables  变量
+     * @param config     mongo 配置
+     * @param validators 验证器
+     * @param extractors 提取器
+     * @return 取样器配置
+     */
+    public static Samplers sampler(String title, Map<String, Object> variables, Mongo config, Validators[] validators,
+                                   Extractors... extractors) {
+        return new Samplers(title, "mongo_sampler", variables, config, validators, new Processors[]{},
+                new Processors[]{}, extractors);
+    }
+
+    /**
+     * 完整的取样器配置
+     *
+     * @param title          描述
+     * @param variables      变量
+     * @param config         mongo 配置
+     * @param preprocessors  前置处理器
+     * @param postprocessors 后置处理器
+     * @param validators     验证器
+     * @param extractors     提取器
+     * @return 取样器配置
+     */
+    public static Samplers sampler(String title, Map<String, Object> variables, Mongo config, Validators[] validators,
+                                   Processors[] preprocessors, Processors[] postprocessors, Extractors... extractors) {
+        return new Samplers(title, "mongo_sampler", variables, config, validators, preprocessors, postprocessors, extractors);
+    }
+
 }
