@@ -37,11 +37,9 @@ public abstract class El {
 
     protected void p(String key, Object[] objects) {
         if (Objects.nonNull(objects) && objects.length > 0) {
-            List<Map<String, Object>> value = new ArrayList<>();
+            List<Object> value = new ArrayList<>();
             for (Object object : objects) {
-                if (object instanceof El el) {
-                    value.add(el.properties());
-                }
+                value.add(object instanceof El el ? el.properties() : object);
             }
             properties.put(key, value);
         }
