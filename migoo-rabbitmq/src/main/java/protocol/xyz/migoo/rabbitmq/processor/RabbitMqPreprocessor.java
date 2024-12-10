@@ -32,7 +32,7 @@ import core.xyz.migoo.testelement.Alias;
  * @author mi.xiao
  * @date 2024/11/04 20:09
  */
-@Alias({"rabbitmq_preprocessor", "rabbit_mq_preprocessor", "rabbit_mq_pre_processor"})
+@Alias({"rabbitmq_preprocessor", "rabbit_mq_preprocessor", "rabbit_mq_pre_processor", "rabbit_preprocessor", "rabbit_pre_processor"})
 public class RabbitMqPreprocessor extends AbstractRabbitMqProcessor implements PreProcessor {
 
 }

@@ -58,6 +58,14 @@ public class Processors extends El {
         return with("kafka_post_processor", config, extractors);
     }
 
+    public static Processors preprocessor(RabbitMQ config, Extractors... extractors) {
+        return with("rabbit_mq_pre_processor", config, extractors);
+    }
+
+    public static Processors postprocessor(RabbitMQ config, Extractors... extractors) {
+        return with("rabbit_mq_post_processor", config, extractors);
+    }
+
     private static Processors with(String testClass, El config, Extractors... extractors) {
         return new Processors(testClass, config, extractors);
     }

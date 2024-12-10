@@ -75,26 +75,7 @@
     </properties>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.apache.groovy/groovy -->
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy</artifactId>
-            <version>${groovy.version}</version>
-        </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.groovy/groovy-groovydoc -->
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy-groovydoc</artifactId>
-            <version>${groovy.version}</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-        </dependency>
     </dependencies>
 
 
