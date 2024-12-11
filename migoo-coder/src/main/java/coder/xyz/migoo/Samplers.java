@@ -383,12 +383,12 @@ public class Samplers extends El {
      * 最简单的取样器配置
      *
      * @param title      描述
-     * @param config     kafka配置
+     * @param config     mongo 配置
      * @param validators 验证器
      * @return 取样器配置
      */
     public static Samplers sampler(String title, Mongo config, Validators... validators) {
-        return new Samplers(title, "kafka_sampler", new HashMap<>(), config, validators, new Processors[]{},
+        return new Samplers(title, "mongo_sampler", new HashMap<>(), config, validators, new Processors[]{},
                 new Processors[]{}, new Extractors[]{});
     }
 
