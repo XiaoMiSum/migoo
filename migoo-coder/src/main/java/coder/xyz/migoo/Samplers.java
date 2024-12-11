@@ -388,8 +388,7 @@ public class Samplers extends El {
      * @return 取样器配置
      */
     public static Samplers sampler(String title, Mongo config, Validators... validators) {
-        return new Samplers(title, "mongo_sampler", new HashMap<>(), config, validators, new Processors[]{},
-                new Processors[]{}, new Extractors[]{});
+        return new Samplers(title, "mongo_sampler", null, config, validators, null, null, null);
     }
 
     /**
@@ -402,8 +401,7 @@ public class Samplers extends El {
      * @return 取样器配置
      */
     public static Samplers sampler(String title, Map<String, Object> variables, Mongo config, Validators... validators) {
-        return new Samplers(title, "mongo_sampler", variables, config, validators, new Processors[]{},
-                new Processors[]{}, new Extractors[]{});
+        return new Samplers(title, "mongo_sampler", variables, config, validators, null, null, null);
     }
 
     /**
@@ -418,8 +416,7 @@ public class Samplers extends El {
      */
     public static Samplers sampler(String title, Map<String, Object> variables, Mongo config, Validators[] validators,
                                    Extractors... extractors) {
-        return new Samplers(title, "mongo_sampler", variables, config, validators, new Processors[]{},
-                new Processors[]{}, extractors);
+        return new Samplers(title, "mongo_sampler", variables, config, validators, null, null, extractors);
     }
 
     /**
