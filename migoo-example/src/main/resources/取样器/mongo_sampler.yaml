@@ -1,0 +1,10 @@
+title: 标准mongodb取样器
+testclass: mongo_sampler  # 取样器类型
+config: # 取样器配置
+  datasource: MongoDataSource_var  # 数据源，可空
+  url: 'mongodb://root:123456@127.0.0.1:27017/?authSource=admin' # 可空，空值时,使用 datasource 中的 url
+  database: 'demo' # 数据库名称，可空，空值时，使用 datasource 中的 database
+  collection: 'demo' # 表名，可空，空值时，使用 datasource 中的 collection
+  action: find  # 操作类型：find、insert、update、delete
+  data: [ ] # insert、update 的数据，可以是 对象 也可以是对象数组
+  condition: { } # 条件，非空

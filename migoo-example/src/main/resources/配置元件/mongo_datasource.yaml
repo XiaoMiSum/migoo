@@ -1,0 +1,6 @@
+# mongo取样器、处理器必须引用一个mongo数据源
+testclass: mongo_datasource # 配置元件类型
+variable_name: MongoDataSource_var  # 数据源名称
+url: 'mongodb://root:123456@127.0.0.1:27017/?authSource=admin'
+database: 'demo' # 数据库名称，可空
+collection: 'demo' # 表名，可空
