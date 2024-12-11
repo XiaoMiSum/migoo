@@ -68,7 +68,7 @@
         <compile.version>3.10.1</compile.version>
         <surefire.version>2.22.2</surefire.version>
         <gpg-plugin.version>3.0.1</gpg-plugin.version>
-        <gmavenplus.version>3.0.2</gmavenplus.version>
+
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

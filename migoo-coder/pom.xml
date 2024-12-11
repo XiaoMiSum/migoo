@@ -67,7 +67,7 @@
         <javadoc.version>3.2.0</javadoc.version>
         <surefire.version>2.22.2</surefire.version>
         <gpg-plugin.version>3.0.1</gpg-plugin.version>
-        <gmavenplus.version>4.0.1</gmavenplus.version>
+
 
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
@@ -75,26 +75,7 @@
     </properties>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.apache.groovy/groovy -->
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy</artifactId>
-            <version>${groovy.version}</version>
-        </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.groovy/groovy-groovydoc -->
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy-groovydoc</artifactId>
-            <version>${groovy.version}</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-        </dependency>
     </dependencies>
 
 
@@ -129,27 +110,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.version}</version>
-            </plugin>
-            <!-- 增加 gmavenplus 插件 允许集成Groovy到Maven-->
-            <plugin>
-                <groupId>org.codehaus.gmavenplus</groupId>
-                <artifactId>gmavenplus-plugin</artifactId>
-                <version>${gmavenplus.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>addSources</goal>
-                            <goal>addTestSources</goal>
-                            <goal>generateStubs</goal>
-                            <goal>compile</goal>
-                            <goal>generateTestStubs</goal>
-                            <goal>compileTests</goal>
-                            <goal>removeStubs</goal>
-                            <goal>removeTestStubs</goal>
-                            <goal>groovydoc-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

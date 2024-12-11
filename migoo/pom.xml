@@ -68,7 +68,7 @@
         <javadoc.version>3.5.0</javadoc.version>
         <surefire.version>2.22.2</surefire.version>
         <gpg-plugin.version>3.0.1</gpg-plugin.version>
-        <gmavenplus.version>3.0.2</gmavenplus.version>
+
         <plugin.version>3.3.0</plugin.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
