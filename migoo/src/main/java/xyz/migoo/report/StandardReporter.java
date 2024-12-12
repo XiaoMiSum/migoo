@@ -141,15 +141,17 @@ public class StandardReporter implements Reporter {
             if (reportLevel.isSampler()) {
                 // 测试报告级别为取样器，遍历打印配置元件类型 和 配置元件内容
                 results.forEach(item -> {
-                    // 给每一个配置元件增加一层节点展示TestClass
-                    var node2 = write(node, item.getTestClass());
-                    // 加一层占位符作为配置元件内容的容器
-                    write(write(node2, "-"), item.getSamplerData(), true);
-                    node2.getModel().setStatus(INFO);
+                    // 给每一个配置元件增加一层节点展示TestClass 加一层占位符作为配置元件内容的容器
+                    var node2 = write(write(node, item.getTestClass()), "-");
+                    write(node2, item.getSamplerData(), true);
+                    writeThrowable(node2, item);
                 });
             } else if (reportLevel.isTestcase()) {
                 var node2 = isGlobal ? write(node, "-") : node;
-                results.forEach(item -> write(node2, item.getSamplerData(), true));
+                results.forEach(item -> {
+                    write(node2, item.getSamplerData(), true);
+                    writeThrowable(node2, item);
+                });
                 if (!isGlobal) {
                     node2.getModel().setStatus(INFO);
                 }
@@ -166,14 +168,13 @@ public class StandardReporter implements Reporter {
             // 测试报告级别为取样器，遍历打印处理器类型 和 处理器元件内容
             results.forEach(item -> {
                 var node2 = writeSampler(node1, item, false, isGlobal);
-                writeThrowable(node1, item);
+                writeThrowable(node2, item);
                 // 提取器挂到Node2 下面
                 writeExtractors(node2, item.getExtractorResults(), false);
                 if (reportLevel.isSampler()) {
                     node2.getModel().setStatus(INFO);
                 }
             });
-            node1.getModel().setStatus(INFO);
         }
     }
 
@@ -214,7 +215,8 @@ public class StandardReporter implements Reporter {
 
     private void writeThrowable(Object feature, Result result) {
         if (Objects.nonNull(result.getThrowable())) {
-            write(write(feature, result.getTitle(), FAIL), result.getTitle(), true, FAIL);
+            var f = feature instanceof ExtentReports r ? write(r, result.getTitle(), FAIL) : (ExtentTest) feature;
+            f.fail(result.getThrowable());
         }
     }
 

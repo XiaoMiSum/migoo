@@ -25,7 +25,8 @@
 
 package core.xyz.migoo.engine;
 
-import core.xyz.migoo.processor.Processor;
+import core.xyz.migoo.processor.PostProcessor;
+import core.xyz.migoo.processor.PreProcessor;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.TestElement;
@@ -34,7 +35,6 @@ import core.xyz.migoo.variable.MiGooVariables;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import static core.xyz.migoo.testelement.AbstractTestElement.*;
 
@@ -66,9 +66,15 @@ public abstract class AbstractTestEngine implements TestEngine {
         context.getVariables().convertVariable();
         try {
             // 准备配置元件
-            prepareConfigurations();
+            boolean runNext = prepareConfigurations();
+            if (!runNext) {
+                return result;
+            }
             // 执行前置处理器
-            runPreprocessors();
+            runNext = runPreprocessors();
+            if (!runNext) {
+                return result;
+            }
             // 执行子节点
             runTest(result);
             // 执行后置处理器
@@ -83,27 +89,38 @@ public abstract class AbstractTestEngine implements TestEngine {
 
     protected abstract void runTest(Result result);
 
-    private void prepareConfigurations() {
+    private boolean prepareConfigurations() {
         var results = new ArrayList<SampleResult>(context.getConfigurations().size());
-        context.getConfigurations().forEach(element -> {
-            var sr = new SampleResult(element.getPropertyAsString(TEST_CLASS));
-            sr.sampleStart();
-            TestElementService.testStarted(element);
-            sr.setTestClass(element.getClass());
-            element.getProperty().remove(VARIABLES);
-            sr.setSamplerData(element.getProperty().toString());
-            sr.sampleEnd();
-            results.add(sr);
-        });
+        var runNext = true;
+        for (TestElement element : context.getConfigurations()) {
+            var result = new SampleResult(element.getPropertyAsString(TEST_CLASS));
+            result.sampleStart();
+            result.setTestClass(element.getClass());
+            try {
+                TestElementService.testStarted(element);
+            } catch (Exception e) {
+                runNext = false;
+                result.setThrowable(e);
+                this.result.setSuccessful(false);
+                break;
+            } finally {
+                element.getProperty().remove(VARIABLES);
+                result.setSamplerData(element.getProperty().toString());
+                result.sampleEnd();
+                results.add(result);
+            }
+        }
         result.setConfigElementResults(results);
+        return runNext;
+
     }
 
-    private void runPreprocessors() {
-        result.setPreprocessorResults(runProcessors(context.getPreprocessors()));
+    private boolean runPreprocessors() {
+        return runProcessors(context.getPreprocessors().stream().filter(item -> item instanceof PreProcessor).toList(), true);
     }
 
     private void runPostprocessors() {
-        result.setPostprocessorResults(runProcessors(context.getPostprocessors()));
+        runProcessors(context.getPreprocessors().stream().filter(item -> item instanceof PostProcessor).toList(), false);
     }
 
     private void testEnded() {
@@ -113,25 +130,44 @@ public abstract class AbstractTestEngine implements TestEngine {
         }
     }
 
-    private List<SampleResult> runProcessors(Vector<TestElement> elements) {
+    private boolean runProcessors(List<TestElement> elements, boolean isPre) {
         var results = new ArrayList<SampleResult>();
-        elements.stream().filter(item -> item instanceof Processor).forEach(element -> {
-            TestElementService.testStarted(element);
-            var result = TestElementService.runTest(element);
-            result.setSubResults(new ArrayList<>());
-            if (element.getProperty().containsKey(EXTRACTORS)) {
-                List<SampleResult> extractorResults = new ArrayList<>();
-                for (int i = 0; i < element.getPropertyAsJSONArray(EXTRACTORS).size(); i++) {
-                    var plan = (Testplan) element.getPropertyAsJSONArray(EXTRACTORS).get(i);
-                    var el = TestElementService.getService(plan.getString(TEST_CLASS));
-                    TestElementService.prepare(el, plan, element.getVariables());
-                    extractorResults.add(TestElementService.runTest(el, result));
+        var runNext = true;
+        for (TestElement element : elements) {
+            var result = new SampleResult(element.getPropertyAsString(TITLE));
+            try {
+                TestElementService.testStarted(element);
+                result = TestElementService.runTest(element);
+                result.setSubResults(new ArrayList<>());
+                if (element.getProperty().containsKey(EXTRACTORS) && result.isSuccessful()) {
+                    List<SampleResult> extractorResults = new ArrayList<>();
+                    for (int i = 0; i < element.getPropertyAsJSONArray(EXTRACTORS).size(); i++) {
+                        var plan = (Testplan) element.getPropertyAsJSONArray(EXTRACTORS).get(i);
+                        var el = TestElementService.getService(plan.getString(TEST_CLASS));
+                        TestElementService.prepare(el, plan, element.getVariables());
+                        extractorResults.add(TestElementService.runTest(el, result));
+                    }
+                    result.setExtractorResults(extractorResults);
                 }
-                result.setExtractorResults(extractorResults);
+                TestElementService.testEnded(element);
+            } catch (Exception e) {
+                runNext = false;
+                this.result.setSuccessful(false);
+                result.setTestClass(element.getClass());
+                result.setThrowable(e);
+                result.sampleEnd();
+                break;
+            } finally {
+                element.getProperty().remove(VARIABLES);
+                result.setSamplerData(element.getProperty().toString());
+                results.add(result);
             }
-            TestElementService.testEnded(element);
-            results.add(result);
-        });
-        return results;
+        }
+        if (isPre) {
+            result.setPreprocessorResults(results);
+        } else {
+            result.setPostprocessorResults(results);
+        }
+        return runNext;
     }
 }

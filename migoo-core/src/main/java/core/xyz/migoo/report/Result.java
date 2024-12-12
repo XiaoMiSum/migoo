@@ -42,7 +42,7 @@ public class Result implements Serializable {
 
     private final String id;
 
-    private final String title;
+    private String title;
 
     private boolean success = true;
 
@@ -73,6 +73,10 @@ public class Result implements Serializable {
 
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public List<Result> getSubResults() {

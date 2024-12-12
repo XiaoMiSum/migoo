@@ -31,6 +31,7 @@ import core.xyz.migoo.report.Result;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author xiaomi
@@ -122,10 +123,13 @@ public class SampleResult extends Result {
 
     public void setTestClass(String testClass) {
         this.testClass = testClass;
+        if (Objects.isNull(getTitle()) || getTitle().trim().isEmpty()) {
+            setTitle(testClass);
+        }
     }
 
     public void setTestClass(Class<?> testClass) {
-        this.testClass = testClass.getName();
+        this.setTestClass(testClass.getName());
     }
 
     public List<SampleResult> getExtractorResults() {
