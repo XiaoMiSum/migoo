@@ -41,23 +41,87 @@ public class Protocols {
         return http;
     }
 
+    /**
+     * 获取一个用于jdbc数据源的 jdbc 配置
+     *
+     * @param name     数据源名称
+     * @param url      jdbc连接地址
+     * @param username 用户名
+     * @param password 密码
+     * @return 用于jdbc数据源的 jdbc 配置
+     */
     public static JDBC jdbc(String name, String url, String username, String password) {
         return new JDBC(name).url(url).username(username).password(password);
     }
 
+    /**
+     * 获取一个用于取样器的 jdbc 配置
+     *
+     * @param datasource 数据源名称
+     * @param statement  sql语句
+     * @return 用于取样器的 jdbc 配置
+     */
     public static JDBC jdbc(String datasource, String statement) {
         return new JDBC().datasource(datasource).statement(statement);
     }
 
-    public static Redis redis2(String name, String host, String password) {
+    /**
+     * 获取一个用于 redis数据源的 redis 配置
+     *
+     * @param name 数据源名称
+     * @param host 服务器地址
+     * @return 用于 redis数据源的 redis 配置
+     */
+    public static Redis redis(String name, String host) {
+        return new Redis(name).host(host);
+    }
+
+    /**
+     * 获取一个用于 redis数据源的 redis 配置
+     *
+     * @param name 数据源名称
+     * @param host 服务器地址
+     * @param port redis端口
+     * @return 用于 redis数据源的 redis 配置
+     */
+    public static Redis redis(String name, String host, int port) {
+        return new Redis(name).host(host).port(port);
+    }
+
+    /**
+     * 获取一个用于 redis数据源的 redis 配置
+     *
+     * @param name     数据源名称
+     * @param host     服务器地址
+     * @param password redis密码
+     * @return 用于 redis数据源的 redis 配置
+     */
+    public static Redis redis(String name, String host, String password) {
         return new Redis(name).host(host).password(password);
     }
 
+    /**
+     * 获取一个用于 redis数据源的 redis 配置
+     *
+     * @param name     数据源名称
+     * @param host     服务器地址
+     * @param port     redis端口
+     * @param password redis密码
+     * @return 用于 redis数据源的 redis 配置
+     */
     public static Redis redis(String name, String host, int port, String password) {
         return new Redis(name).host(host).port(port).password(password);
     }
 
-    public static Redis redis(String datasource, String command, String send) {
+    /**
+     * 获取一个用于取样器的 redis 配置
+     *
+     * @param datasource 数据源名称
+     * @param command    redis命令
+     * @param send       redis命令参数
+     * @return 用于取样器的 redis 配置
+     */
+    public static Redis redis2(String datasource, String command, String send) {
         return new Redis().datasource(datasource).command(command).send(send);
     }
 

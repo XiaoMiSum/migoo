@@ -9,7 +9,7 @@ import java.util.Map;
 public class Testcase extends Testsuite {
 
     protected Testcase(String title, Map<String, Object> variables, Samplers[] children,
-                       Configurers[] configurers, Processors[] preprocessors, Processors[] postprocessors) {
+                       Configurers[] configurers, Processors.Pre[] preprocessors, Processors.Post[] postprocessors) {
         super(title, variables, children, configurers, preprocessors, postprocessors);
     }
 

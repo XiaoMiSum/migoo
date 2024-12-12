@@ -2,64 +2,164 @@ package coder.xyz.migoo;
 
 import coder.xyz.migoo.protocol.*;
 
-public class Processors extends El {
+public class Processors {
 
-    private Processors(String testClass, El protocol, Extractors... extractors) {
-        super(testClass);
-        p("config", protocol.properties());
-        p("extractors", extractors);
+    /**
+     * http 前置处理器
+     *
+     * @param config     http 配置
+     * @param extractors 提取器
+     * @return http 前置处理器
+     */
+    public static Processors.Pre preprocessor(HTTP config, Extractors... extractors) {
+        return withPre("http_pre_processor", config, extractors);
     }
 
-    public static Processors preprocessor(HTTP config, Extractors... extractors) {
-        return with("http_pre_processor", config, extractors);
+    /**
+     * http 后置处理器
+     *
+     * @param config     http 配置
+     * @param extractors 提取器
+     * @return http 后置处理器
+     */
+    public static Processors.Post postprocessor(HTTP config, Extractors... extractors) {
+        return withPost("http_post_processor", config, extractors);
     }
 
-    public static Processors postprocessor(HTTP config, Extractors... extractors) {
-        return with("http_post_processor", config, extractors);
+    /**
+     * jdbc 前置处理器
+     *
+     * @param config     jdbc 配置
+     * @param extractors 提取器
+     * @return jdbc 前置处理器
+     */
+    public static Processors.Pre preprocessor(JDBC config, Extractors... extractors) {
+        return withPre("jdbc_pre_processor", config, extractors);
     }
 
-    public static Processors preprocessor(Redis config, Extractors... extractors) {
-        return with("redis_pre_processor", config, extractors);
+    /**
+     * jdbc 后置处理器
+     *
+     * @param config     jdbc 配置
+     * @param extractors 提取器
+     * @return jdbc 后置处理器
+     */
+    public static Processors.Post postprocessor(JDBC config, Extractors... extractors) {
+        return withPost("jdbc_post_processor", config, extractors);
     }
 
-    public static Processors postprocessor(Redis config, Extractors... extractors) {
-        return with("redis_post_processor", config, extractors);
+    /**
+     * redis 前置处理器
+     *
+     * @param config     redis 配置
+     * @param extractors 提取器
+     * @return redis 前置处理器
+     */
+    public static Processors.Pre preprocessor(Redis config, Extractors... extractors) {
+        return withPre("redis_pre_processor", config, extractors);
     }
 
-    public static Processors preprocessor(JDBC config, Extractors... extractors) {
-        return with("jdbc_pre_processor", config, extractors);
+    /**
+     * redis 后置处理器
+     *
+     * @param config     redis 配置
+     * @param extractors 提取器
+     * @return redis 后置处理器
+     */
+    public static Processors.Post postprocessor(Redis config, Extractors... extractors) {
+        return withPost("redis_post_processor", config, extractors);
     }
 
-    public static Processors postprocessor(JDBC config, Extractors... extractors) {
-        return with("jdbc_post_processor", config, extractors);
+    /**
+     * dubbo 前置处理器
+     *
+     * @param config     dubbo 配置
+     * @param extractors 提取器
+     * @return dubbo 前置处理器
+     */
+    public static Processors.Pre preprocessor(Dubbo config, Extractors... extractors) {
+        return withPre("dubbo_pre_processor", config, extractors);
     }
 
-    public static Processors preprocessor(Dubbo config, Extractors... extractors) {
-        return with("dubbo_pre_processor", config, extractors);
+    /**
+     * dubbo 后置处理器
+     *
+     * @param config     dubbo 配置
+     * @param extractors 提取器
+     * @return dubbo 后置处理器
+     */
+    public static Processors.Post postprocessor(Dubbo config, Extractors... extractors) {
+        return withPost("dubbo_post_processor", config, extractors);
     }
 
-    public static Processors postprocessor(Dubbo config, Extractors... extractors) {
-        return with("dubbo_post_processor", config, extractors);
+    /**
+     * active mq 前置处理器
+     *
+     * @param config     active mq 配置
+     * @param extractors 提取器
+     * @return active mq 前置处理器
+     */
+    public static Processors.Pre preprocessor(ActiveMQ config, Extractors... extractors) {
+        return withPre("active_mq_pre_processor", config, extractors);
     }
 
-    public static Processors preprocessor(ActiveMQ config, Extractors... extractors) {
-        return with("active_mq_pre_processor", config, extractors);
+    /**
+     * active mq 后置处理器
+     *
+     * @param config     active mq 配置
+     * @param extractors 提取器
+     * @return active mq 后置处理器
+     */
+    public static Processors.Post postprocessor(ActiveMQ config, Extractors... extractors) {
+        return withPost("active_mq_post_processor", config, extractors);
     }
 
-    public static Processors postprocessor(ActiveMQ config, Extractors... extractors) {
-        return with("active_mq_post_processor", config, extractors);
+    /**
+     * kafka 前置处理器
+     *
+     * @param config     kafka 配置
+     * @param extractors 提取器
+     * @return kafka 前置处理器
+     */
+    public static Processors.Pre preprocessor(Kafka config, Extractors... extractors) {
+        return withPre("kafka_pre_processor", config, extractors);
     }
 
-    public static Processors preprocessor(Kafka config, Extractors... extractors) {
-        return with("kafka_pre_processor", config, extractors);
+    /**
+     * kafka 后置处理器
+     *
+     * @param config     kafka 配置
+     * @param extractors 提取器
+     * @return kafka 后置处理器
+     */
+    public static Processors.Post postprocessor(Kafka config, Extractors... extractors) {
+        return withPost("kafka_post_processor", config, extractors);
     }
 
-    public static Processors postprocessor(Kafka config, Extractors... extractors) {
-        return with("kafka_post_processor", config, extractors);
+    private static Processors.Pre withPre(String testClass, El config, Extractors... extractors) {
+        return new Processors.Pre(testClass, config, extractors);
     }
 
-    private static Processors with(String testClass, El config, Extractors... extractors) {
-        return new Processors(testClass, config, extractors);
+    private static Processors.Post withPost(String testClass, El config, Extractors... extractors) {
+        return new Processors.Post(testClass, config, extractors);
+    }
+
+    public static class Pre extends El {
+
+        private Pre(String testClass, El protocol, Extractors... extractors) {
+            super(testClass);
+            p("config", protocol.properties());
+            p("extractors", extractors);
+        }
+    }
+
+    public static class Post extends El {
+
+        private Post(String testClass, El protocol, Extractors... extractors) {
+            super(testClass);
+            p("config", protocol.properties());
+            p("extractors", extractors);
+        }
     }
 
 }
