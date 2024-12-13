@@ -26,9 +26,7 @@
 package protocol.xyz.migoo.redis.processor;
 
 import core.xyz.migoo.sampler.SampleResult;
-import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.redis.AbstractRedisTestElement;
-import protocol.xyz.migoo.redis.config.RedisSourceElement;
 
 /**
  * @author xiaomi
@@ -38,19 +36,6 @@ public abstract class AbstractRedisProcessor extends AbstractRedisTestElement {
     protected SampleResult result;
 
     public SampleResult process() {
-        // 1. 获取当前处理器设置的数据源变量名称
-        var dataSourceName = getPropertyAsString("datasource");
-        if (StringUtils.isBlank(dataSourceName)) {
-            throw new IllegalArgumentException("DataSource Name must not be null in datasource");
-        }
-        // 2. 从变量中取出保存的连接池
-        var dataSource = (RedisSourceElement) getVariables().get(dataSourceName);
-        try (var conn = dataSource.getConnection()) {
-            var result = execute(conn);
-            result.setUrl(dataSource.getUrl());
-            return result;
-        } catch (Exception e) {
-            throw new RuntimeException(getClass().getSimpleName() + " error.", e);
-        }
+        return super.execute();
     }
 }

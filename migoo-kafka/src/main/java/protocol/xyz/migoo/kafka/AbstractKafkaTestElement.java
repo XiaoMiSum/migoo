@@ -71,14 +71,16 @@ public abstract class AbstractKafkaTestElement extends AbstractTestElement imple
         getVariables().put("migoo_protocol_kafka_request_args", get(KAFKA_MESSAGE));
     }
 
-    protected SampleResult execute(SampleResult result) throws Exception {
+    protected SampleResult execute(SampleResult result) {
         result.setTestClass(this.getClass());
         result.sampleStart();
+        result.setSamplerData(getSamplerData());
         try {
-            result.setSamplerData(getSamplerData());
             var record = new ProducerRecord<>(getPropertyAsString(KAFKA_TOPIC), (String) get(KAFKA_KEY), getPropertyAsString(KAFKA_MESSAGE));
             Future<RecordMetadata> future = producer.send(record);
             result.setResponseData("offset: " + future.get().offset());
+        } catch (Exception e) {
+            result.setThrowable(e);
         } finally {
             result.sampleEnd();
         }

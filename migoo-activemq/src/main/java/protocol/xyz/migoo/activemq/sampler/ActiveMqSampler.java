@@ -40,12 +40,6 @@ public class ActiveMqSampler extends AbstractActiveMqTestElement implements Samp
 
     @Override
     public SampleResult sample() {
-        var result = new SampleResult(getPropertyAsString(TITLE));
-        try {
-            return execute(result);
-        } catch (Exception e) {
-            result.setThrowable(e);
-        }
-        return result;
+        return super.execute(new SampleResult(getPropertyAsString(TITLE)));
     }
 }

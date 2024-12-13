@@ -63,7 +63,7 @@ public abstract class AbstractActiveMqTestElement extends AbstractTestElement im
         this.buildConnectionFactory();
     }
 
-    protected SampleResult execute(SampleResult result) throws Exception {
+    protected SampleResult execute(SampleResult result) {
         result.setTestClass(this.getClass());
         result.sampleStart();
         result.setSamplerData(getRequestString());
@@ -76,6 +76,8 @@ public abstract class AbstractActiveMqTestElement extends AbstractTestElement im
             producer = session.createProducer(destination);
             var textMessage = session.createTextMessage(getPropertyAsString(ACTIVEMQ_MESSAGE));
             producer.send(textMessage);
+        } catch (Exception e) {
+            result.setThrowable(e);
         } finally {
             result.sampleEnd();
         }

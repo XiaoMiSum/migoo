@@ -29,10 +29,7 @@ import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.sampler.Sampler;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestStateListener;
-import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.redis.AbstractRedisTestElement;
-import protocol.xyz.migoo.redis.config.RedisSourceElement;
-import redis.clients.jedis.Jedis;
 
 /**
  * @author xiaomi
@@ -42,21 +39,7 @@ public class RedisSampler extends AbstractRedisTestElement implements Sampler, T
 
     @Override
     public SampleResult sample() {
-        var result = new SampleResult(getPropertyAsString(TITLE));
-        var dataSourceName = getPropertyAsString("datasource");
-        var dataSource = (RedisSourceElement) getVariables().get(dataSourceName);
-        if (StringUtils.isBlank(dataSourceName) || dataSource == null) {
-            result.setSuccessful(false);
-            result.setResponseData("DataSourceName is not specified or DataSource is null");
-        } else {
-            result.setUrl(dataSource.getUrl());
-            try (Jedis conn = dataSource.getConnection()) {
-                return execute(conn, result);
-            } catch (Exception e) {
-                result.setThrowable(e);
-            }
-        }
-        return result;
+        return super.execute();
     }
 
     @Override

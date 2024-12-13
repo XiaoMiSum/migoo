@@ -29,6 +29,7 @@ import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestStateListener;
+import protocol.xyz.migoo.redis.util.RedisConstantsInterface;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -37,17 +38,7 @@ import redis.clients.jedis.JedisPoolConfig;
  * @author xiaomi
  */
 @Alias({"RedisDataSource", "Redis_DataSource", "RedisSource", "Redis_Source"})
-public class RedisSourceElement extends AbstractTestElement implements TestStateListener {
-
-    private static final String HOST_KEY = "host";
-    private static final String PORT_KEY = "port";
-    private static final String DATABASE_KEY = "database";
-    private static final String PASSWORD_KEY = "password";
-    private static final String TIME_OUT_KEY = "time_out";
-    private static final String MAX_TOTAL_KEY = "max_total";
-    private static final String MAX_IDLE_KEY = "max_idle";
-    private static final String MIN_IDLE_KEY = "min_idle";
-    private static final String VARIABLE_NAME_KEY = "variable_name";
+public class RedisSourceElement extends AbstractTestElement implements TestStateListener, RedisConstantsInterface {
 
     @JSONField(serialize = false)
     private JedisPool jedisPool;

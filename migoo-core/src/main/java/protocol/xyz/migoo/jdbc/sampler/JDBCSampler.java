@@ -29,9 +29,7 @@ import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.sampler.Sampler;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestStateListener;
-import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.jdbc.AbstractJDBCTestElement;
-import protocol.xyz.migoo.jdbc.config.DataSourceElement;
 
 /**
  * @author xiaomi
@@ -41,20 +39,7 @@ public class JDBCSampler extends AbstractJDBCTestElement implements Sampler, Tes
 
     @Override
     public SampleResult sample() {
-        var result = new SampleResult(getPropertyAsString(TITLE));
-        var dataSourceName = getPropertyAsString(DATASOURCE);
-        var dataSource = (DataSourceElement) getVariables().get(dataSourceName);
-        if (StringUtils.isBlank(dataSourceName) || dataSource == null) {
-            result.setSuccessful(false);
-            result.setResponseData("DataSourceName is not specified or DataSource is null");
-        } else {
-            try {
-                return execute(dataSource, result);
-            } catch (Exception e) {
-                result.setThrowable(e);
-            }
-        }
-        return result;
+        return super.execute();
     }
 
     @Override

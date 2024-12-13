@@ -235,7 +235,7 @@ public class StandardReporter implements Reporter {
         }
         if (result instanceof HTTPSampleResult h) {
             if (Objects.nonNull(h.getMethod()) && !h.getMethod().isEmpty()) {
-                write(node, "请求方法：" + h.getMethod());
+                write(node, "请求方法：" + h.getMethod(), isNodeLevel3);
             }
             if (Objects.nonNull(h.getCookies()) && !h.getCookies().isEmpty()) {
                 write(write(node, "Cookies：", isNodeLevel3), toJSONString(h.getCookies()), true);

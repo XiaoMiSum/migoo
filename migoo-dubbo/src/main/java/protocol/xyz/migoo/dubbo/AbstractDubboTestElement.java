@@ -81,6 +81,8 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
             var parameters = getPropertyAsJSONArray(ARGS_PARAMETERS).toArray();
             var response = reference.get().$invoke(getPropertyAsString(METHOD), parameterTypes, parameters);
             result.setResponseData(JSON.toJSONBytes(response));
+        } catch (Exception e) {
+            result.setThrowable(e);
         } finally {
             result.sampleEnd();
         }

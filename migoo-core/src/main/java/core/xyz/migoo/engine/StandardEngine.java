@@ -57,13 +57,20 @@ public class StandardEngine extends AbstractTestEngine {
     @Override
     protected void runTest(Result result) {
         var sr = (SampleResult) result;
+        if (!result.isSuccessful()) {
+            sr.setTestClass(context.getSampler().getClass());
+            sr.sampleStart();
+            sr.setSamplerData("前置步骤测试失败，当前跳过执行");
+            sr.setResponseData("前置步骤测试失败，当前跳过执行");
+            sr.sampleEnd();
+            return;
+        }
         TestElementService.testStarted(context.getSampler());
         sr.setSamplerData(TestElementService.runTest(context.getSampler()));
         TestElementService.testEnded(context.getSampler());
         runAssertions(sr);
         runExtractors(sr);
     }
-
 
     private void runAssertions(SampleResult result) {
         if (!result.isSuccessful() || context.getValidators().isEmpty()) {

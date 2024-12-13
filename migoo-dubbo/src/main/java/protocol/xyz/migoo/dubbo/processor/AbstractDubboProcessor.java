@@ -40,11 +40,7 @@ import protocol.xyz.migoo.dubbo.sampler.DubboSampleResult;
 public abstract class AbstractDubboProcessor extends AbstractDubboTestElement implements TestStateListener {
 
     public SampleResult process() {
-        try {
-            return super.execute(new DubboSampleResult(getPropertyAsString(TITLE)));
-        } catch (Exception e) {
-            throw new RuntimeException(this.getClass().getSimpleName() + " error", e);
-        }
+        return super.execute(new DubboSampleResult(getPropertyAsString(TITLE)));
     }
 
     @Override

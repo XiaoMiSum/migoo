@@ -41,9 +41,20 @@ import java.sql.SQLException;
  */
 public abstract class AbstractJDBCTestElement extends AbstractTestElement implements JDBCConstantsInterface {
 
-
-    protected SampleResult execute(DataSourceElement datasource) throws Exception {
-        return execute(datasource, new SampleResult(getPropertyAsString(TITLE)));
+    protected SampleResult execute() {
+        var result = new SampleResult(getPropertyAsString(TITLE));
+        try {
+            var dataSourceName = getPropertyAsString(DATASOURCE);
+            var datasource = (DataSourceElement) getVariables().get(dataSourceName);
+            if (StringUtils.isBlank(dataSourceName)) {
+                throw new IllegalArgumentException("datasource name is not specified or DataSource is null");
+            }
+            return execute(datasource, result);
+        } catch (Exception e) {
+            result.sampleEnd();
+            result.setThrowable(e);
+        }
+        return result;
     }
 
     protected SampleResult execute(DataSourceElement datasource, SampleResult result) throws Exception {

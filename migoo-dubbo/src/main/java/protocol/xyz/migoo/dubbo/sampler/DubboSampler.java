@@ -40,13 +40,7 @@ public class DubboSampler extends AbstractDubboTestElement implements Sampler, T
 
     @Override
     public SampleResult sample() {
-        var result = new DubboSampleResult(getPropertyAsString(TITLE));
-        try {
-            super.execute(result);
-        } catch (Exception e) {
-            result.setThrowable(e);
-        }
-        return result;
+        return super.execute(new DubboSampleResult(getPropertyAsString(TITLE)));
     }
 
     @Override

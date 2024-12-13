@@ -36,11 +36,6 @@ import protocol.xyz.migoo.activemq.AbstractActiveMqTestElement;
 public abstract class AbstractActiveMqProcessor extends AbstractActiveMqTestElement implements TestStateListener {
 
     public SampleResult process() {
-        var result = new SampleResult(getPropertyAsString(TITLE));
-        try {
-            return super.execute(result);
-        } catch (Exception e) {
-            throw new RuntimeException(this.getClass().getSimpleName() + " error", e);
-        }
+        return super.execute(new SampleResult(getPropertyAsString(TITLE)));
     }
 }

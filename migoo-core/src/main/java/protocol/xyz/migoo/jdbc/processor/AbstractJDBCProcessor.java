@@ -26,9 +26,7 @@
 package protocol.xyz.migoo.jdbc.processor;
 
 import core.xyz.migoo.sampler.SampleResult;
-import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.jdbc.AbstractJDBCTestElement;
-import protocol.xyz.migoo.jdbc.config.DataSourceElement;
 
 /**
  * @author xiaomi
@@ -36,15 +34,6 @@ import protocol.xyz.migoo.jdbc.config.DataSourceElement;
 public abstract class AbstractJDBCProcessor extends AbstractJDBCTestElement {
 
     public SampleResult process() {
-        // 1. 获取当前处理器设置的数据源变量名称
-        var dataSourceName = getPropertyAsString(DATASOURCE);
-        if (StringUtils.isBlank(dataSourceName)) {
-            throw new IllegalArgumentException("DataSource Name must not be null in datasource");
-        }
-        try {
-            return execute((DataSourceElement) getVariables().get(dataSourceName));
-        } catch (Exception e) {
-            throw new RuntimeException(getClass().getSimpleName() + " error.", e);
-        }
+        return super.execute();
     }
 }

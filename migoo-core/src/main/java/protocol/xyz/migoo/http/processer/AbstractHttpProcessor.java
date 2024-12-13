@@ -28,7 +28,6 @@ package protocol.xyz.migoo.http.processer;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.http.AbstractHttpTestElement;
-import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 
 /**
  * @author xiaomi
@@ -41,11 +40,6 @@ public abstract class AbstractHttpProcessor extends AbstractHttpTestElement impl
     }
 
     public SampleResult process() {
-        var result = new HTTPSampleResult(getPropertyAsString(TITLE));
-        try {
-            return super.execute(result);
-        } catch (Exception e) {
-            throw new RuntimeException(getClass().getSimpleName() + " error.", e);
-        }
+        return super.execute();
     }
 }

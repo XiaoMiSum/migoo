@@ -28,6 +28,8 @@ package protocol.xyz.migoo.redis;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
+import protocol.xyz.migoo.redis.config.RedisSourceElement;
+import protocol.xyz.migoo.redis.util.RedisConstantsInterface;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Protocol;
 
@@ -37,10 +39,8 @@ import java.util.Locale;
 /**
  * @author xiaomi
  */
-public abstract class AbstractRedisTestElement extends AbstractTestElement {
+public abstract class AbstractRedisTestElement extends AbstractTestElement implements RedisConstantsInterface {
 
-    private static final String COMMAND = "command";
-    private static final String SEND = "send";
 
     public static String listToString(Collection<?> list) {
         var sb = new StringBuilder("[");
@@ -53,20 +53,32 @@ public abstract class AbstractRedisTestElement extends AbstractTestElement {
         return sb.append("]").toString();
     }
 
-    protected SampleResult execute(Jedis conn) throws UnsupportedOperationException {
-        return execute(conn, new SampleResult(getPropertyAsString(TITLE)));
+    protected SampleResult execute() {
+        var result = new SampleResult(getPropertyAsString(TITLE));
+        try {
+            var dataSourceName = getPropertyAsString(DATASOURCE);
+            var datasource = (RedisSourceElement) getVariables().get(dataSourceName);
+            if (StringUtils.isBlank(dataSourceName)) {
+                throw new IllegalArgumentException("datasource name is not specified or DataSource is null");
+            }
+            return execute(datasource, result);
+        } catch (Exception e) {
+            result.sampleEnd();
+            result.setThrowable(e);
+        }
+        return result;
     }
 
-    protected SampleResult execute(Jedis conn, SampleResult sample) throws UnsupportedOperationException {
+    protected SampleResult execute(RedisSourceElement datasource, SampleResult sample) throws UnsupportedOperationException {
         sample.setTestClass(this.getClass());
-        try {
+        try (Jedis jedis = datasource.getConnection()) {
             sample.sampleStart();
             var command = getPropertyAsString(COMMAND);
             sample.setSamplerData("{\"command\": \"" + command + "\", \"send\": \"" + getPropertyAsString(SEND) + "\"}");
             if (StringUtils.isBlank(command)) {
                 throw new UnsupportedOperationException("unsupported command: " + command);
             }
-            var result = conn.sendCommand(Protocol.Command.valueOf(command.toUpperCase(Locale.ROOT)), getPropertyAsString(SEND).split(","));
+            var result = jedis.sendCommand(Protocol.Command.valueOf(command.toUpperCase(Locale.ROOT)), getPropertyAsString(SEND).split(","));
             sample.setResponseData(result == null ? "" : result instanceof Collection ? listToString((Collection<?>) result) : result.toString());
         } finally {
             sample.sampleEnd();

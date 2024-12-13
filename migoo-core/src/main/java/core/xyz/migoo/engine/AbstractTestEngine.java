@@ -66,15 +66,9 @@ public abstract class AbstractTestEngine implements TestEngine {
         context.getVariables().convertVariable();
         try {
             // 准备配置元件
-            boolean runNext = prepareConfigurations();
-            if (!runNext) {
-                return result;
-            }
+            prepareConfigurations();
             // 执行前置处理器
-            runNext = runPreprocessors();
-            if (!runNext) {
-                return result;
-            }
+            runPreprocessors();
             // 执行子节点
             runTest(result);
             // 执行后置处理器
@@ -89,9 +83,8 @@ public abstract class AbstractTestEngine implements TestEngine {
 
     protected abstract void runTest(Result result);
 
-    private boolean prepareConfigurations() {
+    private void prepareConfigurations() {
         var results = new ArrayList<SampleResult>(context.getConfigurations().size());
-        var runNext = true;
         for (TestElement element : context.getConfigurations()) {
             var result = new SampleResult(element.getPropertyAsString(TEST_CLASS));
             result.sampleStart();
@@ -99,7 +92,6 @@ public abstract class AbstractTestEngine implements TestEngine {
             try {
                 TestElementService.testStarted(element);
             } catch (Exception e) {
-                runNext = false;
                 result.setThrowable(e);
                 this.result.setSuccessful(false);
                 break;
@@ -111,15 +103,19 @@ public abstract class AbstractTestEngine implements TestEngine {
             }
         }
         result.setConfigElementResults(results);
-        return runNext;
-
     }
 
-    private boolean runPreprocessors() {
-        return runProcessors(context.getPreprocessors().stream().filter(item -> item instanceof PreProcessor).toList(), true);
+    private void runPreprocessors() {
+        if (!result.isSuccessful()) {
+            return;
+        }
+        runProcessors(context.getPreprocessors().stream().filter(item -> item instanceof PreProcessor).toList(), true);
     }
 
     private void runPostprocessors() {
+        if (!result.isSuccessful()) {
+            return;
+        }
         runProcessors(context.getPreprocessors().stream().filter(item -> item instanceof PostProcessor).toList(), false);
     }
 
@@ -130,15 +126,18 @@ public abstract class AbstractTestEngine implements TestEngine {
         }
     }
 
-    private boolean runProcessors(List<TestElement> elements, boolean isPre) {
+    private void runProcessors(List<TestElement> elements, boolean isPre) {
         var results = new ArrayList<SampleResult>();
-        var runNext = true;
         for (TestElement element : elements) {
             var result = new SampleResult(element.getPropertyAsString(TITLE));
             try {
                 TestElementService.testStarted(element);
                 result = TestElementService.runTest(element);
                 result.setSubResults(new ArrayList<>());
+                if (!result.isSuccessful() && isPre) {
+                    this.result.setSuccessful(false);
+                    break;
+                }
                 if (element.getProperty().containsKey(EXTRACTORS) && result.isSuccessful()) {
                     List<SampleResult> extractorResults = new ArrayList<>();
                     for (int i = 0; i < element.getPropertyAsJSONArray(EXTRACTORS).size(); i++) {
@@ -151,15 +150,17 @@ public abstract class AbstractTestEngine implements TestEngine {
                 }
                 TestElementService.testEnded(element);
             } catch (Exception e) {
-                runNext = false;
                 this.result.setSuccessful(false);
+                element.getProperty().remove(VARIABLES);
+                if (element.getProperty().containsKey(EXTRACTORS)) {
+                    element.getPropertyAsJSONArray(EXTRACTORS).forEach(item -> ((Testplan) item).remove(VARIABLES));
+                }
+                result.setSamplerData(element.getProperty().toString());
                 result.setTestClass(element.getClass());
                 result.setThrowable(e);
                 result.sampleEnd();
                 break;
             } finally {
-                element.getProperty().remove(VARIABLES);
-                result.setSamplerData(element.getProperty().toString());
                 results.add(result);
             }
         }
@@ -168,6 +169,5 @@ public abstract class AbstractTestEngine implements TestEngine {
         } else {
             result.setPostprocessorResults(results);
         }
-        return runNext;
     }
 }

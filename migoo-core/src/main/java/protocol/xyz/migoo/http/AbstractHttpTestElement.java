@@ -85,7 +85,11 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
         }
     }
 
-    protected SampleResult execute(SampleResult sample) throws Exception {
+    public SampleResult execute() {
+        return execute(new HTTPSampleResult(getPropertyAsString(TITLE)));
+    }
+
+    protected SampleResult execute(SampleResult sample) {
         var result = (HTTPSampleResult) sample;
         result.setTestClass(this.getClass());
         try {
@@ -102,6 +106,8 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
             result.sampleStart();
             var response = request.execute();
             result.setResponseData(response);
+        } catch (Exception e) {
+            result.setThrowable(e);
         } finally {
             result.sampleEnd();
         }

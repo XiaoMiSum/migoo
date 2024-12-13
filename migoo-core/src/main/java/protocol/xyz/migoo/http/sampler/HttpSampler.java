@@ -40,13 +40,7 @@ public class HttpSampler extends AbstractHttpTestElement implements Sampler, Tes
 
     @Override
     public SampleResult sample() {
-        var result = new HTTPSampleResult(getPropertyAsString(TITLE));
-        try {
-            super.execute(result);
-        } catch (Exception e) {
-            result.setThrowable(e);
-        }
-        return result;
+        return super.execute();
     }
 
     @Override
