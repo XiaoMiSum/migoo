@@ -170,39 +170,6 @@ public class Samplers extends El {
     }
 
     /**
-     * 设置取样器的前置处理器
-     *
-     * @param preprocessors 前置处理器
-     * @return 当前取样器
-     */
-    public Samplers preprocessors(Processors.Pre... preprocessors) {
-        p("preprocessors", preprocessors);
-        return this;
-    }
-
-    /**
-     * 设置取样器的后置处理器
-     *
-     * @param postprocessors 后置处理器
-     * @return 当前取样器
-     */
-    public Samplers postprocessors(Processors.Post... postprocessors) {
-        p("postprocessors", postprocessors);
-        return this;
-    }
-
-    /**
-     * 设置取样器的提取器
-     *
-     * @param extractors 提取器
-     * @return 当前取样器
-     */
-    public Samplers extractors(Extractors... extractors) {
-        p("extractors", extractors);
-        return this;
-    }
-
-    /**
      * 最简单的取样器配置
      *
      * @param title      描述
@@ -255,8 +222,41 @@ public class Samplers extends El {
      * @return 取样器配置
      */
     public static Samplers sampler(String title, Map<String, Object> variables, RabbitMQ config, Validators[] validators,
-                                   Processors[] preprocessors, Processors[] postprocessors, Extractors... extractors) {
+                                   Processors.Pre[] preprocessors, Processors.Post[] postprocessors, Extractors... extractors) {
         return new Samplers(title, "rabbit_mq_sampler", variables, config, validators, preprocessors, postprocessors, extractors);
+    }
+
+    /**
+     * 设置取样器的前置处理器
+     *
+     * @param preprocessors 前置处理器
+     * @return 当前取样器
+     */
+    public Samplers preprocessors(Processors.Pre... preprocessors) {
+        p("preprocessors", preprocessors);
+        return this;
+    }
+
+    /**
+     * 设置取样器的后置处理器
+     *
+     * @param postprocessors 后置处理器
+     * @return 当前取样器
+     */
+    public Samplers postprocessors(Processors.Post... postprocessors) {
+        p("postprocessors", postprocessors);
+        return this;
+    }
+
+    /**
+     * 设置取样器的提取器
+     *
+     * @param extractors 提取器
+     * @return 当前取样器
+     */
+    public Samplers extractors(Extractors... extractors) {
+        p("extractors", extractors);
+        return this;
     }
 
 }

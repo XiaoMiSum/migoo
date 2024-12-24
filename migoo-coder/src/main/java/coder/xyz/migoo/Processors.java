@@ -136,6 +136,28 @@ public class Processors {
         return withPost("kafka_post_processor", config, extractors);
     }
 
+    /**
+     * rabbit 前置处理器
+     *
+     * @param config     rabbit 配置
+     * @param extractors 提取器
+     * @return kafka 前置处理器
+     */
+    public static Processors.Pre preprocessor(RabbitMQ config, Extractors... extractors) {
+        return withPre("rabbit_pre_processor", config, extractors);
+    }
+
+    /**
+     * rabbit 后置处理器
+     *
+     * @param config     rabbit 配置
+     * @param extractors 提取器
+     * @return kafka 后置处理器
+     */
+    public static Processors.Post postprocessor(RabbitMQ config, Extractors... extractors) {
+        return withPost("rabbit_post_processor", config, extractors);
+    }
+
     private static Processors.Pre withPre(String testClass, El config, Extractors... extractors) {
         return new Processors.Pre(testClass, config, extractors);
     }
