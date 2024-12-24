@@ -36,7 +36,7 @@ import java.util.Objects;
  * @author mi.xiao
  * @date 2024/11/04 20:38
  */
-@Alias({"rocketmq_defaults", "rocketmq_default", "rocketmq_def", "rocketmqDef", "rocketmqDefault"})
+@Alias({"rabbitmq_defaults", "rabbitmq_default", "rabbitmq_def", "rabbitmqDef", "rabbitmqDefault"})
 public class RabbitMQDefaults extends AbstractTestElement implements TestStateListener, RabbitMQConstantsInterface {
 
     @Override

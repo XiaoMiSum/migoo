@@ -46,7 +46,7 @@ public abstract class AbstractRabbitMQTestElement extends AbstractTestElement im
     private Channel channel;
 
     public void testStarted() {
-        var other = (RabbitMQDefaults) getVariables().get(ROCKETMQ_DEFAULT);
+        var other = (RabbitMQDefaults) getVariables().get(RABBIT_MQ_DEFAULT);
         if (Objects.nonNull(other)) {
             setProperty(VIRTUAL_HOST, other.get(VIRTUAL_HOST));
             setProperty(HOST, other.get(HOST));
