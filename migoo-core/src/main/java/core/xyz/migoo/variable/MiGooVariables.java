@@ -92,18 +92,6 @@ public class MiGooVariables {
         }
     }
 
-    public JSONObject getRequestBody() {
-        return this.getProperty().getJSONObject("migoo_protocol_http_request_body");
-    }
-
-    public JSONObject getRequestData() {
-        return this.getProperty().getJSONObject("migoo_protocol_http_request_data");
-    }
-
-    public JSONObject getRequestQuery() {
-        return this.getProperty().getJSONObject("migoo_protocol_http_request_query");
-    }
-
     public void convertVariables(JSONObject dataMapping) {
         if (dataMapping != null) {
             var entries = dataMapping.entrySet();

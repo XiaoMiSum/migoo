@@ -63,9 +63,6 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
         if (getProperty().containsKey(HEADERS)) {
             getPropertyAsMiGooProperty(HEADERS).remove(VARIABLES);
         }
-        getVariables().put("migoo_protocol_http_request_body", get(BODY));
-        getVariables().put("migoo_protocol_http_request_data", get(DATA));
-        getVariables().put("migoo_protocol_http_request_query", get(QUERY));
     }
 
     private void setHeader(MiGooProperty other) {

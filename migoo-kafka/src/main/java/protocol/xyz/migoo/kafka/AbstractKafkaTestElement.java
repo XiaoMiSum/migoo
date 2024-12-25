@@ -68,7 +68,6 @@ public abstract class AbstractKafkaTestElement extends AbstractTestElement imple
             setProperty(VALUE_SERIALIZER_CLASS_CONFIG, other.get(VALUE_SERIALIZER_CLASS_CONFIG));
         }
         this.buildKafkaProducer();
-        getVariables().put("migoo_protocol_kafka_request_args", get(KAFKA_MESSAGE));
     }
 
     protected SampleResult execute(SampleResult result) {

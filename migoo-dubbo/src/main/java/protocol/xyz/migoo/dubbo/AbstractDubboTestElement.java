@@ -60,7 +60,6 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
             setProperty(REFERENCE, other.get(REFERENCE));
         }
         reference = buildReferenceConfig();
-        getVariables().put("migoo_protocol_dubbo_request_agrs", get(ARGS_PARAMETERS));
     }
 
     protected SampleResult execute(DubboSampleResult result) {
@@ -71,7 +70,6 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
                 var attachments = new HashMap<String, String>(16);
                 getPropertyAsJSONObject(ATTACHMENT_ARGS).forEach((key, value) -> attachments.put(key, value.toString()));
                 RpcContext.getClientAttachment().setAttachments(attachments);
-                getVariables().put("migoo_protocol_dubbo_attachment_args", get(ATTACHMENT_ARGS));
             }
             var parameterTypes = new String[getPropertyAsJSONArray(ARGS_PARAMETER_TYPES).size()];
             for (int i = 0; i < getPropertyAsJSONArray(ARGS_PARAMETER_TYPES).size(); i++) {
