@@ -270,7 +270,6 @@
                         </additionalJOptions>
                         <encoding>UTF-8</encoding>
                         <outputDirectory>${basedir}/doc</outputDirectory>
-                        <reportOutputDirectory>${basedir}/reports</reportOutputDirectory>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -298,7 +297,21 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>${gpg-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <distributionManagement>
