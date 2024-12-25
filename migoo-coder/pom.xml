@@ -29,99 +29,34 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>xyz.migoo</groupId>
-    <artifactId>migoo-coder</artifactId>
-    <version>5.0.1</version>
+    <parent>
+        <artifactId>migoo-parent</artifactId>
+        <groupId>xyz.migoo</groupId>
+        <version>5.1.0</version>
+    </parent>
 
+    <artifactId>migoo-coder</artifactId>
     <name>${project.artifactId}</name>
     <description>coder for migoo</description>
-    <url>https://xiaomisum.github.io/migoo/</url>
-
-    <licenses>
-        <license>
-            <name>MIT</name>
-            <url>https://github.com/XiaoMiSum/migoo/blob/master/LICENSE</url>
-        </license>
-    </licenses>
-
-    <scm>
-        <connection>scm:git:git@github.com:XiaoMiSum/migoo.git</connection>
-        <developerConnection>scm:git:git@github.com:XiaoMiSum/migoo.git</developerConnection>
-        <url>https://xiaomisum.github.io/migoo/</url>
-    </scm>
-
-    <developers>
-        <developer>
-            <name>xiao mi</name>
-            <email>mi_xiao@qq.com</email>
-            <organization>github</organization>
-            <organizationUrl>https://xiaomisum.github.io/migoo/</organizationUrl>
-        </developer>
-    </developers>
-
-    <properties>
-        <groovy.version>4.0.23</groovy.version>
-        <guava.version>33.0.0-jre</guava.version>
-
-        <compile.version>3.10.1</compile.version>
-        <javadoc.version>3.2.0</javadoc.version>
-        <surefire.version>2.22.2</surefire.version>
-        <gpg-plugin.version>3.0.1</gpg-plugin.version>
-
-
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
-    <dependencies>
-
-    </dependencies>
-
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${compile.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>${gpg-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire.version}</version>
             </plugin>
         </plugins>
     </build>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype-nexus</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>sonatype-nexus</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 </project>

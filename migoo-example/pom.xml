@@ -63,8 +63,8 @@
     <properties>
         <migoo.version>5.0.1</migoo.version>
         <spring.boot.version>3.3.3</spring.boot.version>
-        <junit.version>5.9.0</junit.version>
-        <mysql.version>8.0.30</mysql.version>
+        <junit.version>5.11.4</junit.version>
+        <mysql.version>9.1.0</mysql.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -78,8 +78,8 @@
         </dependency>
 
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
             <version>${mysql.version}</version>
         </dependency>
 

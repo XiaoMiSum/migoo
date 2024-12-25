@@ -15,7 +15,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.jar.JarFile;
 
-@CommandLine.Command(name = "migoo(.sh/.bat)", version = "5.0.1-SNAPSHOT", mixinStandardHelpOptions = true)
+@CommandLine.Command(name = "migoo(.sh/.bat)", version = "5.1.0", mixinStandardHelpOptions = true)
 class Cli implements Runnable {
 
     @CommandLine.Option(names = {"-h2m", "--har2migoo"}, description = "har文件转换为migoo取样器描述文件，请输入har文件路径")

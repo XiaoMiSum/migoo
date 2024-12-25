@@ -33,7 +33,7 @@
     <artifactId>migoo-parent</artifactId>
     <packaging>pom</packaging>
 
-    <version>5.0.1</version>
+    <version>5.1.0</version>
 
     <name>${project.artifactId}</name>
     <description>a test tool for api</description>
@@ -62,10 +62,244 @@
     </developers>
 
     <properties>
+        <!-- 单元测试框架 -->
+        <junit.version>5.11.4</junit.version>
+
+        <!-- 协议或工具基础以来 -->
+        <activemq.version>6.1.4</activemq.version>
+        <redis.version>5.2.0</redis.version>
+        <mysql.version>9.1.0</mysql.version>
+        <kafka.version>3.9.0</kafka.version>
+        <druid.version>1.2.24</druid.version>
+        <dubbo.version>3.3.2</dubbo.version>
+        <rabbitmq.version>5.24.0</rabbitmq.version>
+        <simplehttp.version>2.1.1</simplehttp.version>
+
+        <!-- 工具包 -->
+        <yaml.version>2.3</yaml.version>
+        <picocli.version>4.7.6</picocli.version>
+        <reports.version>5.1.2</reports.version>
+        <guava.version>33.4.0-jre</guava.version>
+        <fastjson.version>2.0.53</fastjson.version>
+        <commons-codec.version>1.17.1</commons-codec.version>
+        <commons-lang3.version>3.17.0</commons-lang3.version>
+
+        <compiler.version>3.13.0</compiler.version>
+        <javadoc.version>3.11.2</javadoc.version>
+        <surefire.version>3.5.2</surefire.version>
+        <gpg-plugin.version>3.2.7</gpg-plugin.version>
+        <dependency.version>3.8.1</dependency.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <modules>
+        <module>migoo</module>
+        <module>migoo-coder</module>
+        <module>migoo-core</module>
+        <module>migoo-activemq</module>
+        <module>migoo-dubbo</module>
+        <module>migoo-kafka</module>
+    </modules>
+
+    <dependencyManagement>
+
+        <dependencies>
+            <dependency>
+                <groupId>xyz.migoo</groupId>
+                <artifactId>migoo-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.rabbitmq</groupId>
+                <artifactId>amqp-client</artifactId>
+                <version>${rabbitmq.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>${kafka.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-client -->
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-client</artifactId>
+                <version>${activemq.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo</artifactId>
+                <version>${dubbo.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${yaml.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/xyz.migoo/simplehttp -->
+            <dependency>
+                <groupId>xyz.migoo</groupId>
+                <artifactId>simplehttp</artifactId>
+                <version>${simplehttp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${redis.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>info.picocli</groupId>
+                <artifactId>picocli</artifactId>
+                <version>${picocli.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.aventstack</groupId>
+                <artifactId>extentreports</artifactId>
+                <version>${reports.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>gson</artifactId>
+                        <groupId>com.google.code.gson</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>lombok</artifactId>
+                        <groupId>org.projectlombok</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+        </dependencies>
+
+    </dependencyManagement>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${dependency.version}</version>
+                    <executions>
+                        <execution>
+                            <id>copy-dependencies</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>copy-dependencies</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                <overWriteReleases>false</overWriteReleases>
+                                <overWriteSnapshots>false</overWriteSnapshots>
+                                <overWriteIfNewer>true</overWriteIfNewer>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${javadoc.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <!-- 解决 java8 下发布到 maven 中心库时，生成 doc 的异常 -->
+                        <additionalJOptions>
+                            <additionalJOption>-Xdoclint:none</additionalJOption>
+                        </additionalJOptions>
+                        <encoding>UTF-8</encoding>
+                        <outputDirectory>${basedir}/doc</outputDirectory>
+                        <reportOutputDirectory>${basedir}/reports</reportOutputDirectory>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${compiler.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${gpg-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefire.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+    </build>
 
     <distributionManagement>
         <snapshotRepository>

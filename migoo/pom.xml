@@ -29,69 +29,31 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <artifactId>migoo-parent</artifactId>
+        <groupId>xyz.migoo</groupId>
+        <version>5.1.0</version>
+    </parent>
+
     <artifactId>migoo</artifactId>
-    <groupId>xyz.migoo</groupId>
-    <version>5.0.1</version>
 
     <name>${project.artifactId}</name>
     <description>core of migoo</description>
-    <url>https://xiaomisum.github.io/migoo/</url>
-
-    <licenses>
-        <license>
-            <name>MIT</name>
-            <url>https://github.com/XiaoMiSum/migoo/blob/master/LICENSE</url>
-        </license>
-    </licenses>
-
-    <scm>
-        <connection>scm:git:git@github.com:XiaoMiSum/migoo.git</connection>
-        <developerConnection>scm:git:git@github.com:XiaoMiSum/migoo.git</developerConnection>
-        <url>https://xiaomisum.github.io/migoo/</url>
-    </scm>
-
-    <developers>
-        <developer>
-            <name>xiao mi</name>
-            <email>mi_xiao@qq.com</email>
-            <organization>github</organization>
-            <organizationUrl>https://xiaomisum.github.io/migoo/</organizationUrl>
-        </developer>
-    </developers>
-
-    <properties>
-        <reports.version>5.1.1</reports.version>
-        <picocli.version>4.7.6</picocli.version>
-        <migoo-core.version>5.0.1</migoo-core.version>
-        <junit.version>5.9.0</junit.version>
-        <compile.version>3.10.1</compile.version>
-        <javadoc.version>3.5.0</javadoc.version>
-        <surefire.version>2.22.2</surefire.version>
-        <gpg-plugin.version>3.0.1</gpg-plugin.version>
-
-        <plugin.version>3.3.0</plugin.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <dependencies>
         <dependency>
             <groupId>xyz.migoo</groupId>
             <artifactId>migoo-core</artifactId>
-            <version>${migoo-core.version}</version>
         </dependency>
 
         <dependency>
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
-            <version>${picocli.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.aventstack</groupId>
             <artifactId>extentreports</artifactId>
-            <version>${reports.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>gson</artifactId>
@@ -107,113 +69,34 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>${plugin.version}</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>xyz.migoo.Cli</mainClass>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>../lib/</classpathPrefix>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>${plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
-                            <overWriteSnapshots>false</overWriteSnapshots>
-                            <overWriteIfNewer>true</overWriteIfNewer>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>${gpg-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${javadoc.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <!-- 解决 java8 下发布到 maven 中心库时，生成 doc 的异常 -->
-                    <additionalJOptions>
-                        <additionalJOption>-Xdoclint:none</additionalJOption>
-                    </additionalJOptions>
-                    <encoding>UTF-8</encoding>
-                    <outputDirectory>${basedir}/doc</outputDirectory>
-                    <reportOutputDirectory>${basedir}/reports</reportOutputDirectory>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${compile.version}</version>
             </plugin>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire.version}</version>
             </plugin>
         </plugins>
     </build>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype-nexus</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>sonatype-nexus</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
 </project>
