@@ -26,7 +26,6 @@
 package protocol.xyz.migoo.dubbo;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +41,6 @@ import protocol.xyz.migoo.dubbo.util.DubboConstantsInterface;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * @author mi.xiao
@@ -88,10 +86,8 @@ public abstract class AbstractDubboTestElement extends AbstractTestElement imple
     }
 
     protected ReferenceConfig<GenericService> buildReferenceConfig() {
-        var registerCenter = Optional.ofNullable((JSONObject) removeProperty(REGISTRY_CENTER)).orElse(getPropertyAsJSONObject(REGISTRY));
-        var referenceConfig = Optional.ofNullable((JSONObject) removeProperty(REFERENCE_CONFIG)).orElse(getPropertyAsJSONObject(REFERENCE));
-        setProperty(REGISTRY, registerCenter);
-        setProperty(REFERENCE, referenceConfig);
+        var registerCenter = getPropertyAsJSONObject(REGISTRY);
+        var referenceConfig = getPropertyAsJSONObject(REFERENCE);
 
         var reference = new ReferenceConfig<GenericService>();
         reference.setGeneric("true");
