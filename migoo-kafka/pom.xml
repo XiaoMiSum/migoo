@@ -34,7 +34,7 @@
     <parent>
         <artifactId>migoo-parent</artifactId>
         <groupId>xyz.migoo</groupId>
-        <version>5.1.0</version>
+        <version>5.1.1</version>
     </parent>
 
     <name>${project.artifactId}</name>

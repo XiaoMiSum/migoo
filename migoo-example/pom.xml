@@ -61,7 +61,7 @@
     </developers>
 
     <properties>
-        <migoo.version>5.0.1</migoo.version>
+        <migoo.version>5.1.1</migoo.version>
         <spring.boot.version>3.3.3</spring.boot.version>
         <junit.version>5.11.4</junit.version>
         <mysql.version>9.1.0</mysql.version>
