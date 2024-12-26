@@ -116,7 +116,7 @@ public abstract class AbstractTestEngine implements TestEngine {
         if (!result.isSuccessful()) {
             return;
         }
-        runProcessors(context.getPreprocessors().stream().filter(item -> item instanceof PostProcessor).toList(), false);
+        runProcessors(context.getPostprocessors().stream().filter(item -> item instanceof PostProcessor).toList(), false);
     }
 
     private void testEnded() {
