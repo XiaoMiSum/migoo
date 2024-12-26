@@ -49,7 +49,7 @@ public abstract class AbstractKafkaTestElement extends AbstractTestElement imple
     private void buildKafkaProducer() {
         var props = new Properties();
         props.put(BOOTSTRAP_SERVERS_CONFIG, get(BOOTSTRAP_SERVERS_CONFIG));
-        props.put(ACKS_CONFIG, get(ACKS_CONFIG, "1"));
+        props.put(ACKS_CONFIG, getPropertyAsString(ACKS_CONFIG));
         props.put(RETRIES_CONFIG, get(RETRIES_CONFIG, 5));
         props.put(LINGER_MS_CONFIG, get(LINGER_MS_CONFIG, 20));
         props.put(KEY_SERIALIZER_CLASS_CONFIG, get(KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer"));
@@ -61,11 +61,12 @@ public abstract class AbstractKafkaTestElement extends AbstractTestElement imple
         var other = (KafkaDefaults) getVariables().get(KAFKA_DEFAULT);
         if (Objects.nonNull(other)) {
             setProperty(BOOTSTRAP_SERVERS_CONFIG, other.get(BOOTSTRAP_SERVERS_CONFIG));
-            setProperty(ACKS_CONFIG, other.get(ACKS_CONFIG));
-            setProperty(RETRIES_CONFIG, other.get(RETRIES_CONFIG));
-            setProperty(LINGER_MS_CONFIG, other.get(LINGER_MS_CONFIG));
+            setProperty(ACKS_CONFIG, other.getPropertyAsString(ACKS_CONFIG));
+            setProperty(RETRIES_CONFIG, other.getPropertyAsInt(RETRIES_CONFIG));
+            setProperty(LINGER_MS_CONFIG, other.getPropertyAsLong(LINGER_MS_CONFIG));
             setProperty(KEY_SERIALIZER_CLASS_CONFIG, other.get(KEY_SERIALIZER_CLASS_CONFIG));
             setProperty(VALUE_SERIALIZER_CLASS_CONFIG, other.get(VALUE_SERIALIZER_CLASS_CONFIG));
+            setProperty(KAFKA_TOPIC, other.getPropertyAsString(KAFKA_TOPIC));
         }
         this.buildKafkaProducer();
     }
