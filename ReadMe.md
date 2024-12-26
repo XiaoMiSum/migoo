@@ -74,11 +74,11 @@ options:
         example: ./migoo.sh -f ./example/example_project.yaml -r ./report
 ``` 
 
-# 示例
+# 使用手册
 
 [(Back to top)](#目录)
 
-见src/test/java/example/xyz/migoo
+[用户手册](./docs/ReadMe.md)
 
 # 开发
 

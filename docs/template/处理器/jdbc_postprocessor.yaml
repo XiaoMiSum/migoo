@@ -1,5 +1,4 @@
-testclass: jdbc_preprocessor  # jdbc 前置处理器类型
+testclass: jdbc_postprocessor  # jdbc 后置处理器类型
 config: # 处理器配置
   datasource: JDBCDataSource_var  # 数据源，必须先定义数据源
-  query_type: select   # 语句类型 select delete update insert
   statement: 'select * from sys_user where id = 1;'  # sql语句
