@@ -17,5 +17,5 @@ config: # 取样器配置
   parameter_types: # 方法参数类型，根据接口定义
     - java.lang.String
   parameters: # 接口参数名称
-    - name: test
+    - test
   attachment_args: # 附加参数 keyword形式，可空

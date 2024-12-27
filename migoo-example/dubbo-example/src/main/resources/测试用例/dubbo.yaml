@@ -1,0 +1,28 @@
+title: dubbo_测试用例 # 包含配置原件、前置处理器、后置处理器、多个取样器（执行步骤）
+configelements:
+  - '@F(classpath:配置元件/dubbo_defaults.yaml)'
+PreProcessors: # 前置处理器
+  - '@F(classpath:处理器/dubbo_preprocessor.yaml)'
+PostProcessors: # 后置处理器
+  - '@F(classpath:处理器/dubbo_postprocessor.yaml)'
+children: # 执行步骤
+  - title: 步骤1
+    testclass: dubbo_sampler
+    variables: # 变量
+      username: dubbo_测试用例_步骤1
+    config:
+      interface: dubbo.DemoService  # 接口类名全称
+      method: sayHello  # 接口方法
+      parameter_types: # 方法参数类型，根据接口定义
+        - java.lang.String
+      parameters: # 接口参数名称
+        - ${username}
+  - title: 步骤2
+    testclass: dubbo_sampler
+    config:
+      interface: dubbo.DemoService  # 接口类名全称
+      method: sayHello  # 接口方法
+      parameter_types: # 方法参数类型，根据接口定义
+        - java.lang.String
+      parameters: # 接口参数名称
+        - dubbo_测试用例_步骤2

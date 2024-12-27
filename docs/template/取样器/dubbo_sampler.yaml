@@ -18,6 +18,6 @@ config: # 取样器配置
   method: sayHello  # 接口方法
   parameter_types: # 方法参数类型，根据接口定义
     - java.lang.String
-  parameters: # 接口参数名称
-    - name: test
+  parameters: # 接口参数
+    - test
   attachment_args: # 附加参数 keyword形式，可空

@@ -46,6 +46,8 @@
     </licenses>
     <modules>
         <module>kafka-example</module>
+        <module>active-example</module>
+        <module>dubbo-example</module>
     </modules>
 
 
