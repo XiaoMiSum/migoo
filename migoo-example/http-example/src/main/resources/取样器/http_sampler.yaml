@@ -1,0 +1,9 @@
+title: http_sampler
+testclass: http_sampler
+config:
+  method: GET
+  protocol: https
+  host: dict-subsidiary.youdao.com
+  path: '/home/historynum'
+  headers:
+    Test: test
