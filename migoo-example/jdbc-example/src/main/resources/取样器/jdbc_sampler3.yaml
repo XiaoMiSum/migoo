@@ -1,0 +1,9 @@
+title: jdbc_sampler_3
+testclass: jdbcSampler # 取样器类型
+configelements:
+  - '@F(classpath:配置元件/jdbc_defaults.yaml)'
+config: # 取样器配置
+  datasource: jdbc_source
+  statement: 'select * from t_001  where tick = "test";'  # sql语句
+validators:
+  - { testclass: json_assertion, field: '$.name', expected: jdbc_sampler_2 }
