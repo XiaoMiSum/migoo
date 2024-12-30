@@ -1,0 +1,8 @@
+title: redis_sampler_2
+testclass: redisSampler # 取样器类型
+configelements:
+  - '@F(classpath:配置元件/redis_defaults.yaml)'
+config: # 取样器配置
+  datasource: redis_source
+  command: hset
+  send: test_hash,item1,redis_sampler_2
