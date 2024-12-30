@@ -1,9 +1,11 @@
-title: http_sampler
-testclass: http_sampler
-config:
-  method: GET
-  protocol: https
-  host: dict-subsidiary.youdao.com
-  path: '/home/historynum'
-  headers:
-    Test: test
+title: htt_sampler # 包含配置原件、前置处理器、后置处理器、多个取样器（执行步骤）
+configelements:
+  - '@F(classpath:配置元件/http_defaults.yaml)'
+children: # 执行步骤
+  - title: htt_sampler
+    testclass: http_sampler
+    config:
+      method: get
+      path: '/user/2'
+    validators:
+      - { testclass: json_assertion, field: '$.data.name', expected: 'name_2' }

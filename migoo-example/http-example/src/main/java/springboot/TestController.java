@@ -7,7 +7,8 @@ import xyz.migoo.framework.common.pojo.Result;
 
 import java.util.Map;
 
-@RestController("user")
+@RestController
+@RequestMapping("/user")
 public class TestController {
 
 
@@ -18,7 +19,7 @@ public class TestController {
         return Result.getSuccessful(users.values());
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public Result<?> getUser(@PathVariable("id") String id) {
         return Result.getSuccessful(users.get(id));
     }
@@ -35,7 +36,7 @@ public class TestController {
 
 
     @PostConstruct
-    public void dd() {
+    public void init() {
         for (int i = 0; i < 10; i++) {
             users.put("" + i, Maps.newHashMap(Map.of("id", i, "name", "name_" + i, "age", 18)));
         }

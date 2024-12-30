@@ -1,3 +1,4 @@
 testclass: http_postprocessor # http后置处理器 类型
 config: # 处理器配置
-  path: '/home/historynum'
+  method: get
+  path: '/user/${user_id}'
