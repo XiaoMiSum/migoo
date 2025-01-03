@@ -12,20 +12,20 @@ children: # 执行步骤
       username: migoo
     config:
       datasource: jdbc_source
-      statement: 'select * from t_001  where tick = "jdbc_preprocessor";'  # sql语句
+      sql: 'select * from t_001  where tick = "jdbc_preprocessor";'  # sql语句
     validators:
       - { testclass: json_assertion, field: '$.name', expected: jdbc_preprocessor }
   - title: 步骤2
     testclass: jdbcSampler
     config:
       datasource: jdbc_source
-      statement: 'update t_001  set name = "步骤2:jdbcSampler" where tick = "jdbc_preprocessor";'  # sql语句
+      sql: 'update t_001  set name = "步骤2:jdbcSampler" where tick = "jdbc_preprocessor";'  # sql语句
   - title: 步骤3
     testclass: jdbcSampler
     variables: # 变量
       username: migoo
     config:
       datasource: jdbc_source
-      statement: 'select * from t_001  where tick = "jdbc_preprocessor";'  # sql语句
+      sql: 'select * from t_001  where tick = "jdbc_preprocessor";'  # sql语句
     validators:
       - { testclass: json_assertion, field: '$.name', expected: '步骤2:jdbcSampler' }

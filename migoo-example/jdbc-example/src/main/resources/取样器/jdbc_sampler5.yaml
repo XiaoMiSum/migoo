@@ -4,6 +4,6 @@ configelements:
   - '@F(classpath:配置元件/jdbc_defaults.yaml)'
 config: # 取样器配置
   datasource: jdbc_source
-  statement: 'select * from t_001  where id = 2;'  # sql语句
+  sql: 'select * from t_001  where id = 2;'  # sql语句
 validators:
   - { testclass: result_assertion, rule: isNull }

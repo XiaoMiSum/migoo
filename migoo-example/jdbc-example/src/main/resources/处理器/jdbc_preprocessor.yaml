@@ -1,4 +1,4 @@
 testclass: jdbc_preprocessor # jdbc 后置处理器类型
 config: # 处理器配置
   datasource: jdbc_source
-  statement: 'insert into t_001 (tick, name) values ("jdbc_preprocessor", "jdbc_preprocessor");'  # sql语句
+  sql: 'insert into t_001 (tick, name) values ("jdbc_preprocessor", "jdbc_preprocessor");'  # sql语句

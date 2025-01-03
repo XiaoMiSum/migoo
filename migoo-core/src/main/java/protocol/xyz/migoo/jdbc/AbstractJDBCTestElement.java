@@ -35,6 +35,7 @@ import protocol.xyz.migoo.jdbc.util.JDBCConstantsInterface;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 /**
  * @author xiaomi
@@ -60,7 +61,7 @@ public abstract class AbstractJDBCTestElement extends AbstractTestElement implem
     protected SampleResult execute(DataSourceElement datasource, SampleResult result) throws Exception {
         result.setTestClass(this.getClass());
         result.setUrl(datasource.getUrl());
-        var sql = getPropertyAsString(STATEMENT);
+        var sql = Optional.ofNullable(getPropertyAsString(SQL)).orElse(getPropertyAsString(STATEMENT));
         if (StringUtils.isBlank(sql)) {
             throw new UnsupportedOperationException("Incorrect SQL statement: sql statement can not empty");
         }

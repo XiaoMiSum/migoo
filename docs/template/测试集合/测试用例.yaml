@@ -7,7 +7,7 @@ PreProcessors: # 前置处理器
   - testclass: jdbcpreprocessor
     datasource: JDBCDataSource_var
     query_type: select
-    statement: 'select * from sys_user;'
+    sql: 'select * from sys_user;'
     extractors:
       - { testclass: jsonextractor, field: '$.user_name', variable_name: user_name }
       - { testclass: resultextractor, variable_name: result }
@@ -16,7 +16,7 @@ PostProcessors: # 后置处理器
   - testclass: jdbcpostprocessor
     datasource: JDBCDataSource_var
     query_type: select
-    statement: 'select * from sys_user;'
+    sql: 'select * from sys_user;'
 children: # 执行步骤
   - title: 步骤1
     testclass: httpsampler

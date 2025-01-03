@@ -9,7 +9,7 @@ PreProcessors: # 前置处理器
   - testclass: jdbcpreprocessor
     datasource: JDBCDataSource_var
     query_type: select
-    statement: 'select * from sys_user;'
+    sql: 'select * from sys_user;'
     extractors:
       - { testclass: jsonextractor, field: '$.user_name', variable_name: user_name }
       - { testclass: resultextractor, variable_name: result }
@@ -18,7 +18,7 @@ PostProcessors: # 后置处理器
   - testclass: jdbcpostprocessor
     datasource: JDBCDataSource_var
     query_type: select
-    statement: 'select * from sys_user;'
+    sql: 'select * from sys_user;'
 children: # 测试集合 或 测试用例列表，为了方便查看，可通过 @F(filepath) 将外部文件引入
   - '@F(classpath:测试用例/测试集合（模块）.yaml)'
   - '@F(classpath:测试用例/测试集合（模块）.yaml)'

@@ -4,4 +4,4 @@ configelements:
   - '@F(classpath:配置元件/jdbc_defaults.yaml)'
 config: # 取样器配置
   datasource: jdbc_source
-  statement: 'update t_001  set name = "jdbc_sampler_2" where tick = "test";'  # sql语句
+  sql: 'update t_001  set name = "jdbc_sampler_2" where tick = "test";'  # sql语句

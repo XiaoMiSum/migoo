@@ -11,6 +11,8 @@ public interface JDBCConstantsInterface {
 
     String DATASOURCE = "datasource";
 
+    @Deprecated(since = "5.2.0")
     String STATEMENT = "statement";
+    String SQL = "sql";
     String DRIVER = "driver";
 }
