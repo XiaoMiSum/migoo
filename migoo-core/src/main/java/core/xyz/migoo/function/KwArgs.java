@@ -43,11 +43,11 @@ public class KwArgs extends JSONObject implements Args {
     }
 
     public Object put(String parameter) {
-        List<String> array = new ArrayList<>(List.of(parameter.split("=")));
+        List<String> array = new ArrayList<>(List.of(parameter.trim().split("=")));
         if (array.size() == 1) {
             array.add("");
         }
-        return this.put(array.getFirst(), getParameterValue(array.getLast()));
+        return this.put(array.getFirst().trim(), getParameterValue(array.getLast().trim()));
     }
 
     @Override
