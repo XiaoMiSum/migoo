@@ -34,7 +34,7 @@ import core.xyz.migoo.testelement.Alias;
  * @date 2019-08-13 22:17
  */
 @Alias({"!==", "not", "<>", "!="})
-public class DoseNotEquals extends BaseRule implements Rule {
+public class DoseNotEquals implements Rule {
 
     private final Equals equals = new Equals();
 

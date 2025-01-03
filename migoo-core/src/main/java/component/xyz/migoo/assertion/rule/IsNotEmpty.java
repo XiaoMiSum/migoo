@@ -33,7 +33,7 @@ import core.xyz.migoo.testelement.Alias;
  * @date 2019-08-13 22:17
  */
 @Alias({"isNotEmpty", "isNotNull", "isNotBlank", "notEmpty", "notNull", "notBlank"})
-public class IsNotEmpty extends BaseRule implements Rule {
+public class IsNotEmpty implements Rule {
 
     private static final IsEmpty IS_EMPTY = new IsEmpty();
 

@@ -33,7 +33,7 @@ import core.xyz.migoo.testelement.Alias;
  * @date 2019-08-13 22:17
  */
 @Alias({"notContain", "notContains", "nc", "doesNotContains", "doesNotContain", "⊈"})
-public class DoseNotContains extends BaseRule implements Rule {
+public class DoseNotContains implements Rule {
 
     private final Contains contains = new Contains();
 
