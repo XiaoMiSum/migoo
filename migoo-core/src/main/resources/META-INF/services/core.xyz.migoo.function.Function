@@ -36,3 +36,4 @@ function.xyz.migoo.Timestamp
 function.xyz.migoo.UrlDecode
 function.xyz.migoo.UrlEncode
 function.xyz.migoo.Uuid
+function.xyz.migoo.Faker

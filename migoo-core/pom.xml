@@ -63,6 +63,11 @@
             <artifactId>snakeyaml</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.javafaker</groupId>
+            <artifactId>javafaker</artifactId>
+        </dependency>
+
 
         <!-- https://mvnrepository.com/artifact/xyz.migoo/simplehttp -->
         <dependency>
