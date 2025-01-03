@@ -47,8 +47,6 @@ public class Faker implements Function {
             var keys = key.split("\\.");
             var current = faker.getClass().getDeclaredMethod(StringUtils.uncapitalize(keys[0])).invoke(faker);
             Method method = current.getClass().getDeclaredMethod(StringUtils.uncapitalize(keys[1]));
-            //取消java语言访问检查以访问protected方法
-            method.setAccessible(true);
             return method.invoke(current);
         } catch (Exception e) {
             throw new RuntimeException(e);
