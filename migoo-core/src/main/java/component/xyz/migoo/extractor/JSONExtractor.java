@@ -29,6 +29,7 @@ import com.alibaba.fastjson2.JSONPath;
 import core.xyz.migoo.extractor.AbstractExtractor;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
@@ -42,7 +43,8 @@ public class JSONExtractor extends AbstractExtractor {
     public SampleResult process(SampleResult result) {
         var jsonStr = result.getResponseDataAsString();
         var path = getPropertyAsString(FIELD);
-        var value = JSONPath.extract(jsonStr, path);
+        var value = (StringUtils.isBlank(jsonStr) || StringUtils.equalsAny(jsonStr, "[]", "{}")) ? null :
+                JSONPath.extract(jsonStr, path);
         getVariables().put(getPropertyAsString(VARIABLE_NAME), Objects.isNull(value) ? "def_value" : value);
         getProperty().put("value", Objects.isNull(value) ? "def_value" : value);
         return getResult(new SampleResult("JSONExtractor"));
