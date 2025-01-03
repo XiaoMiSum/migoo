@@ -23,6 +23,12 @@ public class Faker implements Function {
         System.out.println(new Faker().execute(lsArgs));
     }
 
+    /**
+     * 通过 Faker库生成假数据，支持2个参数
+     * 参数：
+     * key: 假数据类型，格式为 Faker库的ClassName.Method
+     * local: 语言，可控，默认为 zh-CN
+     */
     @Override
     public Object execute(Args args) {
         return args instanceof KwArgs kwArgs ? execute(kwArgs) : execute((LsArgs) args);
