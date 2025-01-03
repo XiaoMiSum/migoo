@@ -1,4 +1,4 @@
-migoo.version: ${migoo-core.version}
+migoo.version: ${project.version}
 migoo.report.enable: true
 migoo.report.theme: DARK
 migoo.report.timeline.enabled: false
