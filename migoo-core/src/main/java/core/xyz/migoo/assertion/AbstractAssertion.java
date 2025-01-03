@@ -25,7 +25,6 @@
 
 package core.xyz.migoo.assertion;
 
-import com.alibaba.fastjson2.JSON;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
@@ -75,35 +74,12 @@ public abstract class AbstractAssertion extends AbstractTestElement implements S
             result.setFailureMessage(String.format("assert rule '%s' not found", ruleStr));
         } else {
             try {
-                var actual = get(ACTUAL);
-                var expected = get(EXPECTED);
-                var objects = switch (expected) {
-                    case Object[] os -> List.of(os);
-                    case String s -> of(s);
-                    case List<?> ls -> ls;
-                    case null -> List.of(""); // 这里要给个值，以便进入循环
-                    default -> List.of(expected);
-                };
-                var o = Objects.isNull(expected) ? getProperty().remove(EXPECTED) : getProperty().put(EXPECTED, objects);
-                for (var item : objects) {
-                    if (result.isSuccessful()) {
-                        break;
-                    }
-                    result.setSuccessful(rule.assertThat(actual, item));
-                }
+                result.setSuccessful(rule.assertThat(get(ACTUAL), get(EXPECTED)));
             } catch (Exception e) {
                 result.setFailureMessage(e);
             }
         }
         setContent(result);
-    }
-
-    private List<Object> of(String expected) {
-        if (JSON.isValid(expected) || !expected.contains(",")) {
-            return List.of(expected);
-        } else {
-            return List.of(expected.split(","));
-        }
     }
 
     protected abstract void setActual(SampleResult result);
