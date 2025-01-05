@@ -32,7 +32,7 @@
     <parent>
         <artifactId>migoo-parent</artifactId>
         <groupId>xyz.migoo</groupId>
-        <version>5.1.1</version>
+        <version>5.1.0</version>
     </parent>
 
     <artifactId>migoo-core</artifactId>
@@ -61,6 +61,11 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.javafaker</groupId>
+            <artifactId>javafaker</artifactId>
         </dependency>
 
 
