@@ -42,7 +42,7 @@ public class Contains extends BaseRule implements Rule {
     @Override
     public boolean assertThat(Object actual, Object expected) {
         return switch (actual) {
-            case String obj -> obj.contains(String.valueOf(expected));
+            case String obj -> objectToString(obj).contains(objectToString(expected));
             case Map<?, ?> obj -> obj.containsValue(expected) || obj.containsKey(expected);
             case List<?> obj -> obj.contains(expected);
             default -> false;

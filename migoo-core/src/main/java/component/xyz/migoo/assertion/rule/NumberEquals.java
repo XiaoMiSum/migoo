@@ -34,7 +34,7 @@ import java.math.BigDecimal;
  * @author xiaomi
  * Created in 2021/10/13 18:41
  */
-@Alias({"number_equals", "num_eq", "numeq"})
+@Alias({"number_equals", "num_eq", "numeq", "ne"})
 public class NumberEquals extends BaseRule implements Rule {
 
     @Override
