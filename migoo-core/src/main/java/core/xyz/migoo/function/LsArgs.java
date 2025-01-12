@@ -21,7 +21,7 @@ public class LsArgs extends ArrayList<Object> implements Args {
 
     @Override
     public boolean add(Object parameter) {
-        return super.add(parameter instanceof String s ? getParameterValue(s) : parameter);
+        return super.add(parameter instanceof String s ? getParameterValue(s.trim()) : parameter);
     }
 
     public String getString(int index) {
