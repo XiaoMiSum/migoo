@@ -25,6 +25,7 @@
 
 package component.xyz.migoo.assertion.rule;
 
+import com.alibaba.fastjson2.JSON;
 import core.xyz.migoo.assertion.Rule;
 import core.xyz.migoo.testelement.Alias;
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +43,8 @@ public class IsEmpty extends BaseRule implements Rule {
     @Override
     public boolean assertThat(Object actual, Object expected) {
         return switch (actual) {
-            case String obj -> StringUtils.isBlank(obj);
+            case String obj -> JSON.isValidArray(obj) ? JSON.parseArray(obj).isEmpty() :
+                    JSON.isValidObject(obj) ? JSON.parseObject(obj).isEmpty() : StringUtils.isBlank(obj);
             case Map<?, ?> obj -> obj.isEmpty();
             case List<?> obj -> obj.isEmpty();
             case null -> true;
