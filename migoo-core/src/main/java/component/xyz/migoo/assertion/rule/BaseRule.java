@@ -54,7 +54,7 @@ public abstract class BaseRule {
     }
 
     public String objectToString(Object subj, String defaultString) {
-        defaultString = StringUtils.isEmpty(defaultString) ? "null" : defaultString;
+        defaultString = StringUtils.isBlank(defaultString) ? "null" : defaultString;
         return switch (subj) {
             case String string -> StringUtils.isBlank(string) ? defaultString : string;
             case List<?> objects -> objects.isEmpty() ? defaultString : JSON.toJSONString(objects);
