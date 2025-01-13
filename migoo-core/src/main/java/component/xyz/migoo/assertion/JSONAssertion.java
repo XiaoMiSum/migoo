@@ -29,6 +29,7 @@ import com.alibaba.fastjson2.JSONPath;
 import core.xyz.migoo.assertion.AbstractAssertion;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author xiaomi
@@ -39,6 +40,10 @@ public class JSONAssertion extends AbstractAssertion {
     @Override
     protected void setActual(SampleResult result) {
         var jsonStr = result.getResponseDataAsString();
-        setActual(JSONPath.extract(jsonStr, getPropertyAsString(FIELD)));
+        if (StringUtils.isBlank(jsonStr) || StringUtils.equalsAny(jsonStr, "[]", "{}")) {
+            setActual("");
+        } else {
+            setActual(JSONPath.extract(jsonStr, getPropertyAsString(FIELD)));
+        }
     }
 }
