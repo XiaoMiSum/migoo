@@ -79,7 +79,8 @@ public abstract class AbstractRedisTestElement extends AbstractTestElement imple
                 throw new UnsupportedOperationException("unsupported command: " + command);
             }
             var result = jedis.sendCommand(Protocol.Command.valueOf(command.toUpperCase(Locale.ROOT)), getPropertyAsString(SEND).split(","));
-            sample.setResponseData(result == null ? "" : result instanceof Collection ? listToString((Collection<?>) result) : result.toString());
+            sample.setResponseData(result == null ? "" : result instanceof byte[] bytes ? new String(bytes) :
+                    result instanceof Collection ? listToString((Collection<?>) result) : result.toString());
         } finally {
             sample.sampleEnd();
         }
