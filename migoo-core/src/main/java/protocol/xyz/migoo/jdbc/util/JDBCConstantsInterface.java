@@ -12,5 +12,6 @@ public interface JDBCConstantsInterface {
     String DATASOURCE = "datasource";
 
     String STATEMENT = "statement";
+    String SQL = "sql";
     String DRIVER = "driver";
 }

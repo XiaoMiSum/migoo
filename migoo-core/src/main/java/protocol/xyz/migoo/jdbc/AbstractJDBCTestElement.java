@@ -35,6 +35,7 @@ import protocol.xyz.migoo.jdbc.util.JDBCConstantsInterface;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 /**
  * @author xiaomi
@@ -60,7 +61,7 @@ public abstract class AbstractJDBCTestElement extends AbstractTestElement implem
     protected SampleResult execute(DataSourceElement datasource, SampleResult result) throws Exception {
         result.setTestClass(this.getClass());
         result.setUrl(datasource.getUrl());
-        var sql = getPropertyAsString(STATEMENT);
+        var sql = Optional.ofNullable(getPropertyAsString(SQL)).orElse(getPropertyAsString(STATEMENT));
         if (StringUtils.isBlank(sql)) {
             throw new UnsupportedOperationException("Incorrect SQL statement: sql statement can not empty");
         }
@@ -68,7 +69,7 @@ public abstract class AbstractJDBCTestElement extends AbstractTestElement implem
         result.sampleStart();
         result.setSamplerData(sql);
         try (var conn = datasource.getConnection(); var statement = conn.createStatement()) {
-            boolean bool = statement.execute(sql);
+            var bool = statement.execute(sql);
             result.sampleEnd();
             String results = bool ? toJSONString(statement.getResultSet()) : "Affected rows: " + statement.getUpdateCount();
             result.setResponseData(results);
@@ -81,7 +82,7 @@ public abstract class AbstractJDBCTestElement extends AbstractTestElement implem
         var meta = result.getMetaData();
         while (result.next()) {
             var item = new JSONObject();
-            for (int i = 1; i <= meta.getColumnCount(); i++) {
+            for (var i = 1; i <= meta.getColumnCount(); i++) {
                 String key = meta.getColumnName(i);
                 item.put(key, result.getString(key));
             }
