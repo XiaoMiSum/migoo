@@ -26,10 +26,13 @@
 #
 
 component.xyz.migoo.assertion.rule.Contains
+component.xyz.migoo.assertion.rule.ContainsAny
 component.xyz.migoo.assertion.rule.DoseNotContains
 component.xyz.migoo.assertion.rule.DoseNotEquals
 component.xyz.migoo.assertion.rule.Equals
+component.xyz.migoo.assertion.rule.EqualsAny
 component.xyz.migoo.assertion.rule.EqualsIgnoreCase
+component.xyz.migoo.assertion.rule.EqualsAnyIgnoreCase
 component.xyz.migoo.assertion.rule.GreaterThan
 component.xyz.migoo.assertion.rule.GreaterThanOrEquals
 component.xyz.migoo.assertion.rule.IsEmpty
