@@ -1,5 +1,4 @@
-title: 标准dubbo取样器
-testclass: DubboSampler # 取样器类型
+testclass: DubboPreprocessor # http前置处理器 类型
 config: # 取样器配置
   registry: # 注册中心配置
     protocol: zookeeper
@@ -11,7 +10,6 @@ config: # 取样器配置
     version: 1.0.0
     retries: 1
     timeout: 5000
-    group: test
     async: false
     load_balance: random
   interface: protocol.xyz.migoo.dubbo.dubboserver.service.DemoService  # 接口类名全称
@@ -19,5 +17,5 @@ config: # 取样器配置
   parameter_types: # 方法参数类型，根据接口定义
     - java.lang.String
   parameters: # 接口参数名称
-    - name: test
+    - test
   attachment_args: # 附加参数 keyword形式，可空
