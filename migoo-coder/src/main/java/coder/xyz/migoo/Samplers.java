@@ -170,6 +170,31 @@ public class Samplers extends El {
     }
 
     /**
+     * 最简单的取样器配置
+     *
+     * @param title      描述
+     * @param config     rabbit_mq 配置
+     * @param validators 验证器
+     * @return 取样器配置
+     */
+    public static Samplers sampler(String title, RabbitMQ config, Validators... validators) {
+        return new Samplers(title, "rabbit_mq_sampler", null, config, validators, null, null, null);
+    }
+
+    /**
+     * 有变量的取样器
+     *
+     * @param title      描述
+     * @param variables  变量
+     * @param config     rabbit_mq 配置
+     * @param validators 验证器
+     * @return 取样器配置
+     */
+    public static Samplers sampler(String title, Map<String, Object> variables, RabbitMQ config, Validators... validators) {
+        return new Samplers(title, "rabbit_mq_sampler", variables, config, validators, null, null, null);
+    }
+
+    /**
      * 设置取样器的前置处理器
      *
      * @param preprocessors 前置处理器

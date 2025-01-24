@@ -68,4 +68,8 @@ public class Configurers extends El {
     public static Configurers defaults(Kafka config) {
         return new Configurers("Kafka_Defaults", config);
     }
+
+    public static Configurers defaults(RabbitMQ config) {
+        return new Configurers("rabbitmq_defaults", config);
+    }
 }

@@ -155,4 +155,14 @@ public class Protocols {
         return kafka;
     }
 
+    public static RabbitMQ rabbit() {
+        return new RabbitMQ();
+    }
+
+    public static RabbitMQ rabbit(RabbitMQ copy) {
+        RabbitMQ rabbit = new RabbitMQ();
+        rabbit.properties().putAll(copy.properties());
+        return rabbit;
+    }
+
 }

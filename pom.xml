@@ -65,7 +65,7 @@
         <!-- 单元测试框架 -->
         <junit.version>5.11.4</junit.version>
 
-        <!-- 协议或工具基础以来 -->
+        <!-- 协议或工具基础依赖 -->
         <activemq.version>6.1.4</activemq.version>
         <redis.version>5.2.0</redis.version>
         <mysql.version>9.1.0</mysql.version>
@@ -102,6 +102,7 @@
         <module>migoo-activemq</module>
         <module>migoo-dubbo</module>
         <module>migoo-kafka</module>
+        <module>migoo-rabbitmq</module>
     </modules>
 
     <dependencyManagement>

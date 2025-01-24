@@ -38,7 +38,7 @@ import java.util.Objects;
  */
 public class SampleResult extends Result {
 
-    public static final Charset DEFAULT_HTTP_ENCODING = StandardCharsets.UTF_8;
+    public static final Charset DEFAULT_ENCODING = StandardCharsets.UTF_8;
     public static final String TEXT = "text";
     private static final byte[] EMPTY_BA = new byte[0];
     private String url = "";
@@ -79,12 +79,12 @@ public class SampleResult extends Result {
 
     public void setResponseData(String responseData) {
         responseDataAsString = null;
-        this.responseData = responseData == null ? EMPTY_BA : responseData.getBytes(DEFAULT_HTTP_ENCODING);
+        this.responseData = responseData == null ? EMPTY_BA : responseData.getBytes(DEFAULT_ENCODING);
     }
 
     public String getResponseDataAsString() {
         if (responseDataAsString == null) {
-            responseDataAsString = new String(responseData, DEFAULT_HTTP_ENCODING);
+            responseDataAsString = new String(responseData, DEFAULT_ENCODING);
         }
         return responseDataAsString;
     }

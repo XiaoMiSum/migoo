@@ -11,7 +11,7 @@ public class Processors {
      * @param extractors 提取器
      * @return http 前置处理器
      */
-    public static Processors.Pre preprocessor(HTTP config, Extractors... extractors) {
+    public static Pre preprocessor(HTTP config, Extractors... extractors) {
         return withPre("http_pre_processor", config, extractors);
     }
 
@@ -22,7 +22,7 @@ public class Processors {
      * @param extractors 提取器
      * @return http 后置处理器
      */
-    public static Processors.Post postprocessor(HTTP config, Extractors... extractors) {
+    public static Post postprocessor(HTTP config, Extractors... extractors) {
         return withPost("http_post_processor", config, extractors);
     }
 
@@ -33,7 +33,7 @@ public class Processors {
      * @param extractors 提取器
      * @return jdbc 前置处理器
      */
-    public static Processors.Pre preprocessor(JDBC config, Extractors... extractors) {
+    public static Pre preprocessor(JDBC config, Extractors... extractors) {
         return withPre("jdbc_pre_processor", config, extractors);
     }
 
@@ -44,7 +44,7 @@ public class Processors {
      * @param extractors 提取器
      * @return jdbc 后置处理器
      */
-    public static Processors.Post postprocessor(JDBC config, Extractors... extractors) {
+    public static Post postprocessor(JDBC config, Extractors... extractors) {
         return withPost("jdbc_post_processor", config, extractors);
     }
 
@@ -55,7 +55,7 @@ public class Processors {
      * @param extractors 提取器
      * @return redis 前置处理器
      */
-    public static Processors.Pre preprocessor(Redis config, Extractors... extractors) {
+    public static Pre preprocessor(Redis config, Extractors... extractors) {
         return withPre("redis_pre_processor", config, extractors);
     }
 
@@ -66,7 +66,7 @@ public class Processors {
      * @param extractors 提取器
      * @return redis 后置处理器
      */
-    public static Processors.Post postprocessor(Redis config, Extractors... extractors) {
+    public static Post postprocessor(Redis config, Extractors... extractors) {
         return withPost("redis_post_processor", config, extractors);
     }
 
@@ -77,7 +77,7 @@ public class Processors {
      * @param extractors 提取器
      * @return dubbo 前置处理器
      */
-    public static Processors.Pre preprocessor(Dubbo config, Extractors... extractors) {
+    public static Pre preprocessor(Dubbo config, Extractors... extractors) {
         return withPre("dubbo_pre_processor", config, extractors);
     }
 
@@ -88,7 +88,7 @@ public class Processors {
      * @param extractors 提取器
      * @return dubbo 后置处理器
      */
-    public static Processors.Post postprocessor(Dubbo config, Extractors... extractors) {
+    public static Post postprocessor(Dubbo config, Extractors... extractors) {
         return withPost("dubbo_post_processor", config, extractors);
     }
 
@@ -99,7 +99,7 @@ public class Processors {
      * @param extractors 提取器
      * @return active mq 前置处理器
      */
-    public static Processors.Pre preprocessor(ActiveMQ config, Extractors... extractors) {
+    public static Pre preprocessor(ActiveMQ config, Extractors... extractors) {
         return withPre("active_mq_pre_processor", config, extractors);
     }
 
@@ -110,7 +110,7 @@ public class Processors {
      * @param extractors 提取器
      * @return active mq 后置处理器
      */
-    public static Processors.Post postprocessor(ActiveMQ config, Extractors... extractors) {
+    public static Post postprocessor(ActiveMQ config, Extractors... extractors) {
         return withPost("active_mq_post_processor", config, extractors);
     }
 
@@ -121,7 +121,7 @@ public class Processors {
      * @param extractors 提取器
      * @return kafka 前置处理器
      */
-    public static Processors.Pre preprocessor(Kafka config, Extractors... extractors) {
+    public static Pre preprocessor(Kafka config, Extractors... extractors) {
         return withPre("kafka_pre_processor", config, extractors);
     }
 
@@ -132,16 +132,38 @@ public class Processors {
      * @param extractors 提取器
      * @return kafka 后置处理器
      */
-    public static Processors.Post postprocessor(Kafka config, Extractors... extractors) {
+    public static Post postprocessor(Kafka config, Extractors... extractors) {
         return withPost("kafka_post_processor", config, extractors);
     }
 
-    private static Processors.Pre withPre(String testClass, El config, Extractors... extractors) {
-        return new Processors.Pre(testClass, config, extractors);
+    /**
+     * rabbit 前置处理器
+     *
+     * @param config     rabbit 配置
+     * @param extractors 提取器
+     * @return kafka 前置处理器
+     */
+    public static Pre preprocessor(RabbitMQ config, Extractors... extractors) {
+        return withPre("rabbit_pre_processor", config, extractors);
     }
 
-    private static Processors.Post withPost(String testClass, El config, Extractors... extractors) {
-        return new Processors.Post(testClass, config, extractors);
+    /**
+     * rabbit 后置处理器
+     *
+     * @param config     rabbit 配置
+     * @param extractors 提取器
+     * @return kafka 后置处理器
+     */
+    public static Post postprocessor(RabbitMQ config, Extractors... extractors) {
+        return withPost("rabbit_post_processor", config, extractors);
+    }
+
+    private static Pre withPre(String testClass, El config, Extractors... extractors) {
+        return new Pre(testClass, config, extractors);
+    }
+
+    private static Post withPost(String testClass, El config, Extractors... extractors) {
+        return new Post(testClass, config, extractors);
     }
 
     public static class Pre extends El {
