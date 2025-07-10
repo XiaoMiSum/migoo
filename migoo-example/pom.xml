@@ -71,7 +71,7 @@
     </developers>
 
     <properties>
-        <migoo.version>5.2.0</migoo.version>
+        <migoo.version>5.2.1</migoo.version>
         <spring.boot.version>3.3.3</spring.boot.version>
 
         <junit.version>5.11.4</junit.version>

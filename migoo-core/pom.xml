@@ -32,7 +32,7 @@
     <parent>
         <artifactId>migoo-parent</artifactId>
         <groupId>xyz.migoo</groupId>
-        <version>5.2.0</version>
+        <version>5.2.1</version>
     </parent>
 
     <artifactId>migoo-core</artifactId>
