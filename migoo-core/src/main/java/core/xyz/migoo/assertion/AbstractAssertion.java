@@ -63,6 +63,7 @@ public abstract class AbstractAssertion extends AbstractTestElement implements S
         } catch (Exception e) {
             result.setFailureMessage(e);
         }
+        setContent(result);
         return result;
     }
 
@@ -73,13 +74,8 @@ public abstract class AbstractAssertion extends AbstractTestElement implements S
         if (Objects.isNull(rule)) {
             result.setFailureMessage(String.format("assert rule '%s' not found", ruleStr));
         } else {
-            try {
-                result.setSuccessful(rule.assertThat(get(ACTUAL), get(EXPECTED)));
-            } catch (Exception e) {
-                result.setFailureMessage(e);
-            }
+            result.setSuccessful(rule.assertThat(get(ACTUAL), get(EXPECTED)));
         }
-        setContent(result);
     }
 
     protected abstract void setActual(SampleResult result);
@@ -89,14 +85,14 @@ public abstract class AbstractAssertion extends AbstractTestElement implements S
     }
 
     protected void setContent(VerifyResult result) {
-        String content = StringUtils.isNotEmpty(result.getContent()) ? result.getContent() : result.isSuccessful() ? "true" :
+        var content = StringUtils.isNotEmpty(result.getContent()) ? result.getContent() : result.isSuccessful() ? "true" :
                 String.format("expected value '%s', but found '%s'%s, rule: '%s'",
                         get(EXPECTED), get(ACTUAL), Objects.isNull(get(FIELD)) ? "" : (", field: " + get(FIELD)), get(RULE));
         setContent(result, content);
     }
 
     protected void setContent(VerifyResult result, String content) {
-        MiGooProperty prop = new MiGooProperty(getProperty());
+        var prop = new MiGooProperty(getProperty());
         prop.remove(VARIABLES);
         prop.put("result", content);
         result.setContent(prop.toString());

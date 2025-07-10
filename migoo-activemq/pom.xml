@@ -32,7 +32,7 @@
     <parent>
         <artifactId>migoo-parent</artifactId>
         <groupId>xyz.migoo</groupId>
-        <version>5.1.0</version>
+        <version>5.2.0</version>
     </parent>
 
     <artifactId>migoo-activemq</artifactId>
@@ -64,6 +64,10 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>

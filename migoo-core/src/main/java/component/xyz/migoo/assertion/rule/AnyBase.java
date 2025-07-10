@@ -13,7 +13,7 @@ public class AnyBase {
             case null -> List.of(""); // 这里要给个值，以便进入循环
             default -> List.of(expected);
         };
-        for (Object object : objects) {
+        for (var object : objects) {
             if (rule.assertThat(actual, object)) {
                 return true;
             }
