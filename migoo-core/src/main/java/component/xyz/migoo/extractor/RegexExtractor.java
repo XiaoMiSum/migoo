@@ -38,19 +38,17 @@ import java.util.regex.Pattern;
 public class RegexExtractor extends AbstractExtractor {
 
     @Override
-    public SampleResult process(SampleResult result) {
+    public Object extract(SampleResult result) {
         var pattern = Pattern.compile(getPropertyAsString(FIELD));
         var matcher = pattern.matcher(result.getResponseDataAsString());
-        int matchNum = get(MATCH_NUM) == null || getPropertyAsInt(MATCH_NUM) < 0 ? 0 : getPropertyAsInt(MATCH_NUM);
-        var value = "def_value";
+        int matchNum = Math.max(0, getPropertyAsInt(MATCH_NUM));
+        var value = "";
         int state = 0;
         while (state > -1 && matcher.find()) {
             state = matcher.groupCount() > 0 ? matchNum : state;
             value = matcher.group(1);
             state--;
         }
-        getVariables().put(getPropertyAsString(VARIABLE_NAME), value);
-        getProperty().put(VALUE, value);
-        return getResult(new SampleResult("RegexExtractor"));
+        return value;
     }
 }

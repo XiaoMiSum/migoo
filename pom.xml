@@ -85,6 +85,7 @@
         <commons-codec.version>1.17.1</commons-codec.version>
         <commons-lang3.version>3.17.0</commons-lang3.version>
 
+        <clean.version>3.4.0</clean.version>
         <compiler.version>3.13.0</compiler.version>
         <javadoc.version>3.11.2</javadoc.version>
         <surefire.version>3.5.2</surefire.version>
@@ -277,7 +278,6 @@
                             <additionalJOption>-Xdoclint:none</additionalJOption>
                         </additionalJOptions>
                         <encoding>UTF-8</encoding>
-                        <outputDirectory>${basedir}/doc</outputDirectory>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -303,8 +303,21 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${surefire.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>${clean.version}</version>
+                    <configuration>
+                        <filesets>
+                            <fileset>
+                                <directory>${basedir}/out-put</directory>
+                            </fileset>
+                        </filesets>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -320,6 +333,8 @@
                 </executions>
             </plugin>
         </plugins>
+
+
     </build>
 
     <distributionManagement>

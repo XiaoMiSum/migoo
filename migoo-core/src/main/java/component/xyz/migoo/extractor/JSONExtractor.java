@@ -31,8 +31,6 @@ import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Objects;
-
 /**
  * @author xiaomi
  */
@@ -40,13 +38,9 @@ import java.util.Objects;
 public class JSONExtractor extends AbstractExtractor {
 
     @Override
-    public SampleResult process(SampleResult result) {
+    public Object extract(SampleResult result) {
         var jsonStr = result.getResponseDataAsString();
-        var path = getPropertyAsString(FIELD);
-        var value = (StringUtils.isBlank(jsonStr) || StringUtils.equalsAny(jsonStr, "[]", "{}")) ? null :
-                JSONPath.extract(jsonStr, path);
-        getVariables().put(getPropertyAsString(VARIABLE_NAME), Objects.isNull(value) ? "def_value" : value);
-        getProperty().put("value", Objects.isNull(value) ? "def_value" : value);
-        return getResult(new SampleResult("JSONExtractor"));
+        return (StringUtils.isBlank(jsonStr) || StringUtils.equalsAny(jsonStr, "[]", "{}")) ? null :
+                JSONPath.extract(jsonStr, getPropertyAsString(FIELD));
     }
 }

@@ -45,7 +45,7 @@ public class Contains extends BaseRule implements Rule {
             case String obj -> objectToString(obj).contains(objectToString(expected));
             case Map<?, ?> obj -> obj.containsValue(expected) || obj.containsKey(expected);
             case List<?> obj -> obj.contains(expected);
-            default -> false;
+            case null, default -> false;
         };
     }
 }

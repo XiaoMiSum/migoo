@@ -40,15 +40,20 @@ public abstract class AbstractExtractor extends AbstractTestElement implements E
     public static final String VALUE = "value";
 
     protected SampleResult getResult(SampleResult result) {
-        var items = new JSONObject();
-        items.put("Extractor", this.getClass());
-        items.put(FIELD, get(FIELD));
-        items.put(MATCH_NUM, get(MATCH_NUM));
-        items.put("Result", get(VALUE));
-        items.put(VARIABLE_NAME, get(VARIABLE_NAME));
+        var items = JSONObject.of("Extractor", getClass(), FIELD, get(FIELD), MATCH_NUM, get(MATCH_NUM), "Result", get(VALUE), VARIABLE_NAME, get(VARIABLE_NAME));
         result.setSamplerData(items.toJSONString());
-        result.setTestClass(this.getClass());
+        result.setTestClass(getClass());
         return result;
     }
+
+    @Override
+    public SampleResult process(SampleResult result) {
+        var value = extract(result);
+        getVariables().put(getPropertyAsString(VARIABLE_NAME), value);
+        getProperty().put("value", value);
+        return getResult(new SampleResult(getClass().getSimpleName()));
+    }
+
+    protected abstract Object extract(SampleResult result);
 
 }
