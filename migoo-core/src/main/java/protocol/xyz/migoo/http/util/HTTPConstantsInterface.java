@@ -47,6 +47,7 @@ public interface HTTPConstantsInterface {
     String BYTES = "bytes";
     String BODY = "body";
     String DATA = "data";
+    String BINARY = "binary";
     String QUERY = "query";
 
     String SEPARATOR = "/";
@@ -89,7 +90,6 @@ public interface HTTPConstantsInterface {
     String KEEP_ALIVE = "keep-alive";
     String TRANSFER_ENCODING = "transfer-encoding";
     String HEADER_CONTENT_ENCODING = "content-encoding";
-    String HTTP_1_1 = "HTTP/1.1";
     String HEADER_SET_COOKIE = "set-cookie";
     String ENCODING_BROTLI = "br";
     String ENCODING_DEFLATE = "deflate";

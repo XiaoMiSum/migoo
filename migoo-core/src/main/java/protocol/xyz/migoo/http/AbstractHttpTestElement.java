@@ -31,12 +31,15 @@ import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.MiGooProperty;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.http.config.HttpDefaults;
-import protocol.xyz.migoo.http.sampler.HTTPHCImpl;
+import protocol.xyz.migoo.http.sampler.HC;
 import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 import protocol.xyz.migoo.http.util.HTTPConstantsInterface;
 
 import java.util.Objects;
 import java.util.Optional;
+
+import static org.apache.hc.core5.http.HttpVersion.HTTP_1_1;
+import static org.apache.hc.core5.http.HttpVersion.HTTP_2;
 
 /**
  * @author xiaomi
@@ -91,14 +94,14 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
         result.setTestClass(this.getClass());
         try {
             var headers = Optional.ofNullable(getPropertyAsJSONObject(HEADERS)).orElse(new JSONObject());
-            var request = new HTTPHCImpl(getPropertyAsString(REQUEST_METHOD), buildUrl())
-                    .headers(headers)
-                    .cookie(getPropertyAsJSONObject(COOKIE))
-                    .query(get(QUERY))
-                    .body(getPropertyAsByteArray(BYTES), get(BODY), get(DATA), headers.getString(HEADER_CONTENT_TYPE));
-            if (getPropertyAsBoolean(HTTP2)) {
-                request.http2();
-            }
+            var request = HC.getInstance(getPropertyAsString(REQUEST_METHOD), buildUrl())
+                    .headers(headers).cookie(get(COOKIE))
+                    .query(getPropertyAsJSONObject(QUERY))
+                    // bytes body data(binary) 不会同时出现
+                    .bytes(getPropertyAsByteArray(BYTES), headers.getString(HEADER_CONTENT_TYPE))
+                    .json(getPropertyAsJSONObject(BODY))
+                    .body(getPropertyAsJSONObject(BINARY), getPropertyAsJSONObject(DATA))
+                    .version(getPropertyAsBoolean(HTTP2) ? HTTP_2 : HTTP_1_1);
             result.setRequestData(request);
             result.sampleStart();
             var response = request.execute();
