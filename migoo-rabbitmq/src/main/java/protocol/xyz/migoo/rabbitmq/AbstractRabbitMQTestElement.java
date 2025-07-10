@@ -32,6 +32,7 @@ import core.xyz.migoo.testelement.AbstractTestElement;
 import protocol.xyz.migoo.rabbitmq.config.RabbitMQDefaults;
 import protocol.xyz.migoo.rabbitmq.util.RabbitMQConstantsInterface;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Objects;
 
@@ -105,7 +106,7 @@ public abstract class AbstractRabbitMQTestElement extends AbstractTestElement im
                 routingKey = EXCHANGE_TYPE_FANOUT.equals(type) ? null : exchange.getString(EXCHANGE_ROUTING_KEY);
                 channel.queueBind(queue.getString(QUEUE_NAME), queue.getString(EXCHANGE_NAME), routingKey);
             }
-            channel.basicPublish(exchangeName, queue.getString(QUEUE_NAME), properties, getPropertyAsByteArray(MESSAGE));
+            channel.basicPublish(exchangeName, queue.getString(QUEUE_NAME), properties, getPropertyAsString(MESSAGE).getBytes(StandardCharsets.UTF_8));
         } finally {
             result.sampleEnd();
         }

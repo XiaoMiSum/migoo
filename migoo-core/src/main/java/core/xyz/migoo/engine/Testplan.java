@@ -60,17 +60,17 @@ public class Testplan extends JSONObject {
         json.forEach((key, value) -> {
             // 将 migoo 测试组件 的key 转换为小写
             var newKey = isMiGoo ? key.toLowerCase(Locale.ROOT) : key;
-            if (value instanceof JSONObject object) {
-                put(newKey, parse(object));
-            } else if (value instanceof JSONArray objects) {
-                for (int i = 0; i < objects.size(); i++) {
-                    var item = objects.get(i);
-                    // 这里主要是为了处理 配置的子组件，组件配置一定是Map
-                    objects.set(i, item instanceof Map ? parse(objects.getJSONObject(i)) : item);
+            switch (value) {
+                case JSONObject object -> put(newKey, parse(object));
+                case JSONArray objects -> {
+                    for (int i = 0; i < objects.size(); i++) {
+                        var item = objects.get(i);
+                        // 这里主要是为了处理 配置的子组件，组件配置一定是Map
+                        objects.set(i, item instanceof Map ? parse(objects.getJSONObject(i)) : item);
+                    }
+                    put(newKey, objects);
                 }
-                put(newKey, objects);
-            } else {
-                put(newKey, value);
+                case null, default -> put(newKey, value);
             }
         });
         if (isMiGoo) {
