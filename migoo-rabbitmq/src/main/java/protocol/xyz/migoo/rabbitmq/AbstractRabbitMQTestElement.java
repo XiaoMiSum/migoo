@@ -91,20 +91,16 @@ public abstract class AbstractRabbitMQTestElement extends AbstractTestElement im
                         getPropertyAsString(PROPS_CLUSTER_ID)
                 );
             }
-            var exchangeName = Objects.nonNull(exchange) && !exchange.isEmpty() ? queue.getString(EXCHANGE_NAME) : null;
+            var exchangeName = Objects.nonNull(exchange) && !exchange.isEmpty() ? queue.getString(EXCHANGE_NAME) : "";
             var routingKey = Objects.isNull(exchange) || exchange.isEmpty() ? queue.getString(QUEUE_NAME) : null;
             if (Objects.nonNull(exchange) && !exchange.isEmpty()) {
                 var type = Objects.nonNull(exchange.get(EXCHANGE_TYPE)) ? exchange.getString(EXCHANGE_TYPE).toLowerCase()
                         : EXCHANGE_TYPE_TOPIC;
                 channel.exchangeDeclare(exchange.getString(EXCHANGE_NAME),
                         switch (type) {
-                            case EXCHANGE_TYPE_FANOUT:
-                                yield BuiltinExchangeType.FANOUT;
-                            case EXCHANGE_TYPE_DIRECT:
-                                yield BuiltinExchangeType.DIRECT;
-                            case EXCHANGE_TYPE_TOPIC:
-                            default:
-                                yield BuiltinExchangeType.TOPIC;
+                            case EXCHANGE_TYPE_FANOUT -> BuiltinExchangeType.FANOUT;
+                            case EXCHANGE_TYPE_DIRECT -> BuiltinExchangeType.DIRECT;
+                            default -> BuiltinExchangeType.TOPIC;
                         });
                 routingKey = EXCHANGE_TYPE_FANOUT.equals(type) ? null : exchange.getString(EXCHANGE_ROUTING_KEY);
                 channel.queueBind(queue.getString(QUEUE_NAME), queue.getString(EXCHANGE_NAME), routingKey);

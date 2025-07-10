@@ -30,6 +30,7 @@ import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.variable.MiGooVariables;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
 
@@ -98,6 +99,10 @@ public abstract class AbstractTestElement implements TestElement, Serializable {
     @Override
     public byte[] getPropertyAsByteArray(String key) {
         var lowerKey = key.toLowerCase();
+        var val = propMap.get(lowerKey);
+        if (!(val instanceof String) && !(val instanceof byte[])) {
+            return val.toString().getBytes(StandardCharsets.UTF_8);
+        }
         return propMap.getBytes(lowerKey);
     }
 

@@ -5,6 +5,7 @@ config: # 处理器配置
   username: guest # rabbitmq 用户名，可空，默认值：guest
   password: guest # rabbitmq 密码，可空，默认值：guest
   timeout: 5000 # 连接超时时间，毫秒，默认值：60000
+  virtual_host:
   queue: # 队列配置
     name: migoo  # 消息队列名称
     durable:  # 是否持久化队列，可空，默认值：false
