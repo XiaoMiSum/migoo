@@ -1,5 +1,6 @@
 package core.xyz.migoo.engine;
 
+import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestElementService;
 import core.xyz.migoo.variable.MiGooVariables;
@@ -56,7 +57,7 @@ public class MiGooContext {
         if (Objects.nonNull(components)) {
             components.forEach(item -> {
                 // 配置元件、处理器、提取器、验证器 等测试组件不可单独设置变量，设置这些组件的变量为测试集合或取样器的变量
-                TestElement el = TestElementService.getService(((Testplan) item).getString(TEST_CLASS));
+                TestElement el = TestElementService.getService(((JSONObject) item).getString(TEST_CLASS));
                 TestElementService.prepare(el, ((Testplan) item), variables);
                 elements.add(el);
             });
