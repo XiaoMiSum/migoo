@@ -83,7 +83,7 @@
         <guava.version>33.4.0-jre</guava.version>
         <fastjson.version>2.0.53</fastjson.version>
         <commons-codec.version>1.17.1</commons-codec.version>
-        <commons-lang3.version>3.17.0</commons-lang3.version>
+        <commons-lang3.version>3.18.0</commons-lang3.version>
 
         <clean.version>3.4.0</clean.version>
         <compiler.version>3.13.0</compiler.version>
