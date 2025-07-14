@@ -51,9 +51,9 @@ public abstract class AbstractTestEngine implements TestEngine {
         this.result = result;
     }
 
-    public AbstractTestEngine(MiGooContext context, Result result, MiGooVariables other) {
+    public AbstractTestEngine(MiGooContext context, Result result, MiGooVariables parentVars) {
         // 合并父节点变量
-        context.getVariables().mergeVariable(other);
+        context.getVariables().mergeVariable(parentVars);
         this.context = context;
         this.result = result;
     }

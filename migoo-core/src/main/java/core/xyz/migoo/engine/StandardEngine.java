@@ -49,27 +49,27 @@ public class StandardEngine extends AbstractTestEngine {
                 new HTTPSampleResult(context.getTitle()) : new SampleResult(context.getTitle()));
     }
 
-    public StandardEngine(MiGooContext context, MiGooVariables other) {
+    public StandardEngine(MiGooContext context, MiGooVariables parentVars) {
         super(context, context.getSampler() instanceof HttpSampler ?
-                new HTTPSampleResult(context.getTitle()) : new SampleResult(context.getTitle()), other);
+                new HTTPSampleResult(context.getTitle()) : new SampleResult(context.getTitle()), parentVars);
     }
 
     @Override
     protected void runTest(Result result) {
-        var sr = (SampleResult) result;
+        var sResult = (SampleResult) result;
         if (!result.isSuccessful()) {
-            sr.setTestClass(context.getSampler().getClass());
-            sr.sampleStart();
-            sr.setSamplerData("前置步骤测试失败，当前跳过执行");
-            sr.setResponseData("前置步骤测试失败，当前跳过执行");
-            sr.sampleEnd();
+            sResult.setTestClass(context.getSampler().getClass());
+            sResult.sampleStart();
+            sResult.setSamplerData("前置步骤测试失败，当前跳过执行");
+            sResult.setResponseData("前置步骤测试失败，当前跳过执行");
+            sResult.sampleEnd();
             return;
         }
         TestElementService.testStarted(context.getSampler());
-        sr.setSamplerData(TestElementService.runTest(context.getSampler()));
+        sResult.setSamplerData(TestElementService.runTest(context.getSampler()));
         TestElementService.testEnded(context.getSampler());
-        runAssertions(sr);
-        runExtractors(sr);
+        runAssertions(sResult);
+        runExtractors(sResult);
     }
 
     private void runAssertions(SampleResult result) {
