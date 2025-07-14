@@ -25,6 +25,7 @@
 
 package protocol.xyz.migoo.http.sampler;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +40,7 @@ import xyz.migoo.simplehttp.RequestEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -68,9 +70,11 @@ public class HC extends Request implements HTTPConstantsInterface {
         return this;
     }
 
-    public HC json(JSONObject json) {
-        if (Objects.nonNull(json)) {
-            super.body(RequestEntity.json(json));
+    public HC body(Object body) {
+        if (body instanceof Map<?, ?> || body instanceof List<?>) {
+            super.body(RequestEntity.json(JSON.toJSONString(body)));
+        } else if (Objects.nonNull(body)) {
+            super.body(RequestEntity.text(body.toString()));
         }
         return this;
     }

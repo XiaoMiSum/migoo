@@ -99,7 +99,7 @@ public abstract class AbstractHttpTestElement extends AbstractTestElement implem
                     .query(getPropertyAsJSONObject(QUERY))
                     // bytes body data(binary) 不会同时出现
                     .bytes(getPropertyAsByteArray(BYTES), headers.getString(HEADER_CONTENT_TYPE))
-                    .json(getPropertyAsJSONObject(BODY))
+                    .body(get(BODY))
                     .body(getPropertyAsJSONObject(BINARY), getPropertyAsJSONObject(DATA))
                     .version(getPropertyAsBoolean(HTTP2) ? HTTP_2 : HTTP_1_1);
             result.setRequestData(request);
