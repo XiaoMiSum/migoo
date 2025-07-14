@@ -83,11 +83,11 @@ public class MiGooVariables {
         this.convertVariables(getProperty());
     }
 
-    public void mergeVariable(MiGooVariables other) {
-        if (other != null) {
+    public void mergeVariable(MiGooVariables parentVars) {
+        if (parentVars != null) {
             var copy = new MiGooVariables(getProperty());
             this.getProperty().clear();
-            this.putAll(other);
+            this.putAll(parentVars);
             this.putAll(copy);
         }
     }
