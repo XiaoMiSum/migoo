@@ -25,12 +25,14 @@
 
 package core.xyz.migoo.testelement;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.variable.MiGooVariables;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -100,6 +102,9 @@ public abstract class AbstractTestElement implements TestElement, Serializable {
     public byte[] getPropertyAsByteArray(String key) {
         var lowerKey = key.toLowerCase();
         var val = propMap.get(lowerKey);
+        if (val instanceof Map<?, ?> || val instanceof List<?>) {
+            return JSON.toJSONBytes(val);
+        }
         if (!(val instanceof String) && !(val instanceof byte[])) {
             return val.toString().getBytes(StandardCharsets.UTF_8);
         }
