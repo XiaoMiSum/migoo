@@ -26,7 +26,6 @@
 package core.xyz.migoo.engine;
 
 import core.xyz.migoo.report.Result;
-import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.variable.MiGooVariables;
 
 import java.util.ArrayList;
@@ -47,20 +46,12 @@ public class LoopEngine extends AbstractTestEngine {
 
     @Override
     protected void runTest(Result result) {
+        if (!result.isSuccessful()) {
+            // 父级结果为 false，则子级结果全部跳过
+            return;
+        }
         result.setSubResults(new ArrayList<>());
         for (var child : context.getChildren()) {
-            // 如果当前是取样器执行，且父节点标记失败的，直接标记测试失败
-            if (Objects.nonNull(child.getSampler()) && !result.isSuccessful()) {
-                var sResult = new SampleResult(child.getTitle());
-                sResult.setSuccessful(false);
-                sResult.setTestClass(child.getSampler().getClass());
-                sResult.sampleStart();
-                sResult.setSamplerData("前置步骤测试失败，当前跳过执行");
-                sResult.setResponseData("前置步骤测试失败，当前跳过执行");
-                sResult.sampleEnd();
-                result.getSubResults().add(sResult);
-                continue;
-            }
             var engine = Objects.isNull(child.getSampler()) ? new LoopEngine(child, context.getVariables())
                     : new StandardEngine(child, context.getVariables());
             var sResult = engine.runTest();
