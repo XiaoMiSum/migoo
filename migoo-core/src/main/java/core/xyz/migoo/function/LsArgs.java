@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.variable.MiGooVariables;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ public class LsArgs extends ArrayList<Object> implements Args {
 
     public boolean getBooleanValue(int index) {
         String value = getString(index);
-        return StringUtils.equalsAnyIgnoreCase(value, "1", "t", "true");
+        return Strings.CI.equalsAny(value, "1", "t", "true");
     }
 
     @Override
