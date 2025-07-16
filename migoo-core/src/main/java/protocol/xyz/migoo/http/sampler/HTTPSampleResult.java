@@ -136,7 +136,8 @@ public class HTTPSampleResult extends SampleResult {
     @Override
     public String getUrl() {
         String url = super.getUrl().trim();
-        if (url.endsWith(responseMessage) || url.endsWith(responseCode)) {
+        if ((!responseMessage.isEmpty() && url.endsWith(responseMessage)) ||
+                (!responseCode.isEmpty() && url.endsWith(responseCode))) {
             return url;
         }
         if (!url.isEmpty()) {
@@ -159,6 +160,9 @@ public class HTTPSampleResult extends SampleResult {
 
     public void setResponseCode(String responseCode) {
         this.responseCode = responseCode;
+        if (!isResponseCodeOK()) {
+            setSuccessful(false);
+        }
     }
 
     public void setResponseMessageOK() {

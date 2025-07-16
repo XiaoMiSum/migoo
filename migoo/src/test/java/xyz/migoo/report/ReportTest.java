@@ -23,10 +23,7 @@ public class ReportTest {
     @Test
     public void test4() {
         MiGoo.start("classpath:debug/R4.yaml");
-    }
-
-    @Test
-    public void test5() {
-        MiGoo.start("classpath:debug/R5.yaml");
+        MiGoo.start("classpath:debug/R4-1.yaml");
+        MiGoo.start("classpath:debug/R4-2.yaml");
     }
 }

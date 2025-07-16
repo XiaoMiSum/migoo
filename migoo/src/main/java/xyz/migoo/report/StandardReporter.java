@@ -82,14 +82,13 @@ public class StandardReporter implements Reporter {
             writeVariables(feature, result.getVariables(), isGlobal, true);
             writeConfigElements(feature, result.getConfigElementResults(), isGlobal, true);
             writeProcessors(feature, result.getPreprocessorResults(), "前置", isGlobal, true);
-            writeSampler(feature, sr, true, isGlobal);
+            if (Objects.nonNull(sr.getTestClass())) {
+                writeSampler(feature, sr, true, isGlobal);
+            }
             writeValidators(feature, sr);
             writeThrowable(feature, result);
             writeExtractors(feature, sr.getExtractorResults(), true);
             writeProcessors(feature, result.getPostprocessorResults(), "后置", isGlobal, true);
-            if (feature instanceof ExtentTest t) {
-                t.getModel().setStatus(result.isSuccessful() ? PASS : FAIL);
-            }
             return;
         }
         if (result.hasConfigurer()) {
@@ -142,8 +141,8 @@ public class StandardReporter implements Reporter {
                 // 测试报告级别为取样器，遍历打印配置元件类型 和 配置元件内容
                 results.forEach(item -> {
                     // 给每一个配置元件增加一层节点展示TestClass 加一层占位符作为配置元件内容的容器
-                    var node2 = write(write(node, item.getTestClass()), "-");
-                    write(node2, item.getSamplerData(), true);
+                    var node2 = write(write(node, item.getTestClass(), INFO), "-", INFO);
+                    write(node2, item.getSamplerData(), true, INFO);
                     writeThrowable(node2, item);
                 });
             } else if (reportLevel.isTestcase()) {
@@ -228,41 +227,42 @@ public class StandardReporter implements Reporter {
         var isNodeLevel2 = (reportLevel.isSuite() && isGlobal) || (reportLevel.isSet() && (isSampler || isGlobal)) ||
                 (reportLevel.isSampler() || reportLevel.isTestcase());
         // 当 f = 2级节点时，需要创建三级节点
+        var status = result.isSuccessful() ? PASS : FAIL;
         var node = write(f, (isSampler ? "取样器：" : "处理器：") + result.getTestClass(), !isNodeLevel2, INFO);
         var isNodeLevel3 = !(reportLevel.isTestcase() || reportLevel.isSampler()) || (reportLevel.isTestcase() && !isSampler);
         if (StringUtils.isNotBlank(result.getUrl())) {
-            write(node, "请求地址：" + result.getUrl(), isNodeLevel3);
+            write(node, "请求地址：" + result.getUrl(), isNodeLevel3, status);
         }
         if (result instanceof HTTPSampleResult h) {
             if (Objects.nonNull(h.getMethod()) && !h.getMethod().isEmpty()) {
-                write(node, "请求方法：" + h.getMethod(), isNodeLevel3);
+                write(node, "请求方法：" + h.getMethod(), isNodeLevel3, status);
             }
             if (Objects.nonNull(h.getCookies()) && !h.getCookies().isEmpty()) {
-                write(write(node, "Cookies：", isNodeLevel3), toJSONString(h.getCookies()), true);
+                write(write(node, "Cookies：", isNodeLevel3), toJSONString(h.getCookies()), true, status);
             }
             if (Objects.nonNull(h.getRequestHeaders()) && !h.getRequestHeaders().isEmpty()) {
-                write(write(node, "请求头：", isNodeLevel3), toJSONString(h.getRequestHeaders()), true);
+                write(write(node, "请求头：", isNodeLevel3), toJSONString(h.getRequestHeaders()), true, status);
             }
             if (StringUtils.isNotBlank(h.getQueryString())) {
-                write(write(node, "Query 参数：", isNodeLevel3), h.getQueryString(), true);
+                write(write(node, "Query 参数：", isNodeLevel3), h.getQueryString(), true, status);
             }
         }
         if (StringUtils.isNotBlank(result.getSamplerData())) {
-            write(write(node, "请求数据：", isNodeLevel3), result.getSamplerData(), true);
+            write(write(node, "请求数据：", isNodeLevel3), result.getSamplerData(), true, status);
         }
         if (result instanceof HTTPSampleResult h) {
             if (Objects.nonNull(h.getResponseHeaders()) && !h.getResponseHeaders().isEmpty()) {
-                write(write(node, "响应头：", isNodeLevel3), toJSONString(h.getResponseHeaders()), true);
+                write(write(node, "响应头：", isNodeLevel3), toJSONString(h.getResponseHeaders()), true, status);
             }
         }
         if (StringUtils.isNotBlank(result.getResponseDataAsString())) {
-            write(write(node, "响应数据：", isNodeLevel3), result.getResponseDataAsString(), true);
-        }
-        if (reportLevel.isTestcase() || reportLevel.isSampler()) {
-            node.getModel().setStatus(INFO);
+            write(write(node, "响应数据：", isNodeLevel3), result.getResponseDataAsString(), true, status);
         }
         if (reportLevel.isSampler()) {
-            ((ExtentTest) f).getModel().setStatus(INFO);
+            node.getModel().setStatus(INFO);
+        }
+        if (reportLevel.isTestcase() || reportLevel.isSampler()) {
+            ((ExtentTest) f).getModel().setStatus(result.isSuccessful() ? PASS : FAIL);
         }
         return node;
     }
@@ -278,6 +278,7 @@ public class StandardReporter implements Reporter {
                     var n = write(node, item.getName(), item.isSuccessful() ? PASS : FAIL);
                     write(reportLevel.isSampler() ? write(n, "-") : n, item.getContent(), true, item.isSuccessful() ? PASS : FAIL);
                 });
+                node.getModel().setStatus(result.isSuccessful() ? PASS : FAIL);
                 return;
             }
             // 如果测试报告级别为 Suite，则以 feature 作为打印详情的容器(write 返回 原feature)，否则创建一个新的Node作为打印详情的容器
@@ -314,6 +315,9 @@ public class StandardReporter implements Reporter {
                         isXml(record) ? t.log(s, MarkupHelper.createCodeBlock(record, CodeLanguage.XML)) : t.log(s, record);
             }
             node = t.createNode(Scenario.class, record);
+            if (Objects.nonNull(status) && status.length > 0) {
+                t.getModel().setStatus(status[0]);
+            }
         }
         node.getModel().setStatus(Objects.nonNull(status) && status.length > 0 ? status[0] : PASS);
         return node;

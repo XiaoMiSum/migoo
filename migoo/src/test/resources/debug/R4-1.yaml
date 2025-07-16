@@ -1,4 +1,4 @@
-title: R5
+title: R4-1
 configelements:
   - testclass: HttpDefaults
     method: GET
@@ -10,6 +10,11 @@ configelements:
 testclass: httpsampler
 preprocessors:
   - testclass: httppreprocessor
+  - testclass: httppreprocessor
+    method: GET
+    protocol: http
+    host: localhost
+    path: '/home/historynum'
     extractors:
       - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "data_time3" }
 postprocessors:
@@ -18,7 +23,7 @@ postprocessors:
       - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "data_time5" }
       - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "data_time6" }
 validators:
-  - { testclass: "HTTPAssertion", field: status, rule: '>', expected: 200 }
+  - { testclass: "HTTPAssertion", field: status, rule: '==', expected: 200 }
   - { testclass: "JSONAssertion", field: '$.data', rule: isNotNull }
 extractors:
   - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "data_time4" }
