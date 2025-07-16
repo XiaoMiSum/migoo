@@ -49,4 +49,9 @@ public class MiGooTest {
         MiGoo.start("classpath:debug/变量合并逻辑.yaml");
     }
 
+    @Test
+    public void test10() {
+        MiGoo.start("classpath:debug/上层执行失败处理.yaml");
+    }
+
 }

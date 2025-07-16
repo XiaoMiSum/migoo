@@ -26,20 +26,24 @@
 package util.xyz.migoo.reader;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 
 public class FileReader implements Reader {
 
-    private final String path;
+    private final File file;
 
     public FileReader(String path) {
-        this.path = path;
+        file = new File(path);
+        if (!file.exists() || file.isDirectory()) {
+            throw new RuntimeException("FileReader: " + path + " is not exists or is directory");
+        }
     }
 
     @Override
     public String read() {
-        try (var fis = new FileInputStream(path); var is = new BufferedInputStream(fis)) {
+        try (var fis = new FileInputStream(file); var is = new BufferedInputStream(fis)) {
             var bytes = new byte[is.available()];
             is.read(bytes);
             return new String(bytes, StandardCharsets.UTF_8);

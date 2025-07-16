@@ -26,6 +26,7 @@
 package util.xyz.migoo.reader;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public class ResourceReader implements Reader {
 
@@ -36,9 +37,12 @@ public class ResourceReader implements Reader {
     }
 
     public String read() {
-        try (var is = Thread.currentThread().getContextClassLoader().getResourceAsStream(path)) {
-            var bytes = new byte[is.available()];
-            is.read(bytes);
+        try (var inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path)) {
+            if (Objects.isNull(inputStream)) {
+                throw new RuntimeException("Can not find resource: " + path);
+            }
+            var bytes = new byte[inputStream.available()];
+            inputStream.read(bytes);
             return new String(bytes, StandardCharsets.UTF_8);
         } catch (Exception e) {
             throw new RuntimeException(e);

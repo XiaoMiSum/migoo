@@ -34,6 +34,7 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -102,6 +103,9 @@ public abstract class AbstractTestElement implements TestElement, Serializable {
     public byte[] getPropertyAsByteArray(String key) {
         var lowerKey = key.toLowerCase();
         var val = propMap.get(lowerKey);
+        if (Objects.isNull(val)) {
+            return null;
+        }
         if (val instanceof Map<?, ?> || val instanceof List<?>) {
             return JSON.toJSONBytes(val);
         }
