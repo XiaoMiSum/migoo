@@ -27,6 +27,7 @@ package protocol.xyz.migoo.jdbc.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.fastjson2.annotation.JSONField;
+import core.xyz.migoo.config.ConfigureElement;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestStateListener;
@@ -39,7 +40,7 @@ import java.sql.SQLException;
  * @author xiaomi
  */
 @Alias({"JDBCDatasource", "jdbc_datasource", "datasource", "data_source", "JDBCSource", "jdbc_source"})
-public class DataSourceElement extends AbstractTestElement implements TestStateListener, JDBCConstantsInterface {
+public class DataSourceElement extends AbstractTestElement implements ConfigureElement, TestStateListener, JDBCConstantsInterface {
 
 
     @JSONField(serialize = false)

@@ -7,7 +7,7 @@ import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestElementService;
 import org.apache.commons.lang3.StringUtils;
 import picocli.CommandLine;
-import util.xyz.migoo.loader.Loader;
+import support.xyz.migoo.TestDataLoader;
 import xyz.migoo.convert.ConvertFactory;
 
 import java.io.File;
@@ -62,7 +62,7 @@ class Cli implements Runnable {
         if (StringUtils.isNotBlank(file)) {
             System.setProperty(Constants.REPORT_ENABLE, StringUtils.isNotBlank(report) ? "true" : "false");
             System.setProperty(Constants.REPORT_OUTPUT, StringUtils.isNotBlank(report) ? report : "");
-            var yaml = Loader.toJavaObject(file, JSONObject.class);
+            var yaml = TestDataLoader.toJavaObject(file, JSONObject.class);
             System.out.println("用例解析完成....");
             MiGoo.start(yaml);
             System.out.println("测试执行完成....");

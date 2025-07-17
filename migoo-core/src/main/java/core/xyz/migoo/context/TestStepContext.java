@@ -23,17 +23,12 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package protocol.xyz.migoo.debug.coinfig;
-
-import core.xyz.migoo.config.ConfigureElement;
-import core.xyz.migoo.testelement.Alias;
-import core.xyz.migoo.testelement.TestStateListener;
-import protocol.xyz.migoo.debug.AbstractDebugTestElement;
+package core.xyz.migoo.context;
 
 /**
+ * 测试步骤上下文
+ *
  * @author xiaomi
  */
-@Alias({"debugconfig", "debug_config"})
-public class DebugDefaults extends AbstractDebugTestElement implements ConfigureElement, TestStateListener {
-
+public class TestStepContext extends TestRunContext {
 }

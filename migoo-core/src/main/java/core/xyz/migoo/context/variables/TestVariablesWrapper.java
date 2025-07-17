@@ -23,17 +23,21 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package protocol.xyz.migoo.debug.coinfig;
+package core.xyz.migoo.context.variables;
 
-import core.xyz.migoo.config.ConfigureElement;
-import core.xyz.migoo.testelement.Alias;
-import core.xyz.migoo.testelement.TestStateListener;
-import protocol.xyz.migoo.debug.AbstractDebugTestElement;
+import core.xyz.migoo.context.Context;
+
+import java.util.List;
 
 /**
+ * TestRunner 变量包装类
+ *
  * @author xiaomi
  */
-@Alias({"debugconfig", "debug_config"})
-public class DebugDefaults extends AbstractDebugTestElement implements ConfigureElement, TestStateListener {
+public class TestVariablesWrapper extends AbstractVariablesWrapper {
+
+    public TestVariablesWrapper(List<Context> contextChain) {
+        super(contextChain);
+    }
 
 }

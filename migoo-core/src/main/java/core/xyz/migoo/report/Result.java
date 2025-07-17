@@ -177,7 +177,7 @@ public class Result implements Serializable {
     }
 
     public boolean hasConfigurer() {
-        var hasVariables = Objects.nonNull(variables) && !variables.getProperty().isEmpty();
+        var hasVariables = Objects.nonNull(variables) && !variables.isEmpty();
         var hasConfigElements = Objects.nonNull(configElementResults) && !configElementResults.isEmpty();
         var hasPreprocessors = Objects.nonNull(preprocessorResults) && !preprocessorResults.isEmpty();
         var hasPostprocessors = Objects.nonNull(postprocessorResults) && !postprocessorResults.isEmpty();

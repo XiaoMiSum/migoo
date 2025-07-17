@@ -23,17 +23,16 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package protocol.xyz.migoo.debug.coinfig;
+package core.xyz.migoo.config;
 
-import core.xyz.migoo.config.ConfigureElement;
-import core.xyz.migoo.testelement.Alias;
-import core.xyz.migoo.testelement.TestStateListener;
-import protocol.xyz.migoo.debug.AbstractDebugTestElement;
+import core.xyz.migoo.Mergeable;
+import core.xyz.migoo.Validatable;
 
 /**
+ * 配置元件：默认配置，可参考JMeter的HTTP默认配置、jdbcDataSource配置
+ *
+ * @param <T>
  * @author xiaomi
  */
-@Alias({"debugconfig", "debug_config"})
-public class DebugDefaults extends AbstractDebugTestElement implements ConfigureElement, TestStateListener {
-
+public interface ConfigureElement<T> extends Validatable, Mergeable<T> {
 }

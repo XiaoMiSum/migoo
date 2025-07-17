@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2022.  Lorem XiaoMiSum (mi_xiao@qq.com)
+ * Copyright (c) 2023.  Lorem XiaoMiSum (mi_xiao@qq.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,17 +23,15 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package protocol.xyz.migoo.debug.coinfig;
-
-import core.xyz.migoo.config.ConfigureElement;
-import core.xyz.migoo.testelement.Alias;
-import core.xyz.migoo.testelement.TestStateListener;
-import protocol.xyz.migoo.debug.AbstractDebugTestElement;
+package support.xyz.migoo.reader;
 
 /**
  * @author xiaomi
+ * Created at 2023/9/9 22:53
  */
-@Alias({"debugconfig", "debug_config"})
-public class DebugDefaults extends AbstractDebugTestElement implements ConfigureElement, TestStateListener {
+public class ReaderFactor {
 
+    public static Reader getReader(boolean isClasspath, String path) {
+        return isClasspath ? new ResourceReader(path) : new FileReader(path);
+    }
 }

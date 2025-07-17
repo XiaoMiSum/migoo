@@ -24,16 +24,16 @@
  */
 
 
-package util.xyz.migoo.loader;
+package support.xyz.migoo;
 
 import com.alibaba.fastjson2.JSON;
 import org.yaml.snakeyaml.Yaml;
-import util.xyz.migoo.reader.ReaderFactor;
+import support.xyz.migoo.reader.ReaderFactor;
 
 /**
  * @author xiaomi
  */
-public class Loader {
+public class TestDataLoader {
 
     public static final String CLASSPATH = "classpath:";
 

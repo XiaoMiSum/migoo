@@ -23,17 +23,15 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package protocol.xyz.migoo.debug.coinfig;
+package core.xyz.migoo.filter;
 
-import core.xyz.migoo.config.ConfigureElement;
-import core.xyz.migoo.testelement.Alias;
-import core.xyz.migoo.testelement.TestStateListener;
-import protocol.xyz.migoo.debug.AbstractDebugTestElement;
+import core.xyz.migoo.ContextWrapper;
 
 /**
  * @author xiaomi
  */
-@Alias({"debugconfig", "debug_config"})
-public class DebugDefaults extends AbstractDebugTestElement implements ConfigureElement, TestStateListener {
+public interface SampleFilterChain {
+
+    void doSample(ContextWrapper ctx);
 
 }

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2022.  Lorem XiaoMiSum (mi_xiao@qq.com)
+ * Copyright (c) 2023.  Lorem XiaoMiSum (mi_xiao@qq.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,17 +23,30 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package protocol.xyz.migoo.debug.coinfig;
+package support.xyz.migoo.reader;
 
-import core.xyz.migoo.config.ConfigureElement;
-import core.xyz.migoo.testelement.Alias;
-import core.xyz.migoo.testelement.TestStateListener;
-import protocol.xyz.migoo.debug.AbstractDebugTestElement;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
-/**
- * @author xiaomi
- */
-@Alias({"debugconfig", "debug_config"})
-public class DebugDefaults extends AbstractDebugTestElement implements ConfigureElement, TestStateListener {
+public class FileReader implements Reader {
 
+    private final File file;
+
+    public FileReader(String path) {
+        file = new File(path);
+        if (!file.exists() || file.isDirectory()) {
+            throw new RuntimeException("FileReader: " + path + " is not exists or is directory");
+        }
+    }
+
+    @Override
+    public String read() {
+        try {
+            var bytes = Files.readAllBytes(file.toPath());
+            return new String(bytes, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

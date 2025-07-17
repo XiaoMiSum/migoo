@@ -25,6 +25,7 @@
 
 package protocol.xyz.migoo.http.config;
 
+import core.xyz.migoo.config.ConfigureElement;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestStateListener;
@@ -36,7 +37,7 @@ import java.util.Objects;
  * @author xiaomi
  */
 @Alias({"http_default", "HttpDefault", "Http_Defaults"})
-public class HttpDefaults extends AbstractTestElement implements TestStateListener, HTTPConstantsInterface {
+public class HttpDefaults extends AbstractTestElement implements ConfigureElement, TestStateListener, HTTPConstantsInterface {
 
     @Override
     public void testStarted() {

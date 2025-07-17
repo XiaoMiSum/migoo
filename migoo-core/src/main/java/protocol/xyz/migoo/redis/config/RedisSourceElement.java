@@ -26,6 +26,7 @@
 package protocol.xyz.migoo.redis.config;
 
 import com.alibaba.fastjson2.annotation.JSONField;
+import core.xyz.migoo.config.ConfigureElement;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestStateListener;
@@ -38,7 +39,7 @@ import redis.clients.jedis.JedisPoolConfig;
  * @author xiaomi
  */
 @Alias({"RedisDataSource", "Redis_DataSource", "RedisSource", "Redis_Source"})
-public class RedisSourceElement extends AbstractTestElement implements TestStateListener, RedisConstantsInterface {
+public class RedisSourceElement extends AbstractTestElement implements ConfigureElement, TestStateListener, RedisConstantsInterface {
 
     @JSONField(serialize = false)
     private JedisPool jedisPool;

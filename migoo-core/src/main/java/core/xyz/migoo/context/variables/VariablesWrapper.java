@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2023.  Lorem XiaoMiSum (mi_xiao@qq.com)
+ * Copyright (c) 2022.  Lorem XiaoMiSum (mi_xiao@qq.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,15 +23,49 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package util.xyz.migoo.reader;
+package core.xyz.migoo.context.variables;
+
+import java.util.Map;
 
 /**
+ * 变量包装类
+ *
  * @author xiaomi
- * Created at 2023/9/9 22:53
  */
-public class ReaderFactor {
+public interface VariablesWrapper {
 
-    public static Reader getReader(boolean isClasspath, String path) {
-        return isClasspath ? new ResourceReader(path) : new FileReader(path);
-    }
+    /**
+     * 根据变量名称读取变量值
+     *
+     * @param name 变量名称
+     * @return 变量值
+     */
+    Object get(String name);
+
+    /**
+     * 设置指定名称变量的值
+     *
+     * @param name  变量名称
+     * @param value 变量值
+     * @return 变量之前的值，如果有，否则返回 null
+     */
+    Object put(String name, Object value);
+
+    /**
+     * 移除指定变量
+     *
+     * @param name 变量名称
+     * @return 变量之前的值，如果有，否则返回 null
+     */
+    Object remove(String name);
+
+    /**
+     * 合并所有上下文的变量。
+     *
+     * <p>合并后返回一个新的 Map 对象，对该对象的修改不会反映到上下文的原始变量中。
+     *
+     * @return 合并后的变量
+     */
+    Map<String, Object> mergeVariables();
+
 }

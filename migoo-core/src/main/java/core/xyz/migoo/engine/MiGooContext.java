@@ -1,6 +1,8 @@
 package core.xyz.migoo.engine;
 
 import com.alibaba.fastjson2.JSONObject;
+import core.xyz.migoo.ApplicationConfig;
+import core.xyz.migoo.sampler.Sampler;
 import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestElementService;
 import core.xyz.migoo.variable.MiGooVariables;
@@ -28,10 +30,16 @@ public class MiGooContext {
         this.variables = plan.getVariables();
         this.id = plan.getString(ID);
         this.title = plan.getString(TITLE);
-        if (plan.isSampler()) {
-            sampler = TestElementService.getService(plan.getString(TEST_CLASS));
-            // 这里的 plan 与 sampler 为同一节点，直接设置变量
-            TestElementService.prepare(sampler, plan.getJSONObject(CONFIG), variables);
+        var clz = ApplicationConfig.getTestElementKeyMap().get(plan.getString(plan.getString(TEST_CLASS)));
+        if (Sampler.class.isAssignableFrom(clz)) {
+            try {
+                sampler = clz.getConstructor().newInstance();
+                // 这里的 plan 与 sampler 为同一节点，直接设置变量
+                TestElementService.prepare(sampler, plan.getJSONObject(CONFIG), variables);
+            } catch (Exception ignored) {
+
+            }
+
         }
     }
 

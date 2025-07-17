@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2023.  Lorem XiaoMiSum (mi_xiao@qq.com)
+ * Copyright (c) 2022.  Lorem XiaoMiSum (mi_xiao@qq.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,29 +23,21 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package util.xyz.migoo.reader;
+package core.xyz.migoo.context;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
+import core.xyz.migoo.config.ConfigureGroup;
 
-public class ResourceReader implements Reader {
+/**
+ * 测试上下文接口，通过该接口可以获取每个测试元件的上下文信息
+ *
+ * @author xiaomi
+ */
+public interface Context {
 
-    private final String path;
-
-    public ResourceReader(String path) {
-        this.path = path;
-    }
-
-    public String read() {
-        try (var inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path)) {
-            if (Objects.isNull(inputStream)) {
-                throw new RuntimeException("Can not find resource: " + path);
-            }
-            var bytes = new byte[inputStream.available()];
-            inputStream.read(bytes);
-            return new String(bytes, StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+    /**
+     * 获取当前 TestElement 的配置组数据。TestElement 的配置组数据运行时初始化，属于运行时配置数据。
+     *
+     * @return TestElement 的配置组数据
+     */
+    ConfigureGroup getConfigGroup();
 }

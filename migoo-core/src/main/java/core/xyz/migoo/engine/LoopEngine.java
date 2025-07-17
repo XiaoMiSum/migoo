@@ -59,7 +59,7 @@ public class LoopEngine extends AbstractTestEngine {
             result.setSuccessful(result.isSuccessful() ? sResult.isSuccessful() : result.isSuccessful());
             if (engine instanceof StandardEngine && result.isSuccessful()) {
                 // 标准引擎 将子节点里面的变量合并到当前父节点中，以便传递给其他子节点
-                context.getVariables().mergeVariable(child.getVariables());
+                context.getVariables().merge(child.getVariables());
             }
             if (!sResult.isSuccessful() && Objects.nonNull(child.getSampler())) {
                 break; // 如果子级结果为 false，且子级为取样器时则无需继续执行剩余的子级取样器

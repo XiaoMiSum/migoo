@@ -31,7 +31,7 @@ import core.xyz.migoo.engine.Testplan;
 import core.xyz.migoo.report.Reporter;
 import core.xyz.migoo.report.Result;
 import picocli.CommandLine;
-import util.xyz.migoo.loader.Loader;
+import support.xyz.migoo.TestDataLoader;
 import xyz.migoo.report.StandardReporter;
 
 import java.util.Map;
@@ -45,7 +45,7 @@ import static xyz.migoo.Constants.REPORT_ENABLE;
 public class MiGoo {
 
     static {
-        var config = Loader.toJavaObject("props.migoo.yml", true, JSONObject.class);
+        var config = TestDataLoader.toJavaObject("props.migoo.yml", true, JSONObject.class);
         config.forEach((key, value) -> System.setProperty(key, String.valueOf(value)));
         printLogo();
     }
@@ -71,12 +71,12 @@ public class MiGoo {
     }
 
     public static Result start(String filePath) {
-        var testcase = Loader.toJavaObject(filePath, JSONObject.class);
+        var testcase = TestDataLoader.toJavaObject(filePath, JSONObject.class);
         return start(testcase);
     }
 
     public static Result start(String filePath, boolean isClassPath) {
-        var testcase = Loader.toJavaObject(filePath, isClassPath, JSONObject.class);
+        var testcase = TestDataLoader.toJavaObject(filePath, isClassPath, JSONObject.class);
         return start(testcase);
     }
 

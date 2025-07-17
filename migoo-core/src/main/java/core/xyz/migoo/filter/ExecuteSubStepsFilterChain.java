@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2023.  Lorem XiaoMiSum (mi_xiao@qq.com)
+ * Copyright (c) 2022.  Lorem XiaoMiSum (mi_xiao@qq.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,13 +23,15 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package util.xyz.migoo.reader;
+package core.xyz.migoo.filter;
+
+import core.xyz.migoo.ContextWrapper;
 
 /**
  * @author xiaomi
- * Created at 2023/9/9 22:51
  */
-public interface Reader {
+public interface ExecuteSubStepsFilterChain {
 
-    String read();
+    void doExecuteSubSteps(ContextWrapper ctx);
+
 }

@@ -26,7 +26,7 @@
 package xyz.migoo.convert;
 
 import com.alibaba.fastjson2.JSONObject;
-import util.xyz.migoo.loader.Loader;
+import support.xyz.migoo.TestDataLoader;
 
 import java.io.File;
 
@@ -37,7 +37,7 @@ import java.io.File;
 public class ConvertFactory {
 
     public static void convert(String command, File file) {
-        var object = Loader.toJavaObject(file.getPath(), JSONObject.class);
+        var object = TestDataLoader.toJavaObject(file.getPath(), JSONObject.class);
         if ("h2m".equals(command)) {
             new Har2Sampler().convert(object, file.getParent());
         } else if ("p2m".equals(command)) {

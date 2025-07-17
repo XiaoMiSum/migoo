@@ -23,17 +23,19 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package protocol.xyz.migoo.debug.coinfig;
-
-import core.xyz.migoo.config.ConfigureElement;
-import core.xyz.migoo.testelement.Alias;
-import core.xyz.migoo.testelement.TestStateListener;
-import protocol.xyz.migoo.debug.AbstractDebugTestElement;
+package core.xyz.migoo;
 
 /**
  * @author xiaomi
  */
-@Alias({"debugconfig", "debug_config"})
-public class DebugDefaults extends AbstractDebugTestElement implements ConfigureElement, TestStateListener {
+public interface Mergeable<T> {
+
+    /**
+     * 合并相同类型的对象，参数对象的值会覆盖当前对象的值，方法应返回一个新的对象。
+     *
+     * @param other 新的对象
+     * @return 合并后的对象
+     */
+    T merge(T other);
 
 }

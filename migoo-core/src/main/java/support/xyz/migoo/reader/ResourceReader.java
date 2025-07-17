@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2022.  Lorem XiaoMiSum (mi_xiao@qq.com)
+ * Copyright (c) 2023.  Lorem XiaoMiSum (mi_xiao@qq.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,17 +23,29 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package protocol.xyz.migoo.debug.coinfig;
+package support.xyz.migoo.reader;
 
-import core.xyz.migoo.config.ConfigureElement;
-import core.xyz.migoo.testelement.Alias;
-import core.xyz.migoo.testelement.TestStateListener;
-import protocol.xyz.migoo.debug.AbstractDebugTestElement;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
-/**
- * @author xiaomi
- */
-@Alias({"debugconfig", "debug_config"})
-public class DebugDefaults extends AbstractDebugTestElement implements ConfigureElement, TestStateListener {
+public class ResourceReader implements Reader {
 
+    private final String path;
+
+    public ResourceReader(String path) {
+        this.path = path;
+    }
+
+    public String read() {
+        try (var inputstream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path)) {
+            if (Objects.isNull(inputstream)) {
+                throw new RuntimeException("Can not find resource: " + path);
+            }
+            var bytes = new byte[inputstream.available()];
+            inputstream.read(bytes);
+            return new String(bytes, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

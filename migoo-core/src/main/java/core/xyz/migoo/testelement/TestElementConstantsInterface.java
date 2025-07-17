@@ -23,17 +23,37 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package protocol.xyz.migoo.debug.coinfig;
-
-import core.xyz.migoo.config.ConfigureElement;
-import core.xyz.migoo.testelement.Alias;
-import core.xyz.migoo.testelement.TestStateListener;
-import protocol.xyz.migoo.debug.AbstractDebugTestElement;
+package core.xyz.migoo.testelement;
 
 /**
  * @author xiaomi
  */
-@Alias({"debugconfig", "debug_config"})
-public class DebugDefaults extends AbstractDebugTestElement implements ConfigureElement, TestStateListener {
+public interface TestElementConstantsInterface {
+
+    String ID = "id";
+
+    String TITLE = "title";
+
+    String SLEEP = "sleep";
+
+    String CONFIG = "config";
+
+    String CHILDREN = "children";
+
+    String VALIDATORS = "validators";
+
+    String EXTRACTORS = "extractors";
+
+    String PREPROCESSORS = "preprocessors";
+
+    String POSTPROCESSORS = "postprocessors";
+
+    String CONFIG_ELEMENTS = "configelements";
+
+    String VARIABLES = "variables";
+
+    String TEST_CLASS = "testclass";
+
+    String FILTERS = "filters";
 
 }

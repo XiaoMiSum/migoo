@@ -40,7 +40,9 @@ import static core.xyz.migoo.testelement.AbstractTestElement.CONFIG;
 
 /**
  * @author xiaomi
+ * @deprecated 这个类已经废弃，请使用 {@link core.xyz.migoo.ApplicationConfig} 代替。
  */
+@Deprecated(since = "5.4.0", forRemoval = false)
 public class TestElementService {
 
     private static final Map<String, Class<? extends TestElement>> SERVICES = new HashMap<>(20);

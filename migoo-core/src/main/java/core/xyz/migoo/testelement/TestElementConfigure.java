@@ -23,17 +23,32 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package protocol.xyz.migoo.debug.coinfig;
+package core.xyz.migoo.testelement;
 
-import core.xyz.migoo.config.ConfigureElement;
-import core.xyz.migoo.testelement.Alias;
-import core.xyz.migoo.testelement.TestStateListener;
-import protocol.xyz.migoo.debug.AbstractDebugTestElement;
+import core.xyz.migoo.config.ConfigureGroup;
+import core.xyz.migoo.config.ConfigureItem;
+
+import java.util.HashMap;
 
 /**
+ * 测试元件配置数据
+ *
  * @author xiaomi
  */
-@Alias({"debugconfig", "debug_config"})
-public class DebugDefaults extends AbstractDebugTestElement implements ConfigureElement, TestStateListener {
+@SuppressWarnings({"rawtypes"})
+public class TestElementConfigure extends HashMap<String, ConfigureItem> implements ConfigureGroup {
+
+    @Override
+    @SuppressWarnings({"unchecked"})
+    public <T extends ConfigureItem<T>> T get(String key) {
+        return (T) super.get(key);
+    }
+
+    @Override
+    public TestElementConfigure copy() {
+        TestElementConfigure testElementConfigure = new TestElementConfigure();
+        this.forEach((k, v) -> testElementConfigure.put(k, v.copy()));
+        return testElementConfigure;
+    }
 
 }

@@ -27,12 +27,13 @@ package core.xyz.migoo.engine;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import core.xyz.migoo.sampler.Sampler;
-import core.xyz.migoo.testelement.TestElementService;
 import core.xyz.migoo.variable.MiGooVariables;
-import util.xyz.migoo.loader.Loader;
+import support.xyz.migoo.TestDataLoader;
 
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 import static core.xyz.migoo.testelement.AbstractTestElement.*;
 import static core.xyz.migoo.variable.VariableUtils.FILE_PATTERN;
@@ -42,16 +43,13 @@ import static core.xyz.migoo.variable.VariableUtils.FILE_PATTERN;
  */
 public class Testplan extends JSONObject {
 
-    private final boolean sampler;
+    private final boolean sampler = false;
 
     public Testplan(JSONObject testcase) {
         // 同时包含 children 和 title 这两个key 即 认为是 migoo 的测试集合
         var json = prepare(testcase);
-        var isMiGooSuite = json.containsKey(CHILDREN) && json.containsKey(TITLE);
-        var clazz = TestElementService.getServiceClass(json.getString(TEST_CLASS));
-        sampler = Objects.nonNull(clazz) && Sampler.class.isAssignableFrom(clazz);
         // migoo 测试集合 或者 注册的 test class 都是 migoo 测试组件
-        initialize(json, isMiGooSuite || Objects.nonNull(clazz));
+        initialize(json, isMiGoo(json));
     }
 
     private void initialize(JSONObject json, boolean isMiGoo) {
@@ -81,9 +79,7 @@ public class Testplan extends JSONObject {
     }
 
     private JSONObject parse(JSONObject json) {
-        var isMiGooSuite = json.containsKey(CHILDREN) && json.containsKey(TITLE);
-        var clazz = TestElementService.getServiceClass(json.getString(TEST_CLASS));
-        return isMiGooSuite || Objects.nonNull(clazz) ? new Testplan(json) : json;
+        return isMiGoo(json) ? new Testplan(json) : json;
     }
 
     private JSONObject prepare(Map<?, ?> object) {
@@ -117,7 +113,7 @@ public class Testplan extends JSONObject {
     private Object prepare(String value) {
         var matcher = FILE_PATTERN.matcher(value);
         if (matcher.find()) {
-            var result = Loader.toJSON(matcher.group(1));
+            var result = TestDataLoader.toJSON(matcher.group(1));
             return switch (result) {
                 case List<?> objects -> prepare(objects);
                 case Map<?, ?> object -> prepare(object);
@@ -133,5 +129,9 @@ public class Testplan extends JSONObject {
 
     public MiGooVariables getVariables() {
         return (MiGooVariables) get(VARIABLES);
+    }
+
+    private boolean isMiGoo(JSONObject json) {
+        return (json.containsKey(CHILDREN) && json.containsKey(TITLE)) || json.containsKey(TEST_CLASS);
     }
 }

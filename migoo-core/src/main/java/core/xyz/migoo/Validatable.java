@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2023.  Lorem XiaoMiSum (mi_xiao@qq.com)
+ * Copyright (c) 2022.  Lorem XiaoMiSum (mi_xiao@qq.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,32 +23,26 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package util.xyz.migoo.reader;
+package core.xyz.migoo;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.nio.charset.StandardCharsets;
+/**
+ * 表示一个类是可自检的类，即验证对象是否合法，提现发现数据问题，提升执行效率
+ *
+ * @author xiaomi
+ */
+public interface Validatable {
 
-public class FileReader implements Reader {
-
-    private final File file;
-
-    public FileReader(String path) {
-        file = new File(path);
-        if (!file.exists() || file.isDirectory()) {
-            throw new RuntimeException("FileReader: " + path + " is not exists or is directory");
-        }
+    /**
+     * 对象自检
+     *
+     * <p><br>约定：
+     * <li>如果 valid 为 false，必须填入 reason（不能为 null 或空）。</li>
+     * <li>reason 的填写格式："\n" + 数据非法原因。</li>
+     *
+     * @return 验证结果
+     */
+    default ValidateResult validate() {
+        return new ValidateResult();
     }
 
-    @Override
-    public String read() {
-        try (var fis = new FileInputStream(file); var is = new BufferedInputStream(fis)) {
-            var bytes = new byte[is.available()];
-            is.read(bytes);
-            return new String(bytes, StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

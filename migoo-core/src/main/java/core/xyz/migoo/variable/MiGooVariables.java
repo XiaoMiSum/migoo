@@ -28,8 +28,8 @@ package core.xyz.migoo.variable;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.function.FunctionService;
-import core.xyz.migoo.testelement.MiGooProperty;
 
 import java.util.Map;
 import java.util.Objects;
@@ -39,57 +39,34 @@ import static core.xyz.migoo.variable.VariableUtils.*;
 /**
  * @author xiaomi
  */
-public class MiGooVariables {
-
-    private final MiGooProperty propMap = new MiGooProperty();
+public class MiGooVariables extends JSONObject implements ConfigureItem<MiGooVariables> {
 
     public MiGooVariables() {
-
     }
 
     public MiGooVariables(Map<? extends String, ?> variables) {
         this.putAll(variables);
     }
 
-    public void putAll(MiGooVariables variables) {
-        if (variables != null) {
-            propMap.putAll(variables.getProperty());
-        }
-    }
-
     public void putAll(Map<? extends String, ?> variables) {
         if (variables != null) {
-            propMap.putAll(variables);
+            super.putAll(variables);
         }
-    }
-
-    public void put(String name, Object value) {
-        propMap.put(name, value);
-    }
-
-    public MiGooProperty getProperty() {
-        return this.propMap;
-    }
-
-    public Object get(String key) {
-        return propMap.get(key);
-    }
-
-    public Object remove(String key) {
-        return propMap.remove(key);
     }
 
     public void convertVariable() {
-        this.convertVariables(getProperty());
+        this.convertVariables(this);
     }
 
-    public void mergeVariable(MiGooVariables parentVars) {
-        if (parentVars != null) {
-            var copy = new MiGooVariables(getProperty());
-            this.getProperty().clear();
-            this.putAll(parentVars);
+    @Override
+    public MiGooVariables merge(MiGooVariables other) {
+        if (other != null) {
+            var copy = new MiGooVariables(this);
+            this.clear();
+            this.putAll(other);
             this.putAll(copy);
         }
+        return this;
     }
 
     public void convertVariables(JSONObject dataMapping) {
@@ -99,9 +76,8 @@ public class MiGooVariables {
                 var v = entry.getValue();
                 switch (v) {
                     case String s -> dataMapping.put(entry.getKey(), extractVariables(s));
-                    case JSONObject en -> convertVariables(en);
-                    case JSONArray en -> convertVariables(en);
-                    case MiGooVariables en -> convertVariables(en.getProperty());
+                    case JSONObject object -> convertVariables(object);
+                    case JSONArray array -> convertVariables(array);
                     case null, default -> dataMapping.put(entry.getKey(), v);
                 }
             }
@@ -139,15 +115,15 @@ public class MiGooVariables {
             x = matcher.end();
             var temp = matcher.group();
             var key = matcher.group(1);
-            var v = propMap.get(key);
+            var v = get(key);
             if (Objects.isNull(v)) {
                 continue;
             }
-            if (v instanceof String && JSON.isValid((String) v)) {
+            if (v instanceof String s && JSON.isValid(s)) {
                 // 字符串可以解析为 json 不允许出现在多变量组合的情况
-                return JSON.parse((String) v);
-            } else if (v instanceof String) {
-                var result = evalVariable((String) v);
+                return JSON.parse(s);
+            } else if (v instanceof String s) {
+                var result = evalVariable(s);
                 if (result instanceof String string) {
                     // 变量计算结果为字符串时进行变量替换，同时继续判断字符串中是否还存在变量引用
                     value = value.replace(temp, string);
@@ -183,8 +159,4 @@ public class MiGooVariables {
         return v;
     }
 
-    @Override
-    public String toString() {
-        return propMap.toString();
-    }
 }
