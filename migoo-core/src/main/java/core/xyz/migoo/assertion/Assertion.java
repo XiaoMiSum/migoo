@@ -25,6 +25,7 @@
 
 package core.xyz.migoo.assertion;
 
+import core.xyz.migoo.ContextWrapper;
 import core.xyz.migoo.sampler.SampleResult;
 
 /**
@@ -39,4 +40,6 @@ public interface Assertion {
      * @return 断言结果
      */
     VerifyResult getResult(SampleResult samplerResult);
+
+    void getResult(ContextWrapper contextWrapper);
 }

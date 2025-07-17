@@ -69,6 +69,11 @@ public class MiGooVariables extends JSONObject implements ConfigureItem<MiGooVar
         return this;
     }
 
+    @Override
+    public MiGooVariables copy() {
+        return new MiGooVariables(this);
+    }
+
     public void convertVariables(JSONObject dataMapping) {
         if (dataMapping != null) {
             var entries = dataMapping.entrySet();

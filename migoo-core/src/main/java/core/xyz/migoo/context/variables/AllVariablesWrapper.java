@@ -23,39 +23,22 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package core.xyz.migoo.processor;
+package core.xyz.migoo.context.variables;
 
-import core.xyz.migoo.ContextWrapper;
-import core.xyz.migoo.sampler.SampleResult;
-import core.xyz.migoo.testelement.TestStateListener;
+
+import core.xyz.migoo.context.Context;
+
+import java.util.List;
 
 /**
+ * 全局变量包装类
+ *
  * @author xiaomi
  */
-public interface Processor extends TestStateListener {
+public class AllVariablesWrapper extends AbstractVariablesWrapper {
 
-    /**
-     * 是否禁用
-     *
-     * @return true 表示禁用，默认不禁用
-     */
-    default boolean isDisabled() {
-        return false;
+    public AllVariablesWrapper(List<Context> contextChain) {
+        super(contextChain);
     }
 
-    /**
-     * 前\后置处理器执行
-     *
-     * @return 处理结果
-     */
-    SampleResult process();
-
-    /**
-     * 前\后置处理器执行
-     *
-     * @return 处理结果
-     */
-    default void process(ContextWrapper context) {
-        // todo
-    }
 }

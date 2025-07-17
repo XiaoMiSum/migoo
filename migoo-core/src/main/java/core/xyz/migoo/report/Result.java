@@ -38,7 +38,7 @@ import java.util.Objects;
  * @author mi.xiao
  * @date 2021/6/15 20:44
  */
-public class Result implements Serializable {
+public class Result<T> implements Serializable {
 
     private final String id;
 

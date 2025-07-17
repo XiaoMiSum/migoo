@@ -1,3 +1,28 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2022.  Lorem XiaoMiSum (mi_xiao@qq.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * 'Software'), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package core.xyz.migoo.testelement1;
 
 import core.xyz.migoo.ContextWrapper;
@@ -18,8 +43,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-@SuppressWarnings("rawtypes")
-public abstract class ExecutableTestElement<SELF extends AbstractTestElement<SELF, T>, T extends Result>
+/**
+ * 可执行的测试组件抽象类，提供公共属性和方法
+ *
+ * @author xiaomi
+ */
+@SuppressWarnings({"rawtypes", "unchecked"})
+public abstract class ExecutableTestElement<SELF extends ExecutableTestElement<SELF, T>, T extends Result<T>>
         extends AbstractTestElement<SELF, T> implements RunFilterChain, ExecuteFilterChain {
 
     protected List<ConfigureElement> configureElements;
@@ -33,7 +63,7 @@ public abstract class ExecutableTestElement<SELF extends AbstractTestElement<SEL
     protected List<Assertion> assertions;
 
     protected List<TestFilter> filters;
-    private Iterator<TestFilter> runFilters;
+    private Iterator<TestFilter> runtimeFilters;
     private Iterator<TestFilter> executeFilters;
 
     @Override
@@ -59,11 +89,21 @@ public abstract class ExecutableTestElement<SELF extends AbstractTestElement<SEL
 
     @Override
     public final void doRun(ContextWrapper ctx) {
-        if (runFilters.hasNext()) {
-            TestFilter next = runFilters.next();
+        if (runtimeFilters.hasNext()) {
+            TestFilter next = runtimeFilters.next();
             next.doRun(ctx, this);
         } else {
             internalRun(ctx);
+        }
+    }
+
+    @Override
+    public final void doExecute(ContextWrapper ctx) {
+        if (executeFilters.hasNext()) {
+            TestFilter next = executeFilters.next();
+            next.doExecute(ctx, this);
+        } else {
+            execute(ctx, (T) ctx.getTestResult());
         }
     }
 
@@ -80,7 +120,7 @@ public abstract class ExecutableTestElement<SELF extends AbstractTestElement<SEL
 
     private void handleFilters(ContextWrapper contextWrapper) {
         filters = contextWrapper.getConfigGroup().get(FILTERS);
-        runFilters = filters.iterator();
+        runtimeFilters = filters.iterator();
     }
 
 
@@ -111,8 +151,50 @@ public abstract class ExecutableTestElement<SELF extends AbstractTestElement<SEL
     }
 
 
+    private void internalRun(ContextWrapper contextWrapper) {
+        // 模板计算：当前元件的变量配置项（不会计算父级元件）
+        // List/Map/String 类型对象会深度计算，BeanWrapper 类型会解包返回，Supplier 类型会调用 get 返回，其他类型直接返回
+        evalVariableConfigItem(contextWrapper);
+
+        // 执行前置动作
+        for (PreProcessor preprocessor : preprocessors) {
+            if (preprocessor.isDisabled()) {
+                continue;
+            }
+            preprocessor.process(contextWrapper);
+        }
+        // 执行请求
+        executeFilters = filters.iterator();
+        doExecute(contextWrapper);
+        if (Objects.nonNull(assertions)) {
+            for (Assertion assertion : assertions) {
+                assertion.getResult(contextWrapper);
+            }
+        }
+        for (PostProcessor postprocessor : postprocessors) {
+            if (postprocessor.isDisabled()) {
+                continue;
+            }
+            postprocessor.process(contextWrapper);
+        }
+    }
+
+    @Override
+    public SELF copy() {
+        SELF self = super.copy();
+        self.preprocessors = preprocessors;
+        self.postprocessors = postprocessors;
+        self.assertions = assertions;
+        self.extractors = extractors;
+        return self;
+    }
+
     protected abstract T getTestResult();
 
+    /**
+     * 测试元件的功能实现，比如发起 HTTP 请求
+     */
+    protected abstract void execute(ContextWrapper ctx, T testResult);
 
     public List<ConfigureElement> getConfigureElements() {
         return configureElements;

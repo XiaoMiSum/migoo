@@ -36,7 +36,7 @@ import java.util.Objects;
 /**
  * @author xiaomi
  */
-public class SampleResult extends Result {
+public class SampleResult<T> extends Result<T> {
 
     public static final Charset DEFAULT_ENCODING = StandardCharsets.UTF_8;
     public static final String TEXT = "text";
@@ -53,7 +53,7 @@ public class SampleResult extends Result {
 
     private List<VerifyResult> verifyResults;
 
-    private List<SampleResult> extractorResults;
+    private List<SampleResult<?>> extractorResults;
 
     public SampleResult(String title) {
         super(title);
@@ -132,11 +132,11 @@ public class SampleResult extends Result {
         this.setTestClass(testClass.getName());
     }
 
-    public List<SampleResult> getExtractorResults() {
+    public List<SampleResult<?>> getExtractorResults() {
         return extractorResults;
     }
 
-    public void setExtractorResults(List<SampleResult> extractorResults) {
+    public void setExtractorResults(List<SampleResult<?>> extractorResults) {
         this.extractorResults = extractorResults;
     }
 }
