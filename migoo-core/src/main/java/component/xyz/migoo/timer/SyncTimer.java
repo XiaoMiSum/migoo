@@ -25,8 +25,10 @@
 
 package component.xyz.migoo.timer;
 
+import core.xyz.migoo.config.ConfigureItem;
+import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.processor.AbstractProcessor;
 import core.xyz.migoo.processor.Postprocessor;
-import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 
 /**
@@ -34,24 +36,16 @@ import core.xyz.migoo.testelement.Alias;
  * @date 2021/4/7 19:49
  */
 @Alias({"SyncTimer", "Timer", "sync_timer", "def_timer", "defTimer"})
-public class SyncTimer extends AbstractTestElement implements Postprocessor {
+public class SyncTimer extends AbstractProcessor implements Postprocessor {
 
-    private long timeout;
+    public static final String TIMEOUT = "timeout";
 
-    @Override
-    public void testStarted() {
-        timeout = getPropertyAsLong("timeout") * 1000L;
-    }
 
     @Override
-    public void testEnded() {
-        timeout = 0;
-    }
-
-    @Override
-    public SampleResult process() {
-        var result = new SampleResult(this.getClass().toString());
-        if (timeout > 0) {
+    public void process(ContextWrapper context) {
+        context.getConfigGroup().get(TIMEOUT);
+        // todo 这里要获取配置
+        /*if (timeout > 0) {
             synchronized (this) {
                 try {
                     this.wait(timeout);
@@ -60,7 +54,28 @@ public class SyncTimer extends AbstractTestElement implements Postprocessor {
                 }
             }
         }
-        result.setResponseData(String.format("the test wait %s second", timeout / 1000L));
-        return result;
+        */
+    }
+
+    public static class TimerConfigureItem implements ConfigureItem<TimerConfigureItem> {
+
+        private int timeout;
+
+        @Override
+        public TimerConfigureItem merge(TimerConfigureItem other) {
+            // 无需合并，返回当前对象的拷贝
+            return copy();
+        }
+
+        @Override
+        public TimerConfigureItem copy() {
+            var res = new TimerConfigureItem();
+            res.timeout = timeout;
+            return res;
+        }
+
+        public int getTimeout() {
+            return timeout;
+        }
     }
 }
