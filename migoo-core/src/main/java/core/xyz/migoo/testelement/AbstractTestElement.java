@@ -25,164 +25,148 @@
 
 package core.xyz.migoo.testelement;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
+import core.xyz.migoo.SessionRunner;
+import core.xyz.migoo.context.Context;
+import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.context.TestStepContext;
+import core.xyz.migoo.report.Result;
 import core.xyz.migoo.variable.MiGooVariables;
 
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
+ * 测试组件抽象类，提供公共属性和方法
+ *
  * @author xiaomi
  */
-public abstract class AbstractTestElement implements TestElement, Serializable {
+public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF, T>, T extends Result<T>>
+        implements TestElement<T>, TestElementConstantsInterface {
 
-    public static final String VARIABLES = "variables";
-    public static final String CONFIG_ELEMENTS = "configelements";
-    public static final String PREPROCESSORS = "preprocessors";
-    public static final String POSTPROCESSORS = "postprocessors";
-    public static final String TEST_CLASS = "testclass";
-    public static final String EXTRACTORS = "extractors";
-    public static final String VALIDATORS = "validators";
-    public static final String CHILDREN = "children";
-    public static final String ID = "id";
-    public static final String TITLE = "title";
-    public static final String SLEEP = "sleep";
-    public static final String CONFIG = "config";
+    protected String id;
 
-    private final MiGooProperty propMap = new MiGooProperty();
+    protected String title;
 
-    @Override
-    public MiGooVariables getVariables() {
-        return (MiGooVariables) propMap.get(VARIABLES);
+    protected boolean disabled = false;
+
+    protected TestElementConfigure config;
+
+
+    // 元数据，可以挂载一些辅助数据
+    protected Map<String, Object> metadata = new HashMap<>();
+
+    protected Map<String, Object> rawData;
+
+    protected SELF runtime;
+
+    protected boolean initialized = false;
+
+    public AbstractTestElement() {
     }
 
-    @Override
-    public void setVariables(MiGooVariables variables) {
-        propMap.put(VARIABLES, variables);
+    protected void initialized(SessionRunner session) {
+        initialized = true;
+        runtime = newInstance();
     }
 
-    @Override
-    public void convertVariable() {
-        var variables = getVariables();
-        if (variables != null) {
-            variables.convertVariables(getProperty());
+    /**
+     * 当前测试元件的上下文链
+     *
+     * @param parentContext 父上下文链
+     */
+    protected List<Context> getContextChain(List<Context> parentContext) {
+        List<Context> contextChain = new ArrayList<>(parentContext);
+        contextChain.add(createCurrentContext());
+        return contextChain;
+    }
+
+    /**
+     * 创建当前测试元件的上下文对象，当子类有额外的需求时重写该方法
+     *
+     * @return 当前测试元件的上下文对象
+     */
+    protected TestStepContext createCurrentContext() {
+        TestStepContext context = new TestStepContext();
+        context.setConfigGroup(runtime.config);
+        return context;
+    }
+
+    protected void evalVariableConfigItem(ContextWrapper ctx) {
+        MiGooVariables item;
+        if (runtime.config != null && (item = runtime.config.getVariables()) != null) {
+            ctx.eval(item);
+        }
+    }
+
+
+    protected SELF newInstance() {
+        try {
+            //noinspection unchecked
+            return (SELF) this.getClass().getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(String.format("实例化 %s 失败", this.getClass().getName()), e);
         }
     }
 
     @Override
-    public void setProperties(Map<String, Object> props) {
-        if (props != null && !props.isEmpty()) {
-            props.forEach((key, value) -> propMap.putIfAbsent(key.toLowerCase(), value));
-        }
+    public SELF copy() {
+        SELF self = newInstance();
+        self.title = title;
+        self.id = id;
+        self.disabled = disabled;
+        self.config = config;
+        self.metadata = metadata;
+        return self;
     }
 
-    @Override
-    public void setProperty(String key, Object value) {
-        key = key.toLowerCase();
-        propMap.putIfAbsent(key, value);
+
+    public String getId() {
+        return id;
     }
 
-    @Override
-    public MiGooProperty getProperty() {
-        return propMap;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    @Override
-    public Object removeProperty(String key) {
-        var lowerKey = key.toLowerCase();
-        return propMap.remove(lowerKey);
+    public String getTitle() {
+        return title;
     }
 
-    @Override
-    public byte[] getPropertyAsByteArray(String key) {
-        var lowerKey = key.toLowerCase();
-        var val = propMap.get(lowerKey);
-        if (Objects.isNull(val)) {
-            return null;
-        }
-        if (val instanceof Map<?, ?> || val instanceof List<?>) {
-            return JSON.toJSONBytes(val);
-        }
-        if (!(val instanceof String) && !(val instanceof byte[])) {
-            return val.toString().getBytes(StandardCharsets.UTF_8);
-        }
-        return propMap.getBytes(lowerKey);
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    @Override
-    public boolean getPropertyAsBoolean(String key) {
-        var lowerKey = key.toLowerCase();
-        return propMap.getBooleanValue(lowerKey);
+    public boolean isDisabled() {
+        return disabled;
     }
 
-    @Override
-    public long getPropertyAsLong(String key) {
-        var lowerKey = key.toLowerCase();
-        return propMap.getLongValue(lowerKey);
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
-    @Override
-    public int getPropertyAsInt(String key) {
-        var lowerKey = key.toLowerCase();
-        return propMap.getIntValue(lowerKey);
+    public TestElementConfigure getConfig() {
+        return config;
     }
 
-    @Override
-    public float getPropertyAsFloat(String key) {
-        var lowerKey = key.toLowerCase();
-        return propMap.getFloatValue(lowerKey);
+    public void setConfig(TestElementConfigure config) {
+        this.config = config;
     }
 
-    @Override
-    public double getPropertyAsDouble(String key) {
-        var lowerKey = key.toLowerCase();
-        return propMap.getDoubleValue(lowerKey);
+    public Map<String, Object> getMetadata() {
+        return metadata;
     }
 
-    @Override
-    public String getPropertyAsString(String key) {
-        var lowerKey = key.toLowerCase();
-        return propMap.getString(lowerKey);
+    public void setMetadata(Map<String, Object> metadata) {
+        this.metadata = metadata;
     }
 
-    @Override
-    public JSONObject getPropertyAsJSONObject(String key) {
-        var lowerKey = key.toLowerCase();
-        return propMap.getJSONObject(lowerKey);
+    public Map<String, Object> getRawData() {
+        return rawData;
     }
 
-    @Override
-    public JSONArray getPropertyAsJSONArray(String key) {
-        var lowerKey = key.toLowerCase();
-        return propMap.getJSONArray(lowerKey);
-    }
-
-    @Override
-    public Object get(String key) {
-        String lowerKey = key.toLowerCase();
-        return propMap.get(lowerKey);
-    }
-
-    @Override
-    public Object get(String key, Object defaultValue) {
-        var lowerKey = key.toLowerCase();
-        var obj = propMap.get(lowerKey);
-        return Optional.ofNullable(obj).orElse(defaultValue);
-    }
-
-    @Override
-    public MiGooProperty getPropertyAsMiGooProperty(String key) {
-        Object object = get(key);
-        return switch (object) {
-            case MiGooProperty property -> property;
-            case Map<?, ?> property -> new MiGooProperty(property);
-            case null, default -> null;
-        };
+    public void setRawData(Map<String, Object> rawData) {
+        this.rawData = rawData;
     }
 }

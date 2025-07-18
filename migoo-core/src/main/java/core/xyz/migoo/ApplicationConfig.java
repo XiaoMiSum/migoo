@@ -30,8 +30,8 @@ import core.xyz.migoo.assertion.Rule;
 import core.xyz.migoo.config.ConfigureElement;
 import core.xyz.migoo.extractor.Extractor;
 import core.xyz.migoo.function.Function;
-import core.xyz.migoo.processor.PostProcessor;
-import core.xyz.migoo.processor.PreProcessor;
+import core.xyz.migoo.processor.Postprocessor;
+import core.xyz.migoo.processor.Preprocessor;
 import core.xyz.migoo.testelement.TestElement;
 import support.xyz.migoo.MiGooServiceLoader;
 
@@ -44,6 +44,7 @@ import java.util.function.Supplier;
 /**
  * @author xiaomi
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class ApplicationConfig {
 
 
@@ -59,12 +60,12 @@ public class ApplicationConfig {
 
     private static Map<String, Class<? extends TestElement>> TEST_ELEMENT_KEY_MAP;
     private static Map<String, Class<? extends ConfigureElement>> CONFIG_ELEMENT_KEY_MAP;
-    private static Map<String, Class<? extends PreProcessor>> PREPROCESSOR_KEY_MAP;
-    private static Map<String, Class<? extends PostProcessor>> POSTPROCESSOR_KEY_MAP;
+    private static Map<String, Class<? extends Preprocessor>> PREPROCESSOR_KEY_MAP;
+    private static Map<String, Class<? extends Postprocessor>> POSTPROCESSOR_KEY_MAP;
     private static Map<String, Class<? extends Assertion>> ASSERTION_KEY_MAP;
     private static Map<String, Class<? extends Extractor>> EXTRACTOR_KEY_MAP;
     private static Map<String, Class<? extends Function>> FUNCTION_KEY_MAP;
-    private static Map<String, Class<? extends Rule>> RULE_KEY_MAP;
+    private static Map<String, Rule> RULE_KEY_MAP;
 
     public static Map<String, Class<? extends TestElement>> getTestElementKeyMap() {
         return getClassMap(TEST_ELEMENT_KEY_MAP_LOCK,
@@ -86,21 +87,21 @@ public class ApplicationConfig {
         );
     }
 
-    public static Map<String, Class<? extends PreProcessor>> getPreprocessorKeyMap() {
+    public static Map<String, Class<? extends Preprocessor>> getPreprocessorKeyMap() {
         return getClassMap(PREPROCESSOR_KEY_MAP_LOCK,
                 () -> ApplicationConfig.PREPROCESSOR_KEY_MAP,
                 () -> {
-                    ApplicationConfig.PREPROCESSOR_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(PreProcessor.class);
+                    ApplicationConfig.PREPROCESSOR_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(Preprocessor.class);
                     return ApplicationConfig.PREPROCESSOR_KEY_MAP;
                 }
         );
     }
 
-    public static Map<String, Class<? extends PostProcessor>> getPostprocessorKeyMap() {
+    public static Map<String, Class<? extends Postprocessor>> getPostprocessorKeyMap() {
         return getClassMap(POSTPROCESSOR_KEY_MAP_LOCK,
                 () -> ApplicationConfig.POSTPROCESSOR_KEY_MAP,
                 () -> {
-                    ApplicationConfig.POSTPROCESSOR_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(PostProcessor.class);
+                    ApplicationConfig.POSTPROCESSOR_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(Postprocessor.class);
                     return ApplicationConfig.POSTPROCESSOR_KEY_MAP;
                 }
         );
@@ -136,11 +137,11 @@ public class ApplicationConfig {
         );
     }
 
-    public static Map<String, Class<? extends Rule>> getRuleKeyMap() {
+    public static Map<String, Rule> getRuleKeyMap() {
         return getClassMap(RULE_KEY_MAP_LOCK,
                 () -> ApplicationConfig.RULE_KEY_MAP,
                 () -> {
-                    ApplicationConfig.RULE_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(Rule.class);
+                    ApplicationConfig.RULE_KEY_MAP = (Map<String, Rule>) MiGooServiceLoader.loadAsInstanceMapBySPI(Rule.class);
                     return ApplicationConfig.RULE_KEY_MAP;
                 }
         );

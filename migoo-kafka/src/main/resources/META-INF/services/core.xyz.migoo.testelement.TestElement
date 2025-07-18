@@ -26,6 +26,6 @@
 #
 
 protocol.xyz.migoo.kafka.config.KafkaDefaults
-protocol.xyz.migoo.kafka.processor.KafkaPreProcessor
-protocol.xyz.migoo.kafka.processor.KafkaPostProcessor
+protocol.xyz.migoo.kafka.processor.KafkaPreprocessor
+protocol.xyz.migoo.kafka.processor.KafkaPostprocessor
 protocol.xyz.migoo.kafka.sampler.KafkaSampler

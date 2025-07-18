@@ -27,7 +27,6 @@ package protocol.xyz.migoo.rabbitmq;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.rabbitmq.client.*;
-import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import protocol.xyz.migoo.rabbitmq.config.RabbitMQDefaults;
 import protocol.xyz.migoo.rabbitmq.util.RabbitMQConstantsInterface;

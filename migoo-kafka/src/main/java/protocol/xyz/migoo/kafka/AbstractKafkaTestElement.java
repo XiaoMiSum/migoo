@@ -26,7 +26,6 @@
 package protocol.xyz.migoo.kafka;
 
 import com.alibaba.fastjson2.JSONObject;
-import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;

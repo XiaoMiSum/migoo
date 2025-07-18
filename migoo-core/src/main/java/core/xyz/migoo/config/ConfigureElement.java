@@ -25,14 +25,21 @@
 
 package core.xyz.migoo.config;
 
-import core.xyz.migoo.Mergeable;
-import core.xyz.migoo.Validatable;
+import core.xyz.migoo.SessionRunner;
+import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.report.Result;
+import core.xyz.migoo.testelement.Validatable;
 
 /**
  * 配置元件：默认配置，可参考JMeter的HTTP默认配置、jdbcDataSource配置
  *
- * @param <T>
  * @author xiaomi
  */
-public interface ConfigureElement<T> extends Validatable, Mergeable<T> {
+public interface ConfigureElement<T extends Result<T>> extends Validatable {
+
+    T run(ContextWrapper ctx);
+
+    default T run(SessionRunner sessionRunner) {
+        return null;
+    }
 }

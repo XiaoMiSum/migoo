@@ -1,6 +1,6 @@
 package core.xyz.migoo.filter;
 
-import core.xyz.migoo.ContextWrapper;
+import core.xyz.migoo.context.ContextWrapper;
 
 public interface ExecuteFilterChain {
 

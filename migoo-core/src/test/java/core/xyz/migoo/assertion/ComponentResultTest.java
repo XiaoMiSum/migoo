@@ -37,7 +37,7 @@ public class ComponentResultTest {
 
     @Test
     public void testAssertionResult1() {
-        VerifyResult result = new VerifyResult("test");
+        AssertionResult result = new AssertionResult("test");
         result.setContent("test context");
         result.setSuccessful(true);
         assert result.getName().equals("test");
@@ -47,7 +47,7 @@ public class ComponentResultTest {
 
     @Test
     public void testAssertionResult2() {
-        VerifyResult result = new VerifyResult("test");
+        AssertionResult result = new AssertionResult("test");
         result.setSuccessful(false);
         assert result.getName().equals("test");
         assert !result.isSuccessful();
@@ -55,7 +55,7 @@ public class ComponentResultTest {
 
     @Test
     public void testAssertionResult3() {
-        VerifyResult result = new VerifyResult("test");
+        AssertionResult result = new AssertionResult("test");
         result.setFailureMessage("test false");
         assert result.getName().equals("test");
         assert Objects.equals(result.getContent(), "test false");
@@ -64,7 +64,7 @@ public class ComponentResultTest {
 
     @Test
     public void testAssertionResult4() {
-        VerifyResult result = new VerifyResult("test");
+        AssertionResult result = new AssertionResult("test");
         result.setFailureMessage(new Exception("test Exception"));
         assert result.getName().equals("test");
         assert result.getContent().contains("java.lang.Exception: test Exception");
@@ -73,7 +73,7 @@ public class ComponentResultTest {
 
     @Test
     public void testAssertionResult5() {
-        VerifyResult result = new VerifyResult("test");
+        AssertionResult result = new AssertionResult("test");
         assert !result.isSuccessful();
         assert result.getContent() == null;
     }

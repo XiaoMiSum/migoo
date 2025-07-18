@@ -26,21 +26,33 @@
 package component.xyz.migoo.extractor;
 
 import com.alibaba.fastjson2.JSONPath;
+import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.extractor.AbstractExtractor;
+import core.xyz.migoo.extractor.ExtractResult;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author xiaomi
  */
-@Alias({"JSONExtractor", "json_extractor"})
+@Alias({"JSONExtractor", "json_extractor", "json"})
 public class JSONExtractor extends AbstractExtractor {
 
     @Override
-    public Object extract(SampleResult result) {
-        var jsonStr = result.getResponseDataAsString();
-        return (StringUtils.isBlank(jsonStr) || StringUtils.equalsAny(jsonStr, "[]", "{}")) ? null :
-                JSONPath.extract(jsonStr, getPropertyAsString(FIELD));
+    protected ExtractResult extract(SampleResult<? extends SampleResult<?>> result) {
+        var res = new ExtractResult("JSON 提取: " + field);
+        var target = result.getResponseDataAsString();
+        Object value = null;
+        try {
+            value = JSONPath.extract(target, field);
+            res.setValue(value);
+        } catch (Exception e) {
+            res.setException(e);
+        }
+        if (value == null) {
+            res.setStatus(TestStatus.failed);
+            res.setMessage(String.format("目标字符串不存在 JsonPath %s，目标字符串：\n%s", field, target));
+        }
+        return res;
     }
 }

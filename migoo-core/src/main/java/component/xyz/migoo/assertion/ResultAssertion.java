@@ -26,17 +26,20 @@
 package component.xyz.migoo.assertion;
 
 import core.xyz.migoo.assertion.AbstractAssertion;
+import core.xyz.migoo.assertion.AssertionResult;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
 
 /**
  * @author xiaomi
  */
-@Alias({"ResultAssertion", "Result_Assertion"})
+@Alias({"ResultAssertion", "Result_Assertion", "result"})
 public class ResultAssertion extends AbstractAssertion {
 
     @Override
-    protected void setActual(SampleResult result) {
-        setActual(result.getResponseDataAsString());
+    protected AssertionResult init(SampleResult<? extends SampleResult<?>> result) {
+        var res = new AssertionResult("响应断言: ");
+        actualValue = result.getResponseDataAsString();
+        return res;
     }
 }

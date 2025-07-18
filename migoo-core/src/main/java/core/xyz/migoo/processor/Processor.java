@@ -25,14 +25,12 @@
 
 package core.xyz.migoo.processor;
 
-import core.xyz.migoo.ContextWrapper;
-import core.xyz.migoo.sampler.SampleResult;
-import core.xyz.migoo.testelement.TestStateListener;
+import core.xyz.migoo.context.ContextWrapper;
 
 /**
  * @author xiaomi
  */
-public interface Processor extends TestStateListener {
+public interface Processor {
 
     /**
      * 是否禁用
@@ -48,14 +46,5 @@ public interface Processor extends TestStateListener {
      *
      * @return 处理结果
      */
-    SampleResult process();
-
-    /**
-     * 前\后置处理器执行
-     *
-     * @return 处理结果
-     */
-    default void process(ContextWrapper context) {
-        // todo
-    }
+    void process(ContextWrapper context);
 }

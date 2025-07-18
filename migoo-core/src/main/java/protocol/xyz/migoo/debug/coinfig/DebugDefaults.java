@@ -25,15 +25,28 @@
 
 package protocol.xyz.migoo.debug.coinfig;
 
+import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.config.ConfigureElement;
+import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
-import core.xyz.migoo.testelement.TestStateListener;
-import protocol.xyz.migoo.debug.AbstractDebugTestElement;
+import core.xyz.migoo.testelement.TestSuiteResult;
 
 /**
  * @author xiaomi
  */
-@Alias({"debugconfig", "debug_config"})
-public class DebugDefaults extends AbstractDebugTestElement implements ConfigureElement, TestStateListener {
+@Alias({"debugconfig", "debug_config", "debug"})
+public class DebugDefaults extends AbstractTestElement<DebugDefaults, TestSuiteResult> implements ConfigureElement<TestSuiteResult> {
 
+    @Override
+    public TestSuiteResult run(ContextWrapper ctx) {
+        var result = new DebugDefaults();
+        ctx.getSessionRunner().config(getConfig());
+        return null;
+    }
+
+    @Override
+    public TestSuiteResult run(SessionRunner session) {
+        return null;
+    }
 }

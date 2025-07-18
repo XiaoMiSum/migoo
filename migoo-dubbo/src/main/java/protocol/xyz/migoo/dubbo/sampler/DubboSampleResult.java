@@ -26,8 +26,6 @@
 package protocol.xyz.migoo.dubbo.sampler;
 
 import com.alibaba.fastjson2.JSONObject;
-import core.xyz.migoo.sampler.SampleResult;
-import core.xyz.migoo.testelement.MiGooProperty;
 import protocol.xyz.migoo.dubbo.util.DubboConstantsInterface;
 
 /**

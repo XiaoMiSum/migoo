@@ -27,8 +27,7 @@ package component.xyz.migoo.assertions;
 
 import com.alibaba.fastjson2.JSONObject;
 import component.xyz.migoo.assertion.ResultAssertion;
-import core.xyz.migoo.assertion.VerifyResult;
-import core.xyz.migoo.sampler.SampleResult;
+import core.xyz.migoo.assertion.AssertionResult;
 import core.xyz.migoo.testelement.TestElement;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,7 +61,7 @@ public class ResultAssertionTest {
     @Test
     public void testJSONAssertion() {
         ((TestElement) assertion).setProperty("expected", JSON.toJSONString());
-        VerifyResult result = assertion.getResult(sampleResult);
+        AssertionResult result = assertion.getResult(sampleResult);
         assert result.isSuccessful();
     }
 }

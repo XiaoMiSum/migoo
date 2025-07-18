@@ -1,8 +1,8 @@
 package core.xyz.migoo.config;
 
-import core.xyz.migoo.Copyable;
-import core.xyz.migoo.Mergeable;
-import core.xyz.migoo.Validatable;
+import core.xyz.migoo.testelement.Cloneable;
+import core.xyz.migoo.testelement.Mergeable;
+import core.xyz.migoo.testelement.Validatable;
 
 /**
  * 配置项接口，最基本的配置单元。
@@ -10,7 +10,7 @@ import core.xyz.migoo.Validatable;
  * @param <T>
  * @author xiaomi
  */
-public interface ConfigureItem<T extends ConfigureItem<T>> extends Validatable, Mergeable<T>, Copyable<T> {
+public interface ConfigureItem<T extends ConfigureItem<T>> extends Validatable, Mergeable<T>, Cloneable<T> {
 
     T merge(T other);
 

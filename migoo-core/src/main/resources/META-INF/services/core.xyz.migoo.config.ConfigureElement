@@ -25,9 +25,6 @@
 #  */
 #
 
-protocol.xyz.migoo.jdbc.config.DataSourceElement
-protocol.xyz.migoo.redis.config.RedisSourceElement
-protocol.xyz.migoo.http.config.HttpDefaults
 protocol.xyz.migoo.debug.coinfig.DebugDefaults
 
 

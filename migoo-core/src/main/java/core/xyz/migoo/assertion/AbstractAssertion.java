@@ -25,76 +25,81 @@
 
 package core.xyz.migoo.assertion;
 
+import com.alibaba.fastjson2.annotation.JSONField;
+import core.xyz.migoo.ApplicationConfig;
+import core.xyz.migoo.TestStatus;
+import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.sampler.SampleResult;
-import core.xyz.migoo.testelement.AbstractTestElement;
-import core.xyz.migoo.testelement.Alias;
-import core.xyz.migoo.testelement.MiGooProperty;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.Serializable;
-import java.util.*;
+import java.util.Locale;
+import java.util.Objects;
 
 /**
  * @author xiaomi
  */
-public abstract class AbstractAssertion extends AbstractTestElement implements Serializable, Assertion {
+public abstract class AbstractAssertion implements Assertion, AssertionConstantsInterface {
 
-    protected static final String FIELD = "field";
-    protected static final String EXPECTED = "expected";
-    protected static final String ACTUAL = "actual";
-    private static final Map<String, Rule> RULES = new HashMap<>(100);
-    private static final String RULE = "rule";
+    protected Object actualValue;
 
-    static {
-        var loaders = ServiceLoader.load(Rule.class);
-        for (var function : loaders) {
-            for (String alias : function.getClass().getAnnotation(Alias.class).value()) {
-                RULES.put(alias.toLowerCase(), function);
+    @JSONField(name = EXPECTED)
+    protected Object expected;
+
+    @JSONField(name = RULE)
+    protected String rule;
+
+    @JSONField(name = FIELD)
+    protected String field;
+
+
+    @Override
+    public void assertThat(ContextWrapper ctx) {
+        if (ctx.getTestResult() instanceof SampleResult<? extends SampleResult<?>> result) {
+            var res = init(result);
+            rule = StringUtils.isBlank(rule) ? "==" : rule;
+            var checkRule = ApplicationConfig.getRuleKeyMap().get(rule.toLowerCase(Locale.ROOT));
+            if (Objects.isNull(checkRule)) {
+                res.setStatus(TestStatus.failed);
+                res.setMessage(String.format("没有匹配的验证规则：%s", rule));
+            }
+            if (!checkRule.assertThat(actualValue, expected)) {
+                res.setStatus(TestStatus.failed);
+                res.setMessage(String.format("验证 %s %s %s 失败", expected, rule, actualValue));
             }
         }
     }
 
-    public VerifyResult getResult(SampleResult samplerResult) {
-        var result = new VerifyResult(this.getClass());
-        super.convertVariable();
-        try {
-            setActual(samplerResult);
-            assertThat(result);
-        } catch (Exception e) {
-            result.setFailureMessage(e);
-        }
-        setContent(result);
-        return result;
+    protected abstract AssertionResult init(SampleResult<? extends SampleResult<?>> result);
+
+    public Object getActualValue() {
+        return actualValue;
     }
 
-    protected void assertThat(VerifyResult result) {
-        var ruleStr = get(RULE) == null ? "==" : getPropertyAsString(RULE);
-        setProperty("rule", ruleStr);
-        var rule = RULES.get(ruleStr.toLowerCase(Locale.ROOT));
-        if (Objects.isNull(rule)) {
-            result.setFailureMessage(String.format("assert rule '%s' not found", ruleStr));
-        } else {
-            result.setSuccessful(rule.assertThat(get(ACTUAL), get(EXPECTED)));
-        }
+    public void setActualValue(Object actualValue) {
+        this.actualValue = actualValue;
     }
 
-    protected abstract void setActual(SampleResult result);
-
-    protected void setActual(Object actual) {
-        getProperty().put(ACTUAL, actual);
+    public Object getExpected() {
+        return expected;
     }
 
-    protected void setContent(VerifyResult result) {
-        var content = StringUtils.isNotEmpty(result.getContent()) ? result.getContent() : result.isSuccessful() ? "true" :
-                String.format("expected value '%s', but found '%s'%s, rule: '%s'",
-                        get(EXPECTED), get(ACTUAL), Objects.isNull(get(FIELD)) ? "" : (", field: " + get(FIELD)), get(RULE));
-        setContent(result, content);
+    public void setExpected(Object expected) {
+        this.expected = expected;
     }
 
-    protected void setContent(VerifyResult result, String content) {
-        var prop = new MiGooProperty(getProperty());
-        prop.remove(VARIABLES);
-        prop.put("result", content);
-        result.setContent(prop.toString());
+    public String getRule() {
+        return rule;
+    }
+
+    public void setRule(String rule) {
+        this.rule = rule;
+    }
+
+    public String getField() {
+        return field;
+    }
+
+    public void setField(String field) {
+        this.field = field;
     }
 }

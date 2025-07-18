@@ -25,7 +25,7 @@
 
 package protocol.xyz.migoo.dubbo.processor;
 
-import core.xyz.migoo.processor.PreProcessor;
+import core.xyz.migoo.processor.Preprocessor;
 import core.xyz.migoo.testelement.Alias;
 
 /**
@@ -33,6 +33,6 @@ import core.xyz.migoo.testelement.Alias;
  * @date 2021/4/13 20:08
  */
 @Alias({"dubbo_preprocessor", "dubbo_pre_processor"})
-public class DubboPreprocessor extends AbstractDubboProcessor implements PreProcessor {
+public class DubboPreprocessor extends AbstractDubboProcessor implements Preprocessor {
 
 }

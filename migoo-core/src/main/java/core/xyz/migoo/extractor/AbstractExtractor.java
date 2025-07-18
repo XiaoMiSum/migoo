@@ -25,35 +25,107 @@
 
 package core.xyz.migoo.extractor;
 
-import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.annotation.JSONField;
+import core.xyz.migoo.TestStatus;
+import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.sampler.SampleResult;
-import core.xyz.migoo.testelement.AbstractTestElement;
+import core.xyz.migoo.testelement.ValidateResult;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author xiaomi
  */
-public abstract class AbstractExtractor extends AbstractTestElement implements Extractor {
+public abstract class AbstractExtractor implements Extractor, ExtractorConstantsInterface {
 
-    public static final String FIELD = "field";
-    public static final String VARIABLE_NAME = "variable_name";
-    public static final String MATCH_NUM = "match_num";
-    public static final String VALUE = "value";
+    @JSONField(name = FIELD)
+    protected String field;
 
-    protected SampleResult getResult(SampleResult result) {
-        var items = JSONObject.of("Extractor", getClass(), FIELD, get(FIELD), MATCH_NUM, get(MATCH_NUM), "Result", get(VALUE), VARIABLE_NAME, get(VARIABLE_NAME));
-        result.setSamplerData(items.toJSONString());
-        result.setTestClass(getClass());
+    @JSONField(name = DEFAULT_VALUE)
+    protected Object defaultValue;
+
+    @JSONField(name = VARIABLE_NAME)
+    protected String variableName;
+
+    @JSONField(name = MATCH_NUM)
+    protected int matchNum;
+
+    public AbstractExtractor() {
+    }
+
+    @Override
+    public ValidateResult validate() {
+        ValidateResult result = new ValidateResult();
+        if (StringUtils.isBlank(variableName)) {
+            result.append("\n提取变量 %s 字段值缺失或为空，当前值：%s", VARIABLE_NAME, toString());
+        }
+        if (StringUtils.isBlank(field)) {
+            result.append("\n提取表达式 %s 字段值缺失或为空，当前值：%s", field, toString());
+        }
         return result;
     }
 
     @Override
-    public SampleResult process(SampleResult result) {
-        var value = extract(result);
-        getVariables().put(getPropertyAsString(VARIABLE_NAME), value);
-        getProperty().put("value", value);
-        return getResult(new SampleResult(getClass().getSimpleName()));
+    public void process(ContextWrapper ctx) {
+        if (ctx.getTestResult() instanceof SampleResult<? extends SampleResult<?>> result) {
+            var res = StringUtils.isBlank(result.getResponseDataAsString()) ? broken() : extract(result);
+            if (TestStatus.passed.equals(res.getStatus())) {
+                ctx.getLocalVariablesWrapper().put(variableName, res.getValue());
+                return;
+            }
+            if (TestStatus.failed.equals(res.getStatus()) && defaultValue != null) {
+                res.setStatus(TestStatus.passed);
+                ctx.getLocalVariablesWrapper().put(variableName, defaultValue);
+                return;
+            }
+            throw new RuntimeException(res.getMessage(), res.getException());
+        }
+        throw new RuntimeException("不支持提取的测试组件: " + ctx.getTestElement().getClass());
     }
 
-    protected abstract Object extract(SampleResult result);
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
+    }
 
+    private ExtractResult broken() {
+        var res = new ExtractResult(getClass().getSimpleName());
+        res.setStatus(TestStatus.broken);
+        res.setMessage("待提取的字符串为 null 或空白");
+        return res;
+    }
+
+    protected abstract ExtractResult extract(SampleResult<? extends SampleResult<?>> context);
+
+    public String getField() {
+        return field;
+    }
+
+    public void setField(String field) {
+        this.field = field;
+    }
+
+    public Object getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(Object defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
+    public String getVariableName() {
+        return variableName;
+    }
+
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
+    }
+
+    public int getMatchNum() {
+        return matchNum;
+    }
+
+    public void setMatchNum(int matchNum) {
+        this.matchNum = matchNum;
+    }
 }

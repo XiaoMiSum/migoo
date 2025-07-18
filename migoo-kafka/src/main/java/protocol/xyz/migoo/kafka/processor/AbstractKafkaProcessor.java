@@ -25,8 +25,6 @@
 
 package protocol.xyz.migoo.kafka.processor;
 
-import core.xyz.migoo.sampler.SampleResult;
-import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.kafka.AbstractKafkaTestElement;
 
 /**

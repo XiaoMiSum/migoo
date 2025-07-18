@@ -26,17 +26,30 @@
 package component.xyz.migoo.extractor;
 
 import core.xyz.migoo.extractor.AbstractExtractor;
+import core.xyz.migoo.extractor.ExtractResult;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
+import core.xyz.migoo.testelement.ValidateResult;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author xiaomi
  */
-@Alias({"ResultExtractor", "result_extractor"})
+@Alias({"ResultExtractor", "result_extractor", "result"})
 public class ResultExtractor extends AbstractExtractor {
+    @Override
+    protected ExtractResult extract(SampleResult<? extends SampleResult<?>> result) {
+        var res = new ExtractResult("Result 提取");
+        res.setValue(result.getResponseDataAsString());
+        return res;
+    }
 
     @Override
-    public Object extract(SampleResult result) {
-        return result.getResponseDataAsString();
+    public ValidateResult validate() {
+        ValidateResult result = new ValidateResult();
+        if (StringUtils.isBlank(variableName)) {
+            result.append("\n提取变量 %s 字段值缺失或为空，当前值：%s", VARIABLE_NAME, toString());
+        }
+        return result;
     }
 }

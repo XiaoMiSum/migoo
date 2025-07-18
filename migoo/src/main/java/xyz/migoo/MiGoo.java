@@ -26,22 +26,26 @@
 package xyz.migoo;
 
 import com.alibaba.fastjson2.JSONObject;
-import core.xyz.migoo.engine.TestEngine;
-import core.xyz.migoo.engine.Testplan;
+import core.xyz.migoo.ApplicationConfig;
+import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.report.Reporter;
 import core.xyz.migoo.report.Result;
+import core.xyz.migoo.testelement.TestSuite;
 import picocli.CommandLine;
 import support.xyz.migoo.TestDataLoader;
 import xyz.migoo.report.StandardReporter;
 
 import java.util.Map;
+import java.util.Objects;
 
+import static core.xyz.migoo.testelement.TestElementConstantsInterface.TEST_CLASS;
 import static xyz.migoo.Constants.REPORT_CLASS;
 import static xyz.migoo.Constants.REPORT_ENABLE;
 
 /**
  * @author xiaomi
  */
+@SuppressWarnings({"unchecked"})
 public class MiGoo {
 
     static {
@@ -70,29 +74,39 @@ public class MiGoo {
         System.out.println("    GitHub: https://github.com/XiaoMiSum/migoo");
     }
 
-    public static Result start(String filePath) {
+    public static <T extends Result<T>> Result<T> start(String filePath) {
         var testcase = TestDataLoader.toJavaObject(filePath, JSONObject.class);
         return start(testcase);
     }
 
-    public static Result start(String filePath, boolean isClassPath) {
+    public static <T extends Result<T>> Result<T> start(String filePath, boolean isClassPath) {
         var testcase = TestDataLoader.toJavaObject(filePath, isClassPath, JSONObject.class);
         return start(testcase);
     }
 
-    public static Result start(Map<String, Object> testcase) {
+    public static <T extends Result<T>> Result<T> start(Map<String, Object> testcase) {
+        SessionRunner.newSession();
         return new MiGoo(testcase).runTest();
     }
 
-    private Result runTest() {
-        Reporter reporter;
+    private <T extends Result<T>> Result<T> runTest() {
+        var jsontree = new JsonTree(testcase);
+        var clazz = !jsontree.isSampler() ? TestSuite.class :
+                ApplicationConfig.getTestElementKeyMap().get(jsontree.getString(TEST_CLASS));
+        var result = SessionRunner.getSession().runTest(jsontree.toJavaObject(clazz));
+        Reporter reporter = null;
         try {
-            reporter = Boolean.parseBoolean(System.getProperty(REPORT_ENABLE, "true")) ?
-                    (Reporter) Class.forName(System.getProperty(REPORT_CLASS, "xyz.migoo.report.StandardReporter"))
-                            .getConstructor().newInstance() : null;
+            var enableReport = Boolean.parseBoolean(System.getProperty(REPORT_ENABLE, "true"));
+            if (enableReport) {
+                var reporterStrName = System.getProperty(REPORT_CLASS, "xyz.migoo.report.StandardReporter");
+                reporter = (Reporter) Class.forName(reporterStrName).getConstructor().newInstance();
+            }
         } catch (Exception e) {
             reporter = new StandardReporter();
         }
-        return TestEngine.runTest(new Testplan(testcase), reporter);
+        if (Objects.nonNull(reporter)) {
+            reporter.generateReport(result);
+        }
+        return result;
     }
 }

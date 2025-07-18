@@ -28,8 +28,6 @@
 
 package protocol.xyz.migoo.dubbo.processor;
 
-import core.xyz.migoo.sampler.SampleResult;
-import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.dubbo.AbstractDubboTestElement;
 import protocol.xyz.migoo.dubbo.sampler.DubboSampleResult;
 

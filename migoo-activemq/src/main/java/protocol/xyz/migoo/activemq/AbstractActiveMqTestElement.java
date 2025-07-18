@@ -26,7 +26,6 @@
 package protocol.xyz.migoo.activemq;
 
 import com.alibaba.fastjson2.JSONObject;
-import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;

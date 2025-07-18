@@ -28,10 +28,10 @@
 
 package core.xyz.migoo.sampler;
 
-import core.xyz.migoo.ContextWrapper;
+import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.filter.SampleFilterChain;
 import core.xyz.migoo.filter.TestFilter;
-import core.xyz.migoo.testelement1.ExecutableTestElement;
+import core.xyz.migoo.testelement.ExecutableTestElement;
 
 import java.util.Iterator;
 
@@ -44,7 +44,7 @@ import java.util.Iterator;
  */
 @SuppressWarnings("unchecked")
 public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, T>, T extends SampleResult<T>>
-        extends ExecutableTestElement<SELF, T> implements Sampler2<T>, SampleFilterChain {
+        extends ExecutableTestElement<SELF, T> implements Sampler<T>, SampleFilterChain {
 
     private Iterator<TestFilter> sampleFilters;
 

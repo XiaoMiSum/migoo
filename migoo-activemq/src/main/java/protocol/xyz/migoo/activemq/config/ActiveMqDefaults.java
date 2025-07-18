@@ -27,7 +27,6 @@ package protocol.xyz.migoo.activemq.config;
 
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
-import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.activemq.util.ActiveMqConstantsInterface;
 
 import java.util.Objects;

@@ -25,160 +25,53 @@
 
 package core.xyz.migoo.testelement;
 
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
-import core.xyz.migoo.variable.MiGooVariables;
-
-import java.util.Map;
+import core.xyz.migoo.SessionRunner;
+import core.xyz.migoo.report.Result;
 
 /**
+ * 测试元件是能根据其父上下文链独立执行的一个逻辑执行单元。
+ * 测试元件使用 {@link Alias} 注解配置关键字，
+ * 若未使用该注解则通过 this.getClass().getSimpleName()获取类名用作关键字，以便识别测试集中组件的类型（代码风格中组件类型是已知的）。
+ * 配置方式: test_class: http_sampler
+ *
+ * <p>测试元件是整个工具的核心，
+ * 环境管理、变量管理、前置处理器、后置处理器、插值表达式、函数、断言、配置继承、取样器、控制器、用例引用等功能都将围绕测试元件展开。
+ *
+ * <p>一个测试元件可以包含多个子测试元件。
+ *
+ * <p>设计开发一个新的测试元件前，应当先明确该测试元件要实现的功能、需要的参数，是否和其他测试元件功能重合，实现粒度，然后再编码实现。
+ *
+ * <p>important! TestElement 为非线程安全类，不要在多个线程间共享 TestElement 对象。
+ * 如果要在多个线程中运行同一个 TestElement 对象，请先 {@link #copy()}，每个线程使用该 TestElement 的拷贝进行运行。
+ *
  * @author xiaomi
  */
-public interface TestElement {
+@FunctionalInterface
+public interface TestElement<T extends Result<T>> extends Validatable, Cloneable<TestElement<T>> {
 
     /**
-     * 替换属性中的变量
-     */
-    void convertVariable();
-
-    /**
-     * 获取当前测试元素的变量
+     * 执行测试组件
+     * <p>
+     * 用户应避免直接调用该方法，推荐使用 {@link SessionRunner#runTest} 方法。
      *
-     * @return 变量
+     * @param session 每个测试用例使用各自的 SessionRunner
+     * @return 执行结果
      */
-    MiGooVariables getVariables();
+    T run(SessionRunner session);
 
     /**
-     * 设置当前测试元素的变量
+     * 对象拷贝，用于解决 TestElement对象的非线程安全问题
      *
-     * @param variables 变量
+     * <p>
+     * 所有该接口的实现类均应当重写该方法
+     * <p>
+     *
+     * @return 对象的拷贝
      */
-    void setVariables(MiGooVariables variables);
+    @Override
+    default TestElement<T> copy() {
+        // 默认认为当前类是线程安全的，否则应当重写该方法
+        return this;
+    }
 
-    /**
-     * 通过 map 设置测试元素的属性
-     *
-     * @param props 属性集
-     */
-    void setProperties(Map<String, Object> props);
-
-    /**
-     * 通过 key\value 设置测试元素的属性
-     *
-     * @param key   key
-     * @param value value
-     */
-    void setProperty(String key, Object value);
-
-    /**
-     * 获取当前测试元素的属性集
-     *
-     * @return 当前测试元素的属性集
-     */
-    MiGooProperty getProperty();
-
-    /**
-     * 通过 key 删除一个属性
-     *
-     * @param key key
-     * @return 被删除key的value
-     */
-    Object removeProperty(String key);
-
-    /**
-     * 通过key获取一个ByteArray类型的属性值
-     *
-     * @param key key
-     * @return ByteArray类型的属性值
-     */
-    byte[] getPropertyAsByteArray(String key);
-
-    /**
-     * 通过key获取一个boolean类型的属性值
-     *
-     * @param key key
-     * @return boolean类型的属性值
-     */
-    boolean getPropertyAsBoolean(String key);
-
-    /**
-     * 通过key获取一个long类型的属性值
-     *
-     * @param key key
-     * @return long类型的属性值
-     */
-    long getPropertyAsLong(String key);
-
-    /**
-     * 通过key获取一个int类型的属性值
-     *
-     * @param key key
-     * @return int类型的属性值
-     */
-    int getPropertyAsInt(String key);
-
-    /**
-     * 通过key获取一个float类型的属性值
-     *
-     * @param key key
-     * @return float类型的属性值
-     */
-    float getPropertyAsFloat(String key);
-
-    /**
-     * 通过key获取一个double类型的属性值
-     *
-     * @param key key
-     * @return double类型的属性值
-     */
-    double getPropertyAsDouble(String key);
-
-    /**
-     * 通过key获取一个string类型的属性值
-     *
-     * @param key key
-     * @return string类型的属性值
-     */
-    String getPropertyAsString(String key);
-
-    /**
-     * 通过key获取一个fastjson.JSONObject类型的属性值
-     *
-     * @param key key
-     * @return fastjson.JSONObject类型的属性值
-     */
-    JSONObject getPropertyAsJSONObject(String key);
-
-    /**
-     * 通过key获取一个fastjson.JSONArray类型的属性值
-     *
-     * @param key key
-     * @return fastjson.JSONArray类型的属性值
-     */
-    JSONArray getPropertyAsJSONArray(String key);
-
-    /**
-     * 通过key获取一个MiGooProperty类型的属性值
-     *
-     * @param key key
-     * @return MiGooProperty类型的属性值
-     */
-    MiGooProperty getPropertyAsMiGooProperty(String key);
-
-    /**
-     * 通过key获取一个Object类型的属性值
-     *
-     * @param key key
-     * @return object类型的属性值
-     */
-    Object get(String key);
-
-    /**
-     * 通过key获取一个Object类型的属性值，当值为 null时，返回 defaultValue
-     *
-     * @param key          key
-     * @param defaultValue 值为空时的默认值
-     * @return object类型的属性值
-     */
-    Object get(String key, Object defaultValue);
 }

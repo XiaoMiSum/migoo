@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.function.Function;
 import core.xyz.migoo.function.FunctionService;
 import core.xyz.migoo.testelement.TestElement;
-import core.xyz.migoo.testelement.TestElementService;
 import org.apache.commons.lang3.StringUtils;
 import picocli.CommandLine;
 import support.xyz.migoo.TestDataLoader;

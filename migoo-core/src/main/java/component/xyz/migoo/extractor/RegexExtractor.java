@@ -25,30 +25,43 @@
 
 package component.xyz.migoo.extractor;
 
+import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.extractor.AbstractExtractor;
+import core.xyz.migoo.extractor.ExtractResult;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Pattern;
 
 /**
  * @author xiaomi
  */
-@Alias({"RegexExtractor", "regex_extractor"})
+@Alias({"RegexExtractor", "regex_extractor", "regex"})
 public class RegexExtractor extends AbstractExtractor {
 
     @Override
-    public Object extract(SampleResult result) {
-        var pattern = Pattern.compile(getPropertyAsString(FIELD));
-        var matcher = pattern.matcher(result.getResponseDataAsString());
-        int matchNum = Math.max(0, getPropertyAsInt(MATCH_NUM));
+    protected ExtractResult extract(SampleResult<? extends SampleResult<?>> result) {
+        var res = new ExtractResult("正则表达式 提取: %s ，匹配第 %s 个".formatted(field, matchNum + 1));
+        var target = result.getResponseDataAsString();
         var value = "";
-        int state = 0;
-        while (state > -1 && matcher.find()) {
-            state = matcher.groupCount() > 0 ? matchNum : state;
-            value = matcher.group(1);
-            state--;
+        try {
+            var pattern = Pattern.compile(field);
+            var matcher = pattern.matcher(result.getResponseDataAsString());
+            matchNum = Math.max(0, matchNum);
+            int state = 0;
+            while (state > -1 && matcher.find()) {
+                state = matcher.groupCount() > 0 ? matchNum : state;
+                value = matcher.group(1);
+                state--;
+            }
+        } catch (Exception e) {
+            res.setException(e);
         }
-        return value;
+        if (StringUtils.isBlank(value)) {
+            res.setStatus(TestStatus.failed);
+            res.setMessage(String.format("目标字符串没有匹配的数据 %s，目标字符串：\n%s", field, target));
+        }
+        return res;
     }
 }

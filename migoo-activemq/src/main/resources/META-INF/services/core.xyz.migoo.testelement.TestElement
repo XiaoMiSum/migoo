@@ -26,6 +26,6 @@
 #
 
 protocol.xyz.migoo.activemq.config.ActiveMqDefaults
-protocol.xyz.migoo.activemq.processor.ActiveMqPreProcessor
-protocol.xyz.migoo.activemq.processor.ActiveMqPostProcessor
+protocol.xyz.migoo.activemq.processor.ActiveMqPreprocessor
+protocol.xyz.migoo.activemq.processor.ActiveMqPostprocessor
 protocol.xyz.migoo.activemq.sampler.ActiveMqSampler

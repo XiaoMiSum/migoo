@@ -25,37 +25,18 @@
 
 package xyz.migoo.report;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
-import com.aventstack.extentreports.ExtentReports;
-import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.Status;
-import com.aventstack.extentreports.gherkin.model.Feature;
-import com.aventstack.extentreports.gherkin.model.Scenario;
-import com.aventstack.extentreports.markuputils.CodeLanguage;
-import com.aventstack.extentreports.markuputils.MarkupHelper;
-import com.aventstack.extentreports.reporter.ExtentSparkReporter;
-import com.aventstack.extentreports.reporter.configuration.Theme;
 import core.xyz.migoo.report.Reporter;
 import core.xyz.migoo.report.Result;
-import core.xyz.migoo.sampler.SampleResult;
-import core.xyz.migoo.variable.MiGooVariables;
-import org.apache.commons.lang3.StringUtils;
-import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
-import xyz.migoo.report.util.DateUtils;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-
-import static com.aventstack.extentreports.Status.*;
-import static xyz.migoo.Constants.*;
 
 /**
  * @author xiaomi
  */
 public class StandardReporter implements Reporter {
-
+    @Override
+    public void generateReport(Result<?> result) {
+        // todo  这里要实现生成测试报告
+    }
+/*
     private final ExtentReports extent;
     private ReportLevel reportLevel;
 
@@ -355,4 +336,6 @@ public class StandardReporter implements Reporter {
         extent.getReport().setEndTime(DateUtils.toDate(result.getEndTime()));
         extent.flush();
     }
+
+ */
 }

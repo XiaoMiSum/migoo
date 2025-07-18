@@ -25,7 +25,7 @@
 
 package protocol.xyz.migoo.rabbitmq.processor;
 
-import core.xyz.migoo.processor.PostProcessor;
+import core.xyz.migoo.processor.Postprocessor;
 import core.xyz.migoo.testelement.Alias;
 
 /**
@@ -33,6 +33,6 @@ import core.xyz.migoo.testelement.Alias;
  * @date 2024/11/04 20:09
  */
 @Alias({"rabbitmq_postprocessor", "rabbit_mq_postprocessor", "rabbit_mq_post_processor", "rabbit_post_processor", "rabbit_postprocessor"})
-public class RabbitMqPostprocessor extends AbstractRabbitMqProcessor implements PostProcessor {
+public class RabbitMqPostprocessor extends AbstractRabbitMqProcessor implements Postprocessor {
 
 }

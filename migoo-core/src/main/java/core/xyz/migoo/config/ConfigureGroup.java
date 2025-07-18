@@ -25,11 +25,8 @@
 
 package core.xyz.migoo.config;
 
-import core.xyz.migoo.Copyable;
-import core.xyz.migoo.Mergeable;
-import core.xyz.migoo.Validatable;
-import core.xyz.migoo.ValidateResult;
-import core.xyz.migoo.testelement.TestElementConstantsInterface;
+import core.xyz.migoo.testelement.*;
+import core.xyz.migoo.testelement.Cloneable;
 import core.xyz.migoo.variable.MiGooVariables;
 
 import java.util.HashSet;
@@ -42,7 +39,7 @@ import java.util.Objects;
  * @author xiaomi
  */
 @SuppressWarnings("rawtypes")
-public interface ConfigureGroup extends Validatable, Map<String, ConfigureItem>, Mergeable<ConfigureGroup>, Copyable<ConfigureGroup>, TestElementConstantsInterface {
+public interface ConfigureGroup extends Validatable, Map<String, ConfigureItem>, Mergeable<ConfigureGroup>, Cloneable<ConfigureGroup>, TestElementConstantsInterface {
 
     /**
      * 获取指定配置项

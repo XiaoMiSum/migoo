@@ -25,18 +25,6 @@
 #  */
 #
 
-protocol.xyz.migoo.jdbc.config.DataSourceElement
-protocol.xyz.migoo.jdbc.processor.JDBCPreProcessor
-protocol.xyz.migoo.jdbc.processor.JDBCPostProcessor
-protocol.xyz.migoo.jdbc.sampler.JDBCSampler
-protocol.xyz.migoo.redis.config.RedisSourceElement
-protocol.xyz.migoo.redis.processor.RedisPreProcessor
-protocol.xyz.migoo.redis.processor.RedisPostProcessor
-protocol.xyz.migoo.redis.sampler.RedisSampler
-protocol.xyz.migoo.http.config.HttpDefaults
-protocol.xyz.migoo.http.processer.HttpPreProcessor
-protocol.xyz.migoo.http.processer.HttpPostProcessor
-protocol.xyz.migoo.http.sampler.HttpSampler
 protocol.xyz.migoo.debug.coinfig.DebugDefaults
 protocol.xyz.migoo.debug.processer.DebugPreprocessor
 protocol.xyz.migoo.debug.processer.DebugPostprocessor

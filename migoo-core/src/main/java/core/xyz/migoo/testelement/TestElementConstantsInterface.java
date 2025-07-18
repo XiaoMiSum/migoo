@@ -40,6 +40,8 @@ public interface TestElementConstantsInterface {
 
     String CHILDREN = "children";
 
+    String CHILD = "child";
+
     String VALIDATORS = "validators";
 
     String EXTRACTORS = "extractors";

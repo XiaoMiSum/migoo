@@ -25,8 +25,7 @@
 
 package component.xyz.migoo.timer;
 
-import core.xyz.migoo.processor.PostProcessor;
-import core.xyz.migoo.sampler.SampleResult;
+import core.xyz.migoo.processor.Postprocessor;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 
@@ -35,7 +34,7 @@ import core.xyz.migoo.testelement.Alias;
  * @date 2021/4/7 19:49
  */
 @Alias({"SyncTimer", "Timer", "sync_timer", "def_timer", "defTimer"})
-public class SyncTimer extends AbstractTestElement implements PostProcessor {
+public class SyncTimer extends AbstractTestElement implements Postprocessor {
 
     private long timeout;
 

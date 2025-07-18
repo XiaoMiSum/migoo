@@ -25,21 +25,13 @@
 
 package core.xyz.migoo.assertion;
 
-import core.xyz.migoo.ContextWrapper;
-import core.xyz.migoo.sampler.SampleResult;
+import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.testelement.Validatable;
 
 /**
  * @author xiaomi
  */
-public interface Assertion {
+public interface Assertion extends Validatable {
 
-    /**
-     * 验证取样器结果是否符合预期
-     *
-     * @param samplerResult 取样器结果
-     * @return 断言结果
-     */
-    VerifyResult getResult(SampleResult samplerResult);
-
-    void getResult(ContextWrapper contextWrapper);
+    void assertThat(ContextWrapper contextWrapper);
 }

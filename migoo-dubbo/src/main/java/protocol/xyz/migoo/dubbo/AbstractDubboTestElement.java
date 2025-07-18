@@ -26,7 +26,6 @@
 package protocol.xyz.migoo.dubbo;
 
 import com.alibaba.fastjson2.JSON;
-import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.ApplicationConfig;

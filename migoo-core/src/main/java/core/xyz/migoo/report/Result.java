@@ -25,20 +25,16 @@
 
 package core.xyz.migoo.report;
 
-import core.xyz.migoo.sampler.SampleResult;
-import core.xyz.migoo.variable.MiGooVariables;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author mi.xiao
  * @date 2021/6/15 20:44
  */
-public class Result<T> implements Serializable {
+public abstract class Result<T extends Result<T>> implements Serializable {
 
     private final String id;
 
@@ -50,17 +46,10 @@ public class Result<T> implements Serializable {
 
     private LocalDateTime endTime;
 
-    private List<SampleResult> configElementResults;
-
-    private List<SampleResult> preprocessorResults;
-
-    private List<SampleResult> postprocessorResults;
-
-    private List<Result> subResults;
+    private List<Result<T>> subResults;
 
     private Throwable throwable;
 
-    private MiGooVariables variables;
 
     public Result(String title) {
         this(null, title);
@@ -79,11 +68,11 @@ public class Result<T> implements Serializable {
         this.title = title;
     }
 
-    public List<Result> getSubResults() {
+    public List<Result<T>> getSubResults() {
         return subResults;
     }
 
-    public void setSubResults(List<Result> subResults) {
+    public void setSubResults(List<Result<T>> subResults) {
         this.subResults = subResults;
     }
 
@@ -140,47 +129,7 @@ public class Result<T> implements Serializable {
         this.sampleEnd();
     }
 
-    public List<SampleResult> getPreprocessorResults() {
-        return preprocessorResults;
-    }
-
-    public void setPreprocessorResults(List<SampleResult> preprocessorResults) {
-        this.preprocessorResults = preprocessorResults;
-    }
-
-    public List<SampleResult> getPostprocessorResults() {
-        return postprocessorResults;
-    }
-
-    public void setPostprocessorResults(List<SampleResult> postprocessorResults) {
-        this.postprocessorResults = postprocessorResults;
-    }
-
-    public MiGooVariables getVariables() {
-        return variables;
-    }
-
-    public void setVariables(MiGooVariables variables) {
-        this.variables = variables;
-    }
-
-    public List<SampleResult> getConfigElementResults() {
-        return configElementResults;
-    }
-
-    public void setConfigElementResults(List<SampleResult> configElementResults) {
-        this.configElementResults = configElementResults;
-    }
-
     public String getId() {
         return id;
-    }
-
-    public boolean hasConfigurer() {
-        var hasVariables = Objects.nonNull(variables) && !variables.isEmpty();
-        var hasConfigElements = Objects.nonNull(configElementResults) && !configElementResults.isEmpty();
-        var hasPreprocessors = Objects.nonNull(preprocessorResults) && !preprocessorResults.isEmpty();
-        var hasPostprocessors = Objects.nonNull(postprocessorResults) && !postprocessorResults.isEmpty();
-        return hasVariables || hasConfigElements || hasPreprocessors || hasPostprocessors;
     }
 }

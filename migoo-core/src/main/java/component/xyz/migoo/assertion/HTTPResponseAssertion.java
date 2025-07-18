@@ -25,11 +25,10 @@
 
 package component.xyz.migoo.assertion;
 
-import com.alibaba.fastjson2.JSONPath;
 import core.xyz.migoo.assertion.AbstractAssertion;
+import core.xyz.migoo.assertion.AssertionResult;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
-import protocol.xyz.migoo.http.sampler.HTTPSampleResult;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +37,7 @@ import java.util.regex.Pattern;
 /**
  * @author xiaomi
  */
-@Alias({"HTTPAssertion", "HTTP_Assertion"})
+@Alias({"HTTPAssertion", "HTTP_Assertion", "http"})
 public class HTTPResponseAssertion extends AbstractAssertion {
 
     private static final List<String> STATUS = Arrays.asList("line", "status", "code", "statuscode", "statusline", "status_code", "status_line");
@@ -46,20 +45,21 @@ public class HTTPResponseAssertion extends AbstractAssertion {
     private static final String BODY = "body";
     private static final Pattern PATTERN = Pattern.compile("^header(\\[\\d+])?(\\.\\w+.?)?");
 
+
     @Override
-    protected void setActual(SampleResult result) {
-        if (result instanceof HTTPSampleResult httpResult) {
-            var field = get(FIELD) == null ? BODY : getPropertyAsString(FIELD).toLowerCase();
-            getProperty().put(FIELD, field);
+    protected AssertionResult init(SampleResult<? extends SampleResult<?>> result) {
+        var res = new AssertionResult("HTTP响应断言: " + field);
+        // todo 这里要实现 HTTP协议响应报文的断言
+      /*  if (result instanceof HTTPSampleResult httpResult) {
+            field = StringUtils.isBlank(field) ? BODY : field;
             var matcher = PATTERN.matcher(field);
             if (matcher.find()) {
                 var path = "$" + (matcher.group(1) == null ? "[0]" : matcher.group(1)) + matcher.group(2);
-                setActual(JSONPath.extract(httpResult.getResponseHeaders().toJSONString(), path));
+                actualValue = JSONPath.extract(httpResult.getResponseHeaders().toJSONString(), path);
             } else {
-                setActual(STATUS.contains(field) ? httpResult.getResponseCode() : httpResult.getResponseDataAsString());
+                actualValue = STATUS.contains(field) ? httpResult.getResponseCode() : httpResult.getResponseDataAsString();
             }
-        } else {
-            setActual(String.format("HTTPResponseAssertion unsupported %s, assert default true", result.getClass().getSimpleName()));
-        }
+        }*/
+        return res;
     }
 }

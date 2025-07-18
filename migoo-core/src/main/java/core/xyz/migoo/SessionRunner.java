@@ -1,12 +1,38 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2022.  Lorem XiaoMiSum (mi_xiao@qq.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * 'Software'), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package core.xyz.migoo;
 
-
 import core.xyz.migoo.context.Context;
+import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.context.SessionContext;
 import core.xyz.migoo.report.Result;
+import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestElementConfigure;
 import core.xyz.migoo.testelement.TestElementConstantsInterface;
-import core.xyz.migoo.testelement1.TestElement;
+import core.xyz.migoo.testelement.ValidateResult;
 import core.xyz.migoo.variable.MiGooVariables;
 
 import java.util.ArrayList;
@@ -47,6 +73,10 @@ public class SessionRunner {
         HOLDER.set(sessionRunner);
     }
 
+    public static void newSession() {
+        HOLDER.set(new SessionRunner());
+    }
+
     public static void removeSession() {
         HOLDER.remove();
     }
@@ -75,40 +105,34 @@ public class SessionRunner {
 
 
     /**
-     * 运行任意的测试元件，如 TestCase 或 Sampler
+     * 运行任意的测试元件，如 TestSuite 或 Sampler
      * <p>
      * 默认校验：执行前校验测试元件数据是否合法
      *
-     * @see #run(TestElement, boolean)
+     * @see #runTest(TestElement, boolean)
      */
-    public <T extends Result> T run(TestElement<T> testElement) {
-        return run(testElement, true);
+    public <T extends Result<T>> T runTest(TestElement<T> element) {
+        return runTest(element, true);
     }
 
     /**
-     * 运行任意的测试元件，如 TestCase 或 Sampler
+     * 运行任意的测试元件，如 TestSuite 或 Sampler
      *
-     * @param testElement 测试元件
-     * @param <T>         测试元件对应的执行结果类
-     * @param validate    是否校验测试元件数据
+     * @param element  测试元件
+     * @param <T>      测试元件对应的执行结果类
+     * @param validate 是否校验测试元件数据
      * @return 测试元件的执行结果
      */
-    public <T extends Result> T run(TestElement<T> testElement, boolean validate) {
+    public <T extends Result<T>> T runTest(TestElement<T> element, boolean validate) {
         if (validate) {
-            ValidateResult validateResult = testElement.validate();
-            if (!validateResult.isValid()) {
+            ValidateResult validateResult = element.validate();
+            if (validateResult.isValid()) {
                 throw new RuntimeException(validateResult.getReason());
             }
         }
-        return testElement.run(this);
+        return element.run(this);
     }
 
-
-    /**
-     * 获取 TestCaseRunner 当前的上下文链，依次为：全局上下文、环境上下文、用例上下文。
-     *
-     * @return TestCaseRunner 当前的上下文链
-     */
     public List<Context> getContextChain() {
         return contextChain;
     }

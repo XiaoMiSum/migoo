@@ -25,8 +25,6 @@
 
 package protocol.xyz.migoo.activemq.processor;
 
-import core.xyz.migoo.sampler.SampleResult;
-import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.activemq.AbstractActiveMqTestElement;
 
 /**

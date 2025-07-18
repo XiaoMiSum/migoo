@@ -27,23 +27,38 @@ package component.xyz.migoo.assertion;
 
 import com.alibaba.fastjson2.JSONPath;
 import core.xyz.migoo.assertion.AbstractAssertion;
+import core.xyz.migoo.assertion.AssertionResult;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
+import core.xyz.migoo.testelement.ValidateResult;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author xiaomi
  */
-@Alias({"JSONAssertion", "json_assertion"})
+@Alias({"JSONAssertion", "json_assertion", "json"})
 public class JSONAssertion extends AbstractAssertion {
 
     @Override
-    protected void setActual(SampleResult result) {
-        var jsonStr = result.getResponseDataAsString();
-        if (StringUtils.isBlank(jsonStr) || StringUtils.equalsAny(jsonStr, "[]", "{}")) {
-            setActual("");
-        } else {
-            setActual(JSONPath.extract(jsonStr, getPropertyAsString(FIELD)));
+    protected AssertionResult init(SampleResult<? extends SampleResult<?>> result) {
+        var res = new AssertionResult("JSON断言: " + field);
+        var target = result.getResponseDataAsString();
+        try {
+            actualValue = JSONPath.extract(target, field);
+        } catch (Exception e) {
+            actualValue = null;
         }
+        return res;
     }
+
+    @Override
+    public ValidateResult validate() {
+        ValidateResult result = new ValidateResult();
+        if (StringUtils.isBlank(field)) {
+            result.append("\n提取表达式 %s 字段值缺失或为空，当前值：%s", field, toString());
+        }
+        return result;
+    }
+
+
 }

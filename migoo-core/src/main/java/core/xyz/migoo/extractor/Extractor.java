@@ -25,18 +25,19 @@
 
 package core.xyz.migoo.extractor;
 
-import core.xyz.migoo.sampler.SampleResult;
+import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.processor.Postprocessor;
+import core.xyz.migoo.testelement.Validatable;
 
 /**
  * @author xiaomi
  */
-public interface Extractor {
+public interface Extractor extends Postprocessor, Validatable {
 
     /**
      * 提取器执行，从取样器结果中按指定规格提取数据，并保存到变量中
      *
-     * @param result 取样器结果
-     * @return 执行结果
+     * @param context 测试上下文
      */
-    SampleResult process(SampleResult result);
+    void process(ContextWrapper context);
 }

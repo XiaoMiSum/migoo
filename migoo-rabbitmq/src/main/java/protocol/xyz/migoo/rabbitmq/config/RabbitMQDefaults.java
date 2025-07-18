@@ -27,7 +27,6 @@ package protocol.xyz.migoo.rabbitmq.config;
 
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
-import core.xyz.migoo.testelement.TestStateListener;
 import protocol.xyz.migoo.rabbitmq.util.RabbitMQConstantsInterface;
 
 import java.util.Objects;

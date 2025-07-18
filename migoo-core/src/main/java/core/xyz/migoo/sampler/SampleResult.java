@@ -25,7 +25,7 @@
 
 package core.xyz.migoo.sampler;
 
-import core.xyz.migoo.assertion.VerifyResult;
+import core.xyz.migoo.assertion.AssertionResult;
 import core.xyz.migoo.report.Result;
 
 import java.nio.charset.Charset;
@@ -36,7 +36,7 @@ import java.util.Objects;
 /**
  * @author xiaomi
  */
-public class SampleResult<T> extends Result<T> {
+public abstract class SampleResult<T extends SampleResult<T>> extends Result<T> {
 
     public static final Charset DEFAULT_ENCODING = StandardCharsets.UTF_8;
     public static final String TEXT = "text";
@@ -51,9 +51,9 @@ public class SampleResult<T> extends Result<T> {
 
     private String responseDataAsString;
 
-    private List<VerifyResult> verifyResults;
+    private List<AssertionResult> assertionResults;
 
-    private List<SampleResult<?>> extractorResults;
+    private List<SampleResult> extractorResults;
 
     public SampleResult(String title) {
         super(title);
@@ -109,12 +109,12 @@ public class SampleResult<T> extends Result<T> {
         this.setThrowable(result.getThrowable());
     }
 
-    public List<VerifyResult> getAssertionResults() {
-        return verifyResults;
+    public List<AssertionResult> getAssertionResults() {
+        return assertionResults;
     }
 
-    public void setAssertionResults(List<VerifyResult> verifyResults) {
-        this.verifyResults = verifyResults;
+    public void setAssertionResults(List<AssertionResult> assertionResults) {
+        this.assertionResults = assertionResults;
     }
 
     public String getTestClass() {
@@ -132,11 +132,11 @@ public class SampleResult<T> extends Result<T> {
         this.setTestClass(testClass.getName());
     }
 
-    public List<SampleResult<?>> getExtractorResults() {
+    public List<SampleResult> getExtractorResults() {
         return extractorResults;
     }
 
-    public void setExtractorResults(List<SampleResult<?>> extractorResults) {
+    public void setExtractorResults(List<SampleResult> extractorResults) {
         this.extractorResults = extractorResults;
     }
 }

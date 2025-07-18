@@ -35,5 +35,5 @@ public interface Reporter {
      *
      * @param result 取样器结果
      */
-    void generateReport(Result result);
+    void generateReport(Result<? extends Result<?>> result);
 }

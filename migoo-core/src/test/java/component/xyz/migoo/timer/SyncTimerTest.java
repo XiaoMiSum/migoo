@@ -25,7 +25,6 @@
 
 package component.xyz.migoo.timer;
 
-import core.xyz.migoo.sampler.SampleResult;
 import org.junit.jupiter.api.Test;
 
 /**

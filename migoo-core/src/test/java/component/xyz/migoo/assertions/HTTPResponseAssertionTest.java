@@ -29,8 +29,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import component.xyz.migoo.assertion.HTTPResponseAssertion;
 import core.xyz.migoo.assertion.Assertion;
-import core.xyz.migoo.assertion.VerifyResult;
-import core.xyz.migoo.sampler.SampleResult;
+import core.xyz.migoo.assertion.AssertionResult;
 import core.xyz.migoo.testelement.TestElement;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -83,7 +82,7 @@ public class HTTPResponseAssertionTest {
     public void test4AssertContext1() {
         ((TestElement) assertion).setProperty("field", "context");
         ((TestElement) assertion).setProperty("expected", JSON.toJSONString());
-        VerifyResult result = assertion.getResult(sampleResult);
+        AssertionResult result = assertion.getResult(sampleResult);
         Assertions.assertTrue(result.isSuccessful(), result.getContent());
     }
 
@@ -91,7 +90,7 @@ public class HTTPResponseAssertionTest {
     public void test4AssertContext2() {
         ((TestElement) assertion).setProperty("field", null);
         ((TestElement) assertion).setProperty("expected", JSON.toJSONString());
-        VerifyResult result = assertion.getResult(sampleResult);
+        AssertionResult result = assertion.getResult(sampleResult);
         assert result.isSuccessful();
         // {"key1":1,"key2":2}
         // {"key1":1, "key2":2}
@@ -100,7 +99,7 @@ public class HTTPResponseAssertionTest {
     @Test
     public void test4AssertContext3() {
         ((TestElement) assertion).setProperty("expected", JSON.toJSONString());
-        VerifyResult result = assertion.getResult(sampleResult);
+        AssertionResult result = assertion.getResult(sampleResult);
         assert result.isSuccessful();
     }
 
@@ -109,7 +108,7 @@ public class HTTPResponseAssertionTest {
         // "line", "status", "code", "statuscode", "statusline", "status_code", "status_line"
         ((TestElement) assertion).setProperty("field", "status");
         ((TestElement) assertion).setProperty("expected", 200);
-        VerifyResult result = assertion.getResult(sampleResult);
+        AssertionResult result = assertion.getResult(sampleResult);
         assert result.isSuccessful();
     }
 
@@ -118,7 +117,7 @@ public class HTTPResponseAssertionTest {
         // "line", "status", "code", "statuscode", "statusline", "status_code", "status_line"
         ((TestElement) assertion).setProperty("field", "statusline");
         ((TestElement) assertion).setProperty("expected", 200);
-        VerifyResult result = assertion.getResult(sampleResult);
+        AssertionResult result = assertion.getResult(sampleResult);
         assert result.isSuccessful();
     }
 
@@ -128,7 +127,7 @@ public class HTTPResponseAssertionTest {
         ((TestElement) assertion).setProperty("field", "header[1].header1");
         ((TestElement) assertion).setProperty("expected", "2");
         ((TestElement) assertion).setProperty("rule", "==");
-        VerifyResult result = assertion.getResult(sampleResult);
+        AssertionResult result = assertion.getResult(sampleResult);
         assert result.isSuccessful();
     }
 
@@ -138,14 +137,14 @@ public class HTTPResponseAssertionTest {
         ((TestElement) assertion).setProperty("field", "header[2].header3");
         ((TestElement) assertion).setProperty("expected", "3");
         ((TestElement) assertion).setProperty("rule", "==");
-        VerifyResult result = assertion.getResult(sampleResult);
+        AssertionResult result = assertion.getResult(sampleResult);
         assert result.isSuccessful();
     }
 
     @Test
     public void test4SampleResult() {
         sampleResult = new SampleResult("test");
-        VerifyResult result = assertion.getResult(sampleResult);
+        AssertionResult result = assertion.getResult(sampleResult);
         assert !result.isSuccessful();
     }
 
@@ -154,7 +153,7 @@ public class HTTPResponseAssertionTest {
         ((TestElement) assertion).setProperty("field", "statusline");
         ((TestElement) assertion).setProperty("expected", 200);
         ((TestElement) assertion).setProperty("rule", ">");
-        VerifyResult result = assertion.getResult(sampleResult);
+        AssertionResult result = assertion.getResult(sampleResult);
         assert !result.isSuccessful();
     }
 }
