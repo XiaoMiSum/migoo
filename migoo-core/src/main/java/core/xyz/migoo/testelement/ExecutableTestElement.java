@@ -171,7 +171,7 @@ public abstract class ExecutableTestElement<SELF extends ExecutableTestElement<S
         doExecute(contextWrapper);
         if (Objects.nonNull(assertions)) {
             for (Assertion assertion : assertions) {
-                assertion.getResult(contextWrapper);
+                assertion.assertThat(contextWrapper);
             }
         }
         for (Postprocessor postprocessor : postprocessors) {
