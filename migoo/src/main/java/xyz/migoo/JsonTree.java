@@ -46,6 +46,10 @@ public class JsonTree extends JSONObject {
 
     private final boolean sampler;
 
+    public JsonTree(Map<String, Object> testcase) {
+        this(testcase instanceof JSONObject json ? json : new JSONObject(testcase));
+    }
+
     public JsonTree(JSONObject testcase) {
         replaceExpiredKeys(testcase);
         var json = prepare(testcase);

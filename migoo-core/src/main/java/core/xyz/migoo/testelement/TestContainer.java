@@ -43,7 +43,7 @@ import java.util.List;
  * @author xiaomi
  */
 public abstract class TestContainer<SELF extends TestContainer<SELF, T>, T extends Result<T>>
-        extends ExecutableTestElement<SELF, T> implements ExecuteSubStepsFilterChain {
+        extends AbstractTestElement<SELF, T> implements ExecuteSubStepsFilterChain {
 
     protected List<TestElement<?>> children;
 

@@ -53,10 +53,10 @@ public class MiGoo {
         printLogo();
     }
 
-    private final JSONObject testcase;
+    private final JsonTree testcase;
 
-    public MiGoo(Map<String, Object> testcase) {
-        this.testcase = new JSONObject(testcase);
+    public MiGoo(JsonTree testcase) {
+        this.testcase = testcase;
     }
 
     public static void main(String[] args) {
@@ -74,24 +74,27 @@ public class MiGoo {
     }
 
     public static <T extends Result<T>> Result<T> start(String filePath) {
-        var testcase = TestDataLoader.toJavaObject(filePath, JSONObject.class);
+        var testcase = TestDataLoader.toJavaObject(filePath, JsonTree.class);
         return start(testcase);
     }
 
     public static <T extends Result<T>> Result<T> start(String filePath, boolean isClassPath) {
-        var testcase = TestDataLoader.toJavaObject(filePath, isClassPath, JSONObject.class);
+        var testcase = TestDataLoader.toJavaObject(filePath, isClassPath, JsonTree.class);
         return start(testcase);
     }
 
     public static <T extends Result<T>> Result<T> start(Map<String, Object> testcase) {
+        return start(new JsonTree(testcase));
+    }
+
+    public static <T extends Result<T>> Result<T> start(JsonTree testcase) {
         SessionRunner.newSession();
         return new MiGoo(testcase).runTest();
     }
 
     private <T extends Result<T>> Result<T> runTest() {
-        var jsontree = new JsonTree(testcase);
-        var clazz = ApplicationConfig.getTestElementKeyMap().get(jsontree.getString(TEST_CLASS));
-        var result = SessionRunner.getSession().runTest(jsontree.toJavaObject(clazz));
+        var clazz = ApplicationConfig.getTestElementKeyMap().get(testcase.getString(TEST_CLASS));
+        var result = SessionRunner.getSession().runTest(testcase.toJavaObject(clazz));
         Reporter reporter = null;
         try {
             var enableReport = Boolean.parseBoolean(System.getProperty(REPORT_ENABLE, "true"));
