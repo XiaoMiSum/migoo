@@ -25,8 +25,10 @@
 
 package core.xyz.migoo.testelement;
 
+import com.alibaba.fastjson2.annotation.JSONType;
 import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.report.Result;
+import support.xyz.migoo.fastjson2.TestElementObjectReader;
 
 /**
  * 测试元件是能根据其父上下文链独立执行的一个逻辑执行单元。
@@ -47,6 +49,7 @@ import core.xyz.migoo.report.Result;
  * @author xiaomi
  */
 @FunctionalInterface
+@JSONType(deserializer = TestElementObjectReader.class)
 public interface TestElement<T extends Result<T>> extends Validatable, Cloneable<TestElement<T>> {
 
     /**

@@ -77,7 +77,7 @@ public class ApplicationConfig {
         );
     }
 
-    public static Map<String, Class<? extends ConfigureElement>> getConfigElementKeyMap() {
+    public static Map<String, Class<? extends ConfigureElement>> getConfigureElementKeyMap() {
         return getClassMap(CONFIG_ELEMENT_KEY_MAP_LOCK,
                 () -> ApplicationConfig.CONFIG_ELEMENT_KEY_MAP,
                 () -> {

@@ -56,6 +56,9 @@ public class JsonTree extends JSONObject {
     private void initialize(JSONObject json, boolean isMiGoo) {
         // 1、先删除 MiGoo组件中的变量，减少一次遍历
         var variables = isMiGoo ? json.remove(VARIABLES) : null;
+        if (isMiGooSuite(json)) {
+            json.put(TEST_CLASS, "__testsuite__");
+        }
         json.forEach((key, value) -> {
             // 将 migoo 测试组件 的key 转换为小写
             var newKey = isMiGoo ? key.toLowerCase(Locale.ROOT) : key;

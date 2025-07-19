@@ -25,13 +25,16 @@
 
 package core.xyz.migoo.extractor;
 
+import com.alibaba.fastjson2.annotation.JSONType;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.processor.Postprocessor;
 import core.xyz.migoo.testelement.Validatable;
+import support.xyz.migoo.fastjson2.ExtractorObjectReader;
 
 /**
  * @author xiaomi
  */
+@JSONType(deserializer = ExtractorObjectReader.class)
 public interface Extractor extends Postprocessor, Validatable {
 
     /**

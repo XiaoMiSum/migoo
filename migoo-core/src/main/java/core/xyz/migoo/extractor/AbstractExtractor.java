@@ -44,8 +44,8 @@ public abstract class AbstractExtractor implements Extractor, ExtractorConstants
     @JSONField(name = DEFAULT_VALUE)
     protected Object defaultValue;
 
-    @JSONField(name = VARIABLE_NAME)
-    protected String variableName;
+    @JSONField(name = REF_NAME)
+    protected String refName;
 
     @JSONField(name = MATCH_NUM)
     protected int matchNum;
@@ -56,8 +56,8 @@ public abstract class AbstractExtractor implements Extractor, ExtractorConstants
     @Override
     public ValidateResult validate() {
         ValidateResult result = new ValidateResult();
-        if (StringUtils.isBlank(variableName)) {
-            result.append("\n提取变量 %s 字段值缺失或为空，当前值：%s", VARIABLE_NAME, toString());
+        if (StringUtils.isBlank(refName)) {
+            result.append("\n提取引用名称 %s 字段值缺失或为空，当前值：%s", REF_NAME, toString());
         }
         if (StringUtils.isBlank(field)) {
             result.append("\n提取表达式 %s 字段值缺失或为空，当前值：%s", field, toString());
@@ -70,12 +70,12 @@ public abstract class AbstractExtractor implements Extractor, ExtractorConstants
         if (ctx.getTestResult() instanceof SampleResult<? extends SampleResult<?>> result) {
             var res = StringUtils.isBlank(result.getResponseDataAsString()) ? broken() : extract(result);
             if (TestStatus.passed.equals(res.getStatus())) {
-                ctx.getLocalVariablesWrapper().put(variableName, res.getValue());
+                ctx.getLocalVariablesWrapper().put(refName, res.getValue());
                 return;
             }
             if (TestStatus.failed.equals(res.getStatus()) && defaultValue != null) {
                 res.setStatus(TestStatus.passed);
-                ctx.getLocalVariablesWrapper().put(variableName, defaultValue);
+                ctx.getLocalVariablesWrapper().put(refName, defaultValue);
                 return;
             }
             throw new RuntimeException(res.getMessage(), res.getException());
@@ -113,12 +113,12 @@ public abstract class AbstractExtractor implements Extractor, ExtractorConstants
         this.defaultValue = defaultValue;
     }
 
-    public String getVariableName() {
-        return variableName;
+    public String getRefName() {
+        return refName;
     }
 
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
+    public void setRefName(String refName) {
+        this.refName = refName;
     }
 
     public int getMatchNum() {

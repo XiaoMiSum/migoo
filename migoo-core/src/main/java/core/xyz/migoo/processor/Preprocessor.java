@@ -25,9 +25,13 @@
 
 package core.xyz.migoo.processor;
 
+import com.alibaba.fastjson2.annotation.JSONType;
+import support.xyz.migoo.fastjson2.PreprocessorObjectReader;
+
 /**
  * @author xiaomi
  */
+@JSONType(deserializer = PreprocessorObjectReader.class)
 public interface Preprocessor extends Processor {
 
 }

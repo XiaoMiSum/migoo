@@ -30,7 +30,6 @@ import core.xyz.migoo.ApplicationConfig;
 import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.sampler.SampleResult;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -56,7 +55,6 @@ public abstract class AbstractAssertion implements Assertion, AssertionConstants
     public void assertThat(ContextWrapper ctx) {
         if (ctx.getTestResult() instanceof SampleResult<? extends SampleResult<?>> result) {
             var res = init(result);
-            rule = StringUtils.isBlank(rule) ? "==" : rule;
             var checkRule = ApplicationConfig.getRuleKeyMap().get(rule.toLowerCase(Locale.ROOT));
             if (Objects.isNull(checkRule)) {
                 res.setStatus(TestStatus.failed);

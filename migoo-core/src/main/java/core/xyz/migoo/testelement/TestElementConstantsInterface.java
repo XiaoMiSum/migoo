@@ -58,4 +58,6 @@ public interface TestElementConstantsInterface {
 
     String FILTERS = "filters";
 
+    String REQUEST = "request";
+
 }

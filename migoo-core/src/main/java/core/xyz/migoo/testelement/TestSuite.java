@@ -7,6 +7,7 @@ import core.xyz.migoo.context.SessionContext;
 import java.util.ArrayList;
 import java.util.List;
 
+@Alias("__testsuite__")
 public class TestSuite extends TestContainer<TestSuite, TestSuiteResult> {
 
     @Override

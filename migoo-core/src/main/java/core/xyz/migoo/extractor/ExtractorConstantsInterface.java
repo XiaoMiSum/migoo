@@ -33,5 +33,6 @@ public interface ExtractorConstantsInterface {
     String FIELD = "field";
     String DEFAULT_VALUE = "default_value";
     String VARIABLE_NAME = "variable_name";
+    String REF_NAME = "ref_name";
     String MATCH_NUM = "match_num";
 }

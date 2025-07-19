@@ -30,7 +30,6 @@ import core.xyz.migoo.ApplicationConfig;
 import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.report.Reporter;
 import core.xyz.migoo.report.Result;
-import core.xyz.migoo.testelement.TestSuite;
 import picocli.CommandLine;
 import support.xyz.migoo.TestDataLoader;
 import xyz.migoo.report.StandardReporter;
@@ -91,8 +90,7 @@ public class MiGoo {
 
     private <T extends Result<T>> Result<T> runTest() {
         var jsontree = new JsonTree(testcase);
-        var clazz = !jsontree.isSampler() ? TestSuite.class :
-                ApplicationConfig.getTestElementKeyMap().get(jsontree.getString(TEST_CLASS));
+        var clazz = ApplicationConfig.getTestElementKeyMap().get(jsontree.getString(TEST_CLASS));
         var result = SessionRunner.getSession().runTest(jsontree.toJavaObject(clazz));
         Reporter reporter = null;
         try {

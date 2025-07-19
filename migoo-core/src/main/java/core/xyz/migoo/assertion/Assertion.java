@@ -25,12 +25,15 @@
 
 package core.xyz.migoo.assertion;
 
+import com.alibaba.fastjson2.annotation.JSONType;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.Validatable;
+import support.xyz.migoo.fastjson2.AssertionObjectReader;
 
 /**
  * @author xiaomi
  */
+@JSONType(deserializer = AssertionObjectReader.class)
 public interface Assertion extends Validatable {
 
     void assertThat(ContextWrapper contextWrapper);

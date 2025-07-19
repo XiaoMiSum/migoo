@@ -25,16 +25,19 @@
 
 package core.xyz.migoo.config;
 
+import com.alibaba.fastjson2.annotation.JSONType;
 import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.Validatable;
+import support.xyz.migoo.fastjson2.ConfigureElementObjectReader;
 
 /**
  * 配置元件：默认配置，可参考JMeter的HTTP默认配置、jdbcDataSource配置
  *
  * @author xiaomi
  */
+@JSONType(deserializer = ConfigureElementObjectReader.class)
 public interface ConfigureElement<T extends Result<T>> extends Validatable {
 
     T run(ContextWrapper ctx);
