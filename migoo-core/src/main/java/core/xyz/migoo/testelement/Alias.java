@@ -39,6 +39,8 @@ public @interface Alias {
 
     String[] value();
 
+    Class<?>[] config() default {};
+
     @Deprecated(since = "5.3.0", forRemoval = true)
     String[] aliasList() default {};
 }

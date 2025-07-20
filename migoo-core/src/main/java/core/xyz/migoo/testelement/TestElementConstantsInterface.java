@@ -34,7 +34,9 @@ public interface TestElementConstantsInterface {
 
     String TITLE = "title";
 
-    String SLEEP = "sleep";
+    String METADATA = "metadata";
+
+    String DISABLED = "disabled";
 
     String CONFIG = "config";
 

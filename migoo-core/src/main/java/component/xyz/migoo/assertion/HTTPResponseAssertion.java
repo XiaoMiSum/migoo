@@ -47,7 +47,7 @@ public class HTTPResponseAssertion extends AbstractAssertion {
 
 
     @Override
-    protected AssertionResult init(SampleResult<? extends SampleResult<?>> result) {
+    protected AssertionResult initialized(SampleResult<? extends SampleResult<?>> result) {
         var res = new AssertionResult("HTTP响应断言: " + field);
         // todo 这里要实现 HTTP协议响应报文的断言
       /*  if (result instanceof HTTPSampleResult httpResult) {

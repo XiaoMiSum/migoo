@@ -34,15 +34,24 @@ public class MiGooServiceLoader {
      * @param clazz 目标类型
      * @return 指定接口或抽象类的关键字字典
      */
-    public static Map<String, ?> loadAsInstanceMapBySPI(Class<?> clazz) {
+    public static <T> Map<String, T> loadAsInstanceMapBySPI(Class<T> clazz) {
         // SPI 查找并注册
-        var keyMap = new HashMap<String, Object>();
+        var keyMap = new HashMap<String, T>();
         var serviceLoader = ServiceLoader.load(clazz);
         serviceLoader.iterator().forEachRemaining(t -> {
             var keys = getKeyWord(t.getClass());
             keys.stream().distinct().forEach(key -> keyMap.put(key, t));
         });
         return Collections.unmodifiableMap(keyMap);
+    }
+
+    public static <T> List<T> loadAsInstanceListBySPI(Class<T> clazz) {
+        // SPI 查找并注册
+        var serviceLoader = ServiceLoader.load(clazz);
+        var list = new ArrayList<T>();
+        serviceLoader.iterator().forEachRemaining(list::add);
+        return list;
+
     }
 
     // 获取目标类的 @KeyWord 注解并返回它的值

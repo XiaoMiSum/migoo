@@ -42,8 +42,8 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
 
-import static core.xyz.migoo.config.ConfigureElementConstantsInterface.REF_NAME;
-import static core.xyz.migoo.config.ConfigureElementConstantsInterface.VARIABLE_NAME;
+import static core.xyz.migoo.configureelement.ConfigureElementConstantsInterface.REF_NAME;
+import static core.xyz.migoo.configureelement.ConfigureElementConstantsInterface.VARIABLE_NAME;
 import static core.xyz.migoo.testelement.TestElementConstantsInterface.TEST_CLASS;
 
 /**

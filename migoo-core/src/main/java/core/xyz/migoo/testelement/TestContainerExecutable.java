@@ -28,28 +28,29 @@
 
 package core.xyz.migoo.testelement;
 
+import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.filter.ExecuteSubStepsFilterChain;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.report.Result;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * 测试容器抽象类，负责调度子元件执行
  *
  * @author xiaomi
  */
-public abstract class TestContainer<SELF extends TestContainer<SELF, T>, T extends Result<T>>
-        extends AbstractTestElement<SELF, T> implements ExecuteSubStepsFilterChain {
+@SuppressWarnings({"rawtypes"})
+public abstract class TestContainerExecutable
+        <CONFIG extends ConfigureItem, SELF extends TestContainerExecutable<CONFIG, SELF, T>, T extends Result<T>>
+        extends AbstractTestElementExecutable<CONFIG, SELF, T> implements ExecuteSubStepsFilterChain {
 
     protected List<TestElement<?>> children;
 
     protected Iterator<TestFilter> executeSubStepsFilters;
 
-    public TestContainer() {
+    public TestContainerExecutable() {
     }
 
     @Override
@@ -69,7 +70,7 @@ public abstract class TestContainer<SELF extends TestContainer<SELF, T>, T exten
     }
 
     protected void executeSubSteps(ContextWrapper contextWrapper) {
-        executeSubStepsFilters = filters.iterator();
+        executeSubStepsFilters = Objects.isNull(filters) ? Collections.emptyIterator() : filters.iterator();
         doExecuteSubSteps(contextWrapper);
     }
 

@@ -26,41 +26,37 @@
  *
  */
 
-package protocol.xyz.migoo.debug.processer;
+package core.xyz.migoo.config;
 
-import com.alibaba.fastjson2.JSON;
-import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.processor.AbstractProcessor;
-import core.xyz.migoo.processor.Preprocessor;
-import core.xyz.migoo.sampler.DefaultSampleResult;
-import core.xyz.migoo.testelement.Alias;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import protocol.xyz.migoo.debug.config.DebugConfigItem;
+import com.alibaba.fastjson2.annotation.JSONType;
+import support.xyz.migoo.fastjson2.TestElementConfigureObjectReader;
+
+import java.util.HashMap;
 
 /**
+ * 测试元件配置数据
+ *
  * @author xiaomi
  */
-@Alias(value = {"debug_preprocessor", "debug_pre_processor", "debug"})
-public class DebugPreprocessor extends AbstractProcessor<DebugConfigItem> implements Preprocessor {
-
-    static Logger logger = LoggerFactory.getLogger(DebugPreprocessor.class);
+@SuppressWarnings({"rawtypes", "unchecked"})
+@JSONType(deserializer = TestElementConfigureObjectReader.class)
+public class TestElementConfigure extends HashMap<String, ConfigureItem> implements ConfigureGroup {
 
     @Override
-    protected void _process(ContextWrapper context) {
-        var result = (DefaultSampleResult) context.getTestResult();
-        result.sampleStart();
-        result.setUrl(getClass().getName());
-        result.setRequestData(JSON.toJSONBytes(config));
-        result.setResponseData(JSON.toJSONBytes(config));
-        logger.info("Debug Preprocessor");
-        result.sampleEnd();
+    public <T extends ConfigureItem<T>> T get(String key) {
+        return (T) super.get(key);
     }
 
     @Override
-    protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(runtime.getId(),
-                StringUtils.isBlank(runtime.getTitle()) ? "Debug Preprocessor" : runtime.getTitle());
+    public TestElementConfigure copy() {
+        TestElementConfigure testElementConfigure = new TestElementConfigure();
+        entrySet().stream().filter(entry -> entry.getValue() != null)
+                .forEach(entry -> testElementConfigure.put(entry.getKey(), entry.getValue()));
+        return testElementConfigure;
+    }
+
+    @Override
+    public ConfigureGroup merge(ConfigureGroup other) {
+        return ConfigureGroup.super.merge(other);
     }
 }

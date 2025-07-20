@@ -65,8 +65,8 @@ public class RandomString implements Function {
 
     private String execute(int length, String charsToUse, boolean upper) {
         length = length == 0 ? 10 : length;
-        var randomString = StringUtils.isBlank(charsToUse) ? RandomStringUtils.randomAlphabetic(length)
-                : RandomStringUtils.random(length, charsToUse);
+        var randomString = StringUtils.isBlank(charsToUse) ? RandomStringUtils.secure().nextAlphabetic(length)
+                : RandomStringUtils.secure().next(length, charsToUse);
         return upper ? randomString.toUpperCase() : randomString;
     }
 }

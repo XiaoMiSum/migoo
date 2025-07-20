@@ -35,7 +35,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import static core.xyz.migoo.testelement.AbstractTestElement.*;
+import static core.xyz.migoo.testelement.AbstractTestElementExecutable.*;
 import static core.xyz.migoo.testelement.TestElementConstantsInterface.CHILD;
 import static core.xyz.migoo.variable.VariableUtils.FILE_PATTERN;
 

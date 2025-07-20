@@ -23,26 +23,32 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package core.xyz.migoo.config;
+package protocol.xyz.migoo.debug.config;
 
-import com.alibaba.fastjson2.annotation.JSONType;
-import core.xyz.migoo.SessionRunner;
+import core.xyz.migoo.configureelement.AbstractConfigureElement;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.report.Result;
-import core.xyz.migoo.testelement.Validatable;
-import support.xyz.migoo.fastjson2.ConfigureElementObjectReader;
+import core.xyz.migoo.testelement.Alias;
+import core.xyz.migoo.testelement.TestSuiteResult;
+import org.apache.commons.lang3.StringUtils;
 
 /**
- * 配置元件：默认配置，可参考JMeter的HTTP默认配置、jdbcDataSource配置
- *
  * @author xiaomi
  */
-@JSONType(deserializer = ConfigureElementObjectReader.class)
-public interface ConfigureElement<T extends Result<T>> extends Validatable {
+@Alias(value = {"debugconfig", "debug_config", "debug"})
+public class DebugDefaults extends AbstractConfigureElement<DebugConfigItem, TestSuiteResult> {
 
-    T run(ContextWrapper ctx);
+    public static final String DEF_REF_NAME_KEY = "__debug_configure_element_default_ref_name__";
 
-    default T run(SessionRunner sessionRunner) {
-        return null;
+    @Override
+    public TestSuiteResult process(ContextWrapper ctx) {
+        var result = getTestResult();
+        refName = StringUtils.isBlank(refName) ? DEF_REF_NAME_KEY : refName;
+        ctx.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().put(refName, config);
+        return result;
+    }
+
+    @Override
+    protected TestSuiteResult getTestResult() {
+        return new TestSuiteResult("Debug 默认配置");
     }
 }

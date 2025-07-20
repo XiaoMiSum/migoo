@@ -29,32 +29,34 @@ import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.processor.AbstractProcessor;
 import core.xyz.migoo.processor.Postprocessor;
+import core.xyz.migoo.sampler.DefaultSampleResult;
 import core.xyz.migoo.testelement.Alias;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author mi.xiao
  * @date 2021/4/7 19:49
  */
 @Alias({"SyncTimer", "Timer", "sync_timer", "def_timer", "defTimer"})
-public class SyncTimer extends AbstractProcessor implements Postprocessor {
-
-    public static final String TIMEOUT = "timeout";
-
+public class SyncTimer extends AbstractProcessor<SyncTimer.TimerConfigureItem> implements Postprocessor {
 
     @Override
-    public void process(ContextWrapper context) {
-        context.getConfigGroup().get(TIMEOUT);
-        // todo 这里要获取配置
-        /*if (timeout > 0) {
+    protected void _process(ContextWrapper context) {
+        if (config.getTimeout() > 0) {
             synchronized (this) {
                 try {
-                    this.wait(timeout);
+                    this.wait(config.getTimeout() * 1000L);
                 } catch (InterruptedException e) {
                     this.notify();
                 }
             }
         }
-        */
+    }
+
+    @Override
+    protected DefaultSampleResult getTestResult() {
+        return new DefaultSampleResult(runtime.getId(),
+                StringUtils.isBlank(runtime.getTitle()) ? "同步定时：" + config.timeout + "秒" : runtime.getTitle());
     }
 
     public static class TimerConfigureItem implements ConfigureItem<TimerConfigureItem> {

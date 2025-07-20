@@ -5,6 +5,11 @@ import org.junit.jupiter.api.Test;
 public class MiGooTest {
 
     @Test
+    public void test() {
+        MiGoo.start("classpath:debug/debug2.yaml");
+    }
+
+    @Test
     public void test1() {
         MiGoo.start("classpath:debug/多层级执行逻辑.yaml");
     }

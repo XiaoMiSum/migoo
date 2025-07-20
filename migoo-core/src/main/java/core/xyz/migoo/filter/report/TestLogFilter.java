@@ -26,41 +26,43 @@
  *
  */
 
-package protocol.xyz.migoo.debug.processer;
+package core.xyz.migoo.filter.report;
 
-import com.alibaba.fastjson2.JSON;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.processor.AbstractProcessor;
-import core.xyz.migoo.processor.Preprocessor;
-import core.xyz.migoo.sampler.DefaultSampleResult;
-import core.xyz.migoo.testelement.Alias;
-import org.apache.commons.lang3.StringUtils;
+import core.xyz.migoo.filter.RunFilterChain;
+import core.xyz.migoo.filter.SampleFilterChain;
+import core.xyz.migoo.sampler.SampleResult;
+import core.xyz.migoo.testelement.TestSuiteExecutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import protocol.xyz.migoo.debug.config.DebugConfigItem;
 
 /**
  * @author xiaomi
+ * Created at 2025/7/20 13:46
  */
-@Alias(value = {"debug_preprocessor", "debug_pre_processor", "debug"})
-public class DebugPreprocessor extends AbstractProcessor<DebugConfigItem> implements Preprocessor {
+@SuppressWarnings("rawtypes")
+public class TestLogFilter implements ReportFilter {
 
-    static Logger logger = LoggerFactory.getLogger(DebugPreprocessor.class);
+    static final Logger log = LoggerFactory.getLogger(TestLogFilter.class);
 
     @Override
-    protected void _process(ContextWrapper context) {
-        var result = (DefaultSampleResult) context.getTestResult();
-        result.sampleStart();
-        result.setUrl(getClass().getName());
-        result.setRequestData(JSON.toJSONBytes(config));
-        result.setResponseData(JSON.toJSONBytes(config));
-        logger.info("Debug Preprocessor");
-        result.sampleEnd();
+    public void doRun(ContextWrapper context, RunFilterChain chain) {
+        if (TestSuiteExecutable.class.isAssignableFrom(chain.getClass())) {
+            log.info("开始测试：{}", context.getTestResult().getTitle());
+        }
+        chain.doRun(context);
     }
 
     @Override
-    protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(runtime.getId(),
-                StringUtils.isBlank(runtime.getTitle()) ? "Debug Preprocessor" : runtime.getTitle());
+    public void doSample(ContextWrapper context, SampleFilterChain chain) {
+        log.info("执行测试步骤：{}", context.getTestResult().getTitle());
+        chain.doSample(context);
+        if (TestSuiteExecutable.class.isAssignableFrom(chain.getClass())) {
+            return;
+        }
+        var result = (SampleResult) context.getTestResult();
+        log.info("请求地址：{}", result.getUrl());
+        log.info("请求参数：{}", result.getRequestDataAsString());
+        log.info("响应数据：{}", result.getResponseDataAsString());
     }
 }

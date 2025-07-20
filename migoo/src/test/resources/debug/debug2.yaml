@@ -1,0 +1,80 @@
+title: 接口测试集
+variables:
+  var1: value1
+preprocessors:
+  - title: Debug 前置处理器
+    testclass: debug
+postprocessors:
+  - title: Debug 后置处理器
+    testclass: debug
+    config:
+      test: 接口测试集后置处理器执行
+children:
+  - title: 测试用例1
+    variables:
+      var1: value1
+    preprocessors:
+      - title: Debug 前置处理器
+        testclass: debug
+        config:
+          test: 测试用例1集前置处理器执行
+    postprocessors:
+      - title: Debug 后置处理器
+        testclass: debug
+        config:
+          test: 测试用例1集后置处理器执行
+    children:
+      - title: Debug 步骤1
+        testclass: debug
+        variables:
+          config_var1: config_value1
+        config:
+          c_r_1: c_r_1
+          c_r_2: c_r_2
+        validators:
+          - { testclass: "json", field: $.c_r_1, rule: '==', expected: c_r_1 }
+        extractors:
+          - { testclass: "json", field: "$.c_r_1", variable_name: "data_time4" }
+      - title: Debug 步骤2
+        testclass: debug
+        variables:
+          config_var1: config_value1
+        config:
+          c_r_1: c_r_1
+          c_r_2: c_r_2
+        validators:
+          - { testclass: "json", field: $.c_r_1, rule: '==', expected: c_r_1 }
+        extractors:
+          - { testclass: "json", field: "$.c_r_1", variable_name: "data_time4" }
+  - title: 测试用例2
+    variables:
+      var1: value1
+    preprocessors:
+      - title: Debug 前置处理器
+        testclass: debug
+    postprocessors:
+      - title: Debug 后置处理器
+        testclass: debug
+    children:
+      - title: Debug 步骤1
+        testclass: debug
+        variables:
+          config_var1: config_value1
+        config:
+          c_r_1: c_r_1
+          c_r_2: c_r_2
+        validators:
+          - { testclass: "json", field: $.c_r_1, rule: '==', expected: c_r_1 }
+        extractors:
+          - { testclass: "json", field: "$.c_r_1", variable_name: "data_time4" }
+      - title: Debug 步骤2
+        testclass: debug
+        variables:
+          config_var1: config_value1
+        config:
+          c_r_1: c_r_1
+          c_r_2: c_r_2
+        validators:
+          - { testclass: "json", field: $.c_r_1, rule: '==', expected: c_r_1 }
+        extractors:
+          - { testclass: "json", field: "$.c_r_1", variable_name: "data_time4" }

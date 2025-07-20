@@ -26,41 +26,35 @@
  *
  */
 
-package protocol.xyz.migoo.debug.processer;
+package support.xyz.migoo.fastjson2;
 
 import com.alibaba.fastjson2.JSON;
-import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.processor.AbstractProcessor;
-import core.xyz.migoo.processor.Preprocessor;
-import core.xyz.migoo.sampler.DefaultSampleResult;
-import core.xyz.migoo.testelement.Alias;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import protocol.xyz.migoo.debug.config.DebugConfigItem;
+import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.JSONReader;
+import com.alibaba.fastjson2.reader.ObjectReader;
+import core.xyz.migoo.config.TestElementConfigure;
+
+import java.lang.reflect.Type;
 
 /**
  * @author xiaomi
+ * Created at 2025/7/19 22:16
  */
-@Alias(value = {"debug_preprocessor", "debug_pre_processor", "debug"})
-public class DebugPreprocessor extends AbstractProcessor<DebugConfigItem> implements Preprocessor {
+public class TestElementConfigureObjectReader implements ObjectReader<TestElementConfigure> {
 
-    static Logger logger = LoggerFactory.getLogger(DebugPreprocessor.class);
+    public static void main(String[] args) {
+        var str = """
+                {"test1":"t1est1","test2":"tes1t2","variables":{"var1":"value1"}}
+                """;
 
-    @Override
-    protected void _process(ContextWrapper context) {
-        var result = (DefaultSampleResult) context.getTestResult();
-        result.sampleStart();
-        result.setUrl(getClass().getName());
-        result.setRequestData(JSON.toJSONBytes(config));
-        result.setResponseData(JSON.toJSONBytes(config));
-        logger.info("Debug Preprocessor");
-        result.sampleEnd();
+        var json = JSON.parseObject(str, TestElementConfigure.class);
+        System.out.println(json);
     }
 
     @Override
-    protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(runtime.getId(),
-                StringUtils.isBlank(runtime.getTitle()) ? "Debug Preprocessor" : runtime.getTitle());
+    public TestElementConfigure readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
+        var t = fieldName;
+        var value = jsonReader.readObject();
+        return JSONObject.parseObject(JSON.toJSONString(value), TestElementConfigure.class);
     }
 }

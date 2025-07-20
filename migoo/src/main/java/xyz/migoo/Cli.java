@@ -100,7 +100,7 @@ class Cli implements Runnable {
                         if (Function.class.isAssignableFrom(clz)) {
                             FunctionService.addService((Function) clz.getConstructor().newInstance());
                         } else if (TestElement.class.isAssignableFrom(clz)) {
-                            TestElementService.addService((Class<? extends TestElement>) clz);
+                            // todo  TestElementService.addService((Class<? extends TestElement>) clz);
                         }
                     }
                 }

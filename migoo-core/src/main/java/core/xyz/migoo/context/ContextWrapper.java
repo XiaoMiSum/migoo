@@ -28,13 +28,10 @@ package core.xyz.migoo.context;
 
 import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.config.ConfigureGroup;
-import core.xyz.migoo.context.variables.AllVariablesWrapper;
-import core.xyz.migoo.context.variables.LocalVariablesWrapper;
-import core.xyz.migoo.context.variables.SessionVariablesWrapper;
-import core.xyz.migoo.context.variables.TestVariablesWrapper;
+import core.xyz.migoo.config.TestElementConfigure;
+import core.xyz.migoo.context.variables.*;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.TestElement;
-import core.xyz.migoo.testelement.TestElementConfigure;
 
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +52,9 @@ public class ContextWrapper {
     private final LocalVariablesWrapper localVariablesWrapper;
     // 当前上下文，即最后一个上下文对象
     private Context sessionContext;
+    private GlobalContext globalContext;
     private TestSuiteContext testContext;
+    private GlobalVariablesWrapper globalVariablesWrapper;
     private TestVariablesWrapper testVariablesWrapper;
     private SessionVariablesWrapper sessionVariablesWrapper;
     // Runner 相关对象
@@ -85,6 +84,9 @@ public class ContextWrapper {
         Context currentContext = contextChain.getLast();
 
         // 处理各级上下文
+        if (globalContext != null) {
+            this.globalVariablesWrapper = new GlobalVariablesWrapper(List.of(globalContext));
+        }
         if (testContext != null) {
             this.testVariablesWrapper = new TestVariablesWrapper(List.of(testContext));
         }
@@ -121,7 +123,9 @@ public class ContextWrapper {
     private void searchNonTestStepContext() {
         // 如果上下文链中存在多个 SessionContext，则取最后一个，即最近的一个
         rawContextChain.forEach(ctx -> {
-            if (ctx instanceof TestSuiteContext) {
+            if (ctx instanceof GlobalContext) {
+                this.globalContext = (GlobalContext) ctx;
+            } else if (ctx instanceof TestSuiteContext) {
                 this.testContext = (TestSuiteContext) ctx;
             } else if (ctx instanceof SessionContext) {
                 this.sessionContext = ctx;
@@ -141,7 +145,7 @@ public class ContextWrapper {
     // ----------- ContextWrapper 对外 API -------------
     public Object eval(Object obj) {
         // todo 这里要实现变量计算
-        return null;
+        return obj;
     }
 
     public List<Context> getContextChain() {
@@ -186,5 +190,21 @@ public class ContextWrapper {
 
     public void setTestResult(Result<? extends Result<?>> testResult) {
         this.testResult = testResult;
+    }
+
+    public GlobalContext getGlobalContext() {
+        return globalContext;
+    }
+
+    public void setGlobalContext(GlobalContext globalContext) {
+        this.globalContext = globalContext;
+    }
+
+    public GlobalVariablesWrapper getGlobalVariablesWrapper() {
+        return globalVariablesWrapper;
+    }
+
+    public void setGlobalVariablesWrapper(GlobalVariablesWrapper globalVariablesWrapper) {
+        this.globalVariablesWrapper = globalVariablesWrapper;
     }
 }

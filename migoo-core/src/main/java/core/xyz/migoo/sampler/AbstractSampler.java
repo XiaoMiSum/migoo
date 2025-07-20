@@ -28,12 +28,15 @@
 
 package core.xyz.migoo.sampler;
 
+import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.filter.SampleFilterChain;
 import core.xyz.migoo.filter.TestFilter;
-import core.xyz.migoo.testelement.ExecutableTestElement;
+import core.xyz.migoo.testelement.AbstractTestElementExecutable;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * Sampler 抽象实现类。
@@ -42,17 +45,22 @@ import java.util.Iterator;
  *
  * @author xiaomi
  */
-@SuppressWarnings("unchecked")
-public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, T>, T extends SampleResult<T>>
-        extends ExecutableTestElement<SELF, T> implements Sampler<T>, SampleFilterChain {
+@SuppressWarnings({"rawtypes", "unchecked"})
+public abstract class AbstractSampler<CONFIG extends ConfigureItem, SELF extends AbstractSampler<CONFIG, SELF, T>, T extends SampleResult<T>>
+        extends AbstractTestElementExecutable<CONFIG, SELF, T> implements Sampler<T>, SampleFilterChain {
 
     private Iterator<TestFilter> sampleFilters;
 
     public AbstractSampler() {
     }
 
+    protected void handleFilters(ContextWrapper contextWrapper) {
+        super.handleFilters(contextWrapper);
+        sampleFilters = Objects.isNull(filters) ? Collections.emptyIterator() : filters.iterator();
+    }
+
     // ---------------------------------------------------------------------
-    // 重写 AbstractTestElement 中的方法
+    // 重写 AbstractTestElementExecutable 中的方法
     // ---------------------------------------------------------------------
 
     @Override
@@ -61,7 +69,6 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, T>, T e
         // 子类可以在 sample 方法或其子方法内，在合适的时机再次调用 sampleStart 和 sampleEnd 方法，
         // 以获取更准确的 sample 时间
         result.sampleStart();
-        sampleFilters = filters.iterator();
         doSample(ctx);
         result.sampleEnd();
         handleResponse(ctx, result);

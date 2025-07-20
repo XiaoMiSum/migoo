@@ -84,6 +84,8 @@
         <fastjson.version>2.0.53</fastjson.version>
         <commons-codec.version>1.17.1</commons-codec.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
+        <slf4j-api.version>2.0.17</slf4j-api.version>
+        <logback.version>1.5.18</logback.version>
 
         <clean.version>3.4.0</clean.version>
         <compiler.version>3.13.0</compiler.version>
@@ -101,10 +103,10 @@
         <module>migoo</module>
         <module>migoo-coder</module>
         <module>migoo-core</module>
-        <module>migoo-activemq</module>
-        <module>migoo-dubbo</module>
-        <module>migoo-kafka</module>
-        <module>migoo-rabbitmq</module>
+        <!--   <module>migoo-activemq</module>
+           <module>migoo-dubbo</module>
+           <module>migoo-kafka</module>
+           <module>migoo-rabbitmq</module>-->
     </modules>
 
     <dependencyManagement>
@@ -226,6 +228,19 @@
                 </exclusions>
             </dependency>
 
+            <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-api.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
         </dependencies>
 
     </dependencyManagement>

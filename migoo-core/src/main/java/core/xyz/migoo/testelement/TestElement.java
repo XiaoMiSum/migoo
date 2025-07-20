@@ -48,19 +48,16 @@ import support.xyz.migoo.fastjson2.TestElementObjectReader;
  *
  * @author xiaomi
  */
-@FunctionalInterface
 @JSONType(deserializer = TestElementObjectReader.class)
 public interface TestElement<T extends Result<T>> extends Validatable, Cloneable<TestElement<T>> {
 
     /**
-     * 执行测试组件
-     * <p>
-     * 用户应避免直接调用该方法，推荐使用 {@link SessionRunner#runTest} 方法。
-     *
-     * @param session 每个测试用例使用各自的 SessionRunner
-     * @return 执行结果
+     * 默认的空方法
      */
-    T run(SessionRunner session);
+    default T run(SessionRunner session) {
+        return null;
+    }
+
 
     /**
      * 对象拷贝，用于解决 TestElement对象的非线程安全问题

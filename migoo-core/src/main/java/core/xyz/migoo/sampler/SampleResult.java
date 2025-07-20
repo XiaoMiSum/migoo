@@ -25,13 +25,16 @@
 
 package core.xyz.migoo.sampler;
 
-import core.xyz.migoo.assertion.AssertionResult;
 import core.xyz.migoo.report.Result;
+import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Objects;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * @author xiaomi
@@ -39,24 +42,39 @@ import java.util.Objects;
 public abstract class SampleResult<T extends SampleResult<T>> extends Result<T> {
 
     public static final Charset DEFAULT_ENCODING = StandardCharsets.UTF_8;
-    public static final String TEXT = "text";
-    private static final byte[] EMPTY_BA = new byte[0];
-    private String url = "";
 
-    private String testClass;
+    private String url;
 
-    private String samplerData = "";
+    private byte[] requestData;
 
-    private byte[] responseData = EMPTY_BA;
+    private String requestDataAsString;
+
+    private byte[] responseData;
 
     private String responseDataAsString;
 
-    private List<AssertionResult> assertionResults;
+    private LocalDateTime sampleStartTime;
 
-    private List<SampleResult> extractorResults;
+    private LocalDateTime sampleEndTime;
 
     public SampleResult(String title) {
         super(title);
+    }
+
+    public SampleResult(String id, String title) {
+        super(id, title);
+    }
+
+    public void sampleStart() {
+        if (sampleStartTime == null) {
+            setSampleEndTime(LocalDateTime.now(ZoneId.systemDefault()));
+        }
+    }
+
+    public void sampleEnd() {
+        if (sampleEndTime == null) {
+            setSampleEndTime(LocalDateTime.now(ZoneId.systemDefault()));
+        }
     }
 
     public String getUrl() {
@@ -67,76 +85,54 @@ public abstract class SampleResult<T extends SampleResult<T>> extends Result<T> 
         this.url = url;
     }
 
+    public byte[] getRequestData() {
+        return requestData;
+    }
+
+    public void setRequestData(byte[] requestData) {
+        this.requestData = requestData;
+    }
+
+    public String getRequestDataAsString() {
+        if (StringUtils.isBlank(requestDataAsString)) {
+            requestDataAsString = new String(requestData, DEFAULT_ENCODING);
+        }
+        return requestDataAsString;
+    }
 
     public byte[] getResponseData() {
         return responseData;
     }
 
     public void setResponseData(byte[] responseData) {
-        responseDataAsString = null;
-        this.responseData = responseData == null ? EMPTY_BA : responseData;
-    }
-
-    public void setResponseData(String responseData) {
-        responseDataAsString = null;
-        this.responseData = responseData == null ? EMPTY_BA : responseData.getBytes(DEFAULT_ENCODING);
+        this.responseData = responseData;
     }
 
     public String getResponseDataAsString() {
-        if (responseDataAsString == null) {
+        if (StringUtils.isBlank(responseDataAsString)) {
             responseDataAsString = new String(responseData, DEFAULT_ENCODING);
         }
         return responseDataAsString;
     }
 
-
-    public String getSamplerData() {
-        return samplerData;
+    public LocalDateTime getSampleStartTime() {
+        return sampleStartTime;
     }
 
-    public void setSamplerData(String samplerData) {
-        this.samplerData = samplerData;
+    public void setSampleStartTime(LocalDateTime sampleStartTime) {
+        this.sampleStartTime = sampleStartTime;
     }
 
-    public void setSamplerData(SampleResult result) {
-        this.samplerData = result.getSamplerData();
-        this.responseData = result.getResponseData();
-        this.url = result.getUrl();
-        this.testClass = result.getTestClass();
-        super.setSuccessful(result.isSuccessful());
-        this.setStartTime(result.getStartTime());
-        this.setEndTime(result.getEndTime());
-        this.setThrowable(result.getThrowable());
+    public LocalDateTime getSampleEndTime() {
+        return sampleEndTime;
     }
 
-    public List<AssertionResult> getAssertionResults() {
-        return assertionResults;
+    public void setSampleEndTime(LocalDateTime sampleEndTime) {
+        this.sampleEndTime = sampleEndTime;
     }
 
-    public void setAssertionResults(List<AssertionResult> assertionResults) {
-        this.assertionResults = assertionResults;
-    }
-
-    public String getTestClass() {
-        return testClass;
-    }
-
-    public void setTestClass(String testClass) {
-        this.testClass = testClass;
-        if (Objects.isNull(getTitle()) || getTitle().trim().isEmpty()) {
-            setTitle(testClass);
-        }
-    }
-
-    public void setTestClass(Class<?> testClass) {
-        this.setTestClass(testClass.getName());
-    }
-
-    public List<SampleResult> getExtractorResults() {
-        return extractorResults;
-    }
-
-    public void setExtractorResults(List<SampleResult> extractorResults) {
-        this.extractorResults = extractorResults;
+    public String getDuration() {
+        var duration = Duration.between(sampleStartTime, sampleEndTime).toMillis() / 1000.00;
+        return new BigDecimal(duration).setScale(2, RoundingMode.HALF_UP).doubleValue() + " s";
     }
 }

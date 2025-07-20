@@ -26,41 +26,22 @@
  *
  */
 
-package protocol.xyz.migoo.debug.processer;
+package core.xyz.migoo.configureelement;
 
-import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.annotation.JSONType;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.processor.AbstractProcessor;
-import core.xyz.migoo.processor.Preprocessor;
-import core.xyz.migoo.sampler.DefaultSampleResult;
-import core.xyz.migoo.testelement.Alias;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import protocol.xyz.migoo.debug.config.DebugConfigItem;
+import core.xyz.migoo.report.Result;
+import core.xyz.migoo.testelement.Validatable;
+import support.xyz.migoo.fastjson2.ConfigureElementObjectReader;
 
 /**
+ * 配置元件：默认配置，可参考JMeter的HTTP默认配置、jdbcDataSource配置
+ *
  * @author xiaomi
  */
-@Alias(value = {"debug_preprocessor", "debug_pre_processor", "debug"})
-public class DebugPreprocessor extends AbstractProcessor<DebugConfigItem> implements Preprocessor {
+@JSONType(deserializer = ConfigureElementObjectReader.class)
+public interface ConfigureElement<T extends Result<T>> extends Validatable {
 
-    static Logger logger = LoggerFactory.getLogger(DebugPreprocessor.class);
+    T process(ContextWrapper context);
 
-    @Override
-    protected void _process(ContextWrapper context) {
-        var result = (DefaultSampleResult) context.getTestResult();
-        result.sampleStart();
-        result.setUrl(getClass().getName());
-        result.setRequestData(JSON.toJSONBytes(config));
-        result.setResponseData(JSON.toJSONBytes(config));
-        logger.info("Debug Preprocessor");
-        result.sampleEnd();
-    }
-
-    @Override
-    protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(runtime.getId(),
-                StringUtils.isBlank(runtime.getTitle()) ? "Debug Preprocessor" : runtime.getTitle());
-    }
 }

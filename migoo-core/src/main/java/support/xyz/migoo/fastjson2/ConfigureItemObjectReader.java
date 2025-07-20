@@ -28,42 +28,22 @@
 
 package support.xyz.migoo.fastjson2;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONException;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.reader.ObjectReader;
-import core.xyz.migoo.ApplicationConfig;
-import core.xyz.migoo.testelement.TestElement;
-import org.apache.commons.lang3.tuple.Pair;
+import core.xyz.migoo.config.ConfigureItem;
 
 import java.lang.reflect.Type;
-import java.util.Map;
-import java.util.Objects;
-
-import static core.xyz.migoo.testelement.TestElementConstantsInterface.TEST_CLASS;
 
 /**
  * @author xiaomi
- * Created at 2025/7/19 12:37
+ * Created at 2025/7/19 14:14
  */
 @SuppressWarnings({"rawtypes"})
-public class TestElementObjectReader implements ObjectReader<TestElement> {
-
+public class ConfigureItemObjectReader implements ObjectReader<ConfigureItem> {
     @Override
-    public TestElement readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
+    public ConfigureItem readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
         var testElementMap = jsonReader.readObject();
-        var pair = checkTestElement(testElementMap);
-        return JSON.parseObject(JSON.toJSONString(testElementMap), pair.getLeft());
-    }
 
-    private Pair<Class<? extends TestElement>, String> checkTestElement(Map<String, Object> testElementMap) {
-        var keyMap = ApplicationConfig.getTestElementKeyMap();
-        var key = testElementMap.get(TEST_CLASS).toString();
-        var clazz = keyMap.get(key);
-        if (Objects.nonNull(clazz)) {
-            return Pair.of(clazz, key);
-        }
-        throw new JSONException("没有匹配的测试集或取样器, JSON String: " + JSON.toJSONString(testElementMap));
+        return null;
     }
-
 }

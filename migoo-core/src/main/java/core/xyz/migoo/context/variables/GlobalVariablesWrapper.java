@@ -26,14 +26,20 @@
  *
  */
 
-package core.xyz.migoo.config;
+package core.xyz.migoo.context.variables;
+
+import core.xyz.migoo.context.Context;
+
+import java.util.List;
 
 /**
  * @author xiaomi
- * Created at 2025/7/19 14:22
+ * Created at 2025/7/20 14:02
  */
-public interface ConfigureElementConstantsInterface {
+public class GlobalVariablesWrapper extends AbstractVariablesWrapper {
 
-    String VARIABLE_NAME = "variable_name";
-    String REF_NAME = "ref_name";
+    public GlobalVariablesWrapper(List<Context> contextChain) {
+        super(contextChain);
+    }
+
 }

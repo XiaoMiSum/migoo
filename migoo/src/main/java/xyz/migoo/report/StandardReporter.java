@@ -95,7 +95,7 @@ public class StandardReporter implements Reporter {
         }
     }
 
-    private void writeVariables(Object feature, MiGooVariables variables, boolean isGlobal, boolean isSampler) {
+    private void writeVariables(Object feature, TestElementConfigure variables, boolean isGlobal, boolean isSampler) {
         if (Objects.nonNull(variables) && !variables.getProperty().isEmpty()) {
             // test 为 1级节点 或者 2级节点
             if (reportLevel.isSuite() && isSampler) {

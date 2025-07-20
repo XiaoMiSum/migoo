@@ -27,24 +27,33 @@ package core.xyz.migoo;
 
 import core.xyz.migoo.assertion.Assertion;
 import core.xyz.migoo.assertion.Rule;
-import core.xyz.migoo.config.ConfigureElement;
+import core.xyz.migoo.config.ConfigureItem;
+import core.xyz.migoo.config.FilterConfigureItem;
+import core.xyz.migoo.config.GlobalConfigure;
+import core.xyz.migoo.configureelement.ConfigureElement;
+import core.xyz.migoo.context.GlobalContext;
 import core.xyz.migoo.extractor.Extractor;
+import core.xyz.migoo.filter.TestFilter;
+import core.xyz.migoo.filter.report.ReportFilter;
 import core.xyz.migoo.function.Function;
 import core.xyz.migoo.processor.Postprocessor;
 import core.xyz.migoo.processor.Preprocessor;
 import core.xyz.migoo.testelement.TestElement;
 import support.xyz.migoo.MiGooServiceLoader;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Supplier;
 
+import static core.xyz.migoo.testelement.TestElementConstantsInterface.FILTERS;
+
 /**
  * @author xiaomi
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes"})
 public class ApplicationConfig {
 
 
@@ -57,6 +66,10 @@ public class ApplicationConfig {
     private static final ReadWriteLock EXTRACTOR_KEY_MAP_LOCK = new ReentrantReadWriteLock(false);
     private static final ReadWriteLock FUNCTION_KEY_MAP_LOCK = new ReentrantReadWriteLock(false);
     private static final ReadWriteLock RULE_KEY_MAP_LOCK = new ReentrantReadWriteLock(false);
+    private static final ReadWriteLock CONFIGURE_ITEM_KEY_MAP_LOCK = new ReentrantReadWriteLock(false);
+    private static final ReadWriteLock REPORT_FILTERS_LOCK = new ReentrantReadWriteLock(false);
+    private static final ReadWriteLock TEST_FILTER_KEY_MAP_LOCK = new ReentrantReadWriteLock(false);
+    private static final ReadWriteLock globalContextLock = new ReentrantReadWriteLock(false);
 
     private static Map<String, Class<? extends TestElement>> TEST_ELEMENT_KEY_MAP;
     private static Map<String, Class<? extends ConfigureElement>> CONFIG_ELEMENT_KEY_MAP;
@@ -66,9 +79,14 @@ public class ApplicationConfig {
     private static Map<String, Class<? extends Extractor>> EXTRACTOR_KEY_MAP;
     private static Map<String, Class<? extends Function>> FUNCTION_KEY_MAP;
     private static Map<String, Rule> RULE_KEY_MAP;
+    private static Map<String, Class<? extends ConfigureItem>> CONFIGURE_ITEM_KEY_MAP;
+    private static List<? extends ReportFilter> REPORT_FILTERS;
+    private static Map<String, Class<? extends TestFilter>> TEST_FILTER_KEY_MAP;
+
+    private static GlobalContext globalContext;
 
     public static Map<String, Class<? extends TestElement>> getTestElementKeyMap() {
-        return getClassMap(TEST_ELEMENT_KEY_MAP_LOCK,
+        return getDataMap(TEST_ELEMENT_KEY_MAP_LOCK,
                 () -> ApplicationConfig.TEST_ELEMENT_KEY_MAP,
                 () -> {
                     ApplicationConfig.TEST_ELEMENT_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(TestElement.class);
@@ -78,7 +96,7 @@ public class ApplicationConfig {
     }
 
     public static Map<String, Class<? extends ConfigureElement>> getConfigureElementKeyMap() {
-        return getClassMap(CONFIG_ELEMENT_KEY_MAP_LOCK,
+        return getDataMap(CONFIG_ELEMENT_KEY_MAP_LOCK,
                 () -> ApplicationConfig.CONFIG_ELEMENT_KEY_MAP,
                 () -> {
                     ApplicationConfig.CONFIG_ELEMENT_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(ConfigureElement.class);
@@ -88,7 +106,7 @@ public class ApplicationConfig {
     }
 
     public static Map<String, Class<? extends Preprocessor>> getPreprocessorKeyMap() {
-        return getClassMap(PREPROCESSOR_KEY_MAP_LOCK,
+        return getDataMap(PREPROCESSOR_KEY_MAP_LOCK,
                 () -> ApplicationConfig.PREPROCESSOR_KEY_MAP,
                 () -> {
                     ApplicationConfig.PREPROCESSOR_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(Preprocessor.class);
@@ -98,7 +116,7 @@ public class ApplicationConfig {
     }
 
     public static Map<String, Class<? extends Postprocessor>> getPostprocessorKeyMap() {
-        return getClassMap(POSTPROCESSOR_KEY_MAP_LOCK,
+        return getDataMap(POSTPROCESSOR_KEY_MAP_LOCK,
                 () -> ApplicationConfig.POSTPROCESSOR_KEY_MAP,
                 () -> {
                     ApplicationConfig.POSTPROCESSOR_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(Postprocessor.class);
@@ -108,7 +126,7 @@ public class ApplicationConfig {
     }
 
     public static Map<String, Class<? extends Assertion>> getAssertionKeyMap() {
-        return getClassMap(ASSERTION_KEY_MAP_LOCK,
+        return getDataMap(ASSERTION_KEY_MAP_LOCK,
                 () -> ApplicationConfig.ASSERTION_KEY_MAP,
                 () -> {
                     ApplicationConfig.ASSERTION_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(Assertion.class);
@@ -118,7 +136,7 @@ public class ApplicationConfig {
     }
 
     public static Map<String, Class<? extends Extractor>> getExtractorKeyMap() {
-        return getClassMap(EXTRACTOR_KEY_MAP_LOCK,
+        return getDataMap(EXTRACTOR_KEY_MAP_LOCK,
                 () -> ApplicationConfig.EXTRACTOR_KEY_MAP,
                 () -> {
                     ApplicationConfig.EXTRACTOR_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(Extractor.class);
@@ -128,7 +146,7 @@ public class ApplicationConfig {
     }
 
     public static Map<String, Class<? extends Function>> getFunctionKeyMap() {
-        return getClassMap(FUNCTION_KEY_MAP_LOCK,
+        return getDataMap(FUNCTION_KEY_MAP_LOCK,
                 () -> ApplicationConfig.FUNCTION_KEY_MAP,
                 () -> {
                     ApplicationConfig.FUNCTION_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(Function.class);
@@ -138,16 +156,59 @@ public class ApplicationConfig {
     }
 
     public static Map<String, Rule> getRuleKeyMap() {
-        return getClassMap(RULE_KEY_MAP_LOCK,
+        return getDataMap(RULE_KEY_MAP_LOCK,
                 () -> ApplicationConfig.RULE_KEY_MAP,
                 () -> {
-                    ApplicationConfig.RULE_KEY_MAP = (Map<String, Rule>) MiGooServiceLoader.loadAsInstanceMapBySPI(Rule.class);
+                    ApplicationConfig.RULE_KEY_MAP = MiGooServiceLoader.loadAsInstanceMapBySPI(Rule.class);
                     return ApplicationConfig.RULE_KEY_MAP;
                 }
         );
     }
 
-    private static <T> T getClassMap(ReadWriteLock readWriteLock, Supplier<T> readWorker, Supplier<T> writeWorker) {
+    public static Map<String, Class<? extends ConfigureItem>> getConfigureItemKeyMap() {
+        return getDataMap(CONFIGURE_ITEM_KEY_MAP_LOCK,
+                () -> ApplicationConfig.CONFIGURE_ITEM_KEY_MAP,
+                () -> {
+                    ApplicationConfig.CONFIGURE_ITEM_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(ConfigureItem.class);
+                    return ApplicationConfig.CONFIGURE_ITEM_KEY_MAP;
+                }
+        );
+    }
+
+    public static Map<String, Class<? extends TestFilter>> getTestFilterKeyMap() {
+        return getDataMap(TEST_FILTER_KEY_MAP_LOCK,
+                () -> ApplicationConfig.TEST_FILTER_KEY_MAP,
+                () -> {
+                    ApplicationConfig.TEST_FILTER_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(TestFilter.class);
+                    return ApplicationConfig.TEST_FILTER_KEY_MAP;
+                }
+        );
+    }
+
+    public static List<? extends ReportFilter> getReportFilters() {
+        return getDataMap(REPORT_FILTERS_LOCK,
+                () -> ApplicationConfig.REPORT_FILTERS,
+                () -> {
+                    ApplicationConfig.REPORT_FILTERS = MiGooServiceLoader.loadAsInstanceListBySPI(ReportFilter.class);
+                    return ApplicationConfig.REPORT_FILTERS;
+                }
+        );
+    }
+
+    public static GlobalContext getGlobalContext() {
+        return getDataMap(globalContextLock,
+                () -> ApplicationConfig.globalContext,
+                () -> {
+                    ApplicationConfig.globalContext = new GlobalContext(new GlobalConfigure());
+                    FilterConfigureItem<ReportFilter> items = new FilterConfigureItem<>();
+                    items.addAll(getReportFilters());
+                    ApplicationConfig.globalContext.getConfigGroup().put(FILTERS, items);
+                    return ApplicationConfig.globalContext;
+                }
+        );
+    }
+
+    private static <T> T getDataMap(ReadWriteLock readWriteLock, Supplier<T> readWorker, Supplier<T> writeWorker) {
         var readLock = readWriteLock.readLock();
         var writeLock = readWriteLock.writeLock();
         readLock.lock();

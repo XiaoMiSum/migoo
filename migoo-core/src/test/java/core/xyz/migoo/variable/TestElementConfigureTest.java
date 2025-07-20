@@ -39,7 +39,7 @@ import java.util.Map;
  * @author mi.xiao
  * @date 2021/2/22 22:13
  */
-public class MiGooVariablesTest {
+public class TestElementConfigureTest {
 
     /**
      * 测试变量转换

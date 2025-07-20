@@ -25,7 +25,7 @@
 #  */
 #
 
-protocol.xyz.migoo.debug.coinfig.DebugDefaults
+protocol.xyz.migoo.debug.config.DebugConfigItem
 
 
 

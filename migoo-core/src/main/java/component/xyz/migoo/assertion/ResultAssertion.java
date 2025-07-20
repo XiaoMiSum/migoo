@@ -37,7 +37,7 @@ import core.xyz.migoo.testelement.Alias;
 public class ResultAssertion extends AbstractAssertion {
 
     @Override
-    protected AssertionResult init(SampleResult<? extends SampleResult<?>> result) {
+    protected AssertionResult initialized(SampleResult<? extends SampleResult<?>> result) {
         var res = new AssertionResult("响应断言: ");
         actualValue = result.getResponseDataAsString();
         return res;

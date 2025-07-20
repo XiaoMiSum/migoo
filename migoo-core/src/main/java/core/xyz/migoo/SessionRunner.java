@@ -25,15 +25,14 @@
 
 package core.xyz.migoo;
 
+import core.xyz.migoo.config.TestElementConfigure;
 import core.xyz.migoo.context.Context;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.context.SessionContext;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.TestElement;
-import core.xyz.migoo.testelement.TestElementConfigure;
 import core.xyz.migoo.testelement.TestElementConstantsInterface;
 import core.xyz.migoo.testelement.ValidateResult;
-import core.xyz.migoo.variable.MiGooVariables;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,13 +82,14 @@ public class SessionRunner {
 
     private void initContextChain() {
         // 会话上下文（运行用例）
+        contextChain.add(ApplicationConfig.getGlobalContext());
         contextChain.add(sessionContext);
 
         // 会话上下文默认值：添加一个空的变量配置
         // SessionRunner 可能直接运行某个 Sampler，而不是 TestCase，比如 Groovy/Java 用例
         // 示例：SessionRunner 连续运行多个 Http 请求，Http 请求中设置和读取 Session 变量
         TestElementConfigure testElementConfig = new TestElementConfigure();
-        testElementConfig.put(TestElementConstantsInterface.VALIDATORS, new MiGooVariables());
+        testElementConfig.put(TestElementConstantsInterface.VARIABLES, new core.xyz.migoo.variable.MiGooVariables());
         sessionContext.setConfigGroup(testElementConfig);
 
         contextWrapper = new ContextWrapper(this);
@@ -105,7 +105,7 @@ public class SessionRunner {
 
 
     /**
-     * 运行任意的测试元件，如 TestSuite 或 Sampler
+     * 运行任意的测试元件，如 TestSuiteExecutable 或 Sampler
      * <p>
      * 默认校验：执行前校验测试元件数据是否合法
      *
@@ -116,7 +116,7 @@ public class SessionRunner {
     }
 
     /**
-     * 运行任意的测试元件，如 TestSuite 或 Sampler
+     * 运行任意的测试元件，如 TestSuiteExecutable 或 Sampler
      *
      * @param element  测试元件
      * @param <T>      测试元件对应的执行结果类

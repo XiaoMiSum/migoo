@@ -47,8 +47,8 @@ public class ResultExtractor extends AbstractExtractor {
     @Override
     public ValidateResult validate() {
         ValidateResult result = new ValidateResult();
-        if (StringUtils.isBlank(variableName)) {
-            result.append("\n提取变量 %s 字段值缺失或为空，当前值：%s", VARIABLE_NAME, toString());
+        if (StringUtils.isBlank(refName)) {
+            result.append("\n提取变量引用名称 %s 字段值缺失或为空，当前值：%s", REF_NAME, toString());
         }
         return result;
     }

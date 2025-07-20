@@ -25,9 +25,7 @@
 #  */
 #
 
-
-core.xyz.migoo.testelement.TestSuiteExecutable
-protocol.xyz.migoo.debug.sampler.DebugSampler
+protocol.xyz.migoo.debug.config.DebugDefaults
 
 
 

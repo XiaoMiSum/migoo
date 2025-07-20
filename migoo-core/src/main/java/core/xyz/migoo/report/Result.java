@@ -60,6 +60,19 @@ public abstract class Result<T extends Result<T>> implements Serializable {
         this.title = title;
     }
 
+    public void testStart() {
+        if (startTime == null) {
+            setStartTime(LocalDateTime.now(ZoneId.systemDefault()));
+        }
+    }
+
+    public void testEnd() {
+        if (endTime == null) {
+            setEndTime(LocalDateTime.now(ZoneId.systemDefault()));
+        }
+    }
+
+
     public String getTitle() {
         return title;
     }
@@ -100,18 +113,6 @@ public abstract class Result<T extends Result<T>> implements Serializable {
         this.endTime = endTime;
     }
 
-    public void sampleStart() {
-        if (startTime == null) {
-            setStartTime(LocalDateTime.now(ZoneId.systemDefault()));
-        }
-    }
-
-    public void sampleEnd() {
-        if (endTime == null) {
-            setEndTime(LocalDateTime.now(ZoneId.systemDefault()));
-        }
-    }
-
     public boolean isException() {
         return throwable != null;
     }
@@ -121,12 +122,12 @@ public abstract class Result<T extends Result<T>> implements Serializable {
     }
 
     public void setThrowable(Throwable throwable) {
-        this.sampleStart();
+        this.testStart();
         if (throwable != null) {
             this.success = false;
             this.throwable = throwable;
         }
-        this.sampleEnd();
+        this.testEnd();
     }
 
     public String getId() {

@@ -1,5 +1,7 @@
 package core.xyz.migoo.testelement;
 
+import core.xyz.migoo.config.EmptyConfigureItem;
+import core.xyz.migoo.config.TestElementConfigure;
 import core.xyz.migoo.context.Context;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.context.SessionContext;
@@ -8,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Alias("__testsuite__")
-public class TestSuite extends TestContainer<TestSuite, TestSuiteResult> {
+public class TestSuiteExecutable extends TestContainerExecutable<EmptyConfigureItem, TestSuiteExecutable, TestSuiteResult> {
 
     @Override
     protected TestSuiteResult getTestResult() {
@@ -30,12 +32,12 @@ public class TestSuite extends TestContainer<TestSuite, TestSuiteResult> {
     private void updateCurrentContext(List<Context> contextChain) {
         Context context = contextChain.getLast();
         if (context instanceof SessionContext sessionContext) {
-            if (runtime.config == null) {
-                runtime.config = new TestElementConfigure();
+            if (runtime.configGroup == null) {
+                runtime.configGroup = new TestElementConfigure();
             }
             // 驱动数据覆盖默认变量值
-            var configGroup = (TestElementConfigure) runtime.config.merge(sessionContext.getConfigGroup());
-            runtime.config = configGroup;
+            var configGroup = (TestElementConfigure) runtime.configGroup.merge(sessionContext.getConfigGroup());
+            runtime.configGroup = configGroup;
             sessionContext.setConfigGroup(configGroup);
             return;
         }

@@ -1,13 +1,66 @@
+/*
+ *
+ *  * The MIT License (MIT)
+ *  *
+ *  * Copyright (c) 2025.  Lorem XiaoMiSum (mi_xiao@qq.com)
+ *  *
+ *  * Permission is hereby granted, free of charge, to any person obtaining
+ *  * a copy of this software and associated documentation files (the
+ *  * 'Software'), to deal in the Software without restriction, including
+ *  * without limitation the rights to use, copy, modify, merge, publish,
+ *  * distribute, sublicense, and/or sell copies of the Software, and to
+ *  * permit persons to whom the Software is furnished to do so, subject to
+ *  * the following conditions:
+ *  *
+ *  * The above copyright notice and this permission notice shall be
+ *  * included in all copies or substantial portions of the Software.
+ *  *
+ *  * THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+ *  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ *  * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ *  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ *  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ *  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ *
+ */
+
 package protocol.xyz.migoo.debug.processer;
 
+import com.alibaba.fastjson2.JSON;
+import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.processor.AbstractProcessor;
 import core.xyz.migoo.processor.Postprocessor;
+import core.xyz.migoo.sampler.DefaultSampleResult;
 import core.xyz.migoo.testelement.Alias;
-import protocol.xyz.migoo.debug.AbstractDebugTestElement;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import protocol.xyz.migoo.debug.config.DebugConfigItem;
 
-@Alias({"debug_postprocessor", "debug_post_processor"})
-public class DebugPostprocessor extends AbstractDebugTestElement implements Postprocessor {
+/**
+ * @author xiaomi
+ */
+@Alias(value = {"debug_postprocessor", "debug_post_processor", "debug"})
+public class DebugPostprocessor extends AbstractProcessor<DebugConfigItem> implements Postprocessor {
+
+    static Logger logger = LoggerFactory.getLogger(DebugPostprocessor.class);
+
     @Override
-    public SampleResult process() {
-        return super.execute(new SampleResult(getPropertyAsString(TITLE)));
+    protected void _process(ContextWrapper context) {
+        var result = (DefaultSampleResult) context.getTestResult();
+        result.sampleStart();
+        result.setUrl(getClass().getName());
+        result.setRequestData(JSON.toJSONBytes(config));
+        result.setResponseData(JSON.toJSONBytes(config));
+        logger.info("Debug Postprocessor");
+        result.sampleEnd();
+    }
+
+    @Override
+    protected DefaultSampleResult getTestResult() {
+        return new DefaultSampleResult(runtime.getId(),
+                StringUtils.isBlank(runtime.getTitle()) ? "Debug Preprocessor" : runtime.getTitle());
     }
 }

@@ -34,15 +34,15 @@ import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.reader.ObjectReader;
 import core.xyz.migoo.ApplicationConfig;
-import core.xyz.migoo.config.ConfigureElement;
+import core.xyz.migoo.configureelement.ConfigureElement;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
 
-import static core.xyz.migoo.config.ConfigureElementConstantsInterface.REF_NAME;
-import static core.xyz.migoo.config.ConfigureElementConstantsInterface.VARIABLE_NAME;
+import static core.xyz.migoo.configureelement.ConfigureElementConstantsInterface.REF_NAME;
+import static core.xyz.migoo.configureelement.ConfigureElementConstantsInterface.VARIABLE_NAME;
 import static core.xyz.migoo.testelement.TestElementConstantsInterface.CONFIG;
 import static core.xyz.migoo.testelement.TestElementConstantsInterface.TEST_CLASS;
 
@@ -57,7 +57,8 @@ public class ConfigureElementObjectReader implements ObjectReader<ConfigureEleme
         var testElementMap = jsonReader.readObject();
         var pair = checkTestElement(testElementMap);
         standardizeConfig(testElementMap, pair.getRight());
-        return JSON.parseObject(JSON.toJSONString(testElementMap), pair.getLeft());
+        var rawData = JSON.toJSONString(testElementMap);
+        return JSON.parseObject(rawData, pair.getLeft());
     }
 
     private Pair<Class<? extends ConfigureElement>, String> checkTestElement(Map<String, Object> testElementMap) {
@@ -82,6 +83,6 @@ public class ConfigureElementObjectReader implements ObjectReader<ConfigureEleme
             testElementMap.clear();
         }
         // 测试集config中只存在变量
-        testElementMap.put(CONFIG, JSONObject.of(TEST_CLASS, key, REF_NAME, refName, CONFIG, _config));
+        testElementMap.putAll(JSONObject.of(TEST_CLASS, key, REF_NAME, refName, CONFIG, _config));
     }
 }

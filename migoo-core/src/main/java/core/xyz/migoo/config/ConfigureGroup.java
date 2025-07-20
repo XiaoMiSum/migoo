@@ -25,6 +25,7 @@
 
 package core.xyz.migoo.config;
 
+import com.alibaba.fastjson2.JSON;
 import core.xyz.migoo.testelement.*;
 import core.xyz.migoo.testelement.Cloneable;
 import core.xyz.migoo.variable.MiGooVariables;
@@ -38,7 +39,7 @@ import java.util.Objects;
  *
  * @author xiaomi
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "unchecked"})
 public interface ConfigureGroup extends Validatable, Map<String, ConfigureItem>, Mergeable<ConfigureGroup>, Cloneable<ConfigureGroup>, TestElementConstantsInterface {
 
     /**
@@ -66,9 +67,22 @@ public interface ConfigureGroup extends Validatable, Map<String, ConfigureItem>,
         }
         var keys = new HashSet<>(other.keySet());
         // 过滤当前配置组中已存在的key（重复配置项以当前为准）
-        keys.stream().filter(key -> this.containsKey(key) && Objects.nonNull(key))
+        keys.stream().filter(key -> !this.containsKey(key) && other.get(key) != null)
                 .forEach(key -> data.put(key, other.get(key).copy()));
         return data;
+    }
+
+    default <T extends ConfigureItem<T>> T get(String key, Class<T> clazz) {
+        var v = get(key);
+        if (Objects.isNull(v)) {
+            return null;
+        }
+        if (clazz.isAssignableFrom(v.getClass())) {
+            return (T) v;
+        }
+        T t = JSON.parseObject(JSON.toJSONBytes(v), clazz);
+        put(key, t);
+        return t;
     }
 
     @Override
@@ -79,6 +93,6 @@ public interface ConfigureGroup extends Validatable, Map<String, ConfigureItem>,
     }
 
     default MiGooVariables getVariables() {
-        return get(VARIABLES);
+        return get(VARIABLES, MiGooVariables.class);
     }
 }

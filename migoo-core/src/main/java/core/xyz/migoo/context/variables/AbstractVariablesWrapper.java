@@ -25,11 +25,10 @@
 
 package core.xyz.migoo.context.variables;
 
+import core.xyz.migoo.config.TestElementConfigure;
 import core.xyz.migoo.context.Context;
 import core.xyz.migoo.context.TestRunContext;
-import core.xyz.migoo.testelement.TestElementConfigure;
 import core.xyz.migoo.testelement.TestElementConstantsInterface;
-import core.xyz.migoo.variable.MiGooVariables;
 
 import java.util.List;
 import java.util.Map;
@@ -95,7 +94,7 @@ public abstract class AbstractVariablesWrapper implements VariablesWrapper, Test
         return lastContext.getConfigGroup().getVariables() != null;
     }
 
-    public MiGooVariables getLastVariables() {
+    public core.xyz.migoo.variable.MiGooVariables getLastVariables() {
         var lastConfigureGroup = lastContext.getConfigGroup();
         if (Objects.isNull(lastConfigureGroup)) {
             lastConfigureGroup = new TestElementConfigure();
@@ -105,7 +104,7 @@ public abstract class AbstractVariablesWrapper implements VariablesWrapper, Test
         if (!Objects.isNull(lastContextVariables)) {
             return lastContextVariables;
         }
-        lastContextVariables = new MiGooVariables();
+        lastContextVariables = new core.xyz.migoo.variable.MiGooVariables();
         lastConfigureGroup.put(VARIABLES, lastContextVariables);
         return lastContextVariables;
     }

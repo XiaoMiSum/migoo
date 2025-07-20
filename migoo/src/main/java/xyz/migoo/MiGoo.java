@@ -25,6 +25,7 @@
 
 package xyz.migoo;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.ApplicationConfig;
 import core.xyz.migoo.SessionRunner;
@@ -74,12 +75,12 @@ public class MiGoo {
     }
 
     public static <T extends Result<T>> Result<T> start(String filePath) {
-        var testcase = TestDataLoader.toJavaObject(filePath, JsonTree.class);
+        var testcase = TestDataLoader.toJavaObject(filePath, JSONObject.class);
         return start(testcase);
     }
 
     public static <T extends Result<T>> Result<T> start(String filePath, boolean isClassPath) {
-        var testcase = TestDataLoader.toJavaObject(filePath, isClassPath, JsonTree.class);
+        var testcase = TestDataLoader.toJavaObject(filePath, isClassPath, JSONObject.class);
         return start(testcase);
     }
 
@@ -94,7 +95,7 @@ public class MiGoo {
 
     private <T extends Result<T>> Result<T> runTest() {
         var clazz = ApplicationConfig.getTestElementKeyMap().get(testcase.getString(TEST_CLASS));
-        var result = SessionRunner.getSession().runTest(testcase.toJavaObject(clazz));
+        var result = SessionRunner.getSession().runTest(JSON.parseObject(testcase.toJSONString(), clazz));
         Reporter reporter = null;
         try {
             var enableReport = Boolean.parseBoolean(System.getProperty(REPORT_ENABLE, "true"));

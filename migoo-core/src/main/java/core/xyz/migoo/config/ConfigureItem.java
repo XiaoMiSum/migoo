@@ -10,6 +10,7 @@ import core.xyz.migoo.testelement.Validatable;
  * @param <T>
  * @author xiaomi
  */
+//@JSONType(deserializer = ConfigureItemObjectReader.class)
 public interface ConfigureItem<T extends ConfigureItem<T>> extends Validatable, Mergeable<T>, Cloneable<T> {
 
     T merge(T other);

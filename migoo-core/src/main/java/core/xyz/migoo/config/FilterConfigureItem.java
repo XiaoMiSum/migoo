@@ -26,41 +26,31 @@
  *
  */
 
-package protocol.xyz.migoo.debug.processer;
+package core.xyz.migoo.config;
 
-import com.alibaba.fastjson2.JSON;
-import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.processor.AbstractProcessor;
-import core.xyz.migoo.processor.Preprocessor;
-import core.xyz.migoo.sampler.DefaultSampleResult;
-import core.xyz.migoo.testelement.Alias;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import protocol.xyz.migoo.debug.config.DebugConfigItem;
+import core.xyz.migoo.filter.TestFilter;
+
+import java.util.ArrayList;
 
 /**
  * @author xiaomi
+ * Created at 2025/7/20 14:51
  */
-@Alias(value = {"debug_preprocessor", "debug_pre_processor", "debug"})
-public class DebugPreprocessor extends AbstractProcessor<DebugConfigItem> implements Preprocessor {
-
-    static Logger logger = LoggerFactory.getLogger(DebugPreprocessor.class);
+public class FilterConfigureItem<T extends TestFilter> extends ArrayList<T> implements ConfigureItem<FilterConfigureItem<T>> {
 
     @Override
-    protected void _process(ContextWrapper context) {
-        var result = (DefaultSampleResult) context.getTestResult();
-        result.sampleStart();
-        result.setUrl(getClass().getName());
-        result.setRequestData(JSON.toJSONBytes(config));
-        result.setResponseData(JSON.toJSONBytes(config));
-        logger.info("Debug Preprocessor");
-        result.sampleEnd();
+    public FilterConfigureItem<T> merge(FilterConfigureItem<T> other) {
+        FilterConfigureItem<T> filterConfigItem = new FilterConfigureItem<>();
+        filterConfigItem.addAll(this);
+        if (other != null)
+            filterConfigItem.addAll(other);
+        return filterConfigItem;
     }
 
     @Override
-    protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(runtime.getId(),
-                StringUtils.isBlank(runtime.getTitle()) ? "Debug Preprocessor" : runtime.getTitle());
+    public FilterConfigureItem<T> copy() {
+        FilterConfigureItem<T> filterConfigItem = new FilterConfigureItem<>();
+        filterConfigItem.addAll(this);
+        return filterConfigItem;
     }
 }
