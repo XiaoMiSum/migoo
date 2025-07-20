@@ -9,9 +9,8 @@ import core.xyz.migoo.testelement.Alias;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import protocol.xyz.migoo.debug.config.DebugConfigItem;
-import protocol.xyz.migoo.debug.config.DebugDefaults;
 
-@Alias(value = {"debug", "debug_sampler"}, config = DebugDefaults.class)
+@Alias(value = {"debug", "debug_sampler"})
 public class DebugSampler extends AbstractSampler<DebugConfigItem, DebugSampler, DefaultSampleResult>
         implements Sampler<DefaultSampleResult> {
 

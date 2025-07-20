@@ -43,7 +43,7 @@ import protocol.xyz.migoo.debug.config.DebugConfigItem;
  * @author xiaomi
  */
 @Alias(value = {"debug_postprocessor", "debug_post_processor", "debug"})
-public class DebugPostprocessor extends AbstractProcessor<DebugConfigItem> implements Postprocessor {
+public class DebugPostprocessor extends AbstractProcessor<DebugConfigItem, DefaultSampleResult> implements Postprocessor {
 
     static Logger logger = LoggerFactory.getLogger(DebugPostprocessor.class);
 

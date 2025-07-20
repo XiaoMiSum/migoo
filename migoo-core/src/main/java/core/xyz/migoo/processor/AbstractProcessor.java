@@ -34,7 +34,7 @@ import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.extractor.Extractor;
 import core.xyz.migoo.filter.SampleFilterChain;
 import core.xyz.migoo.filter.TestFilter;
-import core.xyz.migoo.sampler.DefaultSampleResult;
+import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.TestElementConstantsInterface;
 
@@ -48,8 +48,8 @@ import java.util.Objects;
  * @author xiaomi
  */
 @SuppressWarnings({"rawtypes"})
-public abstract class AbstractProcessor<T extends ConfigureItem>
-        extends AbstractTestElement<T, AbstractProcessor<T>, DefaultSampleResult>
+public abstract class AbstractProcessor<CONFIG extends ConfigureItem, T extends SampleResult<T>>
+        extends AbstractTestElement<CONFIG, AbstractProcessor<CONFIG, T>, T>
         implements Processor, SampleFilterChain, TestElementConstantsInterface {
 
     @JSONField(name = EXTRACTORS, ordinal = 2)

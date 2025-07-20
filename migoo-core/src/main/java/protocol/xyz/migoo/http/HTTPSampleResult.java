@@ -26,40 +26,21 @@
  *
  */
 
-package core.xyz.migoo.filter.report;
+package protocol.xyz.migoo.http;
 
-import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.filter.RunFilterChain;
-import core.xyz.migoo.filter.SampleFilterChain;
 import core.xyz.migoo.sampler.SampleResult;
-import core.xyz.migoo.testelement.TestSuiteExecutable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author xiaomi
- * Created at 2025/7/20 13:46
+ * Created at 2025/7/20 23:18
  */
-public class TestLogFilter implements ReportFilter {
-
-    static final Logger log = LoggerFactory.getLogger(TestLogFilter.class);
-
-    @Override
-    public void doRun(ContextWrapper context, RunFilterChain chain) {
-        if (TestSuiteExecutable.class.isAssignableFrom(chain.getClass())) {
-            log.info("开始测试：{}", context.getTestResult().getTitle());
-        }
-        chain.doRun(context);
+public class HTTPSampleResult extends SampleResult<HTTPSampleResult> {
+    
+    public HTTPSampleResult(String title) {
+        super(title);
     }
 
-    @Override
-    public void doSample(ContextWrapper context, SampleFilterChain chain) {
-        log.info("执行测试步骤：{}", context.getTestResult().getTitle());
-        chain.doSample(context);
-        if (context.getTestResult() instanceof SampleResult<?> result) {
-            log.info("请求地址：{}", result.getUrl());
-            log.info("请求参数：{}", result.getRequestDataAsString());
-            log.info("响应数据：{}", result.getResponseDataAsString());
-        }
+    public HTTPSampleResult(String id, String title) {
+        super(id, title);
     }
 }

@@ -26,26 +26,27 @@
  *
  */
 
-package protocol.xyz.migoo.debug.processer;
+package protocol.xyz.migoo.http.processor;
 
 import com.alibaba.fastjson2.JSON;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.processor.AbstractProcessor;
-import core.xyz.migoo.processor.Preprocessor;
+import core.xyz.migoo.processor.Postprocessor;
 import core.xyz.migoo.sampler.DefaultSampleResult;
 import core.xyz.migoo.testelement.Alias;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import protocol.xyz.migoo.debug.config.DebugConfigItem;
+import protocol.xyz.migoo.http.HTTPSampleResult;
+import protocol.xyz.migoo.http.config.HttpConfigItem;
 
 /**
  * @author xiaomi
  */
-@Alias(value = {"debug_preprocessor", "debug_pre_processor", "debug"})
-public class DebugPreprocessor extends AbstractProcessor<DebugConfigItem, DefaultSampleResult> implements Preprocessor {
+@Alias(value = {"http_postprocessor", "http_post_processor", "http"})
+public class HTTPPostprocessor extends AbstractProcessor<HttpConfigItem, HTTPSampleResult> implements Postprocessor {
 
-    static Logger logger = LoggerFactory.getLogger(DebugPreprocessor.class);
+    static Logger logger = LoggerFactory.getLogger(HTTPPostprocessor.class);
 
     @Override
     protected void _process(ContextWrapper context) {
@@ -54,13 +55,13 @@ public class DebugPreprocessor extends AbstractProcessor<DebugConfigItem, Defaul
         result.setUrl(getClass().getName());
         result.setRequestData(JSON.toJSONBytes(config));
         result.setResponseData(JSON.toJSONBytes(config));
-        logger.info("Debug Preprocessor");
+        logger.info("Debug Postprocessor");
         result.sampleEnd();
     }
 
     @Override
-    protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(runtime.getId(),
+    protected HTTPSampleResult getTestResult() {
+        return new HTTPSampleResult(runtime.getId(),
                 StringUtils.isBlank(runtime.getTitle()) ? "Debug Preprocessor" : runtime.getTitle());
     }
 }

@@ -26,7 +26,7 @@
  *
  */
 
-package protocol.xyz.migoo.debug.processer;
+package protocol.xyz.migoo.http.processor;
 
 import com.alibaba.fastjson2.JSON;
 import core.xyz.migoo.context.ContextWrapper;
@@ -37,15 +37,16 @@ import core.xyz.migoo.testelement.Alias;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import protocol.xyz.migoo.debug.config.DebugConfigItem;
+import protocol.xyz.migoo.http.HTTPSampleResult;
+import protocol.xyz.migoo.http.config.HttpConfigItem;
 
 /**
  * @author xiaomi
  */
-@Alias(value = {"debug_preprocessor", "debug_pre_processor", "debug"})
-public class DebugPreprocessor extends AbstractProcessor<DebugConfigItem, DefaultSampleResult> implements Preprocessor {
+@Alias(value = {"http_preprocessor", "http_pre_processor", "http"})
+public class HTTPPreprocessor extends AbstractProcessor<HttpConfigItem, HTTPSampleResult> implements Preprocessor {
 
-    static Logger logger = LoggerFactory.getLogger(DebugPreprocessor.class);
+    static Logger logger = LoggerFactory.getLogger(HTTPPreprocessor.class);
 
     @Override
     protected void _process(ContextWrapper context) {
@@ -59,8 +60,8 @@ public class DebugPreprocessor extends AbstractProcessor<DebugConfigItem, Defaul
     }
 
     @Override
-    protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(runtime.getId(),
+    protected HTTPSampleResult getTestResult() {
+        return new HTTPSampleResult(runtime.getId(),
                 StringUtils.isBlank(runtime.getTitle()) ? "Debug Preprocessor" : runtime.getTitle());
     }
 }
