@@ -135,7 +135,7 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
         ContextWrapper context = updateCurrentContextInfo(session, snapshot);
         doRun(context);
         restoreCurrentContextInfo(session, snapshot);
-        snapshot.testResult.testEnd();
+        testEnded(snapshot);
         return snapshot.testResult;
     }
 
@@ -168,6 +168,17 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
         }
         result.testStart();
         snapshot.testResult = result;
+    }
+
+    private void testEnded(Snapshot snapshot) {
+        if (Objects.nonNull(configureElements)) {
+            for (ConfigureElement configureElement : configureElements) {
+                if (configureElement instanceof Closeable closeable) {
+                    closeable.close();
+                }
+            }
+        }
+        snapshot.testResult.testEnd();
     }
 
     protected void handleFilters(ContextWrapper contextWrapper) {

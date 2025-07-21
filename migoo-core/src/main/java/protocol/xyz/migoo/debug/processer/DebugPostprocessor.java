@@ -48,7 +48,6 @@ public class DebugPostprocessor extends AbstractProcessor<DebugConfigureItem, De
 
     static Logger logger = LoggerFactory.getLogger(DebugPostprocessor.class);
 
-
     @Override
     protected DefaultSampleResult getTestResult() {
         return new DefaultSampleResult(runtime.getId(),

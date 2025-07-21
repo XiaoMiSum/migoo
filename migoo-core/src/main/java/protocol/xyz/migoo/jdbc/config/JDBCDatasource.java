@@ -5,13 +5,15 @@ import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.configureelement.AbstractConfigureElement;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.Alias;
+import core.xyz.migoo.testelement.Closeable;
 import core.xyz.migoo.testelement.TestSuiteResult;
 import core.xyz.migoo.testelement.ValidateResult;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.jdbc.JDBCConstantsInterface;
 
 @Alias({"jdbc", "jdbc_datasource", "jdbc_data_source"})
-public class JDBCDatasource extends AbstractConfigureElement<JDBCConfigureItem, JDBCDatasource, TestSuiteResult> implements JDBCConstantsInterface {
+public class JDBCDatasource extends AbstractConfigureElement<JDBCConfigureItem, JDBCDatasource, TestSuiteResult>
+        implements Closeable, JDBCConstantsInterface {
 
     @JSONField(serialize = false)
     private final DruidDataSource dataSource = new DruidDataSource();
@@ -56,5 +58,10 @@ public class JDBCDatasource extends AbstractConfigureElement<JDBCConfigureItem, 
     @Override
     protected TestSuiteResult getTestResult() {
         return new TestSuiteResult("JDBC数据源配置：" + refName);
+    }
+
+    @Override
+    public void close() {
+        dataSource.close();
     }
 }

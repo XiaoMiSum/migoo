@@ -94,7 +94,7 @@ public abstract class AbstractSampler<CONFIG extends ConfigureItem, SELF extends
      *
      * <p>该方法在 {@link TestFilter#doSample} 之前调用。
      */
-    protected void handleRequest(ContextWrapper contextWrapper, T result) {
+    protected void handleRequest(ContextWrapper context, T result) {
         // do nothing.
     }
 
@@ -102,14 +102,14 @@ public abstract class AbstractSampler<CONFIG extends ConfigureItem, SELF extends
      * 执行请求。
      * <p>不要在该方法内进行请求的动态数据替换，请使用 {@link AbstractSampler#handleRequest(ContextWrapper, SampleResult)}。
      */
-    protected abstract void sample(ContextWrapper contextWrapper, T result);
+    protected abstract void sample(ContextWrapper context, T result);
 
     /**
      * 请求执行后处理。
      *
      * <p>该方法在 {@link TestFilter#doSample} 之后调用。
      */
-    protected void handleResponse(ContextWrapper contextWrapper, T result) {
+    protected void handleResponse(ContextWrapper context, T result) {
         // do nothing.
     }
 }

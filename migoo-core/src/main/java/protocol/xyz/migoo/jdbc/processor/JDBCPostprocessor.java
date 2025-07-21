@@ -1,21 +1,27 @@
 package protocol.xyz.migoo.jdbc.processor;
 
+import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.processor.AbstractProcessor;
 import core.xyz.migoo.processor.Postprocessor;
 import core.xyz.migoo.sampler.DefaultSampleResult;
+import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.jdbc.JDBCConstantsInterface;
+import protocol.xyz.migoo.jdbc.RealJDBCRequest;
 import protocol.xyz.migoo.jdbc.config.JDBCConfigureItem;
+
+import static protocol.xyz.migoo.jdbc.JDBC.toJSONBytes;
 
 @Alias(value = {"jdbc_postprocessor", "jdbc_post_processor", "jdbc"})
 public class JDBCPostprocessor extends AbstractProcessor<JDBCConfigureItem, JDBCPostprocessor, DefaultSampleResult> implements Postprocessor, JDBCConstantsInterface {
 
-    @Override
-    protected void sample(ContextWrapper context, DefaultSampleResult result) {
+    @JSONField(serialize = false)
+    private DruidDataSource datasource;
 
-    }
+    private byte[] bytes;
 
     @Override
     protected DefaultSampleResult getTestResult() {
@@ -23,14 +29,27 @@ public class JDBCPostprocessor extends AbstractProcessor<JDBCConfigureItem, JDBC
     }
 
     @Override
+    protected void sample(ContextWrapper context, DefaultSampleResult result) {
+        result.sampleStart();
+        try (var conn = datasource.getConnection(); var statement = conn.createStatement()) {
+            var bool = statement.execute(runtime.getConfig().getSql());
+            result.sampleEnd();
+            bytes = toJSONBytes(bool, statement);
+        } catch (Exception e) {
+            result.setThrowable(e);
+        }
+    }
+
+    @Override
     protected void handleRequest(ContextWrapper context, DefaultSampleResult result) {
-        // todo
         super.handleRequest(context, result);
+        datasource = (DruidDataSource) context.getLocalVariablesWrapper().get(runtime.getConfig().getDatasource());
     }
 
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
-        // todo
         super.handleResponse(context, result);
+        result.setRequest(new RealJDBCRequest(datasource.getUrl(), datasource.getUsername(), datasource.getPassword(), runtime.getConfig().getSql()));
+        result.setResponse(SampleResult.DefaultReal.build(bytes));
     }
 }
