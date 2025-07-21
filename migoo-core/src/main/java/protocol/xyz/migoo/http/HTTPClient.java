@@ -36,7 +36,7 @@ import org.apache.commons.lang3.Strings;
 import org.apache.hc.client5.http.impl.cookie.BasicClientCookie;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
-import protocol.xyz.migoo.http.config.HttpConfigureItem;
+import protocol.xyz.migoo.http.config.HTTPConfigureItem;
 import xyz.migoo.simplehttp.Form;
 import xyz.migoo.simplehttp.Request;
 import xyz.migoo.simplehttp.RequestEntity;
@@ -54,22 +54,22 @@ import static org.apache.hc.core5.http.HttpVersion.HTTP_2;
  * Created at 2025/7/20 23:01
  */
 @SuppressWarnings({"unchecked"})
-public class HttpClient extends Request implements HTTPConstantsInterface {
+public class HTTPClient extends Request implements HTTPConstantsInterface {
 
-    protected HttpClient(String method, String url) {
+    protected HTTPClient(String method, String url) {
         super(method, url);
     }
 
-    public static HttpClient getInstance(String method, String url) {
-        return new HttpClient(method, url);
+    public static HTTPClient getInstance(String method, String url) {
+        return new HTTPClient(method, url);
     }
 
-    public static Request build(HttpConfigureItem config) {
+    public static Request build(HTTPConfigureItem config) {
         var port = config.getPort() > 0 ? ":" + config.getPort() : "";
         var path = Strings.CS.startsWith(config.getPath(), "/") ? config.getPath() : "/" + config.getPath();
         var url = "%s://%s%s%s".formatted(config.getProtocol(), config.getHost(), port, path);
         // bytes body data(binary) 不会同时出现
-        return new HttpClient(config.getMethod(), url)
+        return new HTTPClient(config.getMethod(), url)
                 .headers(config.getHeaders())
                 .cookie(config.getCookie())
                 .query(config.getQuery())
@@ -81,21 +81,21 @@ public class HttpClient extends Request implements HTTPConstantsInterface {
     }
 
 
-    public HttpClient query(Map<String, ?> query) {
+    public HTTPClient query(Map<String, ?> query) {
         if (query != null && !query.isEmpty()) {
             super.query(Form.create((Map<String, Object>) query));
         }
         return this;
     }
 
-    public HttpClient bytes(byte[] bytes, String contentType) {
+    public HTTPClient bytes(byte[] bytes, String contentType) {
         if (Objects.nonNull(bytes)) {
             super.body(RequestEntity.bytes(bytes, contentType));
         }
         return this;
     }
 
-    public HttpClient body(Object body) {
+    public HTTPClient body(Object body) {
         if (body instanceof Map<?, ?> || body instanceof List<?>) {
             super.body(RequestEntity.json(JSON.toJSONString(body)));
         } else if (Objects.nonNull(body)) {
@@ -117,7 +117,7 @@ public class HttpClient extends Request implements HTTPConstantsInterface {
      */
 
     //
-    public HttpClient body(Object binary, Map<String, ?> data) {
+    public HTTPClient body(Object binary, Map<String, ?> data) {
         if (Objects.nonNull(binary)) {
             var files = new ArrayList<NameValuePair>();
             if (binary instanceof List<?> objects) {
@@ -148,7 +148,7 @@ public class HttpClient extends Request implements HTTPConstantsInterface {
         return this;
     }
 
-    public HttpClient headers(Map<String, String> headers) {
+    public HTTPClient headers(Map<String, String> headers) {
         if (headers == null) {
             return this;
         }
@@ -157,7 +157,7 @@ public class HttpClient extends Request implements HTTPConstantsInterface {
         return this;
     }
 
-    public HttpClient cookie(Map<String, String> cookie) {
+    public HTTPClient cookie(Map<String, String> cookie) {
         if (cookie == null) {
             return this;
         }

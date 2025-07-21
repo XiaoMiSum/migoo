@@ -63,4 +63,8 @@ public class RealHTTPResponse extends HTTP {
         }
         return buf.toString();
     }
+
+    public int statusCode() {
+        return statusCode;
+    }
 }

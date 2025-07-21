@@ -23,12 +23,16 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package component.xyz.migoo.assertion;
+package protocol.xyz.migoo.http.assertion;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONPath;
 import core.xyz.migoo.assertion.AbstractAssertion;
 import core.xyz.migoo.assertion.AssertionResult;
 import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
+import org.apache.commons.lang3.StringUtils;
+import protocol.xyz.migoo.http.RealHTTPResponse;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,25 +45,22 @@ import java.util.regex.Pattern;
 public class HTTPResponseAssertion extends AbstractAssertion {
 
     private static final List<String> STATUS = Arrays.asList("line", "status", "code", "statuscode", "statusline", "status_code", "status_line");
-
     private static final String BODY = "body";
     private static final Pattern PATTERN = Pattern.compile("^header(\\[\\d+])?(\\.\\w+.?)?");
-
 
     @Override
     protected AssertionResult initialized(SampleResult result) {
         var res = new AssertionResult("HTTP响应断言: " + field);
-        // todo 这里要实现 HTTP协议响应报文的断言
-      /*  if (result instanceof HTTPSampleResult httpResult) {
-            field = StringUtils.isBlank(field) ? BODY : field;
-            var matcher = PATTERN.matcher(field);
-            if (matcher.find()) {
-                var path = "$" + (matcher.group(1) == null ? "[0]" : matcher.group(1)) + matcher.group(2);
-                actualValue = JSONPath.extract(httpResult.getResponseHeaders().toJSONString(), path);
-            } else {
-                actualValue = STATUS.contains(field) ? httpResult.getResponseCode() : httpResult.getResponseDataAsString();
-            }
-        }*/
+        var response = (RealHTTPResponse) result.getResponse();
+        field = StringUtils.isBlank(field) ? BODY : field;
+        var matcher = PATTERN.matcher(field);
+        if (matcher.find()) {
+            var path = "$" + (matcher.group(1) == null ? "[0]" : matcher.group(1)) + matcher.group(2);
+            actualValue = JSONPath.extract(JSON.toJSONString(response.headers()), path);
+        } else {
+            actualValue = STATUS.contains(field) ? response.statusCode() : response.bytesAsString();
+        }
+
         return res;
     }
 }

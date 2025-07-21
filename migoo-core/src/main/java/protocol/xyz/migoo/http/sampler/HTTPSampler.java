@@ -9,16 +9,16 @@ import core.xyz.migoo.testelement.Alias;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import protocol.xyz.migoo.http.HTTPClient;
 import protocol.xyz.migoo.http.HTTPConstantsInterface;
-import protocol.xyz.migoo.http.HttpClient;
 import protocol.xyz.migoo.http.RealHTTPRequest;
 import protocol.xyz.migoo.http.RealHTTPResponse;
-import protocol.xyz.migoo.http.config.HttpConfigureItem;
+import protocol.xyz.migoo.http.config.HTTPConfigureItem;
 import xyz.migoo.simplehttp.Request;
 import xyz.migoo.simplehttp.Response;
 
 @Alias(value = {"http", "http_sampler"})
-public class HTTPSampler extends AbstractSampler<HttpConfigureItem, HTTPSampler, DefaultSampleResult> implements Sampler<DefaultSampleResult>, HTTPConstantsInterface {
+public class HTTPSampler extends AbstractSampler<HTTPConfigureItem, HTTPSampler, DefaultSampleResult> implements Sampler<DefaultSampleResult>, HTTPConstantsInterface {
 
     static Logger logger = LoggerFactory.getLogger(HTTPSampler.class);
 
@@ -53,10 +53,10 @@ public class HTTPSampler extends AbstractSampler<HttpConfigureItem, HTTPSampler,
         super.handleRequest(context, result);
         // 1. 合并配置项
         var datasource = StringUtils.isBlank(config.getDatasource()) ? DEF_REF_NAME_KEY : config.getDatasource();
-        var otherConfig = (HttpConfigureItem) context.getLocalVariablesWrapper().get(datasource);
+        var otherConfig = (HTTPConfigureItem) context.getLocalVariablesWrapper().get(datasource);
         runtime.config = runtime.config.merge(otherConfig);
         // 2. 创建http对象
-        request = HttpClient.build(runtime.config);
+        request = HTTPClient.build(runtime.config);
     }
 
     @Override

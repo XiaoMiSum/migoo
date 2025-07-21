@@ -35,11 +35,11 @@ import core.xyz.migoo.processor.Postprocessor;
 import core.xyz.migoo.sampler.DefaultSampleResult;
 import core.xyz.migoo.testelement.Alias;
 import org.apache.commons.lang3.StringUtils;
+import protocol.xyz.migoo.http.HTTPClient;
 import protocol.xyz.migoo.http.HTTPConstantsInterface;
-import protocol.xyz.migoo.http.HttpClient;
 import protocol.xyz.migoo.http.RealHTTPRequest;
 import protocol.xyz.migoo.http.RealHTTPResponse;
-import protocol.xyz.migoo.http.config.HttpConfigureItem;
+import protocol.xyz.migoo.http.config.HTTPConfigureItem;
 import xyz.migoo.simplehttp.Request;
 import xyz.migoo.simplehttp.Response;
 
@@ -47,7 +47,7 @@ import xyz.migoo.simplehttp.Response;
  * @author xiaomi
  */
 @Alias(value = {"http_postprocessor", "http_post_processor", "http"})
-public class HTTPPostprocessor extends AbstractProcessor<HttpConfigureItem, HTTPPostprocessor, DefaultSampleResult> implements Postprocessor, HTTPConstantsInterface {
+public class HTTPPostprocessor extends AbstractProcessor<HTTPConfigureItem, HTTPPostprocessor, DefaultSampleResult> implements Postprocessor, HTTPConstantsInterface {
 
     @JSONField(serialize = false)
     private Request request;
@@ -76,10 +76,10 @@ public class HTTPPostprocessor extends AbstractProcessor<HttpConfigureItem, HTTP
         super.handleRequest(context, result);
         // 1. 合并配置项
         var datasource = StringUtils.isBlank(config.getDatasource()) ? DEF_REF_NAME_KEY : config.getDatasource();
-        var otherConfig = (HttpConfigureItem) context.getLocalVariablesWrapper().get(datasource);
+        var otherConfig = (HTTPConfigureItem) context.getLocalVariablesWrapper().get(datasource);
         runtime.setConfig(runtime.getConfig().merge(otherConfig));
         // 2. 创建http对象
-        request = HttpClient.build(runtime.getConfig());
+        request = HTTPClient.build(runtime.getConfig());
     }
 
     @Override

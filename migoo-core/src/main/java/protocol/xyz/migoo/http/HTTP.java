@@ -16,7 +16,7 @@ public abstract class HTTP extends SampleResult.Real {
         super(bytes);
     }
 
-    public List<Header> getHeaders() {
+    public List<Header> headers() {
         return headers;
     }
 

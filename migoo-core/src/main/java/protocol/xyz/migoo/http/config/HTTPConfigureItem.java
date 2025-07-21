@@ -43,7 +43,7 @@ import static core.xyz.migoo.testelement.TestElementConstantsInterface.DATASOURC
  * @author xiaomi
  * Created at 2025/7/19 20:17
  */
-public class HttpConfigureItem implements ConfigureItem<HttpConfigureItem>, HTTPConstantsInterface {
+public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTPConstantsInterface {
 
     @JSONField(name = DATASOURCE)
     protected String datasource;
@@ -86,7 +86,7 @@ public class HttpConfigureItem implements ConfigureItem<HttpConfigureItem>, HTTP
     private Object binary;
 
 
-    public HttpConfigureItem() {
+    public HTTPConfigureItem() {
 
     }
 
@@ -97,7 +97,7 @@ public class HttpConfigureItem implements ConfigureItem<HttpConfigureItem>, HTTP
      * @return 合并后的新对象
      */
     @Override
-    public HttpConfigureItem merge(HttpConfigureItem other) {
+    public HTTPConfigureItem merge(HTTPConfigureItem other) {
         if (other == null) {
             return copy();
         }

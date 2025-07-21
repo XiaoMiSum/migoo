@@ -38,7 +38,7 @@ import java.util.Objects;
  * @author xiaomi
  */
 @Alias(value = {"http_defaults", "http"})
-public class HttpDefaults extends AbstractConfigureElement<HttpConfigureItem, HttpDefaults, TestSuiteResult> implements HTTPConstantsInterface {
+public class HTTPDefaults extends AbstractConfigureElement<HTTPConfigureItem, HTTPDefaults, TestSuiteResult> implements HTTPConstantsInterface {
 
     /**
      * HTTP默认配置元件处理
@@ -54,7 +54,7 @@ public class HttpDefaults extends AbstractConfigureElement<HttpConfigureItem, Ht
         refName = StringUtils.isBlank(refName) ? DEF_REF_NAME_KEY : refName;
         var localConfig = runtime.getConfig();
         var otherRefName = StringUtils.isBlank(datasource) ? DEF_REF_NAME_KEY : datasource;
-        var config = (HttpConfigureItem) context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().get(otherRefName);
+        var config = (HTTPConfigureItem) context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().get(otherRefName);
         if (Objects.nonNull(config)) {
             runtime.setConfig(localConfig = localConfig.merge(config));
         }
