@@ -33,6 +33,7 @@ import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.filter.ExecuteSubStepsFilterChain;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.report.Result;
+import support.xyz.migoo.KryoUtil;
 
 import java.util.*;
 
@@ -41,12 +42,12 @@ import java.util.*;
  *
  * @author xiaomi
  */
-@SuppressWarnings({"rawtypes"})
+@SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class TestContainerExecutable
-        <CONFIG extends ConfigureItem, SELF extends TestContainerExecutable<CONFIG, SELF, T>, T extends Result<T>>
+        <CONFIG extends ConfigureItem, SELF extends TestContainerExecutable<CONFIG, SELF, T>, T extends Result>
         extends AbstractTestElementExecutable<CONFIG, SELF, T> implements ExecuteSubStepsFilterChain {
 
-    protected List<TestElement<?>> children;
+    protected List<TestElement<T>> children;
 
     protected Iterator<TestFilter> executeSubStepsFilters;
 
@@ -60,11 +61,14 @@ public abstract class TestContainerExecutable
             next.doExecuteSubSteps(ctx, this);
         } else {
             if (children != null) {
-                for (TestElement<?> step : children) {
+                var subResults = new ArrayList<T>();
+                for (TestElement<T> step : children) {
                     if (step != null) {
-                        ctx.getSessionRunner().runTest(step);
+                        T result = ctx.getSessionRunner().runTest(step);
+                        subResults.add(result);
                     }
                 }
+                ctx.getTestResult().setSubResults((List<Result>) subResults);
             }
         }
     }
@@ -88,22 +92,16 @@ public abstract class TestContainerExecutable
     @Override
     public SELF copy() {
         SELF self = super.copy();
-        if (children != null) {
-            List<TestElement<?>> newChildren = new ArrayList<>();
-            for (TestElement<?> step : children) {
-                newChildren.add(step.copy());
-            }
-            self.children = newChildren;
-        }
+        self.children = KryoUtil.copy(children);
         return self;
     }
 
 
-    public List<TestElement<?>> getChildren() {
+    public List<TestElement<T>> getChildren() {
         return children;
     }
 
-    public void setChildren(List<TestElement<?>> children) {
+    public void setChildren(List<TestElement<T>> children) {
         this.children = children;
     }
 

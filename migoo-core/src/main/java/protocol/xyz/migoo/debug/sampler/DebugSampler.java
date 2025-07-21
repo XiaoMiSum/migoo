@@ -4,14 +4,15 @@ import com.alibaba.fastjson2.JSON;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.sampler.AbstractSampler;
 import core.xyz.migoo.sampler.DefaultSampleResult;
+import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.sampler.Sampler;
 import core.xyz.migoo.testelement.Alias;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import protocol.xyz.migoo.debug.config.DebugConfigItem;
+import protocol.xyz.migoo.debug.config.DebugConfigureItem;
 
 @Alias(value = {"debug", "debug_sampler"})
-public class DebugSampler extends AbstractSampler<DebugConfigItem, DebugSampler, DefaultSampleResult>
+public class DebugSampler extends AbstractSampler<DebugConfigureItem, DebugSampler, DefaultSampleResult>
         implements Sampler<DefaultSampleResult> {
 
     static Logger logger = LoggerFactory.getLogger(DebugSampler.class);
@@ -27,11 +28,15 @@ public class DebugSampler extends AbstractSampler<DebugConfigItem, DebugSampler,
 
     @Override
     protected void sample(ContextWrapper contextWrapper, DefaultSampleResult result) {
-        runtime.getTestResult().sampleStart();
-        result.setUrl(getClass().getName());
-        result.setRequestData(JSON.toJSONBytes(config));
-        result.setResponseData(JSON.toJSONBytes(config));
-        logger.info("Debug Sampler");
-        result.sampleEnd();
+        try {
+            result.sampleStart();
+            byte[] bytes = JSON.toJSONBytes(config);
+            result.setRequest(SampleResult.DefaultReal.build(bytes));
+            result.setResponse(SampleResult.DefaultReal.build(bytes));
+            logger.info("Debug Sampler");
+            result.sampleEnd();
+        } catch (Exception e) {
+            result.setThrowable(e);
+        }
     }
 }

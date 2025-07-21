@@ -33,34 +33,35 @@ import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.processor.AbstractProcessor;
 import core.xyz.migoo.processor.Postprocessor;
 import core.xyz.migoo.sampler.DefaultSampleResult;
+import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import protocol.xyz.migoo.debug.config.DebugConfigItem;
+import protocol.xyz.migoo.debug.config.DebugConfigureItem;
 
 /**
  * @author xiaomi
  */
 @Alias(value = {"debug_postprocessor", "debug_post_processor", "debug"})
-public class DebugPostprocessor extends AbstractProcessor<DebugConfigItem, DefaultSampleResult> implements Postprocessor {
+public class DebugPostprocessor extends AbstractProcessor<DebugConfigureItem, DebugPostprocessor, DefaultSampleResult> implements Postprocessor {
 
     static Logger logger = LoggerFactory.getLogger(DebugPostprocessor.class);
 
-    @Override
-    protected void _process(ContextWrapper context) {
-        var result = (DefaultSampleResult) context.getTestResult();
-        result.sampleStart();
-        result.setUrl(getClass().getName());
-        result.setRequestData(JSON.toJSONBytes(config));
-        result.setResponseData(JSON.toJSONBytes(config));
-        logger.info("Debug Postprocessor");
-        result.sampleEnd();
-    }
 
     @Override
     protected DefaultSampleResult getTestResult() {
         return new DefaultSampleResult(runtime.getId(),
                 StringUtils.isBlank(runtime.getTitle()) ? "Debug Preprocessor" : runtime.getTitle());
+    }
+
+    @Override
+    protected void sample(ContextWrapper context, DefaultSampleResult result) {
+        result.sampleStart();
+        byte[] bytes = JSON.toJSONBytes(config);
+        result.setRequest(SampleResult.DefaultReal.build(bytes));
+        result.setResponse(SampleResult.DefaultReal.build(bytes));
+        logger.info("Debug Postprocessor");
+        result.sampleEnd();
     }
 }

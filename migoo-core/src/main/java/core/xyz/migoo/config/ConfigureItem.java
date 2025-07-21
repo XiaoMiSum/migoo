@@ -3,6 +3,7 @@ package core.xyz.migoo.config;
 import core.xyz.migoo.testelement.Cloneable;
 import core.xyz.migoo.testelement.Mergeable;
 import core.xyz.migoo.testelement.Validatable;
+import support.xyz.migoo.KryoUtil;
 
 /**
  * 配置项接口，最基本的配置单元。
@@ -15,5 +16,8 @@ public interface ConfigureItem<T extends ConfigureItem<T>> extends Validatable, 
 
     T merge(T other);
 
-    T copy();
+    @SuppressWarnings({"unchecked"})
+    default T copy() {
+        return (T) KryoUtil.copy(this);
+    }
 }

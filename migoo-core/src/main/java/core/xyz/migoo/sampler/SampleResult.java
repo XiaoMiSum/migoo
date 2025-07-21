@@ -25,13 +25,11 @@
 
 package core.xyz.migoo.sampler;
 
+import com.alibaba.fastjson2.JSON;
 import core.xyz.migoo.report.Result;
-import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -39,23 +37,12 @@ import java.time.ZoneId;
 /**
  * @author xiaomi
  */
-public abstract class SampleResult<T extends SampleResult<T>> extends Result<T> {
-
-    public static final Charset DEFAULT_ENCODING = StandardCharsets.UTF_8;
-
-    private String url;
-
-    private byte[] requestData;
-
-    private String requestDataAsString;
-
-    private byte[] responseData;
-
-    private String responseDataAsString;
+public abstract class SampleResult extends Result {
 
     private LocalDateTime sampleStartTime;
-
     private LocalDateTime sampleEndTime;
+    private Real request;
+    private Real response;
 
     public SampleResult(String title) {
         super(title);
@@ -77,44 +64,6 @@ public abstract class SampleResult<T extends SampleResult<T>> extends Result<T> 
         }
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public byte[] getRequestData() {
-        return requestData;
-    }
-
-    public void setRequestData(byte[] requestData) {
-        this.requestData = requestData;
-    }
-
-    public String getRequestDataAsString() {
-        if (StringUtils.isBlank(requestDataAsString)) {
-            requestDataAsString = new String(requestData, DEFAULT_ENCODING);
-        }
-        return requestDataAsString;
-    }
-
-    public byte[] getResponseData() {
-        return responseData;
-    }
-
-    public void setResponseData(byte[] responseData) {
-        this.responseData = responseData;
-    }
-
-    public String getResponseDataAsString() {
-        if (StringUtils.isBlank(responseDataAsString)) {
-            responseDataAsString = new String(responseData, DEFAULT_ENCODING);
-        }
-        return responseDataAsString;
-    }
-
     public LocalDateTime getSampleStartTime() {
         return sampleStartTime;
     }
@@ -134,5 +83,61 @@ public abstract class SampleResult<T extends SampleResult<T>> extends Result<T> 
     public String getDuration() {
         var duration = Duration.between(sampleStartTime, sampleEndTime).toMillis() / 1000.00;
         return new BigDecimal(duration).setScale(2, RoundingMode.HALF_UP).doubleValue() + " s";
+    }
+
+    public Real getRequest() {
+        return request;
+    }
+
+    public void setRequest(Real request) {
+        this.request = request;
+    }
+
+    public Real getResponse() {
+        return response;
+    }
+
+    public void setResponse(Real response) {
+        this.response = response;
+    }
+
+
+    public static abstract class Real {
+
+        private final byte[] bytes;
+        private String bytesAsString;
+
+        public Real(byte[] bytes) {
+            this.bytes = bytes;
+        }
+
+        public abstract String format();
+
+        public byte[] bytes() {
+            return bytes;
+        }
+
+        public String bytesAsString() {
+            if (bytesAsString == null) {
+                bytesAsString = (bytes == null || bytes.length == 0) ? "" : new String(bytes);
+            }
+            return bytesAsString;
+        }
+    }
+
+    public static class DefaultReal extends Real {
+
+        private DefaultReal(byte[] bytes) {
+            super(bytes);
+        }
+
+        public static DefaultReal build(byte[] bytes) {
+            return new DefaultReal(bytes);
+        }
+
+        @Override
+        public String format() {
+            return JSON.toJSONString(bytes());
+        }
     }
 }

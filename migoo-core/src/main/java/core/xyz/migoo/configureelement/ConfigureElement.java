@@ -40,7 +40,7 @@ import support.xyz.migoo.fastjson2.ConfigureElementObjectReader;
  * @author xiaomi
  */
 @JSONType(deserializer = ConfigureElementObjectReader.class)
-public interface ConfigureElement<T extends Result<T>> extends Validatable {
+public interface ConfigureElement<T extends Result> extends Validatable {
 
     T process(ContextWrapper context);
 

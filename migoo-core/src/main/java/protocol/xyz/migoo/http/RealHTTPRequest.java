@@ -1,0 +1,62 @@
+package protocol.xyz.migoo.http;
+
+import com.alibaba.fastjson2.JSON;
+import org.apache.commons.lang3.StringUtils;
+import xyz.migoo.simplehttp.Request;
+
+import java.util.Arrays;
+
+public class RealHTTPRequest extends HTTP {
+
+    private final String url;
+
+    private final String method;
+
+    private final String query;
+
+    private final byte[] body;
+
+
+    public RealHTTPRequest(Request request) {
+        super(new byte[0]);
+        url = request.uri();
+        method = request.method();
+        query = request.query();
+        body = request.body();
+        version = request.version();
+        headers = Arrays.stream(request.headers()).toList();
+    }
+
+
+    @Override
+    public byte[] bytes() {
+        return body != null && body.length > 0 ? body : query != null ? query.getBytes() : super.bytes();
+    }
+
+    @Override
+    public String bytesAsString() {
+        return new String(bytes());
+    }
+
+    /**
+     * 设置 HTTP请求信息，格式如下
+     * <p>
+     * POST /contact_form.php HTTP/1.1
+     * Host: developer.mozilla.org
+     * Content-Length: 64
+     * Content-Type: application/x-www-form-urlencoded
+     */
+    @Override
+    public String format() {
+        var buf = new StringBuilder();
+        buf.append(method).append(" ").append(url).append(" ").append(version).append("\n");
+        header(buf);
+        if (StringUtils.isNotBlank(query)) {
+            buf.append("QueryParams in JSON:").append(query).append("\n\n");
+        }
+        if (body != null && body.length > 0) {
+            buf.append("BodyParams in JSON:").append(JSON.toJSONString(body));
+        }
+        return buf.toString();
+    }
+}

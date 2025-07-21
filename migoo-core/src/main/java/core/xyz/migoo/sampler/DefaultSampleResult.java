@@ -1,7 +1,7 @@
 package core.xyz.migoo.sampler;
 
-public class DefaultSampleResult extends SampleResult<DefaultSampleResult> {
-    
+public class DefaultSampleResult extends SampleResult {
+
     public DefaultSampleResult(String title) {
         super(title);
     }

@@ -38,9 +38,9 @@ import org.apache.commons.lang3.StringUtils;
 @Alias({"ResultExtractor", "result_extractor", "result"})
 public class ResultExtractor extends AbstractExtractor {
     @Override
-    protected ExtractResult extract(SampleResult<? extends SampleResult<?>> result) {
+    protected ExtractResult extract(SampleResult result) {
         var res = new ExtractResult("Result 提取");
-        res.setValue(result.getResponseDataAsString());
+        res.setValue(result.getResponse().bytesAsString());
         return res;
     }
 

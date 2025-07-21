@@ -62,7 +62,7 @@ public class ContextWrapper {
 
     // 测试元件信息
     private TestElement<?> testElement;
-    private Result<?> testResult;
+    private Result testResult;
 
     // ----------- 构造器 -------------
 
@@ -184,11 +184,11 @@ public class ContextWrapper {
         this.testElement = testElement;
     }
 
-    public Result<? extends Result<?>> getTestResult() {
+    public Result getTestResult() {
         return testResult;
     }
 
-    public void setTestResult(Result<? extends Result<?>> testResult) {
+    public void setTestResult(Result testResult) {
         this.testResult = testResult;
     }
 

@@ -37,9 +37,4 @@ public class EmptyConfigureItem implements ConfigureItem<EmptyConfigureItem> {
     public EmptyConfigureItem merge(EmptyConfigureItem other) {
         return this;
     }
-
-    @Override
-    public EmptyConfigureItem copy() {
-        return this;
-    }
 }

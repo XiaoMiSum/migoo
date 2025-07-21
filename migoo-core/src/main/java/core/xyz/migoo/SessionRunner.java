@@ -33,6 +33,7 @@ import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestElementConstantsInterface;
 import core.xyz.migoo.testelement.ValidateResult;
+import core.xyz.migoo.variable.MiGooVariables;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,7 +90,7 @@ public class SessionRunner {
         // SessionRunner 可能直接运行某个 Sampler，而不是 TestCase，比如 Groovy/Java 用例
         // 示例：SessionRunner 连续运行多个 Http 请求，Http 请求中设置和读取 Session 变量
         TestElementConfigure testElementConfig = new TestElementConfigure();
-        testElementConfig.put(TestElementConstantsInterface.VARIABLES, new core.xyz.migoo.variable.MiGooVariables());
+        testElementConfig.put(TestElementConstantsInterface.VARIABLES, new MiGooVariables());
         sessionContext.setConfigGroup(testElementConfig);
 
         contextWrapper = new ContextWrapper(this);
@@ -111,7 +112,7 @@ public class SessionRunner {
      *
      * @see #runTest(TestElement, boolean)
      */
-    public <T extends Result<T>> T runTest(TestElement<T> element) {
+    public <T extends Result> T runTest(TestElement<T> element) {
         return runTest(element, true);
     }
 
@@ -123,7 +124,7 @@ public class SessionRunner {
      * @param validate 是否校验测试元件数据
      * @return 测试元件的执行结果
      */
-    public <T extends Result<T>> T runTest(TestElement<T> element, boolean validate) {
+    public <T extends Result> T runTest(TestElement<T> element, boolean validate) {
         if (validate) {
             ValidateResult validateResult = element.validate();
             if (validateResult.isValid()) {

@@ -28,11 +28,13 @@
 
 package core.xyz.migoo.configureelement;
 
+import core.xyz.migoo.testelement.TestElementConstantsInterface;
+
 /**
  * @author xiaomi
  * Created at 2025/7/19 14:22
  */
-public interface ConfigureElementConstantsInterface {
+public interface ConfigureElementConstantsInterface extends TestElementConstantsInterface {
 
     String VARIABLE_NAME = "variable_name";
     String REF_NAME = "ref_name";

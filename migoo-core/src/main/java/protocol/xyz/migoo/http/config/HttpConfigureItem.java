@@ -30,20 +30,27 @@ package protocol.xyz.migoo.http.config;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.config.ConfigureItem;
+import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.http.HTTPConstantsInterface;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+
+import static core.xyz.migoo.testelement.TestElementConstantsInterface.DATASOURCE;
 
 /**
  * @author xiaomi
  * Created at 2025/7/19 20:17
  */
-public class HttpConfigItem implements ConfigureItem<HttpConfigItem>, HTTPConstantsInterface {
+public class HttpConfigureItem implements ConfigureItem<HttpConfigureItem>, HTTPConstantsInterface {
 
-    @JSONField(name = PROTOCOL)
-    private String protocol = "http";
+    @JSONField(name = DATASOURCE)
+    protected String datasource;
+    @JSONField(name = PROTOCOL, ordinal = 1)
+    private String protocol;
 
-    @JSONField(name = HOST, ordinal = 1)
+    @JSONField(name = HOST, ordinal = 2)
     private String host;
 
     @JSONField(name = PORT, ordinal = 2)
@@ -53,16 +60,16 @@ public class HttpConfigItem implements ConfigureItem<HttpConfigItem>, HTTPConsta
     private String path;
 
     @JSONField(name = REQUEST_METHOD, ordinal = 4)
-    private String method = "GET";
+    private String method;
 
     @JSONField(name = HTTP2, ordinal = 5)
-    private boolean http2;
+    private Boolean http2;
 
     @JSONField(name = HEADERS, ordinal = 6)
     private Map<String, String> headers;
 
-    @JSONField(name = COOKIES, ordinal = 7)
-    private Map<String, String> cookies;
+    @JSONField(name = COOKIE, ordinal = 7)
+    private Map<String, String> cookie;
 
     @JSONField(name = QUERY, ordinal = 5)
     private Map<String, String> query;
@@ -73,25 +80,64 @@ public class HttpConfigItem implements ConfigureItem<HttpConfigItem>, HTTPConsta
     @JSONField(name = BODY, ordinal = 5)
     private Object body;
 
-    public HttpConfigItem() {
+    @JSONField(name = BYTES, ordinal = 5)
+    private byte[] bytes;
+    @JSONField(name = BINARY, ordinal = 5)
+    private Object binary;
+
+
+    public HttpConfigureItem() {
 
     }
-    
+
+    /**
+     * 合并属性，如果当前对象的属性值为空，则以 other 对象的属性值替换
+     *
+     * @param other 其他对象
+     * @return 合并后的新对象
+     */
     @Override
-    public HttpConfigItem merge(HttpConfigItem other) {
-        //  todo 合并时，使用当前对象的属性覆盖other对象的属性，返回新对象
-        var self = other.copy();
+    public HttpConfigureItem merge(HttpConfigureItem other) {
+        if (other == null) {
+            return copy();
+        }
+        var localOther = other.copy();
+        var self = copy();
+        self.protocol = StringUtils.isBlank(self.protocol) ? localOther.protocol : self.protocol;
+        self.host = StringUtils.isBlank(self.host) ? localOther.host : self.host;
+        self.port = self.port == 0 ? localOther.port : self.port;
+        self.path = StringUtils.isBlank(self.path) ? localOther.path : self.path;
+        self.method = StringUtils.isBlank(self.method) ? localOther.method : self.method;
+        self.http2 = self.http2 == null ? localOther.http2 : self.http2;
+        self.headers = handleMap(other.headers, headers);
+        self.cookie = handleMap(other.cookie, cookie);
+        self.query = self.query == null ? localOther.query : self.query;
+        self.data = self.data == null ? localOther.data : self.data;
+        self.body = self.body == null ? localOther.body : self.body;
         return self;
     }
 
-    @Override
-    public HttpConfigItem copy() {
-        // todo 拷贝对象
-        return new HttpConfigItem();
+    private Map<String, String> handleMap(Map<String, String> other, Map<String, String> self) {
+        var resp = new HashMap<String, String>();
+        if (other != null) {
+            resp.putAll(other);
+        }
+        if (self != null) {
+            resp.putAll(self);
+        }
+        return resp;
+    }
+
+    public String getDatasource() {
+        return StringUtils.isBlank(datasource) ? DEF_REF_NAME_KEY : datasource;
+    }
+
+    public void setDatasource(String datasource) {
+        this.datasource = datasource;
     }
 
     public String getProtocol() {
-        return protocol;
+        return StringUtils.isBlank(protocol) ? PROTOCOL_HTTP : protocol;
     }
 
     public void setProtocol(String protocol) {
@@ -115,7 +161,7 @@ public class HttpConfigItem implements ConfigureItem<HttpConfigItem>, HTTPConsta
     }
 
     public String getPath() {
-        return path;
+        return StringUtils.isBlank(path) ? "/" : path;
     }
 
     public void setPath(String path) {
@@ -123,7 +169,7 @@ public class HttpConfigItem implements ConfigureItem<HttpConfigItem>, HTTPConsta
     }
 
     public String getMethod() {
-        return method;
+        return StringUtils.isBlank(method) ? GET : method;
     }
 
     public void setMethod(String method) {
@@ -131,10 +177,10 @@ public class HttpConfigItem implements ConfigureItem<HttpConfigItem>, HTTPConsta
     }
 
     public boolean isHttp2() {
-        return http2;
+        return Objects.nonNull(http2) && http2;
     }
 
-    public void setHttp2(boolean http2) {
+    public void setHttp2(Boolean http2) {
         this.http2 = http2;
     }
 
@@ -146,12 +192,12 @@ public class HttpConfigItem implements ConfigureItem<HttpConfigItem>, HTTPConsta
         this.headers = headers;
     }
 
-    public Map<String, String> getCookies() {
-        return cookies;
+    public Map<String, String> getCookie() {
+        return cookie;
     }
 
-    public void setCookies(Map<String, String> cookies) {
-        this.cookies = cookies;
+    public void setCookie(Map<String, String> cookie) {
+        this.cookie = cookie;
     }
 
     public Map<String, String> getQuery() {
@@ -176,5 +222,21 @@ public class HttpConfigItem implements ConfigureItem<HttpConfigItem>, HTTPConsta
 
     public void setBody(Object body) {
         this.body = body;
+    }
+
+    public byte[] getBytes() {
+        return bytes;
+    }
+
+    public void setBytes(byte[] bytes) {
+        this.bytes = bytes;
+    }
+
+    public Object getBinary() {
+        return binary;
+    }
+
+    public void setBinary(Object binary) {
+        this.binary = binary;
     }
 }

@@ -30,20 +30,35 @@ import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestSuiteResult;
 import org.apache.commons.lang3.StringUtils;
+import protocol.xyz.migoo.http.HTTPConstantsInterface;
+
+import java.util.Objects;
 
 /**
  * @author xiaomi
  */
 @Alias(value = {"http_defaults", "http"})
-public class HttpDefaults extends AbstractConfigureElement<HttpConfigItem, TestSuiteResult> {
+public class HttpDefaults extends AbstractConfigureElement<HttpConfigureItem, HttpDefaults, TestSuiteResult> implements HTTPConstantsInterface {
 
-    public static final String DEF_REF_NAME_KEY = "__http_configure_element_default_ref_name__";
-
+    /**
+     * HTTP默认配置元件处理
+     * 1. 如果存在其他与当前同类型的配置，或者当前有通过 datasource 指定数据源，则将其他配置元件的配置项合并到当前配置元件中
+     * 2. 如果有指定 ref_name 则使用 ref_name 作为key 将当前配置存入 localVariables 中，否则以默认 DEF_REF_NAME_KEY 作为key
+     *
+     * @param context 测试上下文
+     * @return 处理结果
+     */
     @Override
-    public TestSuiteResult process(ContextWrapper ctx) {
+    public TestSuiteResult process(ContextWrapper context) {
         var result = getTestResult();
         refName = StringUtils.isBlank(refName) ? DEF_REF_NAME_KEY : refName;
-        ctx.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().put(refName, config);
+        var localConfig = runtime.getConfig();
+        var otherRefName = StringUtils.isBlank(datasource) ? DEF_REF_NAME_KEY : datasource;
+        var config = (HttpConfigureItem) context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().get(otherRefName);
+        if (Objects.nonNull(config)) {
+            runtime.setConfig(localConfig = localConfig.merge(config));
+        }
+        context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().put(refName, localConfig);
         return result;
     }
 

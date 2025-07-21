@@ -49,7 +49,7 @@ import support.xyz.migoo.fastjson2.TestElementObjectReader;
  * @author xiaomi
  */
 @JSONType(deserializer = TestElementObjectReader.class)
-public interface TestElement<T extends Result<T>> extends Validatable, Cloneable<TestElement<T>> {
+public interface TestElement<T extends Result> extends Validatable, Cloneable<TestElement<T>> {
 
     /**
      * 默认的空方法

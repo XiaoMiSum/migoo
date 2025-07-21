@@ -39,9 +39,9 @@ import core.xyz.migoo.testelement.Alias;
 public class JSONExtractor extends AbstractExtractor {
 
     @Override
-    protected ExtractResult extract(SampleResult<? extends SampleResult<?>> result) {
+    protected ExtractResult extract(SampleResult result) {
         var res = new ExtractResult("JSON 提取: " + field);
-        var target = result.getResponseDataAsString();
+        var target = result.getResponse().bytesAsString();
         Object value = null;
         try {
             value = JSONPath.extract(target, field);

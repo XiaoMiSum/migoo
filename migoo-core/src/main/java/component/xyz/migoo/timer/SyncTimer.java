@@ -38,10 +38,16 @@ import org.apache.commons.lang3.StringUtils;
  * @date 2021/4/7 19:49
  */
 @Alias({"SyncTimer", "Timer", "sync_timer", "def_timer", "defTimer"})
-public class SyncTimer extends AbstractProcessor<SyncTimer.TimerConfigureItem> implements Postprocessor {
+public class SyncTimer extends AbstractProcessor<SyncTimer.TimerConfigureItem, SyncTimer, DefaultSampleResult> implements Postprocessor {
 
     @Override
-    protected void _process(ContextWrapper context) {
+    protected DefaultSampleResult getTestResult() {
+        return new DefaultSampleResult(runtime.getId(),
+                StringUtils.isBlank(runtime.getTitle()) ? "同步定时：" + config.timeout + "秒" : runtime.getTitle());
+    }
+
+    @Override
+    protected void sample(ContextWrapper context, DefaultSampleResult result) {
         if (config.getTimeout() > 0) {
             synchronized (this) {
                 try {
@@ -51,12 +57,6 @@ public class SyncTimer extends AbstractProcessor<SyncTimer.TimerConfigureItem> i
                 }
             }
         }
-    }
-
-    @Override
-    protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(runtime.getId(),
-                StringUtils.isBlank(runtime.getTitle()) ? "同步定时：" + config.timeout + "秒" : runtime.getTitle());
     }
 
     public static class TimerConfigureItem implements ConfigureItem<TimerConfigureItem> {

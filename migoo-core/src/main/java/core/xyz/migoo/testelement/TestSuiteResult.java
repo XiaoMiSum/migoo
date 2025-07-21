@@ -2,7 +2,7 @@ package core.xyz.migoo.testelement;
 
 import core.xyz.migoo.report.Result;
 
-public class TestSuiteResult extends Result<TestSuiteResult> {
+public class TestSuiteResult extends Result {
 
     public TestSuiteResult(String title) {
         super(title);

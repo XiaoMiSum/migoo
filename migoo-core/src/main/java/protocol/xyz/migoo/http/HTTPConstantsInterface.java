@@ -32,14 +32,16 @@ package protocol.xyz.migoo.http;
  * @author xiaomi
  */
 public interface HTTPConstantsInterface {
+
+    String DEF_REF_NAME_KEY = "__http_configure_element_default_ref_name__";
     String HEADERS = "headers";
-    String COOKIES = "cookies";
+    String COOKIE = "cookie";
     String COOKIE_NAME = "name";
     String COOKIE_VALUE = "value";
     String COOKIE_DOMAIN = "domain";
     String COOKIE_PATH = "path";
     String HTTP2 = "http/2";
-    String HTTP_DEFAULT = "migoo_protocol_http_element_defaults";
+
     String HOST = "host";
     String PORT = "port";
     String PROTOCOL = "protocol";

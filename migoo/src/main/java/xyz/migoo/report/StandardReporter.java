@@ -33,7 +33,7 @@ import core.xyz.migoo.report.Result;
  */
 public class StandardReporter implements Reporter {
     @Override
-    public void generateReport(Result<?> result) {
+    public void generateReport(Result result) {
         // todo  这里要实现生成测试报告
     }
 /*

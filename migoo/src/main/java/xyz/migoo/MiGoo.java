@@ -74,26 +74,26 @@ public class MiGoo {
         System.out.println("    GitHub: https://github.com/XiaoMiSum/migoo");
     }
 
-    public static <T extends Result<T>> Result<T> start(String filePath) {
+    public static Result start(String filePath) {
         var testcase = TestDataLoader.toJavaObject(filePath, JSONObject.class);
         return start(testcase);
     }
 
-    public static <T extends Result<T>> Result<T> start(String filePath, boolean isClassPath) {
+    public static Result start(String filePath, boolean isClassPath) {
         var testcase = TestDataLoader.toJavaObject(filePath, isClassPath, JSONObject.class);
         return start(testcase);
     }
 
-    public static <T extends Result<T>> Result<T> start(Map<String, Object> testcase) {
+    public static Result start(Map<String, Object> testcase) {
         return start(new JsonTree(testcase));
     }
 
-    public static <T extends Result<T>> Result<T> start(JsonTree testcase) {
+    public static Result start(JsonTree testcase) {
         SessionRunner.newSession();
         return new MiGoo(testcase).runTest();
     }
 
-    private <T extends Result<T>> Result<T> runTest() {
+    private Result runTest() {
         var clazz = ApplicationConfig.getTestElementKeyMap().get(testcase.getString(TEST_CLASS));
         var result = SessionRunner.getSession().runTest(JSON.parseObject(testcase.toJSONString(), clazz));
         Reporter reporter = null;

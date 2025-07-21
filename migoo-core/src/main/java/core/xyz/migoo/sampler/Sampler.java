@@ -27,6 +27,7 @@
  */
 package core.xyz.migoo.sampler;
 
+import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.TestElement;
 
 /**
@@ -37,7 +38,7 @@ import core.xyz.migoo.testelement.TestElement;
  *
  * @author xiaomi
  */
-public interface Sampler<T extends SampleResult<T>> extends TestElement<T> {
+public interface Sampler<T extends Result> extends TestElement<T> {
 
 
 }

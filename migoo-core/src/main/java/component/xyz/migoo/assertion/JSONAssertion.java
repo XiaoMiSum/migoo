@@ -40,9 +40,9 @@ import org.apache.commons.lang3.StringUtils;
 public class JSONAssertion extends AbstractAssertion {
 
     @Override
-    protected AssertionResult initialized(SampleResult<? extends SampleResult<?>> result) {
+    protected AssertionResult initialized(SampleResult result) {
         var res = new AssertionResult("JSON断言: " + field);
-        var target = result.getResponseDataAsString();
+        var target = result.getResponse().bytesAsString();
         try {
             actualValue = JSONPath.extract(target, field);
         } catch (Exception e) {

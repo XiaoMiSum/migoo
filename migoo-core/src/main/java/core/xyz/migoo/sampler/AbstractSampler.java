@@ -46,7 +46,7 @@ import java.util.Objects;
  * @author xiaomi
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public abstract class AbstractSampler<CONFIG extends ConfigureItem, SELF extends AbstractSampler<CONFIG, SELF, T>, T extends SampleResult<T>>
+public abstract class AbstractSampler<CONFIG extends ConfigureItem, SELF extends AbstractSampler<CONFIG, SELF, T>, T extends SampleResult>
         extends AbstractTestElementExecutable<CONFIG, SELF, T> implements Sampler<T>, SampleFilterChain {
 
     private Iterator<TestFilter> sampleFilters;
@@ -80,6 +80,7 @@ public abstract class AbstractSampler<CONFIG extends ConfigureItem, SELF extends
 
     @Override
     public final void doSample(ContextWrapper ctx) {
+        runtime.config = (CONFIG) ctx.eval(runtime.config);
         if (sampleFilters.hasNext()) {
             TestFilter next = sampleFilters.next();
             next.doSample(ctx, this);

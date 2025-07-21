@@ -35,7 +35,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author xiaomi
  */
 @Alias(value = {"debugconfig", "debug_config", "debug"})
-public class DebugDefaults extends AbstractConfigureElement<DebugConfigItem, TestSuiteResult> {
+public class DebugDefaults extends AbstractConfigureElement<DebugConfigureItem, DebugDefaults, TestSuiteResult> {
 
     public static final String DEF_REF_NAME_KEY = "__debug_configure_element_default_ref_name__";
 

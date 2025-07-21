@@ -67,8 +67,8 @@ public abstract class AbstractExtractor implements Extractor, ExtractorConstants
 
     @Override
     public void process(ContextWrapper ctx) {
-        if (ctx.getTestResult() instanceof SampleResult<? extends SampleResult<?>> result) {
-            var res = StringUtils.isBlank(result.getResponseDataAsString()) ? broken() : extract(result);
+        if (ctx.getTestResult() instanceof SampleResult result) {
+            var res = StringUtils.isBlank(result.getResponse().bytesAsString()) ? broken() : extract(result);
             if (TestStatus.passed.equals(res.getStatus())) {
                 ctx.getLocalVariablesWrapper().put(refName, res.getValue());
                 return;
@@ -95,7 +95,7 @@ public abstract class AbstractExtractor implements Extractor, ExtractorConstants
         return res;
     }
 
-    protected abstract ExtractResult extract(SampleResult<? extends SampleResult<?>> context);
+    protected abstract ExtractResult extract(SampleResult context);
 
     public String getField() {
         return field;

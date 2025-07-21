@@ -86,6 +86,7 @@
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <slf4j-api.version>2.0.17</slf4j-api.version>
         <logback.version>1.5.18</logback.version>
+        <kryo.version>5.6.2</kryo.version>
 
         <clean.version>3.4.0</clean.version>
         <compiler.version>3.13.0</compiler.version>
@@ -241,7 +242,14 @@
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.esotericsoftware</groupId>
+                <artifactId>kryo</artifactId>
+                <version>${kryo.version}</version>
+            </dependency>
         </dependencies>
+
 
     </dependencyManagement>
 

@@ -52,7 +52,7 @@ public abstract class AbstractAssertion implements Assertion, AssertionConstants
 
     @Override
     public void assertThat(ContextWrapper ctx) {
-        if (ctx.getTestResult() instanceof SampleResult<? extends SampleResult<?>> result) {
+        if (ctx.getTestResult() instanceof SampleResult result) {
             expected = ctx.eval(expected);
             var res = initialized(result);
             var checkRule = ApplicationConfig.getRuleKeyMap().get(rule.toLowerCase(Locale.ROOT));
@@ -67,7 +67,7 @@ public abstract class AbstractAssertion implements Assertion, AssertionConstants
         }
     }
 
-    protected abstract AssertionResult initialized(SampleResult<? extends SampleResult<?>> result);
+    protected abstract AssertionResult initialized(SampleResult result);
 
     public Object getActualValue() {
         return actualValue;

@@ -47,9 +47,9 @@ import java.util.Objects;
  * @param <T>
  * @author xiaomi
  */
-@SuppressWarnings({"rawtypes"})
-public abstract class AbstractProcessor<CONFIG extends ConfigureItem, T extends SampleResult<T>>
-        extends AbstractTestElement<CONFIG, AbstractProcessor<CONFIG, T>, T>
+@SuppressWarnings({"rawtypes", "unchecked"})
+public abstract class AbstractProcessor<CONFIG extends ConfigureItem, SELF, T extends SampleResult>
+        extends AbstractTestElement<CONFIG, AbstractProcessor<CONFIG, SELF, T>, T>
         implements Processor, SampleFilterChain, TestElementConstantsInterface {
 
     @JSONField(name = EXTRACTORS, ordinal = 2)
@@ -62,8 +62,8 @@ public abstract class AbstractProcessor<CONFIG extends ConfigureItem, T extends 
     }
 
     @Override
-    public void doSample(ContextWrapper context) {
-        _process(context);
+    public void doSample(ContextWrapper ctx) {
+        sample(ctx, (T) ctx.getTestResult());
     }
 
     @Override
@@ -73,13 +73,15 @@ public abstract class AbstractProcessor<CONFIG extends ConfigureItem, T extends 
         }
         ContextWrapper localContext = new ContextWrapper(context.getSessionRunner());
         localContext.setTestResult(getTestResult());
-        localContext.eval(config);
+        runtime.config = (CONFIG) localContext.eval(runtime.config);
+        handleRequest(localContext, (T) localContext.getTestResult());
         if (processFilters.hasNext()) {
             TestFilter next = processFilters.next();
             next.doSample(localContext, this);
         } else {
-            doSample(localContext);
+            sample(localContext, (T) localContext.getTestResult());
         }
+        handleResponse(localContext, (T) localContext.getTestResult());
         extract(context, localContext);
     }
 
@@ -99,6 +101,28 @@ public abstract class AbstractProcessor<CONFIG extends ConfigureItem, T extends 
                 .merge(localContext.getLocalVariablesWrapper().getLastVariables());
     }
 
-    protected abstract void _process(ContextWrapper context);
+    /**
+     * 请求执行前处理。比如请求数据的表达式计算。
+     *
+     * <p>该方法在 {@link TestFilter#doSample} 之前调用。
+     */
+    protected void handleRequest(ContextWrapper context, T result) {
+        // do nothing.
+    }
+
+    /**
+     * 执行请求。
+     * <p>不要在该方法内进行请求的动态数据替换，请使用 {@link AbstractProcessor#handleRequest(ContextWrapper, SampleResult)}。
+     */
+    protected abstract void sample(ContextWrapper context, T result);
+
+    /**
+     * 请求执行后处理。
+     *
+     * <p>该方法在 {@link TestFilter#doSample} 之后调用。
+     */
+    protected void handleResponse(ContextWrapper context, T result) {
+        // do nothing.
+    }
 
 }

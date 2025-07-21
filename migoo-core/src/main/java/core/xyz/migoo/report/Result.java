@@ -34,7 +34,7 @@ import java.util.List;
  * @author mi.xiao
  * @date 2021/6/15 20:44
  */
-public abstract class Result<T extends Result<T>> implements Serializable {
+public abstract class Result implements Serializable {
 
     private final String id;
 
@@ -46,7 +46,7 @@ public abstract class Result<T extends Result<T>> implements Serializable {
 
     private LocalDateTime endTime;
 
-    private List<Result<T>> subResults;
+    private List<Result> subResults;
 
     private Throwable throwable;
 
@@ -81,11 +81,11 @@ public abstract class Result<T extends Result<T>> implements Serializable {
         this.title = title;
     }
 
-    public List<Result<T>> getSubResults() {
+    public List<Result> getSubResults() {
         return subResults;
     }
 
-    public void setSubResults(List<Result<T>> subResults) {
+    public void setSubResults(List<Result> subResults) {
         this.subResults = subResults;
     }
 

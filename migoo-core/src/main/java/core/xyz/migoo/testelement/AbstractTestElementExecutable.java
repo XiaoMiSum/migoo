@@ -42,6 +42,7 @@ import core.xyz.migoo.processor.Postprocessor;
 import core.xyz.migoo.processor.Preprocessor;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.variable.MiGooVariables;
+import support.xyz.migoo.KryoUtil;
 
 import java.util.*;
 
@@ -51,7 +52,7 @@ import java.util.*;
  * @author xiaomi
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem, SELF extends AbstractTestElementExecutable<CONFIG, SELF, T>, T extends Result<T>>
+public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem, SELF extends AbstractTestElementExecutable<CONFIG, SELF, T>, T extends Result>
         extends AbstractTestElement<CONFIG, SELF, T>
         implements TestElementExecutable<T>, RunFilterChain, ExecuteFilterChain, TestElementConstantsInterface {
 
@@ -247,11 +248,11 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
     @Override
     public SELF copy() {
         SELF self = super.copy();
-        self.variables = variables;
-        self.preprocessors = preprocessors;
-        self.postprocessors = postprocessors;
-        self.assertions = assertions;
-        self.extractors = extractors;
+        self.variables = KryoUtil.copy(variables);
+        self.preprocessors = KryoUtil.copy(preprocessors);
+        self.postprocessors = KryoUtil.copy(postprocessors);
+        self.assertions = KryoUtil.copy(assertions);
+        self.extractors = KryoUtil.copy(extractors);
         return self;
     }
 

@@ -36,7 +36,7 @@ import core.xyz.migoo.report.Result;
  * Created at 2025/7/20 11:55
  */
 @FunctionalInterface
-public interface TestElementExecutable<T extends Result<T>> extends TestElement<T> {
+public interface TestElementExecutable<T extends Result> extends TestElement<T> {
 
     /**
      * 执行测试组件

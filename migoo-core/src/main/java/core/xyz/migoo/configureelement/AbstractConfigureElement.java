@@ -37,12 +37,15 @@ import core.xyz.migoo.testelement.AbstractTestElement;
  * @author xiaomi
  * Created at 2025/7/19 15:47
  */
-public abstract class AbstractConfigureElement<CONFIG extends ConfigureItem<CONFIG>, T extends Result<T>>
-        extends AbstractTestElement<CONFIG, AbstractConfigureElement<CONFIG, T>, T>
+public abstract class AbstractConfigureElement<CONFIG extends ConfigureItem<CONFIG>, SELF extends AbstractConfigureElement<CONFIG, SELF, T>, T extends Result>
+        extends AbstractTestElement<CONFIG, AbstractConfigureElement<CONFIG, SELF, T>, T>
         implements ConfigureElement<T>, ConfigureElementConstantsInterface {
 
-    @JSONField(name = REF_NAME)
+    @JSONField(name = REF_NAME, ordinal = 1)
     protected String refName;
+
+    @JSONField(name = DATASOURCE, ordinal = 2)
+    protected String datasource;
 
     public AbstractConfigureElement() {
     }

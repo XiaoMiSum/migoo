@@ -28,40 +28,64 @@
 
 package protocol.xyz.migoo.http.processor;
 
-import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.processor.AbstractProcessor;
 import core.xyz.migoo.processor.Postprocessor;
 import core.xyz.migoo.sampler.DefaultSampleResult;
 import core.xyz.migoo.testelement.Alias;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import protocol.xyz.migoo.http.HTTPSampleResult;
-import protocol.xyz.migoo.http.config.HttpConfigItem;
+import protocol.xyz.migoo.http.HTTPConstantsInterface;
+import protocol.xyz.migoo.http.HttpClient;
+import protocol.xyz.migoo.http.RealHTTPRequest;
+import protocol.xyz.migoo.http.RealHTTPResponse;
+import protocol.xyz.migoo.http.config.HttpConfigureItem;
+import xyz.migoo.simplehttp.Request;
+import xyz.migoo.simplehttp.Response;
 
 /**
  * @author xiaomi
  */
 @Alias(value = {"http_postprocessor", "http_post_processor", "http"})
-public class HTTPPostprocessor extends AbstractProcessor<HttpConfigItem, HTTPSampleResult> implements Postprocessor {
+public class HTTPPostprocessor extends AbstractProcessor<HttpConfigureItem, HTTPPostprocessor, DefaultSampleResult> implements Postprocessor, HTTPConstantsInterface {
 
-    static Logger logger = LoggerFactory.getLogger(HTTPPostprocessor.class);
+    @JSONField(serialize = false)
+    private Request request;
+    @JSONField(serialize = false)
+    private Response response;
 
     @Override
-    protected void _process(ContextWrapper context) {
-        var result = (DefaultSampleResult) context.getTestResult();
-        result.sampleStart();
-        result.setUrl(getClass().getName());
-        result.setRequestData(JSON.toJSONBytes(config));
-        result.setResponseData(JSON.toJSONBytes(config));
-        logger.info("Debug Postprocessor");
-        result.sampleEnd();
+    protected DefaultSampleResult getTestResult() {
+        return new DefaultSampleResult(id, StringUtils.isBlank(title) ? "HTTP 后置处理器" : title);
     }
 
     @Override
-    protected HTTPSampleResult getTestResult() {
-        return new HTTPSampleResult(runtime.getId(),
-                StringUtils.isBlank(runtime.getTitle()) ? "Debug Preprocessor" : runtime.getTitle());
+    protected void sample(ContextWrapper context, DefaultSampleResult result) {
+        try {
+            result.sampleStart();
+            response = request.execute();
+        } catch (Exception e) {
+            result.setThrowable(e);
+        } finally {
+            result.sampleEnd();
+        }
+    }
+
+    @Override
+    protected void handleRequest(ContextWrapper context, DefaultSampleResult result) {
+        super.handleRequest(context, result);
+        // 1. 合并配置项
+        var datasource = StringUtils.isBlank(config.getDatasource()) ? DEF_REF_NAME_KEY : config.getDatasource();
+        var otherConfig = (HttpConfigureItem) context.getLocalVariablesWrapper().get(datasource);
+        runtime.setConfig(runtime.getConfig().merge(otherConfig));
+        // 2. 创建http对象
+        request = HttpClient.build(runtime.getConfig());
+    }
+
+    @Override
+    protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
+        super.handleResponse(context, result);
+        result.setRequest(new RealHTTPRequest(request));
+        result.setResponse(new RealHTTPResponse(response));
     }
 }

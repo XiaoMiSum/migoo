@@ -31,10 +31,12 @@ package protocol.xyz.migoo.http;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import org.apache.hc.client5.http.cookie.Cookie;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.client5.http.impl.cookie.BasicClientCookie;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
+import protocol.xyz.migoo.http.config.HttpConfigureItem;
 import xyz.migoo.simplehttp.Form;
 import xyz.migoo.simplehttp.Request;
 import xyz.migoo.simplehttp.RequestEntity;
@@ -44,10 +46,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static org.apache.hc.core5.http.HttpVersion.HTTP_1_1;
+import static org.apache.hc.core5.http.HttpVersion.HTTP_2;
+
 /**
  * @author xiaomi
  * Created at 2025/7/20 23:01
  */
+@SuppressWarnings({"unchecked"})
 public class HttpClient extends Request implements HTTPConstantsInterface {
 
     protected HttpClient(String method, String url) {
@@ -58,10 +64,26 @@ public class HttpClient extends Request implements HTTPConstantsInterface {
         return new HttpClient(method, url);
     }
 
+    public static Request build(HttpConfigureItem config) {
+        var port = config.getPort() > 0 ? ":" + config.getPort() : "";
+        var path = Strings.CS.startsWith(config.getPath(), "/") ? config.getPath() : "/" + config.getPath();
+        var url = "%s://%s%s%s".formatted(config.getProtocol(), config.getHost(), port, path);
+        // bytes body data(binary) 不会同时出现
+        return new HttpClient(config.getMethod(), url)
+                .headers(config.getHeaders())
+                .cookie(config.getCookie())
+                .query(config.getQuery())
+                // bytes body data(binary) 不会同时出现
+                .bytes(config.getBytes(), config.getHeaders().get(HEADER_CONTENT_TYPE))
+                .body(config.getBody())
+                .body(config.getBinary(), config.getData())
+                .version(config.isHttp2() ? HTTP_2 : HTTP_1_1);
+    }
 
-    public HttpClient query(Map<String, Object> query) {
-        if (query != null) {
-            super.query(Form.create(query));
+
+    public HttpClient query(Map<String, ?> query) {
+        if (query != null && !query.isEmpty()) {
+            super.query(Form.create((Map<String, Object>) query));
         }
         return this;
     }
@@ -82,52 +104,68 @@ public class HttpClient extends Request implements HTTPConstantsInterface {
         return this;
     }
 
-    public HttpClient body(JSONObject binary, JSONObject data) {
-        if (Objects.nonNull(binary) && !binary.isEmpty()) {
+    /**
+     * 场景1：
+     * binary: [{"file": "1.text"},{"file": "2.text"},{"image": "1.jpg"}]
+     * <p>
+     * 场景2：
+     * binary: {"file": "1.text", "files": ["1.text", "2.text"]}
+     *
+     * @param binary 上传文件数据
+     * @param data   form data
+     * @return this
+     */
+
+    //
+    public HttpClient body(Object binary, Map<String, ?> data) {
+        if (Objects.nonNull(binary)) {
             var files = new ArrayList<NameValuePair>();
-            binary.forEach((key, value) -> {
-                if (value instanceof String path) {
-                    files.add(new BasicNameValuePair(key, path));
-                } else if (value instanceof List<?> paths) {
-                    paths.forEach(path -> files.add(new BasicNameValuePair(key, (String) path)));
+            if (binary instanceof List<?> objects) {
+                var jsonArray = new JSONArray(objects);
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    JSONObject item = jsonArray.getJSONObject(i);
+                    for (String key : item.keySet()) {
+                        files.add(new BasicNameValuePair(key, item.getString(key)));
+                    }
                 }
-            });
+            }
+            if (binary instanceof Map<?, ?> map) {
+                var json = new JSONObject(map);
+                for (Map.Entry<String, Object> en : json.entrySet()) {
+                    Object value = en.getValue();
+                    if (value instanceof String path) {
+                        files.add(new BasicNameValuePair(en.getKey(), path));
+                    } else if (value instanceof List<?> paths) {
+                        paths.forEach(path -> files.add(new BasicNameValuePair(en.getKey(), (String) path)));
+                    }
+                }
+            }
             // 如果 binary 非空，则认为 data 为 binary 中的消息
-            super.body(RequestEntity.binary(files, data));
+            super.body(RequestEntity.binary(files, (Map<String, Object>) data));
         } else if (Objects.nonNull(data)) {
-            super.body(RequestEntity.form(data));
+            super.body(RequestEntity.form((Map<String, Object>) data));
         }
         return this;
     }
 
-    public HttpClient headers(JSONObject headers) {
-        if (headers != null) {
-            headers.forEach((name, value) -> this.addHeader(name, value == null ? "" : value.toString()));
+    public HttpClient headers(Map<String, String> headers) {
+        if (headers == null) {
+            return this;
         }
+        headers.entrySet().stream().filter(entry -> StringUtils.isNotBlank(entry.getValue()))
+                .forEach(entry -> addHeader(entry.getKey(), entry.getValue()));
         return this;
     }
 
-    public HttpClient cookie(Object cookie) {
-        if (cookie instanceof JSONObject object) {
-            addCookie(toCookie(object));
-        } else if (cookie instanceof JSONArray objects) {
-            addCookie(toCookie(objects));
+    public HttpClient cookie(Map<String, String> cookie) {
+        if (cookie == null) {
+            return this;
         }
+        var localCookie = new BasicClientCookie(cookie.get(COOKIE_NAME), cookie.get(COOKIE_VALUE));
+        localCookie.setPath(cookie.get(COOKIE_PATH));
+        localCookie.setDomain(cookie.get(COOKIE_DOMAIN));
+        addCookie(localCookie);
         return this;
     }
 
-    private Cookie toCookie(JSONObject object) {
-        var cookie = new BasicClientCookie(object.getString(COOKIE_NAME), object.getString(COOKIE_VALUE));
-        cookie.setPath(object.getString(COOKIE_PATH));
-        cookie.setDomain(object.getString(COOKIE_DOMAIN));
-        return cookie;
-    }
-
-    private Cookie[] toCookie(JSONArray objects) {
-        List<Cookie> cookies = new ArrayList<>(objects.size());
-        for (int i = 0; i < objects.size(); i++) {
-            cookies.add(toCookie(objects.getJSONObject(i)));
-        }
-        return cookies.toArray(new Cookie[0]);
-    }
 }

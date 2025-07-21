@@ -41,13 +41,13 @@ import java.util.regex.Pattern;
 public class RegexExtractor extends AbstractExtractor {
 
     @Override
-    protected ExtractResult extract(SampleResult<? extends SampleResult<?>> result) {
+    protected ExtractResult extract(SampleResult result) {
         var res = new ExtractResult("正则表达式 提取: %s ，匹配第 %s 个".formatted(field, matchNum + 1));
-        var target = result.getResponseDataAsString();
+        var target = result.getResponse().bytesAsString();
         var value = "";
         try {
             var pattern = Pattern.compile(field);
-            var matcher = pattern.matcher(result.getResponseDataAsString());
+            var matcher = pattern.matcher(target);
             matchNum = Math.max(0, matchNum);
             int state = 0;
             while (state > -1 && matcher.find()) {

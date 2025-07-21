@@ -26,21 +26,41 @@
  *
  */
 
-package protocol.xyz.migoo.http;
+package protocol.xyz.migoo.debug.config;
 
-import core.xyz.migoo.sampler.SampleResult;
+import com.alibaba.fastjson2.JSONObject;
+import core.xyz.migoo.config.ConfigureItem;
 
 /**
  * @author xiaomi
- * Created at 2025/7/20 23:18
+ * Created at 2025/7/19 20:17
  */
-public class HTTPSampleResult extends SampleResult<HTTPSampleResult> {
-    
-    public HTTPSampleResult(String title) {
-        super(title);
+public class DebugConfigureItem extends JSONObject implements ConfigureItem<DebugConfigureItem> {
+
+    public DebugConfigureItem() {
+
     }
 
-    public HTTPSampleResult(String id, String title) {
-        super(id, title);
+    public DebugConfigureItem(DebugConfigureItem debugConfigureItem) {
+        super(debugConfigureItem);
+    }
+
+    public static DebugConfigureItem of(Object... keyWords) {
+        DebugConfigureItem object = new DebugConfigureItem();
+        for (int i = 0; i < keyWords.length; i += 2) {
+            if (i + 1 > keyWords.length) {
+                break;
+            }
+            object.put(keyWords[i].toString(), keyWords[i + 1]);
+        }
+        return object;
+    }
+
+    @Override
+    public DebugConfigureItem merge(DebugConfigureItem other) {
+        // 合并时，使用当前对象的属性覆盖other对象的属性，返回新对象
+        var self = other.copy();
+        self.putAll(this);
+        return self;
     }
 }

@@ -31,6 +31,7 @@ import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.report.Result;
+import support.xyz.migoo.KryoUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +43,7 @@ import java.util.Map;
  * @author xiaomi
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public abstract class AbstractTestElement<CONFIG extends ConfigureItem, SELF extends AbstractTestElement<CONFIG, SELF, T>, T extends Result<T>>
+public abstract class AbstractTestElement<CONFIG extends ConfigureItem, SELF extends AbstractTestElement<CONFIG, SELF, T>, T extends Result>
         implements TestElement<T>, TestElementConstantsInterface {
 
     @JSONField(name = ID)
@@ -82,7 +83,7 @@ public abstract class AbstractTestElement<CONFIG extends ConfigureItem, SELF ext
     protected void handleFilters(ContextWrapper contextWrapper) {
 
     }
-    
+
     protected abstract T getTestResult();
 
 
@@ -98,10 +99,12 @@ public abstract class AbstractTestElement<CONFIG extends ConfigureItem, SELF ext
     @Override
     public SELF copy() {
         SELF self = newInstance();
-        self.title = title;
-        self.id = id;
-        self.disabled = disabled;
-        self.metadata = metadata;
+        self.title = KryoUtil.copy(title);
+        self.id = KryoUtil.copy(id);
+        self.disabled = KryoUtil.copy(disabled);
+        self.metadata = KryoUtil.copy(metadata);
+        self.config = KryoUtil.copy(config);
+        self.filters = KryoUtil.copy(filters);
         return self;
     }
 

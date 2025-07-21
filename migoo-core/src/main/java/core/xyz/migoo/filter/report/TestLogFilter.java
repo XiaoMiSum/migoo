@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TestLogFilter implements ReportFilter {
 
-    static final Logger log = LoggerFactory.getLogger(TestLogFilter.class);
+    static final Logger log = LoggerFactory.getLogger("");
 
     @Override
     public void doRun(ContextWrapper context, RunFilterChain chain) {
@@ -54,12 +54,14 @@ public class TestLogFilter implements ReportFilter {
 
     @Override
     public void doSample(ContextWrapper context, SampleFilterChain chain) {
-        log.info("执行测试步骤：{}", context.getTestResult().getTitle());
         chain.doSample(context);
-        if (context.getTestResult() instanceof SampleResult<?> result) {
-            log.info("请求地址：{}", result.getUrl());
-            log.info("请求参数：{}", result.getRequestDataAsString());
-            log.info("响应数据：{}", result.getResponseDataAsString());
+        log.info("执行 {}：{}", chain.getClass().getSimpleName(), context.getTestResult().getTitle());
+        if (context.getTestResult().isException()) {
+            log.error("\n", context.getTestResult().getThrowable());
+        }
+        if (context.getTestResult() instanceof SampleResult result) {
+            log.info("{}{}{}", "\n--------------- 请求信息 -----------------\n", result.getRequest().bytesAsString(), "\n");
+            log.info("{}{}{}", "\n--------------- 响应信息 -----------------\n", result.getResponse().bytesAsString(), "\n");
         }
     }
 }
