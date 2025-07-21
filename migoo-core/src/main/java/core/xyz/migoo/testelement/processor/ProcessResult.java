@@ -26,35 +26,46 @@
  *
  */
 
-package support.xyz.migoo.fastjson2;
+package core.xyz.migoo.testelement.processor;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
-import com.alibaba.fastjson2.JSONReader;
-import com.alibaba.fastjson2.reader.ObjectReader;
-import core.xyz.migoo.config.TestElementConfigure;
-
-import java.lang.reflect.Type;
+import core.xyz.migoo.TestStatus;
 
 /**
  * @author xiaomi
- * Created at 2025/7/19 22:16
  */
-public class TestElementConfigureObjectReader implements ObjectReader<TestElementConfigure> {
+public class ProcessResult {
 
-    public static void main(String[] args) {
-        var str = """
-                {"test1":"t1est1","test2":"tes1t2","variables":{"var1":"value1"}}
-                """;
+    /**
+     * Processor 名称
+     */
+    private final String title;
+    private TestStatus status = TestStatus.passed;
+    /**
+     * 失败时的异常信息
+     */
+    private String message;
 
-        var json = JSON.parseObject(str, TestElementConfigure.class);
-        System.out.println(json);
+    public ProcessResult(String title) {
+        this.title = title;
     }
 
-    @Override
-    public TestElementConfigure readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
-        var t = fieldName;
-        var value = jsonReader.readObject();
-        return JSONObject.parseObject(JSON.toJSONString(value), TestElementConfigure.class);
+    public TestStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TestStatus status) {
+        this.status = status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getTitle() {
+        return title;
     }
 }

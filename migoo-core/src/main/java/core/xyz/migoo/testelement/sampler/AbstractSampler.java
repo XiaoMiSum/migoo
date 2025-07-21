@@ -26,7 +26,7 @@
  *
  */
 
-package core.xyz.migoo.sampler;
+package core.xyz.migoo.testelement.sampler;
 
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;

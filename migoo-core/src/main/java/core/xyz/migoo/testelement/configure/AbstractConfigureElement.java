@@ -26,7 +26,7 @@
  *
  */
 
-package core.xyz.migoo.configureelement;
+package core.xyz.migoo.testelement.configure;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.config.ConfigureItem;

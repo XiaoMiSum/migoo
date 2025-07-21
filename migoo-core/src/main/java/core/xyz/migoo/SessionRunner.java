@@ -25,12 +25,12 @@
 
 package core.xyz.migoo;
 
-import core.xyz.migoo.config.TestElementConfigure;
 import core.xyz.migoo.context.Context;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.context.SessionContext;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.TestElement;
+import core.xyz.migoo.testelement.TestElementConfigure;
 import core.xyz.migoo.testelement.TestElementConstantsInterface;
 import core.xyz.migoo.testelement.ValidateResult;
 import core.xyz.migoo.variable.MiGooVariables;

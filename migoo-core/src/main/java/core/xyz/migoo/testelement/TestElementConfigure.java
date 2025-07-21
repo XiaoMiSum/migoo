@@ -26,44 +26,39 @@
  *
  */
 
-package protocol.xyz.migoo.jdbc;
+package core.xyz.migoo.testelement;
 
-import core.xyz.migoo.testelement.sampler.SampleResult;
+import com.alibaba.fastjson2.annotation.JSONType;
+import core.xyz.migoo.config.ConfigureGroup;
+import core.xyz.migoo.config.ConfigureItem;
+import core.xyz.migoo.testelement.deserializer.TestElementConfigureObjectReader;
+
+import java.util.HashMap;
 
 /**
+ * 测试元件配置数据
+ *
  * @author xiaomi
- * Created at 2025/7/21 19:11
  */
-public class RealJDBCRequest extends SampleResult.Real implements JDBCConstantsInterface {
+@SuppressWarnings({"rawtypes", "unchecked"})
+@JSONType(deserializer = TestElementConfigureObjectReader.class)
+public class TestElementConfigure extends HashMap<String, ConfigureItem> implements ConfigureGroup {
 
-    private final String url;
-
-    private final String username;
-
-    private final String password;
-
-    public RealJDBCRequest(String url, String username, String password, String sql) {
-        super(sql.getBytes());
-        this.url = url;
-        this.username = username;
-        this.password = password;
-    }
-
-    /**
-     * 设置 JDBC请求信息，格式如下
-     * <p>
-     * jdbc:mysql://localhost:3306/dbname?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-     * username
-     * password
-     * <p>
-     * data
-     */
     @Override
-    public String format() {
-        return url + "\n" +
-                USERNAME + ": " + username + "\n" +
-                PASSWORD + ": " + password + "\n\n" +
-                bytesAsString();
+    public <T extends ConfigureItem<T>> T get(String key) {
+        return (T) super.get(key);
     }
 
+    @Override
+    public TestElementConfigure copy() {
+        TestElementConfigure testElementConfigure = new TestElementConfigure();
+        entrySet().stream().filter(entry -> entry.getValue() != null)
+                .forEach(entry -> testElementConfigure.put(entry.getKey(), entry.getValue()));
+        return testElementConfigure;
+    }
+
+    @Override
+    public ConfigureGroup merge(ConfigureGroup other) {
+        return ConfigureGroup.super.merge(other);
+    }
 }

@@ -31,8 +31,8 @@ package core.xyz.migoo.filter.report;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.filter.RunFilterChain;
 import core.xyz.migoo.filter.SampleFilterChain;
-import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.TestSuiteExecutable;
+import core.xyz.migoo.testelement.sampler.SampleResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -25,10 +25,10 @@
 
 package protocol.xyz.migoo.debug.config;
 
-import core.xyz.migoo.configureelement.AbstractConfigureElement;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.TestSuiteResult;
+import core.xyz.migoo.testelement.configure.AbstractConfigureElement;
 import org.apache.commons.lang3.StringUtils;
 
 /**

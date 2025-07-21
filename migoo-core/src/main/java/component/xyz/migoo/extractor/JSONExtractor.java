@@ -29,8 +29,8 @@ import com.alibaba.fastjson2.JSONPath;
 import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.extractor.AbstractExtractor;
 import core.xyz.migoo.extractor.ExtractResult;
-import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
+import core.xyz.migoo.testelement.sampler.SampleResult;
 
 /**
  * @author xiaomi

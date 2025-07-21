@@ -66,7 +66,7 @@ public class FunctionService {
     private static Function getService(String fName) {
         var function = SERVICES.get(fName.toLowerCase());
         if (function == null) {
-            throw new RuntimeException("No matcher the function: " + fName);
+            throw new RuntimeException("没有匹配的函数: " + fName);
         }
         return function;
     }

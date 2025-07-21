@@ -26,44 +26,35 @@
  *
  */
 
-package protocol.xyz.migoo.jdbc;
+package core.xyz.migoo.testelement.deserializer;
 
-import core.xyz.migoo.testelement.sampler.SampleResult;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.JSONReader;
+import com.alibaba.fastjson2.reader.ObjectReader;
+import core.xyz.migoo.testelement.TestElementConfigure;
+
+import java.lang.reflect.Type;
 
 /**
  * @author xiaomi
- * Created at 2025/7/21 19:11
+ * Created at 2025/7/19 22:16
  */
-public class RealJDBCRequest extends SampleResult.Real implements JDBCConstantsInterface {
+public class TestElementConfigureObjectReader implements ObjectReader<TestElementConfigure> {
 
-    private final String url;
+    public static void main(String[] args) {
+        var str = """
+                {"test1":"t1est1","test2":"tes1t2","variables":{"var1":"value1"}}
+                """;
 
-    private final String username;
-
-    private final String password;
-
-    public RealJDBCRequest(String url, String username, String password, String sql) {
-        super(sql.getBytes());
-        this.url = url;
-        this.username = username;
-        this.password = password;
+        var json = JSON.parseObject(str, TestElementConfigure.class);
+        System.out.println(json);
     }
 
-    /**
-     * 设置 JDBC请求信息，格式如下
-     * <p>
-     * jdbc:mysql://localhost:3306/dbname?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-     * username
-     * password
-     * <p>
-     * data
-     */
     @Override
-    public String format() {
-        return url + "\n" +
-                USERNAME + ": " + username + "\n" +
-                PASSWORD + ": " + password + "\n\n" +
-                bytesAsString();
+    public TestElementConfigure readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
+        var t = fieldName;
+        var value = jsonReader.readObject();
+        return JSONObject.parseObject(JSON.toJSONString(value), TestElementConfigure.class);
     }
-
 }

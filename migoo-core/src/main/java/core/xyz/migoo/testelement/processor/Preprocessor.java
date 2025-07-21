@@ -26,44 +26,15 @@
  *
  */
 
-package protocol.xyz.migoo.jdbc;
+package core.xyz.migoo.testelement.processor;
 
-import core.xyz.migoo.testelement.sampler.SampleResult;
+import com.alibaba.fastjson2.annotation.JSONType;
+import core.xyz.migoo.testelement.deserializer.PreprocessorObjectReader;
 
 /**
  * @author xiaomi
- * Created at 2025/7/21 19:11
  */
-public class RealJDBCRequest extends SampleResult.Real implements JDBCConstantsInterface {
-
-    private final String url;
-
-    private final String username;
-
-    private final String password;
-
-    public RealJDBCRequest(String url, String username, String password, String sql) {
-        super(sql.getBytes());
-        this.url = url;
-        this.username = username;
-        this.password = password;
-    }
-
-    /**
-     * 设置 JDBC请求信息，格式如下
-     * <p>
-     * jdbc:mysql://localhost:3306/dbname?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-     * username
-     * password
-     * <p>
-     * data
-     */
-    @Override
-    public String format() {
-        return url + "\n" +
-                USERNAME + ": " + username + "\n" +
-                PASSWORD + ": " + password + "\n\n" +
-                bytesAsString();
-    }
+@JSONType(deserializer = PreprocessorObjectReader.class)
+public interface Preprocessor extends Processor {
 
 }

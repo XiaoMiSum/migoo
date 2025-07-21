@@ -28,8 +28,8 @@ package component.xyz.migoo.extractor;
 import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.extractor.AbstractExtractor;
 import core.xyz.migoo.extractor.ExtractResult;
-import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
+import core.xyz.migoo.testelement.sampler.SampleResult;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Pattern;

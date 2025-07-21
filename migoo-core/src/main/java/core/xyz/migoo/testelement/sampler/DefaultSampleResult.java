@@ -26,16 +26,15 @@
  *
  */
 
-package core.xyz.migoo.configureelement;
+package core.xyz.migoo.testelement.sampler;
 
-import core.xyz.migoo.testelement.TestElementConstantsInterface;
+public class DefaultSampleResult extends SampleResult {
 
-/**
- * @author xiaomi
- * Created at 2025/7/19 14:22
- */
-public interface ConfigureElementConstantsInterface extends TestElementConstantsInterface {
+    public DefaultSampleResult(String title) {
+        super(title);
+    }
 
-    String VARIABLE_NAME = "variable_name";
-    String REF_NAME = "ref_name";
+    public DefaultSampleResult(String id, String title) {
+        super(id, title);
+    }
 }

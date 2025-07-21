@@ -25,45 +25,20 @@
  *
  *
  */
+package core.xyz.migoo.testelement.sampler;
 
-package protocol.xyz.migoo.jdbc;
-
-import core.xyz.migoo.testelement.sampler.SampleResult;
+import core.xyz.migoo.report.Result;
+import core.xyz.migoo.testelement.TestElement;
 
 /**
+ * Sampler 接口，表示一个测试元件是最基本的测试执行单元，其下没有子元件。
+ *
+ * <p>Sampler 一般是各种协议请求实现，如 JDBC 请求、HTTP 请求、Dubbo 请求等等，
+ * 或者是最基本的动作，如打开一个网页、点击一个按钮等等。
+ *
  * @author xiaomi
- * Created at 2025/7/21 19:11
  */
-public class RealJDBCRequest extends SampleResult.Real implements JDBCConstantsInterface {
+public interface Sampler<T extends Result> extends TestElement<T> {
 
-    private final String url;
-
-    private final String username;
-
-    private final String password;
-
-    public RealJDBCRequest(String url, String username, String password, String sql) {
-        super(sql.getBytes());
-        this.url = url;
-        this.username = username;
-        this.password = password;
-    }
-
-    /**
-     * 设置 JDBC请求信息，格式如下
-     * <p>
-     * jdbc:mysql://localhost:3306/dbname?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-     * username
-     * password
-     * <p>
-     * data
-     */
-    @Override
-    public String format() {
-        return url + "\n" +
-                USERNAME + ": " + username + "\n" +
-                PASSWORD + ": " + password + "\n\n" +
-                bytesAsString();
-    }
 
 }

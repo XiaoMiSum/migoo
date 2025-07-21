@@ -25,7 +25,7 @@
 
 package core.xyz.migoo.assertion;
 
-import core.xyz.migoo.processor.ProcessResult;
+import core.xyz.migoo.testelement.processor.ProcessResult;
 
 /**
  * @author xiaomi

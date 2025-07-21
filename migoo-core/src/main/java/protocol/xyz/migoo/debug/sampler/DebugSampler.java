@@ -2,11 +2,11 @@ package protocol.xyz.migoo.debug.sampler;
 
 import com.alibaba.fastjson2.JSON;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.sampler.AbstractSampler;
-import core.xyz.migoo.sampler.DefaultSampleResult;
-import core.xyz.migoo.sampler.SampleResult;
-import core.xyz.migoo.sampler.Sampler;
 import core.xyz.migoo.testelement.Alias;
+import core.xyz.migoo.testelement.sampler.AbstractSampler;
+import core.xyz.migoo.testelement.sampler.DefaultSampleResult;
+import core.xyz.migoo.testelement.sampler.SampleResult;
+import core.xyz.migoo.testelement.sampler.Sampler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import protocol.xyz.migoo.debug.config.DebugConfigureItem;

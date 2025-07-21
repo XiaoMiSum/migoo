@@ -3,11 +3,11 @@ package protocol.xyz.migoo.jdbc.sampler;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.sampler.AbstractSampler;
-import core.xyz.migoo.sampler.DefaultSampleResult;
-import core.xyz.migoo.sampler.SampleResult;
-import core.xyz.migoo.sampler.Sampler;
 import core.xyz.migoo.testelement.Alias;
+import core.xyz.migoo.testelement.sampler.AbstractSampler;
+import core.xyz.migoo.testelement.sampler.DefaultSampleResult;
+import core.xyz.migoo.testelement.sampler.SampleResult;
+import core.xyz.migoo.testelement.sampler.Sampler;
 import protocol.xyz.migoo.jdbc.JDBCConstantsInterface;
 import protocol.xyz.migoo.jdbc.RealJDBCRequest;
 import protocol.xyz.migoo.jdbc.config.JDBCConfigureItem;
@@ -21,7 +21,7 @@ public class JDBCSampler extends AbstractSampler<JDBCConfigureItem, JDBCSampler,
     private DruidDataSource datasource;
 
     private byte[] bytes;
-    
+
     @Override
     protected DefaultSampleResult getTestResult() {
         return new DefaultSampleResult(id, title);

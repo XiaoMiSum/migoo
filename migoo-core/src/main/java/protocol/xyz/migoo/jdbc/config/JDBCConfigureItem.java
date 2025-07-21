@@ -1,9 +1,12 @@
 package protocol.xyz.migoo.jdbc.config;
 
 import com.alibaba.fastjson2.annotation.JSONField;
+import com.alibaba.fastjson2.annotation.JSONType;
 import core.xyz.migoo.config.ConfigureItem;
+import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.jdbc.JDBCConstantsInterface;
 
+@JSONType(deserializer = JDBCConfigureItemObjectReader.class)
 public class JDBCConfigureItem implements ConfigureItem<JDBCConfigureItem>, JDBCConstantsInterface {
 
     @JSONField(name = DATASOURCE)
@@ -27,15 +30,26 @@ public class JDBCConfigureItem implements ConfigureItem<JDBCConfigureItem>, JDBC
     @JSONField(name = MAX_WAIT, ordinal = 6)
     private int maxWait;
 
-    // todo 这里要实现 jdbc config fastjson 反序列化逻辑 将 statement 转化为 sql
     @JSONField(name = SQL, ordinal = 7)
     private String sql;
 
 
     @Override
     public JDBCConfigureItem merge(JDBCConfigureItem other) {
-        // todo 实现数据合并
-        return null;
+        if (other == null) {
+            return copy();
+        }
+        var localOther = other.copy();
+        var self = copy();
+        self.datasource = StringUtils.isBlank(self.datasource) ? localOther.datasource : self.datasource;
+        self.driver = StringUtils.isBlank(self.driver) ? localOther.driver : self.driver;
+        self.url = StringUtils.isBlank(self.url) ? localOther.url : self.url;
+        self.username = StringUtils.isBlank(self.username) ? localOther.username : self.username;
+        self.password = StringUtils.isBlank(self.password) ? localOther.password : self.password;
+        self.sql = StringUtils.isBlank(self.sql) ? localOther.sql : self.sql;
+        self.maxActive = self.maxActive > 0 ? localOther.maxActive : self.maxActive;
+        self.maxWait = self.maxWait > 0 ? localOther.maxWait : self.maxWait;
+        return self;
     }
 
     public String getDatasource() {

@@ -30,10 +30,10 @@ package protocol.xyz.migoo.http.processor;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.processor.AbstractProcessor;
-import core.xyz.migoo.processor.Postprocessor;
-import core.xyz.migoo.sampler.DefaultSampleResult;
 import core.xyz.migoo.testelement.Alias;
+import core.xyz.migoo.testelement.processor.AbstractProcessor;
+import core.xyz.migoo.testelement.processor.Postprocessor;
+import core.xyz.migoo.testelement.sampler.DefaultSampleResult;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.http.HTTPClient;
 import protocol.xyz.migoo.http.HTTPConstantsInterface;

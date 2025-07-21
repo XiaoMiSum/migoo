@@ -2,10 +2,10 @@ package protocol.xyz.migoo.http.sampler;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.sampler.AbstractSampler;
-import core.xyz.migoo.sampler.DefaultSampleResult;
-import core.xyz.migoo.sampler.Sampler;
 import core.xyz.migoo.testelement.Alias;
+import core.xyz.migoo.testelement.sampler.AbstractSampler;
+import core.xyz.migoo.testelement.sampler.DefaultSampleResult;
+import core.xyz.migoo.testelement.sampler.Sampler;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

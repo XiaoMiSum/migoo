@@ -26,22 +26,28 @@
  *
  */
 
-package core.xyz.migoo.configureelement;
+package core.xyz.migoo.testelement.processor;
 
-import com.alibaba.fastjson2.annotation.JSONType;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.report.Result;
-import core.xyz.migoo.testelement.Validatable;
-import support.xyz.migoo.fastjson2.ConfigureElementObjectReader;
 
 /**
- * 配置元件：默认配置，可参考JMeter的HTTP默认配置、jdbcDataSource配置
- *
  * @author xiaomi
  */
-@JSONType(deserializer = ConfigureElementObjectReader.class)
-public interface ConfigureElement<T extends Result> extends Validatable {
+public interface Processor {
 
-    T process(ContextWrapper context);
+    /**
+     * 是否禁用
+     *
+     * @return true 表示禁用，默认不禁用
+     */
+    default boolean isDisabled() {
+        return false;
+    }
 
+    /**
+     * 前\后置处理器执行
+     *
+     * @return 处理结果
+     */
+    void process(ContextWrapper context);
 }

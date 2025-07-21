@@ -26,54 +26,46 @@
  *
  */
 
-package support.xyz.migoo.fastjson2;
+package protocol.xyz.migoo.jdbc.config;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONException;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.reader.ObjectReader;
-import component.xyz.migoo.assertion.JSONAssertion;
 import core.xyz.migoo.ApplicationConfig;
-import core.xyz.migoo.assertion.Assertion;
-import org.apache.commons.lang3.StringUtils;
+import core.xyz.migoo.config.ConfigureItem;
 import org.apache.commons.lang3.tuple.Pair;
+import protocol.xyz.migoo.jdbc.JDBCConstantsInterface;
 
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
 
-import static core.xyz.migoo.assertion.AssertionConstantsInterface.RULE;
-import static core.xyz.migoo.testelement.TestElementConstantsInterface.TEST_CLASS;
-
 /**
  * @author xiaomi
- * Created at 2025/7/19 14:54
+ * Created at 2025/7/21 22:25
  */
-public class AssertionObjectReader implements ObjectReader<Assertion> {
-
+@SuppressWarnings({"rawtypes"})
+public class JDBCConfigureItemObjectReader implements ObjectReader<JDBCConfigureItem>, JDBCConstantsInterface {
     @Override
-    public Assertion readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
+    public JDBCConfigureItem readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
         var testElementMap = jsonReader.readObject();
-        var testClass = testElementMap.get(TEST_CLASS);
-        if (Objects.isNull(testClass) || StringUtils.isBlank(testClass.toString())) {
-            testElementMap.put(TEST_CLASS, JSONAssertion.class.getSimpleName());
-        }
         var pair = checkTestElement(testElementMap);
-        var rule = testElementMap.get(RULE);
-        if (Objects.isNull(rule) || StringUtils.isBlank(rule.toString())) {
-            testElementMap.put(RULE, "==");
+        var statement = testElementMap.remove(STATEMENT);
+        if (Objects.nonNull(statement)) {
+            testElementMap.put(SQL, statement);
         }
-        return JSON.parseObject(JSON.toJSONString(testElementMap), pair.getLeft());
+        var rawData = JSON.toJSONString(testElementMap);
+        return (JDBCConfigureItem) JSON.parseObject(rawData, pair.getLeft());
     }
 
-    private Pair<Class<? extends Assertion>, String> checkTestElement(Map<String, Object> testElementMap) {
-        var keyMap = ApplicationConfig.getAssertionKeyMap();
+    private Pair<Class<? extends ConfigureItem>, String> checkTestElement(Map<String, Object> testElementMap) {
+        var keyMap = ApplicationConfig.getConfigureItemKeyMap();
         var key = testElementMap.get(TEST_CLASS).toString();
         var clazz = keyMap.get(key);
         if (Objects.nonNull(clazz)) {
             return Pair.of(clazz, key);
         }
-        throw new JSONException("没有匹配的验证器, JSON String: " + JSON.toJSONString(testElementMap));
+        throw new JSONException("没有匹配的配置对象, JSON String: " + JSON.toJSONString(testElementMap));
     }
-
 }

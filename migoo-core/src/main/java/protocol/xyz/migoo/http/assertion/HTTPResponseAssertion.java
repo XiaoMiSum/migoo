@@ -29,8 +29,8 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONPath;
 import core.xyz.migoo.assertion.AbstractAssertion;
 import core.xyz.migoo.assertion.AssertionResult;
-import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
+import core.xyz.migoo.testelement.sampler.SampleResult;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.http.RealHTTPResponse;
 

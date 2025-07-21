@@ -26,7 +26,7 @@
  *
  */
 
-package core.xyz.migoo.processor;
+package core.xyz.migoo.testelement.processor;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.config.ConfigureItem;
@@ -34,9 +34,9 @@ import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.extractor.Extractor;
 import core.xyz.migoo.filter.SampleFilterChain;
 import core.xyz.migoo.filter.TestFilter;
-import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.TestElementConstantsInterface;
+import core.xyz.migoo.testelement.sampler.SampleResult;
 
 import java.util.Collections;
 import java.util.Iterator;

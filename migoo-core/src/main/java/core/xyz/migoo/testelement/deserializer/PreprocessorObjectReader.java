@@ -26,24 +26,11 @@
  *
  */
 
-package support.xyz.migoo.fastjson2;
-
-import com.alibaba.fastjson2.JSONReader;
-import com.alibaba.fastjson2.reader.ObjectReader;
-import core.xyz.migoo.config.ConfigureItem;
-
-import java.lang.reflect.Type;
+package core.xyz.migoo.testelement.deserializer;
 
 /**
  * @author xiaomi
- * Created at 2025/7/19 14:14
+ * Created at 2025/7/19 14:39
  */
-@SuppressWarnings({"rawtypes"})
-public class ConfigureItemObjectReader implements ObjectReader<ConfigureItem> {
-    @Override
-    public ConfigureItem readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
-        var testElementMap = jsonReader.readObject();
-
-        return null;
-    }
+public class PreprocessorObjectReader extends ProcessorObjectReader {
 }

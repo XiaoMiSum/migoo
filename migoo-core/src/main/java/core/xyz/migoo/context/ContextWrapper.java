@@ -28,10 +28,10 @@ package core.xyz.migoo.context;
 
 import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.config.ConfigureGroup;
-import core.xyz.migoo.config.TestElementConfigure;
 import core.xyz.migoo.context.variables.*;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.TestElement;
+import core.xyz.migoo.testelement.TestElementConfigure;
 
 import java.util.Collections;
 import java.util.List;

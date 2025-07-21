@@ -30,15 +30,15 @@ import core.xyz.migoo.assertion.Rule;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.config.FilterConfigureItem;
 import core.xyz.migoo.config.GlobalConfigure;
-import core.xyz.migoo.configureelement.ConfigureElement;
 import core.xyz.migoo.context.GlobalContext;
 import core.xyz.migoo.extractor.Extractor;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.filter.report.ReportFilter;
 import core.xyz.migoo.function.Function;
-import core.xyz.migoo.processor.Postprocessor;
-import core.xyz.migoo.processor.Preprocessor;
 import core.xyz.migoo.testelement.TestElement;
+import core.xyz.migoo.testelement.configure.ConfigureElement;
+import core.xyz.migoo.testelement.processor.Postprocessor;
+import core.xyz.migoo.testelement.processor.Preprocessor;
 import support.xyz.migoo.MiGooServiceLoader;
 
 import java.util.List;

@@ -26,14 +26,14 @@
  *
  */
 
-package support.xyz.migoo.fastjson2;
+package core.xyz.migoo.testelement.deserializer;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONException;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.reader.ObjectReader;
 import core.xyz.migoo.ApplicationConfig;
-import core.xyz.migoo.processor.Processor;
+import core.xyz.migoo.testelement.TestElement;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.reflect.Type;
@@ -44,24 +44,26 @@ import static core.xyz.migoo.testelement.TestElementConstantsInterface.TEST_CLAS
 
 /**
  * @author xiaomi
- * Created at 2025/7/19 14:14
+ * Created at 2025/7/19 12:37
  */
-public abstract class ProcessorObjectReader implements ObjectReader<Processor> {
+@SuppressWarnings({"rawtypes"})
+public class TestElementObjectReader implements ObjectReader<TestElement> {
+
     @Override
-    public Processor readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
+    public TestElement readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
         var testElementMap = jsonReader.readObject();
         var pair = checkTestElement(testElementMap);
         return JSON.parseObject(JSON.toJSONString(testElementMap), pair.getLeft());
     }
 
-    private Pair<Class<? extends Processor>, String> checkTestElement(Map<String, Object> testElementMap) {
-        var keyMap = getClass().equals(PreprocessorObjectReader.class) ?
-                ApplicationConfig.getPreprocessorKeyMap() : ApplicationConfig.getPostprocessorKeyMap();
+    private Pair<Class<? extends TestElement>, String> checkTestElement(Map<String, Object> testElementMap) {
+        var keyMap = ApplicationConfig.getTestElementKeyMap();
         var key = testElementMap.get(TEST_CLASS).toString();
         var clazz = keyMap.get(key);
         if (Objects.nonNull(clazz)) {
             return Pair.of(clazz, key);
         }
-        throw new JSONException("没有匹配的处理器, JSON String: " + JSON.toJSONString(testElementMap));
+        throw new JSONException("没有匹配的测试集或取样器, JSON String: " + JSON.toJSONString(testElementMap));
     }
+
 }

@@ -26,11 +26,16 @@
  *
  */
 
-package support.xyz.migoo.fastjson2;
+package core.xyz.migoo.testelement.configure;
+
+import core.xyz.migoo.testelement.TestElementConstantsInterface;
 
 /**
  * @author xiaomi
- * Created at 2025/7/19 14:39
+ * Created at 2025/7/19 14:22
  */
-public class PostprocessorObjectReader extends ProcessorObjectReader {
+public interface ConfigureElementConstantsInterface extends TestElementConstantsInterface {
+
+    String VARIABLE_NAME = "variable_name";
+    String REF_NAME = "ref_name";
 }

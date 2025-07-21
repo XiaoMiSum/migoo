@@ -30,11 +30,11 @@ package protocol.xyz.migoo.debug.processer;
 
 import com.alibaba.fastjson2.JSON;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.processor.AbstractProcessor;
-import core.xyz.migoo.processor.Preprocessor;
-import core.xyz.migoo.sampler.DefaultSampleResult;
-import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.Alias;
+import core.xyz.migoo.testelement.processor.AbstractProcessor;
+import core.xyz.migoo.testelement.processor.Preprocessor;
+import core.xyz.migoo.testelement.sampler.DefaultSampleResult;
+import core.xyz.migoo.testelement.sampler.SampleResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

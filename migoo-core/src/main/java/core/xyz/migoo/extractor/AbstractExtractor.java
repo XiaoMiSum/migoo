@@ -29,8 +29,8 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.sampler.SampleResult;
 import core.xyz.migoo.testelement.ValidateResult;
+import core.xyz.migoo.testelement.sampler.SampleResult;
 import org.apache.commons.lang3.StringUtils;
 
 /**

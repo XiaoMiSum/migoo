@@ -1,7 +1,6 @@
 package core.xyz.migoo.testelement;
 
 import core.xyz.migoo.config.EmptyConfigureItem;
-import core.xyz.migoo.config.TestElementConfigure;
 import core.xyz.migoo.context.Context;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.context.SessionContext;

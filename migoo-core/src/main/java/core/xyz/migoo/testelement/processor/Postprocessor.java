@@ -25,20 +25,15 @@
  *
  *
  */
-package core.xyz.migoo.sampler;
 
-import core.xyz.migoo.report.Result;
-import core.xyz.migoo.testelement.TestElement;
+package core.xyz.migoo.testelement.processor;
+
+import com.alibaba.fastjson2.annotation.JSONType;
+import core.xyz.migoo.testelement.deserializer.PostprocessorObjectReader;
 
 /**
- * Sampler 接口，表示一个测试元件是最基本的测试执行单元，其下没有子元件。
- *
- * <p>Sampler 一般是各种协议请求实现，如 JDBC 请求、HTTP 请求、Dubbo 请求等等，
- * 或者是最基本的动作，如打开一个网页、点击一个按钮等等。
- *
  * @author xiaomi
  */
-public interface Sampler<T extends Result> extends TestElement<T> {
-
-
+@JSONType(deserializer = PostprocessorObjectReader.class)
+public interface Postprocessor extends Processor {
 }

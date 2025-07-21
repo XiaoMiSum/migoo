@@ -27,9 +27,9 @@ package core.xyz.migoo.extractor;
 
 import com.alibaba.fastjson2.annotation.JSONType;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.processor.Postprocessor;
 import core.xyz.migoo.testelement.Validatable;
-import support.xyz.migoo.fastjson2.ExtractorObjectReader;
+import core.xyz.migoo.testelement.deserializer.ExtractorObjectReader;
+import core.xyz.migoo.testelement.processor.Postprocessor;
 
 /**
  * @author xiaomi

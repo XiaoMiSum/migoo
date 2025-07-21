@@ -2,12 +2,12 @@ package protocol.xyz.migoo.jdbc.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.fastjson2.annotation.JSONField;
-import core.xyz.migoo.configureelement.AbstractConfigureElement;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.Closeable;
 import core.xyz.migoo.testelement.TestSuiteResult;
 import core.xyz.migoo.testelement.ValidateResult;
+import core.xyz.migoo.testelement.configure.AbstractConfigureElement;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.jdbc.JDBCConstantsInterface;
 

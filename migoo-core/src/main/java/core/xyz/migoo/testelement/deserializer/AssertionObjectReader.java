@@ -26,15 +26,15 @@
  *
  */
 
-package support.xyz.migoo.fastjson2;
+package core.xyz.migoo.testelement.deserializer;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONException;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.reader.ObjectReader;
-import component.xyz.migoo.extractor.JSONExtractor;
+import component.xyz.migoo.assertion.JSONAssertion;
 import core.xyz.migoo.ApplicationConfig;
-import core.xyz.migoo.extractor.Extractor;
+import core.xyz.migoo.assertion.Assertion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -42,32 +42,32 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
 
-import static core.xyz.migoo.configureelement.ConfigureElementConstantsInterface.REF_NAME;
-import static core.xyz.migoo.configureelement.ConfigureElementConstantsInterface.VARIABLE_NAME;
+import static core.xyz.migoo.assertion.AssertionConstantsInterface.RULE;
 import static core.xyz.migoo.testelement.TestElementConstantsInterface.TEST_CLASS;
 
 /**
  * @author xiaomi
  * Created at 2025/7/19 14:54
  */
-public class ExtractorObjectReader implements ObjectReader<Extractor> {
+public class AssertionObjectReader implements ObjectReader<Assertion> {
 
     @Override
-    public Extractor readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
+    public Assertion readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
         var testElementMap = jsonReader.readObject();
         var testClass = testElementMap.get(TEST_CLASS);
         if (Objects.isNull(testClass) || StringUtils.isBlank(testClass.toString())) {
-            testElementMap.put(TEST_CLASS, JSONExtractor.class.getSimpleName());
+            testElementMap.put(TEST_CLASS, JSONAssertion.class.getSimpleName());
         }
-        var variableName = testElementMap.remove(VARIABLE_NAME);
-        var refName = Objects.isNull(variableName) ? testElementMap.remove(REF_NAME) : variableName;
-        testElementMap.put(REF_NAME, refName);
         var pair = checkTestElement(testElementMap);
+        var rule = testElementMap.get(RULE);
+        if (Objects.isNull(rule) || StringUtils.isBlank(rule.toString())) {
+            testElementMap.put(RULE, "==");
+        }
         return JSON.parseObject(JSON.toJSONString(testElementMap), pair.getLeft());
     }
 
-    private Pair<Class<? extends Extractor>, String> checkTestElement(Map<String, Object> testElementMap) {
-        var keyMap = ApplicationConfig.getExtractorKeyMap();
+    private Pair<Class<? extends Assertion>, String> checkTestElement(Map<String, Object> testElementMap) {
+        var keyMap = ApplicationConfig.getAssertionKeyMap();
         var key = testElementMap.get(TEST_CLASS).toString();
         var clazz = keyMap.get(key);
         if (Objects.nonNull(clazz)) {

@@ -29,7 +29,7 @@ import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.ApplicationConfig;
 import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.sampler.SampleResult;
+import core.xyz.migoo.testelement.sampler.SampleResult;
 
 import java.util.Locale;
 import java.util.Objects;

@@ -27,10 +27,10 @@ package component.xyz.migoo.timer;
 
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.processor.AbstractProcessor;
-import core.xyz.migoo.processor.Postprocessor;
-import core.xyz.migoo.sampler.DefaultSampleResult;
 import core.xyz.migoo.testelement.Alias;
+import core.xyz.migoo.testelement.processor.AbstractProcessor;
+import core.xyz.migoo.testelement.processor.Postprocessor;
+import core.xyz.migoo.testelement.sampler.DefaultSampleResult;
 import org.apache.commons.lang3.StringUtils;
 
 /**

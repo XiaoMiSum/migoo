@@ -26,6 +26,8 @@
 #
 
 protocol.xyz.migoo.debug.config.DebugConfigureItem
+protocol.xyz.migoo.http.config.HTTPConfigureItem
+protocol.xyz.migoo.jdbc.config.JDBCConfigureItem
 
 
 

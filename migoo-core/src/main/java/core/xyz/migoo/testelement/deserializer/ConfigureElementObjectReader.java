@@ -26,7 +26,7 @@
  *
  */
 
-package support.xyz.migoo.fastjson2;
+package core.xyz.migoo.testelement.deserializer;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONException;
@@ -34,17 +34,17 @@ import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.reader.ObjectReader;
 import core.xyz.migoo.ApplicationConfig;
-import core.xyz.migoo.configureelement.ConfigureElement;
+import core.xyz.migoo.testelement.configure.ConfigureElement;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
 
-import static core.xyz.migoo.configureelement.ConfigureElementConstantsInterface.REF_NAME;
-import static core.xyz.migoo.configureelement.ConfigureElementConstantsInterface.VARIABLE_NAME;
 import static core.xyz.migoo.testelement.TestElementConstantsInterface.CONFIG;
 import static core.xyz.migoo.testelement.TestElementConstantsInterface.TEST_CLASS;
+import static core.xyz.migoo.testelement.configure.ConfigureElementConstantsInterface.REF_NAME;
+import static core.xyz.migoo.testelement.configure.ConfigureElementConstantsInterface.VARIABLE_NAME;
 
 /**
  * @author xiaomi

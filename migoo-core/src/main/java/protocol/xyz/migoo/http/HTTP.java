@@ -1,6 +1,6 @@
 package protocol.xyz.migoo.http;
 
-import core.xyz.migoo.sampler.SampleResult;
+import core.xyz.migoo.testelement.sampler.SampleResult;
 import org.apache.hc.core5.http.Header;
 
 import java.util.List;
