@@ -10,6 +10,7 @@ testclass: RedisDatasource # 配置元件类型
 variable_name: JDBCDataSource_var  # 数据源名称
 username: 'root'
 password: '123456qq'
+database: 0
 host: localhost # 服务器地址
 port: 6379 # 端口 默认 6379
 time_out: 5000 # 连接超时时间，默认 10000ms

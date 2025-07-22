@@ -29,6 +29,7 @@
 package core.xyz.migoo.testelement.processor;
 
 import com.alibaba.fastjson2.annotation.JSONField;
+import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.extractor.Extractor;
@@ -52,7 +53,7 @@ public abstract class AbstractProcessor<CONFIG extends ConfigureItem, SELF, T ex
         extends AbstractTestElement<CONFIG, AbstractProcessor<CONFIG, SELF, T>, T>
         implements Processor, SampleFilterChain, TestElementConstantsInterface {
 
-    @JSONField(name = EXTRACTORS, ordinal = 2)
+    @JSONField(name = EXTRACTORS, ordinal = 10)
     protected List<Extractor> extractors;
 
     private Iterator<TestFilter> processFilters;
@@ -61,28 +62,35 @@ public abstract class AbstractProcessor<CONFIG extends ConfigureItem, SELF, T ex
         super();
     }
 
+    public void setExtractors(List<Extractor> extractors) {
+        this.extractors = extractors;
+    }
+
+    protected ContextWrapper _initialized(SessionRunner session) {
+        super.initialized(session);
+        var localContext = new ContextWrapper(session);
+        localContext.setTestResult(getTestResult());
+        runtime.config = (CONFIG) localContext.eval(runtime.config);
+        return localContext;
+    }
+
     @Override
-    public void doSample(ContextWrapper ctx) {
-        sample(ctx, (T) ctx.getTestResult());
+    public void doSample(ContextWrapper context) {
+        process(context);
     }
 
     @Override
     public void process(ContextWrapper context) {
-        if (!initialized) {
-            initialized(context.getSessionRunner());
-        }
-        ContextWrapper localContext = new ContextWrapper(context.getSessionRunner());
-        localContext.setTestResult(getTestResult());
-        runtime.config = (CONFIG) localContext.eval(runtime.config);
-        handleRequest(localContext, (T) localContext.getTestResult());
+        var localContext = initialized ? context : _initialized(context.getSessionRunner());
         if (processFilters.hasNext()) {
             TestFilter next = processFilters.next();
             next.doSample(localContext, this);
         } else {
+            handleRequest(localContext, (T) localContext.getTestResult());
             sample(localContext, (T) localContext.getTestResult());
+            handleResponse(localContext, (T) localContext.getTestResult());
+            extract(context, localContext);
         }
-        handleResponse(localContext, (T) localContext.getTestResult());
-        extract(context, localContext);
     }
 
     protected void handleFilters(ContextWrapper contextWrapper) {

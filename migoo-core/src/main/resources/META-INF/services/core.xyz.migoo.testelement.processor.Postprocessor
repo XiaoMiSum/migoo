@@ -25,8 +25,11 @@
 #  */
 #
 
-protocol.xyz.migoo.debug.processer.DebugPostprocessor
 component.xyz.migoo.timer.SyncTimer
+protocol.xyz.migoo.debug.processer.DebugPostprocessor
+protocol.xyz.migoo.http.processor.HTTPPostprocessor
+protocol.xyz.migoo.jdbc.processor.JDBCPostprocessor
+protocol.xyz.migoo.redis.processor.RedisPostprocessor
 
 
 

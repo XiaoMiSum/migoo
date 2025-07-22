@@ -27,7 +27,6 @@ package core.xyz.migoo;
 
 import core.xyz.migoo.assertion.Assertion;
 import core.xyz.migoo.assertion.Rule;
-import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.config.FilterConfigureItem;
 import core.xyz.migoo.config.GlobalConfigure;
 import core.xyz.migoo.context.GlobalContext;
@@ -40,7 +39,9 @@ import core.xyz.migoo.testelement.configure.ConfigureElement;
 import core.xyz.migoo.testelement.processor.Postprocessor;
 import core.xyz.migoo.testelement.processor.Preprocessor;
 import support.xyz.migoo.MiGooServiceLoader;
+import support.xyz.migoo.fastjson.interceptor.JSONInterceptor;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -66,7 +67,7 @@ public class ApplicationConfig {
     private static final ReadWriteLock EXTRACTOR_KEY_MAP_LOCK = new ReentrantReadWriteLock(false);
     private static final ReadWriteLock FUNCTION_KEY_MAP_LOCK = new ReentrantReadWriteLock(false);
     private static final ReadWriteLock RULE_KEY_MAP_LOCK = new ReentrantReadWriteLock(false);
-    private static final ReadWriteLock CONFIGURE_ITEM_KEY_MAP_LOCK = new ReentrantReadWriteLock(false);
+    private static final ReadWriteLock JSON_INTERCEPTOR_KEY_MAP_LOCK = new ReentrantReadWriteLock(false);
     private static final ReadWriteLock REPORT_FILTERS_LOCK = new ReentrantReadWriteLock(false);
     private static final ReadWriteLock TEST_FILTER_KEY_MAP_LOCK = new ReentrantReadWriteLock(false);
     private static final ReadWriteLock globalContextLock = new ReentrantReadWriteLock(false);
@@ -79,10 +80,9 @@ public class ApplicationConfig {
     private static Map<String, Class<? extends Extractor>> EXTRACTOR_KEY_MAP;
     private static Map<String, Class<? extends Function>> FUNCTION_KEY_MAP;
     private static Map<String, Rule> RULE_KEY_MAP;
-    private static Map<String, Class<? extends ConfigureItem>> CONFIGURE_ITEM_KEY_MAP;
     private static List<? extends ReportFilter> REPORT_FILTERS;
     private static Map<String, Class<? extends TestFilter>> TEST_FILTER_KEY_MAP;
-
+    private static Map<Class<?>, JSONInterceptor> JSON_INTERCEPTOR_KEY_MAP;
     private static GlobalContext globalContext;
 
     public static Map<String, Class<? extends TestElement>> getTestElementKeyMap() {
@@ -165,12 +165,14 @@ public class ApplicationConfig {
         );
     }
 
-    public static Map<String, Class<? extends ConfigureItem>> getConfigureItemKeyMap() {
-        return getDataMap(CONFIGURE_ITEM_KEY_MAP_LOCK,
-                () -> ApplicationConfig.CONFIGURE_ITEM_KEY_MAP,
+    public static Map<Class<?>, JSONInterceptor> getJsonInterceptorKeyMap() {
+        return getDataMap(JSON_INTERCEPTOR_KEY_MAP_LOCK,
+                () -> ApplicationConfig.JSON_INTERCEPTOR_KEY_MAP,
                 () -> {
-                    ApplicationConfig.CONFIGURE_ITEM_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(ConfigureItem.class);
-                    return ApplicationConfig.CONFIGURE_ITEM_KEY_MAP;
+                    var map = new HashMap<Class<?>, JSONInterceptor>();
+                    MiGooServiceLoader.loadAsInstanceListBySPI(JSONInterceptor.class).forEach(item -> item.getSupportedClasses().forEach(clazz -> map.put(clazz, item)));
+                    ApplicationConfig.JSON_INTERCEPTOR_KEY_MAP = map;
+                    return ApplicationConfig.JSON_INTERCEPTOR_KEY_MAP;
                 }
         );
     }
@@ -194,6 +196,7 @@ public class ApplicationConfig {
                 }
         );
     }
+
 
     public static GlobalContext getGlobalContext() {
         return getDataMap(globalContextLock,

@@ -29,7 +29,7 @@
 package core.xyz.migoo.testelement.processor;
 
 import com.alibaba.fastjson2.annotation.JSONType;
-import core.xyz.migoo.testelement.deserializer.PreprocessorObjectReader;
+import support.xyz.migoo.fastjson.deserializer.PreprocessorObjectReader;
 
 /**
  * @author xiaomi

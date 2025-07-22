@@ -26,44 +26,42 @@
  *
  */
 
-package core.xyz.migoo.testelement.deserializer;
+package support.xyz.migoo.fastjson.deserializer;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONException;
+import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.reader.ObjectReader;
-import core.xyz.migoo.ApplicationConfig;
 import core.xyz.migoo.testelement.TestElement;
-import org.apache.commons.lang3.tuple.Pair;
+import core.xyz.migoo.testelement.TestElementConfigure;
+import core.xyz.migoo.testelement.processor.Preprocessor;
 
 import java.lang.reflect.Type;
-import java.util.Map;
-import java.util.Objects;
-
-import static core.xyz.migoo.testelement.TestElementConstantsInterface.TEST_CLASS;
 
 /**
  * @author xiaomi
- * Created at 2025/7/19 12:37
+ * Created at 2025/7/19 22:16
  */
-@SuppressWarnings({"rawtypes"})
-public class TestElementObjectReader implements ObjectReader<TestElement> {
+public class TestElementConfigureObjectReader implements ObjectReader<TestElementConfigure> {
+
+    public static void main(String[] args) {
+        var str = """
+                {
+                  "testclass": "jdbc"
+                  "extractors": [{ "testclass": "json", "field": "$.username", "variable_name": "username" }]
+                }
+                """;
+
+        var preprocessor = JSON.parseObject(str, Preprocessor.class);
+        System.out.println(preprocessor.getClass());
+
+        var sampler = JSON.parseObject(str, TestElement.class);
+        System.out.println(sampler.getClass());
+    }
 
     @Override
-    public TestElement readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
-        var testElementMap = jsonReader.readObject();
-        var pair = checkTestElement(testElementMap);
-        return JSON.parseObject(JSON.toJSONString(testElementMap), pair.getLeft());
+    public TestElementConfigure readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
+        var value = jsonReader.readObject();
+        return JSONObject.parseObject(JSON.toJSONString(value), TestElementConfigure.class);
     }
-
-    private Pair<Class<? extends TestElement>, String> checkTestElement(Map<String, Object> testElementMap) {
-        var keyMap = ApplicationConfig.getTestElementKeyMap();
-        var key = testElementMap.get(TEST_CLASS).toString();
-        var clazz = keyMap.get(key);
-        if (Objects.nonNull(clazz)) {
-            return Pair.of(clazz, key);
-        }
-        throw new JSONException("没有匹配的测试集或取样器, JSON String: " + JSON.toJSONString(testElementMap));
-    }
-
 }

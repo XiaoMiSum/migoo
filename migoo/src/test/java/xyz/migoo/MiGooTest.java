@@ -3,6 +3,10 @@ package xyz.migoo;
 import org.junit.jupiter.api.Test;
 
 public class MiGooTest {
+    @Test
+    public void jdbc() {
+        MiGoo.start("classpath:jdbc/测试用例/jdbc2.yaml");
+    }
 
     @Test
     public void test() {

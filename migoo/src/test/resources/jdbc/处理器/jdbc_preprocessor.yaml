@@ -1,0 +1,7 @@
+testclass: jdbc_preprocessor # jdbc 后置处理器类型
+title: "jdbc_source 查询用户id = 1"
+config: # 处理器配置
+  datasource: jdbc_source
+  sql: 'select username from sys_user where id = 1;'  # sql语句
+extractors:
+  - { testclass: json, field: '$.username', variable_name: 'username' }

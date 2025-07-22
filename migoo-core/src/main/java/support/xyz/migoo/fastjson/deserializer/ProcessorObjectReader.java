@@ -26,46 +26,42 @@
  *
  */
 
-package protocol.xyz.migoo.jdbc.config;
+package support.xyz.migoo.fastjson.deserializer;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONException;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.reader.ObjectReader;
 import core.xyz.migoo.ApplicationConfig;
-import core.xyz.migoo.config.ConfigureItem;
+import core.xyz.migoo.testelement.processor.Processor;
 import org.apache.commons.lang3.tuple.Pair;
-import protocol.xyz.migoo.jdbc.JDBCConstantsInterface;
 
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
 
+import static core.xyz.migoo.testelement.TestElementConstantsInterface.TEST_CLASS;
+
 /**
  * @author xiaomi
- * Created at 2025/7/21 22:25
+ * Created at 2025/7/19 14:14
  */
-@SuppressWarnings({"rawtypes"})
-public class JDBCConfigureItemObjectReader implements ObjectReader<JDBCConfigureItem>, JDBCConstantsInterface {
+public abstract class ProcessorObjectReader implements ObjectReader<Processor> {
     @Override
-    public JDBCConfigureItem readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
+    public Processor readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
         var testElementMap = jsonReader.readObject();
         var pair = checkTestElement(testElementMap);
-        var statement = testElementMap.remove(STATEMENT);
-        if (Objects.nonNull(statement)) {
-            testElementMap.put(SQL, statement);
-        }
-        var rawData = JSON.toJSONString(testElementMap);
-        return (JDBCConfigureItem) JSON.parseObject(rawData, pair.getLeft());
+        return JSON.parseObject(JSON.toJSONString(testElementMap), pair.getLeft());
     }
 
-    private Pair<Class<? extends ConfigureItem>, String> checkTestElement(Map<String, Object> testElementMap) {
-        var keyMap = ApplicationConfig.getConfigureItemKeyMap();
-        var key = testElementMap.get(TEST_CLASS).toString();
+    private Pair<Class<? extends Processor>, String> checkTestElement(Map<String, Object> testElementMap) {
+        var keyMap = getClass().equals(PreprocessorObjectReader.class) ?
+                ApplicationConfig.getPreprocessorKeyMap() : ApplicationConfig.getPostprocessorKeyMap();
+        var key = testElementMap.get(TEST_CLASS).toString().toLowerCase();
         var clazz = keyMap.get(key);
         if (Objects.nonNull(clazz)) {
             return Pair.of(clazz, key);
         }
-        throw new JSONException("没有匹配的配置对象, JSON String: " + JSON.toJSONString(testElementMap));
+        throw new JSONException("没有匹配的处理器, JSON String: " + JSON.toJSONString(testElementMap));
     }
 }

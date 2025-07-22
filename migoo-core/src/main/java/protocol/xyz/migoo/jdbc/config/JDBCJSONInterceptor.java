@@ -26,24 +26,42 @@
  *
  */
 
-package core.xyz.migoo.testelement.deserializer;
+package protocol.xyz.migoo.jdbc.config;
 
-import com.alibaba.fastjson2.JSONReader;
-import com.alibaba.fastjson2.reader.ObjectReader;
+import com.alibaba.fastjson2.JSON;
 import core.xyz.migoo.config.ConfigureItem;
+import protocol.xyz.migoo.jdbc.JDBCConstantsInterface;
+import protocol.xyz.migoo.jdbc.processor.JDBCPostprocessor;
+import protocol.xyz.migoo.jdbc.processor.JDBCPreprocessor;
+import protocol.xyz.migoo.jdbc.sampler.JDBCSampler;
+import support.xyz.migoo.fastjson.interceptor.JSONInterceptor;
 
-import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author xiaomi
- * Created at 2025/7/19 14:14
+ * Created at 2025/7/21 22:25
  */
-@SuppressWarnings({"rawtypes"})
-public class ConfigureItemObjectReader implements ObjectReader<ConfigureItem> {
-    @Override
-    public ConfigureItem readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
-        var testElementMap = jsonReader.readObject();
+@SuppressWarnings({"rawtypes", "unchecked"})
+public class JDBCJSONInterceptor implements JSONInterceptor, JDBCConstantsInterface {
 
+    @Override
+    public List<Class<?>> getSupportedClasses() {
+        return List.of(JDBCSampler.class, JDBCDatasource.class, JDBCPreprocessor.class, JDBCPostprocessor.class);
+    }
+
+    @Override
+    public ConfigureItem<?> deserializeConfigureItem(Object value) {
+        if (value instanceof Map configure) {
+            var statement = configure.remove(STATEMENT);
+            if (Objects.nonNull(statement)) {
+                configure.put(SQL, statement);
+            }
+            var rawData = JSON.toJSONString(configure);
+            return JSON.parseObject(rawData, JDBCConfigureItem.class);
+        }
         return null;
     }
 }

@@ -65,13 +65,7 @@ public abstract class AbstractSampler<CONFIG extends ConfigureItem, SELF extends
 
     @Override
     protected final void execute(ContextWrapper ctx, T result) {
-        handleRequest(ctx, result);
-        // 子类可以在 sample 方法或其子方法内，在合适的时机再次调用 sampleStart 和 sampleEnd 方法，
-        // 以获取更准确的 sample 时间
-        result.sampleStart();
         doSample(ctx);
-        result.sampleEnd();
-        handleResponse(ctx, result);
     }
 
     // ---------------------------------------------------------------------
@@ -85,7 +79,14 @@ public abstract class AbstractSampler<CONFIG extends ConfigureItem, SELF extends
             TestFilter next = sampleFilters.next();
             next.doSample(ctx, this);
         } else {
+            T result = (T) ctx.getTestResult();
+            handleRequest(ctx, result);
+            // 子类可以在 sample 方法或其子方法内，在合适的时机再次调用 sampleStart 和 sampleEnd 方法，
+            // 以获取更准确的 sample 时间
+            result.sampleStart();
             sample(ctx, (T) ctx.getTestResult());
+            result.sampleEnd();
+            handleResponse(ctx, result);
         }
     }
 

@@ -25,9 +25,15 @@
 
 package core.xyz.migoo.report;
 
+import core.xyz.migoo.TestStatus;
+import core.xyz.migoo.assertion.AssertionResult;
+import core.xyz.migoo.extractor.ExtractResult;
+import core.xyz.migoo.testelement.processor.ProcessResult;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,18 +43,16 @@ import java.util.List;
 public abstract class Result implements Serializable {
 
     private final String id;
-
-    private String title;
-
-    private boolean success = true;
-
+    private final String title;
+    private final List<ProcessResult> preprocessors = new ArrayList<>();
+    private final List<ProcessResult> postprocessors = new ArrayList<>();
+    private final List<ExtractResult> extractors = new ArrayList<>();
+    private final List<AssertionResult> assertions = new ArrayList<>();
+    private final List<Result> children = new ArrayList<>();
+    private TestStatus status = TestStatus.passed;
     private LocalDateTime startTime;
-
     private LocalDateTime endTime;
-
-    private List<Result> subResults;
-
-    private Throwable throwable;
+    private Throwable track;
 
 
     public Result(String title) {
@@ -72,29 +76,61 @@ public abstract class Result implements Serializable {
         }
     }
 
+    public String getId() {
+        return id;
+    }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public TestStatus getStatus() {
+        return status;
     }
 
-    public List<Result> getSubResults() {
-        return subResults;
+    public void setStatus(TestStatus status) {
+        this.status = status;
     }
 
-    public void setSubResults(List<Result> subResults) {
-        this.subResults = subResults;
+
+    public List<Result> getChildren() {
+        return children;
     }
 
-    public boolean isSuccessful() {
-        return success;
+    public List<ProcessResult> getPreprocessors() {
+        return preprocessors;
     }
 
-    public void setSuccessful(boolean success) {
-        this.success = success;
+    public List<ProcessResult> getPostprocessors() {
+        return postprocessors;
+    }
+
+    public List<ExtractResult> getExtractors() {
+        return extractors;
+    }
+
+    public List<AssertionResult> getAssertions() {
+        return assertions;
+    }
+
+    public void addPreprocessor(ProcessResult preprocessor) {
+        this.preprocessors.add(preprocessor);
+    }
+
+    public void addPostprocessor(ProcessResult postprocessor) {
+        this.postprocessors.add(postprocessor);
+    }
+
+    public void addExtractor(ExtractResult extractor) {
+        this.extractors.add(extractor);
+    }
+
+    public void addAssertion(AssertionResult assertion) {
+        this.assertions.add(assertion);
+    }
+
+    public void addChild(Result child) {
+        this.children.add(child);
     }
 
     public LocalDateTime getStartTime() {
@@ -113,24 +149,17 @@ public abstract class Result implements Serializable {
         this.endTime = endTime;
     }
 
-    public boolean isException() {
-        return throwable != null;
+    public boolean isAnomalous() {
+        return track != null;
     }
 
-    public Throwable getThrowable() {
-        return throwable;
+    public Throwable getTrack() {
+        return track;
     }
 
-    public void setThrowable(Throwable throwable) {
+    public void setTrack(Throwable track) {
         this.testStart();
-        if (throwable != null) {
-            this.success = false;
-            this.throwable = throwable;
-        }
+        this.track = track;
         this.testEnd();
-    }
-
-    public String getId() {
-        return id;
     }
 }

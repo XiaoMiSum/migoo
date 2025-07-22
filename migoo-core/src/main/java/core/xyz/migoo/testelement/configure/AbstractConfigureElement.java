@@ -30,6 +30,7 @@ package core.xyz.migoo.testelement.configure;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.config.ConfigureItem;
+import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.AbstractTestElement;
 
@@ -44,11 +45,21 @@ public abstract class AbstractConfigureElement<CONFIG extends ConfigureItem<CONF
     @JSONField(name = REF_NAME, ordinal = 1)
     protected String refName;
 
-    @JSONField(name = DATASOURCE, ordinal = 2)
-    protected String datasource;
-
     public AbstractConfigureElement() {
     }
+
+
+    public T process(ContextWrapper context) {
+        if (!initialized) {
+            initialized(context.getSessionRunner());
+        }
+        var result = getTestResult();
+        doProcess(context);
+        return result;
+    }
+
+
+    protected abstract void doProcess(ContextWrapper context);
 
     public String getRefName() {
         return refName;

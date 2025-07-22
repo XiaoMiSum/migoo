@@ -67,6 +67,7 @@ public abstract class AbstractExtractor implements Extractor, ExtractorConstants
 
     @Override
     public void process(ContextWrapper ctx) {
+        // todo 这里要捕获测试异常，将
         if (ctx.getTestResult() instanceof SampleResult result) {
             var res = StringUtils.isBlank(result.getResponse().bytesAsString()) ? broken() : extract(result);
             if (TestStatus.passed.equals(res.getStatus())) {

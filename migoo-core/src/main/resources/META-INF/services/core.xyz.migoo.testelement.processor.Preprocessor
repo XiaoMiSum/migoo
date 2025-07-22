@@ -26,6 +26,8 @@
 #
 
 protocol.xyz.migoo.debug.processer.DebugPreprocessor
-
+protocol.xyz.migoo.http.processor.HTTPPreprocessor
+protocol.xyz.migoo.jdbc.processor.JDBCPreprocessor
+protocol.xyz.migoo.redis.processor.RedisPreprocessor
 
 

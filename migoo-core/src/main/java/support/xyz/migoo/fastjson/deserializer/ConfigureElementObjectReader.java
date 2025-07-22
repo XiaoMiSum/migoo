@@ -26,7 +26,7 @@
  *
  */
 
-package core.xyz.migoo.testelement.deserializer;
+package support.xyz.migoo.fastjson.deserializer;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONException;
@@ -38,6 +38,7 @@ import core.xyz.migoo.testelement.configure.ConfigureElement;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -54,35 +55,39 @@ import static core.xyz.migoo.testelement.configure.ConfigureElementConstantsInte
 public class ConfigureElementObjectReader implements ObjectReader<ConfigureElement> {
     @Override
     public ConfigureElement readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
-        var testElementMap = jsonReader.readObject();
-        var pair = checkTestElement(testElementMap);
-        standardizeConfig(testElementMap, pair.getRight());
-        var rawData = JSON.toJSONString(testElementMap);
+        var testElementMap1 = jsonReader.readObject();
+        var elementMap = new HashMap<String, Object>();
+        // 转换所有key 为小写
+        for (Map.Entry<String, Object> entry : testElementMap1.entrySet()) {
+            elementMap.put(entry.getKey().toLowerCase(), entry.getValue());
+        }
+        var pair = checkTestElement(elementMap);
+        standardizeConfig(elementMap, pair.getRight());
+        var rawData = JSON.toJSONString(elementMap);
         return JSON.parseObject(rawData, pair.getLeft());
     }
 
-    private Pair<Class<? extends ConfigureElement>, String> checkTestElement(Map<String, Object> testElementMap) {
+    private Pair<Class<? extends ConfigureElement>, String> checkTestElement(Map<String, Object> elementMap) {
         var keyMap = ApplicationConfig.getConfigureElementKeyMap();
-        var key = testElementMap.get(TEST_CLASS).toString();
+        var key = elementMap.get(TEST_CLASS).toString();
         var clazz = keyMap.get(key);
         if (Objects.nonNull(clazz)) {
             return Pair.of(clazz, key);
         }
-        throw new JSONException("没有匹配的配置元件, JSON String: " + JSON.toJSONString(testElementMap));
+        throw new JSONException("没有匹配的配置元件, JSON String: " + JSON.toJSONString(elementMap));
     }
 
-    private void standardizeConfig(Map<String, Object> testElementMap, String key) {
-        testElementMap.remove(TEST_CLASS); // 删除测试类
-        var variableName = testElementMap.remove(VARIABLE_NAME);
-        var refName = Objects.isNull(variableName) ? testElementMap.remove(REF_NAME) : variableName;
+    private void standardizeConfig(Map<String, Object> elementMap, String key) {
+        elementMap.remove(TEST_CLASS); // 删除测试类
+        var variableName = elementMap.remove(VARIABLE_NAME);
+        var refName = Objects.isNull(variableName) ? elementMap.remove(REF_NAME) : variableName;
         // 删除 TestElement 的 config 或创建一个新的 config
-        var _config = testElementMap.containsKey(CONFIG) ? new JSONObject((Map) testElementMap.remove(CONFIG)) : new JSONObject();
+        var _config = elementMap.containsKey(CONFIG) ? new JSONObject((Map) elementMap.remove(CONFIG)) : new JSONObject();
         if (_config.isEmpty()) {
             // config 没有属性，则将 testElementMap 的所有属性添加到 config 中
-            _config.putAll(testElementMap);
-            testElementMap.clear();
+            _config.putAll(elementMap);
+            elementMap.clear();
         }
-        // 测试集config中只存在变量
-        testElementMap.putAll(JSONObject.of(TEST_CLASS, key, REF_NAME, refName, CONFIG, _config));
+        elementMap.putAll(JSONObject.of(TEST_CLASS, key, REF_NAME, refName, CONFIG, _config));
     }
 }

@@ -40,11 +40,9 @@ public class DebugDefaults extends AbstractConfigureElement<DebugConfigureItem, 
     public static final String DEF_REF_NAME_KEY = "__debug_configure_element_default_ref_name__";
 
     @Override
-    public TestSuiteResult process(ContextWrapper ctx) {
-        var result = getTestResult();
+    protected void doProcess(ContextWrapper context) {
         refName = StringUtils.isBlank(refName) ? DEF_REF_NAME_KEY : refName;
-        ctx.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().put(refName, config);
-        return result;
+        context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().put(refName, config);
     }
 
     @Override

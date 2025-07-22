@@ -28,14 +28,13 @@ package core.xyz.migoo.extractor;
 import com.alibaba.fastjson2.annotation.JSONType;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.Validatable;
-import core.xyz.migoo.testelement.deserializer.ExtractorObjectReader;
-import core.xyz.migoo.testelement.processor.Postprocessor;
+import support.xyz.migoo.fastjson.deserializer.ExtractorObjectReader;
 
 /**
  * @author xiaomi
  */
 @JSONType(deserializer = ExtractorObjectReader.class)
-public interface Extractor extends Postprocessor, Validatable {
+public interface Extractor extends Validatable {
 
     /**
      * 提取器执行，从取样器结果中按指定规格提取数据，并保存到变量中

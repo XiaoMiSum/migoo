@@ -28,6 +28,8 @@
 
 core.xyz.migoo.testelement.TestSuiteExecutable
 protocol.xyz.migoo.debug.sampler.DebugSampler
-
+protocol.xyz.migoo.http.sampler.HTTPSampler
+protocol.xyz.migoo.jdbc.sampler.JDBCSampler
+protocol.xyz.migoo.redis.sampler.RedisSampler
 
 

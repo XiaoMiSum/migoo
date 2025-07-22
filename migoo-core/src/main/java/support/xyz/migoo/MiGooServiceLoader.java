@@ -21,7 +21,6 @@ public class MiGooServiceLoader {
         var serviceLoader = ServiceLoader.load(clazz);
         serviceLoader.iterator().forEachRemaining(t -> {
             var implClazz = (Class<? extends T>) t.getClass();
-
             var keys = getKeyWord(implClazz);
             keys.stream().distinct().forEach(key -> keyMap.put(key, implClazz));
         });

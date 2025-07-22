@@ -55,13 +55,14 @@ public class TestLogFilter implements ReportFilter {
     @Override
     public void doSample(ContextWrapper context, SampleFilterChain chain) {
         chain.doSample(context);
-        log.info("执行 {}：{}", chain.getClass().getSimpleName(), context.getTestResult().getTitle());
-        if (context.getTestResult().isException()) {
-            log.error("\n", context.getTestResult().getThrowable());
-        }
         if (context.getTestResult() instanceof SampleResult result) {
-            log.info("{}{}{}", "\n--------------- 请求信息 -----------------\n", result.getRequest().bytesAsString(), "\n");
-            log.info("{}{}{}", "\n--------------- 响应信息 -----------------\n", result.getResponse().bytesAsString(), "\n");
+            log.info("执行{}：{}\n{}{}{}{}{}{}", chain.getClass().getSimpleName(), context.getTestResult().getTitle(),
+                    "\n--------------- 请求信息 -----------------\n", result.getRequest().bytesAsString(), "\n",
+                    "\n--------------- 响应信息 -----------------\n", result.getResponse().bytesAsString(), "\n");
+        }
+        if (context.getTestResult().isAnomalous()) {
+            log.error("执行 {}：{}\n", chain.getClass().getSimpleName(), context.getTestResult().getTitle(),
+                    context.getTestResult().getTrack());
         }
     }
 }

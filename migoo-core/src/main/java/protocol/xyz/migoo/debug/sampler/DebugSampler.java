@@ -36,7 +36,7 @@ public class DebugSampler extends AbstractSampler<DebugConfigureItem, DebugSampl
             logger.info("Debug Sampler");
             result.sampleEnd();
         } catch (Exception e) {
-            result.setThrowable(e);
+            result.setTrack(e);
         }
     }
 }

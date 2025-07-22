@@ -1,0 +1,22 @@
+title: 测试用例 # 包含配置原件、前置处理器、后置处理器、多个取样器（执行步骤）
+configelements:
+  - '@F(classpath:jdbc/配置元件/jdbc_defaults.yaml)'
+preprocessors: # 前置处理器
+  - '@F(classpath:jdbc/处理器/jdbc_preprocessor.yaml)'
+postprocessors: # 后置处理器
+  - '@F(classpath:jdbc/处理器/jdbc_postprocessor.yaml)'
+children: # 执行步骤
+  - title: 查询用户的角色id
+    testclass: jdbcSampler
+    config:
+      datasource: jdbc_source
+      sql: 'select * from sys_user_role where user_id = 1;' # sql语句
+    validators:
+      - { testclass: json_assertion, field: '$.role_id', expected: 1 }
+  - title: 查询用户的项目id
+    testclass: jdbc
+    config:
+      datasource: jdbc_source
+      sql: 'select * from sys_user_profile where user_id = 1;' # sql语句
+    validators:
+      - { testclass: json_assertion, field: '$.role_id', expected: '1938425475538087936' }

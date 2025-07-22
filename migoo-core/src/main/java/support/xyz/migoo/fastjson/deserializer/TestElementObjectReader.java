@@ -26,54 +26,59 @@
  *
  */
 
-package core.xyz.migoo.testelement.deserializer;
+package support.xyz.migoo.fastjson.deserializer;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONException;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.reader.ObjectReader;
-import component.xyz.migoo.extractor.JSONExtractor;
 import core.xyz.migoo.ApplicationConfig;
-import core.xyz.migoo.extractor.Extractor;
-import org.apache.commons.lang3.StringUtils;
+import core.xyz.migoo.testelement.TestElement;
 import org.apache.commons.lang3.tuple.Pair;
+import support.xyz.migoo.fastjson.interceptor.JSONInterceptor;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static core.xyz.migoo.testelement.TestElementConstantsInterface.CONFIG;
 import static core.xyz.migoo.testelement.TestElementConstantsInterface.TEST_CLASS;
-import static core.xyz.migoo.testelement.configure.ConfigureElementConstantsInterface.REF_NAME;
-import static core.xyz.migoo.testelement.configure.ConfigureElementConstantsInterface.VARIABLE_NAME;
 
 /**
  * @author xiaomi
- * Created at 2025/7/19 14:54
+ * Created at 2025/7/19 12:37
  */
-public class ExtractorObjectReader implements ObjectReader<Extractor> {
+@SuppressWarnings({"rawtypes"})
+public class TestElementObjectReader implements ObjectReader<TestElement> {
 
     @Override
-    public Extractor readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
+    public TestElement readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
         var testElementMap = jsonReader.readObject();
-        var testClass = testElementMap.get(TEST_CLASS);
-        if (Objects.isNull(testClass) || StringUtils.isBlank(testClass.toString())) {
-            testElementMap.put(TEST_CLASS, JSONExtractor.class.getSimpleName());
+        var elementMap = new HashMap<String, Object>();
+        // 转换所有key 为小写
+        for (Map.Entry<String, Object> entry : testElementMap.entrySet()) {
+            elementMap.put(entry.getKey().toLowerCase(), entry.getValue());
         }
-        var variableName = testElementMap.remove(VARIABLE_NAME);
-        var refName = Objects.isNull(variableName) ? testElementMap.remove(REF_NAME) : variableName;
-        testElementMap.put(REF_NAME, refName);
-        var pair = checkTestElement(testElementMap);
-        return JSON.parseObject(JSON.toJSONString(testElementMap), pair.getLeft());
+        var pair = checkTestElement(elementMap);
+        JSONInterceptor interceptor = ApplicationConfig.getJsonInterceptorKeyMap().get(pair.getLeft());
+        if (interceptor != null) {
+            var config = interceptor.deserializeConfigureItem(elementMap.get(CONFIG));
+            if (config != null) {
+                elementMap.put(CONFIG, config);
+            }
+        }
+        return JSON.parseObject(JSON.toJSONString(elementMap), pair.getLeft());
     }
 
-    private Pair<Class<? extends Extractor>, String> checkTestElement(Map<String, Object> testElementMap) {
-        var keyMap = ApplicationConfig.getExtractorKeyMap();
-        var key = testElementMap.get(TEST_CLASS).toString();
+    private Pair<Class<? extends TestElement>, String> checkTestElement(Map<String, Object> elementMap) {
+        var keyMap = ApplicationConfig.getTestElementKeyMap();
+        var key = elementMap.get(TEST_CLASS).toString().toLowerCase();
         var clazz = keyMap.get(key);
         if (Objects.nonNull(clazz)) {
             return Pair.of(clazz, key);
         }
-        throw new JSONException("没有匹配的验证器, JSON String: " + JSON.toJSONString(testElementMap));
+        throw new JSONException("没有匹配的测试集或取样器, JSON String: " + JSON.toJSONString(elementMap));
     }
 
 }

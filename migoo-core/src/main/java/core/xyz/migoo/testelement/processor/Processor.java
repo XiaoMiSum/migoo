@@ -29,6 +29,9 @@
 package core.xyz.migoo.testelement.processor;
 
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.extractor.Extractor;
+
+import java.util.List;
 
 /**
  * @author xiaomi
@@ -50,4 +53,9 @@ public interface Processor {
      * @return 处理结果
      */
     void process(ContextWrapper context);
+
+    /**
+     * 解决反序列化时，extractors 为 null 的问题
+     */
+    void setExtractors(List<Extractor> extractors);
 }

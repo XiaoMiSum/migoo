@@ -26,6 +26,9 @@
 #
 
 protocol.xyz.migoo.debug.config.DebugDefaults
+protocol.xyz.migoo.http.config.HTTPDefaults
+protocol.xyz.migoo.jdbc.config.JDBCDatasource
+protocol.xyz.migoo.redis.config.RedisDatasource
 
 
 

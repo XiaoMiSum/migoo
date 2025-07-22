@@ -65,7 +65,7 @@ public class HTTPPreprocessor extends AbstractProcessor<HTTPConfigureItem, HTTPP
             result.sampleStart();
             response = request.execute();
         } catch (Exception e) {
-            result.setThrowable(e);
+            result.setTrack(e);
         } finally {
             result.sampleEnd();
         }

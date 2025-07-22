@@ -21,6 +21,7 @@ public class JDBCPreprocessor extends AbstractProcessor<JDBCConfigureItem, JDBCP
     @JSONField(serialize = false)
     private DruidDataSource datasource;
 
+    @JSONField(serialize = false)
     private byte[] bytes;
 
     @Override
@@ -33,10 +34,11 @@ public class JDBCPreprocessor extends AbstractProcessor<JDBCConfigureItem, JDBCP
         result.sampleStart();
         try (var conn = datasource.getConnection(); var statement = conn.createStatement()) {
             var bool = statement.execute(runtime.getConfig().getSql());
-            result.sampleEnd();
             bytes = toJSONBytes(bool, statement);
         } catch (Exception e) {
-            result.setThrowable(e);
+            result.setTrack(e);
+        } finally {
+            result.sampleEnd();
         }
     }
 

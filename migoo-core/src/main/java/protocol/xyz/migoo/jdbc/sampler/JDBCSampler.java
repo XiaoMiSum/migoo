@@ -32,17 +32,18 @@ public class JDBCSampler extends AbstractSampler<JDBCConfigureItem, JDBCSampler,
         result.sampleStart();
         try (var conn = datasource.getConnection(); var statement = conn.createStatement()) {
             var bool = statement.execute(runtime.config.getSql());
-            result.sampleEnd();
             bytes = toJSONBytes(bool, statement);
         } catch (Exception e) {
-            result.setThrowable(e);
+            result.setTrack(e);
+        } finally {
+            result.sampleEnd();
         }
     }
 
     @Override
     protected void handleRequest(ContextWrapper context, DefaultSampleResult result) {
         super.handleRequest(context, result);
-        datasource = (DruidDataSource) context.getLocalVariablesWrapper().get(runtime.config.getDatasource());
+        datasource = (DruidDataSource) context.getAllVariablesWrapper().get(runtime.config.getDatasource());
     }
 
     @Override

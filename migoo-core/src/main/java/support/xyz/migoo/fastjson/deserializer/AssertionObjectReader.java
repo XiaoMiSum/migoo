@@ -26,7 +26,7 @@
  *
  */
 
-package core.xyz.migoo.testelement.deserializer;
+package support.xyz.migoo.fastjson.deserializer;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONException;

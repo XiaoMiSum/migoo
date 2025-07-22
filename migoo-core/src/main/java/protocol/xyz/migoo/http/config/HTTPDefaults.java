@@ -46,20 +46,17 @@ public class HTTPDefaults extends AbstractConfigureElement<HTTPConfigureItem, HT
      * 2. 如果有指定 ref_name 则使用 ref_name 作为key 将当前配置存入 localVariables 中，否则以默认 DEF_REF_NAME_KEY 作为key
      *
      * @param context 测试上下文
-     * @return 处理结果
      */
     @Override
-    public TestSuiteResult process(ContextWrapper context) {
-        var result = getTestResult();
+    protected void doProcess(ContextWrapper context) {
         refName = StringUtils.isBlank(refName) ? DEF_REF_NAME_KEY : refName;
         var localConfig = runtime.getConfig();
-        var otherRefName = StringUtils.isBlank(datasource) ? DEF_REF_NAME_KEY : datasource;
+        var otherRefName = StringUtils.isBlank(localConfig.datasource) ? DEF_REF_NAME_KEY : localConfig.datasource;
         var config = (HTTPConfigureItem) context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().get(otherRefName);
         if (Objects.nonNull(config)) {
             runtime.setConfig(localConfig = localConfig.merge(config));
         }
         context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().put(refName, localConfig);
-        return result;
     }
 
     @Override

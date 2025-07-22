@@ -57,7 +57,6 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
 
     @JSONField(name = VARIABLES, ordinal = 4)
     protected MiGooVariables variables;
-
     @JSONField(name = CONFIG_ELEMENTS, ordinal = 5)
     protected List<ConfigureElement> configureElements;
 
@@ -80,14 +79,10 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
 
     public AbstractTestElementExecutable() {
         super();
-        configGroup.put(VARIABLES, variables);
-        configGroup.put(CONFIG, config);
     }
 
     protected void initialized(SessionRunner session) {
-        initialized = true;
-        runtime = copy();
-        handleFilters(session.getContextWrapper());
+        super.initialized(session);
     }
 
     /**
@@ -97,7 +92,7 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
      */
     protected List<Context> getContextChain(List<Context> parentContext) {
         List<Context> contextChain = new ArrayList<>(parentContext);
-        contextChain.add(createCurrentContext());
+        contextChain.add(createCurrentContext(parentContext.getLast()));
         return contextChain;
     }
 
@@ -106,9 +101,13 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
      *
      * @return 当前测试元件的上下文对象
      */
-    protected TestStepContext createCurrentContext() {
+    protected TestStepContext createCurrentContext(Context parentContext) {
         TestStepContext context = new TestStepContext();
-        context.setConfigGroup(runtime.configGroup);
+        if (Objects.isNull(variables)) {
+            variables = new MiGooVariables();
+        }
+        runtime.configGroup.put(VARIABLES, variables.merge(parentContext.getConfigGroup().getVariables()));
+        context.setConfigGroup(runtime.getConfigGroup());
         return context;
     }
 
@@ -132,6 +131,7 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
         }
         testStarted(snapshot);
         ContextWrapper context = updateCurrentContextInfo(session, snapshot);
+
         doRun(context);
         restoreCurrentContextInfo(session, snapshot);
         testEnded(snapshot);
@@ -242,7 +242,6 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
         }
         if (Objects.nonNull(extractors)) {
             for (Extractor extractor : extractors) {
-                //todo 这里要记录测试元件执行结果
                 extractor.process(contextWrapper);
             }
         }

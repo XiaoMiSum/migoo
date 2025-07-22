@@ -28,7 +28,7 @@ package core.xyz.migoo.testelement;
 import com.alibaba.fastjson2.annotation.JSONType;
 import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.report.Result;
-import core.xyz.migoo.testelement.deserializer.TestElementObjectReader;
+import support.xyz.migoo.fastjson.deserializer.TestElementObjectReader;
 
 /**
  * 测试元件是能根据其父上下文链独立执行的一个逻辑执行单元。

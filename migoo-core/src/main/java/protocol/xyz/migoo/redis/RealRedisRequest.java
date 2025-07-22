@@ -26,11 +26,37 @@
  *
  */
 
-package core.xyz.migoo.testelement.deserializer;
+package protocol.xyz.migoo.redis;
+
+import core.xyz.migoo.testelement.sampler.SampleResult;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author xiaomi
- * Created at 2025/7/19 14:39
+ * Created at 2025/7/21 19:11
  */
-public class PostprocessorObjectReader extends ProcessorObjectReader {
+public class RealRedisRequest extends SampleResult.Real implements RedisConstantsInterface {
+
+    private final String url;
+
+    public RealRedisRequest(String url, String command, String send) {
+        super((COMMAND + ": " + command + "\n" + SEND + ": " + send + "\n\n").getBytes(StandardCharsets.UTF_8));
+        this.url = url;
+    }
+
+    /**
+     * 设置 Redis请求信息，格式如下
+     * <p>
+     * redis(s)://username:password@localhost:3306/db
+     * command
+     * send
+     * <p>
+     * data
+     */
+    @Override
+    public String format() {
+        return url + "\n" + bytesAsString();
+    }
+
 }

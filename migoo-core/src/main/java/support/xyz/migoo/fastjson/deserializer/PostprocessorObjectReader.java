@@ -26,11 +26,11 @@
  *
  */
 
-package core.xyz.migoo.testelement.deserializer;
+package support.xyz.migoo.fastjson.deserializer;
 
 /**
  * @author xiaomi
  * Created at 2025/7/19 14:39
  */
-public class PreprocessorObjectReader extends ProcessorObjectReader {
+public class PostprocessorObjectReader extends ProcessorObjectReader {
 }

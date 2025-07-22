@@ -31,7 +31,7 @@ package core.xyz.migoo.testelement;
 import com.alibaba.fastjson2.annotation.JSONType;
 import core.xyz.migoo.config.ConfigureGroup;
 import core.xyz.migoo.config.ConfigureItem;
-import core.xyz.migoo.testelement.deserializer.TestElementConfigureObjectReader;
+import support.xyz.migoo.fastjson.deserializer.TestElementConfigureObjectReader;
 
 import java.util.HashMap;
 

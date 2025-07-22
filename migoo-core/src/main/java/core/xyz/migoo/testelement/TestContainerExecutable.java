@@ -33,7 +33,6 @@ import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.filter.ExecuteSubStepsFilterChain;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.report.Result;
-import support.xyz.migoo.KryoUtil;
 
 import java.util.*;
 
@@ -61,14 +60,12 @@ public abstract class TestContainerExecutable
             next.doExecuteSubSteps(ctx, this);
         } else {
             if (children != null) {
-                var subResults = new ArrayList<T>();
                 for (TestElement<T> step : children) {
                     if (step != null) {
                         T result = ctx.getSessionRunner().runTest(step);
-                        subResults.add(result);
+                        ctx.getTestResult().addChild(result);
                     }
                 }
-                ctx.getTestResult().setSubResults((List<Result>) subResults);
             }
         }
     }
@@ -92,7 +89,12 @@ public abstract class TestContainerExecutable
     @Override
     public SELF copy() {
         SELF self = super.copy();
-        self.children = KryoUtil.copy(children);
+        if (children != null) {
+            self.children = new ArrayList<>();
+            for (TestElement<T> step : children) {
+                self.children.add(step.copy());
+            }
+        }
         return self;
     }
 

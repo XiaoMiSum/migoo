@@ -1,12 +1,10 @@
 package protocol.xyz.migoo.jdbc.config;
 
 import com.alibaba.fastjson2.annotation.JSONField;
-import com.alibaba.fastjson2.annotation.JSONType;
 import core.xyz.migoo.config.ConfigureItem;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.jdbc.JDBCConstantsInterface;
 
-@JSONType(deserializer = JDBCConfigureItemObjectReader.class)
 public class JDBCConfigureItem implements ConfigureItem<JDBCConfigureItem>, JDBCConstantsInterface {
 
     @JSONField(name = DATASOURCE)
@@ -47,8 +45,8 @@ public class JDBCConfigureItem implements ConfigureItem<JDBCConfigureItem>, JDBC
         self.username = StringUtils.isBlank(self.username) ? localOther.username : self.username;
         self.password = StringUtils.isBlank(self.password) ? localOther.password : self.password;
         self.sql = StringUtils.isBlank(self.sql) ? localOther.sql : self.sql;
-        self.maxActive = self.maxActive > 0 ? localOther.maxActive : self.maxActive;
-        self.maxWait = self.maxWait > 0 ? localOther.maxWait : self.maxWait;
+        self.maxActive = (self.maxActive = self.maxActive > 0 ? localOther.maxActive : self.maxActive) > 0 ? self.maxActive : 10;
+        self.maxWait = (self.maxWait = self.maxWait > 0 ? localOther.maxWait : self.maxWait) > 0 ? self.maxWait : 5000;
         return self;
     }
 
@@ -93,7 +91,7 @@ public class JDBCConfigureItem implements ConfigureItem<JDBCConfigureItem>, JDBC
     }
 
     public int getMaxActive() {
-        return maxActive > 1 ? 10 : maxActive;
+        return maxActive > 1 ? maxActive : 10;
     }
 
     public void setMaxActive(int maxActive) {

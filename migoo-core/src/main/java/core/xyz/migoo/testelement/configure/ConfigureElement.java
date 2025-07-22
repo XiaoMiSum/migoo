@@ -32,7 +32,7 @@ import com.alibaba.fastjson2.annotation.JSONType;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.Validatable;
-import core.xyz.migoo.testelement.deserializer.ConfigureElementObjectReader;
+import support.xyz.migoo.fastjson.deserializer.ConfigureElementObjectReader;
 
 /**
  * 配置元件：默认配置，可参考JMeter的HTTP默认配置、jdbcDataSource配置

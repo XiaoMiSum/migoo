@@ -26,35 +26,11 @@
  *
  */
 
-package core.xyz.migoo.testelement.deserializer;
-
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
-import com.alibaba.fastjson2.JSONReader;
-import com.alibaba.fastjson2.reader.ObjectReader;
-import core.xyz.migoo.testelement.TestElementConfigure;
-
-import java.lang.reflect.Type;
+package support.xyz.migoo.fastjson.deserializer;
 
 /**
  * @author xiaomi
- * Created at 2025/7/19 22:16
+ * Created at 2025/7/19 14:39
  */
-public class TestElementConfigureObjectReader implements ObjectReader<TestElementConfigure> {
-
-    public static void main(String[] args) {
-        var str = """
-                {"test1":"t1est1","test2":"tes1t2","variables":{"var1":"value1"}}
-                """;
-
-        var json = JSON.parseObject(str, TestElementConfigure.class);
-        System.out.println(json);
-    }
-
-    @Override
-    public TestElementConfigure readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
-        var t = fieldName;
-        var value = jsonReader.readObject();
-        return JSONObject.parseObject(JSON.toJSONString(value), TestElementConfigure.class);
-    }
+public class PreprocessorObjectReader extends ProcessorObjectReader {
 }

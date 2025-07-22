@@ -26,8 +26,9 @@
 #
 
 component.xyz.migoo.assertion.JSONAssertion
-protocol.xyz.migoo.http.assertion.HTTPResponseAssertion
 component.xyz.migoo.assertion.ResultAssertion
+
+protocol.xyz.migoo.http.assertion.HTTPResponseAssertion
 
 
 

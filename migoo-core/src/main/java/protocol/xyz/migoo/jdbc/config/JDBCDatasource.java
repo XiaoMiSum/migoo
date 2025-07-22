@@ -21,24 +21,23 @@ public class JDBCDatasource extends AbstractConfigureElement<JDBCConfigureItem, 
     @Override
     public ValidateResult validate() {
         var result = super.validate();
-        if (StringUtils.isBlank(runtime.getRefName())) {
+        if (StringUtils.isBlank(refName)) {
             result.append("\n数据源引用名称 %s 字段值缺失或为空，当前值：%s", REF_NAME, toString());
         }
-        if (StringUtils.isBlank(runtime.getConfig().getUrl())) {
+        if (StringUtils.isBlank(config.getUrl())) {
             result.append("\n数据源连接 %s 字段值缺失或为空，当前值：%s", URL, toString());
         }
-        if (StringUtils.isBlank(runtime.getConfig().getUsername())) {
+        if (StringUtils.isBlank(config.getUsername())) {
             result.append("\n数据源用户名 %s 字段值缺失或为空，当前值：%s", USERNAME, toString());
         }
-        if (StringUtils.isBlank(runtime.getConfig().getPassword())) {
+        if (StringUtils.isBlank(config.getPassword())) {
             result.append("\n数据源密码 %s 字段值缺失或为空，当前值：%s", PASSWORD, toString());
         }
         return result;
     }
 
     @Override
-    public TestSuiteResult process(ContextWrapper context) {
-        var result = getTestResult();
+    protected void doProcess(ContextWrapper context) {
         try {
             // 兼容 没有使用 SPI 的 JDBC驱动
             if (StringUtils.isNotBlank(runtime.getConfig().getDriver())) {
@@ -51,8 +50,7 @@ public class JDBCDatasource extends AbstractConfigureElement<JDBCConfigureItem, 
         dataSource.setPassword(runtime.getConfig().getPassword());
         dataSource.setMaxActive(runtime.getConfig().getMaxActive());
         dataSource.setMaxWait(runtime.getConfig().getMaxWait());
-        context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().put(refName, datasource);
-        return result;
+        context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().put(refName, dataSource);
     }
 
     @Override
