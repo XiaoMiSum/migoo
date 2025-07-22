@@ -143,8 +143,24 @@ public class ContextWrapper {
     }
 
     // ----------- ContextWrapper 对外 API -------------
+
+    /**
+     * 变量 & 函数 计算，如果 obj 不是变量&函数，则返回obj
+     * <p>
+     * 比如 ${var} 表示变量，__func() __func(1,2) __func(a=1.b=2) __func(${var}) __func(a=${var}) 表示函数
+     * <p>
+     * 支持多个变量或函数混合使用
+     * <p>
+     * 比如 ${var1}migoo__func()${var2}test
+     *
+     * @param obj 待计算的对象
+     * @return 计算后的对象 或 obj原值
+     */
     public Object eval(Object obj) {
         // todo 这里要实现变量计算
+        //  1、MiGooVariables 对象自身要计算变量
+        //  2、使用 MiGooVariables 对象替换掉obj中的变量或者函数
+        //  3、如果 obj 不是变量&函数，则返回obj
         return obj;
     }
 

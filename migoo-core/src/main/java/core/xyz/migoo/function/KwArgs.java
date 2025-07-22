@@ -26,7 +26,7 @@
 package core.xyz.migoo.function;
 
 import com.alibaba.fastjson2.JSONObject;
-import core.xyz.migoo.variable.MiGooVariables;
+import core.xyz.migoo.context.ContextWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +36,10 @@ import java.util.List;
  */
 public class KwArgs extends JSONObject implements Args {
 
-    private final MiGooVariables variables;
+    private final ContextWrapper context;
 
-    public KwArgs(MiGooVariables variables) {
-        this.variables = variables;
+    public KwArgs(ContextWrapper context) {
+        this.context = context;
     }
 
     public Object put(String parameter) {
@@ -51,7 +51,7 @@ public class KwArgs extends JSONObject implements Args {
     }
 
     @Override
-    public MiGooVariables getCurrentVars() {
-        return this.variables;
+    public ContextWrapper getContext() {
+        return context;
     }
 }

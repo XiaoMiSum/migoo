@@ -78,7 +78,7 @@ public class ApplicationConfig {
     private static Map<String, Class<? extends Postprocessor>> POSTPROCESSOR_KEY_MAP;
     private static Map<String, Class<? extends Assertion>> ASSERTION_KEY_MAP;
     private static Map<String, Class<? extends Extractor>> EXTRACTOR_KEY_MAP;
-    private static Map<String, Class<? extends Function>> FUNCTION_KEY_MAP;
+    private static Map<String, Function> FUNCTION_KEY_MAP;
     private static Map<String, Rule> RULE_KEY_MAP;
     private static List<? extends ReportFilter> REPORT_FILTERS;
     private static Map<String, Class<? extends TestFilter>> TEST_FILTER_KEY_MAP;
@@ -145,11 +145,11 @@ public class ApplicationConfig {
         );
     }
 
-    public static Map<String, Class<? extends Function>> getFunctionKeyMap() {
+    public static Map<String, Function> getFunctionKeyMap() {
         return getDataMap(FUNCTION_KEY_MAP_LOCK,
                 () -> ApplicationConfig.FUNCTION_KEY_MAP,
                 () -> {
-                    ApplicationConfig.FUNCTION_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(Function.class);
+                    ApplicationConfig.FUNCTION_KEY_MAP = MiGooServiceLoader.loadAsInstanceMapBySPI(Function.class);
                     return ApplicationConfig.FUNCTION_KEY_MAP;
                 }
         );

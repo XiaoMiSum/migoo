@@ -25,10 +25,22 @@
 
 package core.xyz.migoo.function;
 
+import core.xyz.migoo.ApplicationConfig;
+import core.xyz.migoo.context.ContextWrapper;
+
 /**
  * @author xiaomi
  */
 public interface Function {
+
+    static Object execute(ContextWrapper context, String fName, String parameter) {
+        var function = ApplicationConfig.getFunctionKeyMap().get(fName);
+        if (function == null) {
+            throw new RuntimeException("没有匹配的函数: " + fName);
+        }
+        var args = Args.newArgs(context, parameter);
+        return function.execute(args);
+    }
 
     /**
      * 扩展函数执行，返回生成的数据
@@ -37,5 +49,5 @@ public interface Function {
      * @return 生成的数据
      */
     Object execute(Args args);
-    
+
 }

@@ -25,16 +25,10 @@
 
 package core.xyz.migoo.variable;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.config.ConfigureItem;
-import core.xyz.migoo.function.FunctionService;
 
 import java.util.Map;
-import java.util.Objects;
-
-import static core.xyz.migoo.variable.VariableUtils.*;
 
 /**
  * @author xiaomi
@@ -54,10 +48,6 @@ public class MiGooVariables extends JSONObject implements ConfigureItem<MiGooVar
         }
     }
 
-    public void convertVariable() {
-        this.convertVariables(this);
-    }
-
     @Override
     public MiGooVariables merge(MiGooVariables other) {
         if (other != null) {
@@ -72,96 +62,6 @@ public class MiGooVariables extends JSONObject implements ConfigureItem<MiGooVar
     @Override
     public MiGooVariables copy() {
         return new MiGooVariables(this);
-    }
-
-    public void convertVariables(JSONObject dataMapping) {
-        if (dataMapping != null) {
-            var entries = dataMapping.entrySet();
-            for (var entry : entries) {
-                var v = entry.getValue();
-                switch (v) {
-                    case String s -> dataMapping.put(entry.getKey(), extractVariables(s));
-                    case JSONObject object -> convertVariables(object);
-                    case JSONArray array -> convertVariables(array);
-                    case null, default -> dataMapping.put(entry.getKey(), v);
-                }
-            }
-        }
-    }
-
-    private void convertVariables(JSONArray dataMapping) {
-        for (int i = 0; i < dataMapping.size(); i++) {
-            var item = dataMapping.get(i);
-            if (item instanceof String string) {
-                item = extractVariables(string);
-            } else if (item instanceof JSONObject entry) {
-                convertVariables(entry);
-            } else if (item instanceof JSONArray objects) {
-                convertVariables(objects);
-            }
-            dataMapping.set(i, item);
-        }
-    }
-
-    public Object extractVariables(String value) {
-        value = value.trim();
-        if (isFunc(value)) {
-            return evalVariable(value);
-        } else if (isVars(value)) {
-            return extractVariable(value);
-        }
-        return value;
-    }
-
-    private Object extractVariable(String value) {
-        var matcher = VARS_PATTERN.matcher(value);
-        int x = 0;
-        while (matcher.find(x)) {
-            x = matcher.end();
-            var temp = matcher.group();
-            var key = matcher.group(1);
-            var v = get(key);
-            if (Objects.isNull(v)) {
-                continue;
-            }
-            if (v instanceof String s && JSON.isValid(s)) {
-                // 字符串可以解析为 json 不允许出现在多变量组合的情况
-                return JSON.parse(s);
-            } else if (v instanceof String s) {
-                var result = evalVariable(s);
-                if (result instanceof String string) {
-                    // 变量计算结果为字符串时进行变量替换，同时继续判断字符串中是否还存在变量引用
-                    value = value.replace(temp, string);
-                } else {
-                    // 非字符串计算结果，直接返回
-                    return result;
-                }
-            } else if (v instanceof Number || v instanceof Boolean) {
-                value = value.replace(temp, v.toString());
-            } else {
-                // 在设计上 不允许变量值为 非字符串、非数字、非布尔类型 出现在多变量组合的情况
-                return v;
-            }
-        }
-        return value;
-    }
-
-    private Object evalVariable(String v) {
-        var func = FUNC_PATTERN.matcher(v);
-        while (func.find()) {
-            var result = FunctionService.execute(func.group(1), func.group(2), this);
-            if (result instanceof String string && JSON.isValid(string)) {
-                // 字符串可以解析为 json 不允许出现在多变量组合的情况
-                return JSON.parse(string);
-            } else if (result instanceof String || result instanceof Number || result instanceof Boolean) {
-                // 字符串、数字、布尔类型对象，转换为字符串替换（可能存在多个函数，不能return）
-                v = v.replace(func.group(), result.toString());
-            } else {
-                // 其他未知类型，直接返回原始对象
-                return result;
-            }
-        }
-        return v;
     }
 
 }

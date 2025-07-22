@@ -25,7 +25,7 @@
 
 package core.xyz.migoo.function;
 
-import core.xyz.migoo.variable.MiGooVariables;
+import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.variable.VariableUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -38,28 +38,28 @@ import java.util.Collections;
 public interface Args {
 
 
-    static Args newArgs(String origin, MiGooVariables variables) {
+    static Args newArgs(ContextWrapper context, String origin) {
         if (StringUtils.isBlank(origin)) {
-            return new KwArgs(variables);
+            return new KwArgs(context);
         }
         if (VariableUtils.isKwArgs(origin)) {
-            var args = new KwArgs(variables);
+            var args = new KwArgs(context);
             Arrays.stream(origin.split(",")).forEach(args::put);
             return args;
         }
-        var args = new LsArgs(variables);
+        var args = new LsArgs(context);
         Collections.addAll(args, origin.split(","));
         return args;
     }
 
     default Object getParameterValue(String parameter) {
         if (VariableUtils.isVars(parameter) || VariableUtils.isFunc(parameter)) {
-            return getCurrentVars().extractVariables(parameter);
+            return getContext().getLocalVariablesWrapper().getLastVariables().extractVariables(parameter);
         }
         return parameter.trim();
     }
 
-    MiGooVariables getCurrentVars();
+    ContextWrapper getContext();
 
     boolean isEmpty();
 
