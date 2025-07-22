@@ -28,6 +28,7 @@
 
 package core.xyz.migoo.testelement;
 
+import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.filter.ExecuteSubStepsFilterChain;
@@ -41,7 +42,7 @@ import java.util.*;
  *
  * @author xiaomi
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes"})
 public abstract class TestContainerExecutable
         <CONFIG extends ConfigureItem, SELF extends TestContainerExecutable<CONFIG, SELF, T>, T extends Result>
         extends AbstractTestElementExecutable<CONFIG, SELF, T> implements ExecuteSubStepsFilterChain {
@@ -54,19 +55,24 @@ public abstract class TestContainerExecutable
     }
 
     @Override
-    public void doExecuteSubSteps(ContextWrapper ctx) {
+    public void doExecuteSubSteps(ContextWrapper context) {
+        if (children == null) {
+            return;
+        }
         if (executeSubStepsFilters.hasNext()) {
             TestFilter next = executeSubStepsFilters.next();
-            next.doExecuteSubSteps(ctx, this);
-        } else {
-            if (children != null) {
-                for (TestElement<T> step : children) {
-                    if (step != null) {
-                        T result = ctx.getSessionRunner().runTest(step);
-                        ctx.getTestResult().addChild(result);
-                    }
-                }
+            next.doExecuteSubSteps(context, this);
+            return;
+        }
+        for (TestElement<T> step : children) {
+            if (step == null) {
+                continue;
             }
+            T result = context.getSessionRunner().runTest(step);
+            if (TestStatus.failed == result.getStatus()) {
+                context.getTestResult().setStatus(TestStatus.failed);
+            }
+            context.getTestResult().addChild(result);
         }
     }
 
@@ -78,10 +84,11 @@ public abstract class TestContainerExecutable
     @Override
     public ValidateResult validate() {
         ValidateResult result = super.validate();
-        if (children != null) {
-            for (TestElement<?> step : children) {
-                result.append(step);
-            }
+        if (children == null) {
+            return result;
+        }
+        for (TestElement<?> step : children) {
+            result.append(step);
         }
         return result;
     }
@@ -89,11 +96,12 @@ public abstract class TestContainerExecutable
     @Override
     public SELF copy() {
         SELF self = super.copy();
-        if (children != null) {
-            self.children = new ArrayList<>();
-            for (TestElement<T> step : children) {
-                self.children.add(step.copy());
-            }
+        if (children == null) {
+            return self;
+        }
+        self.children = new ArrayList<>();
+        for (TestElement<T> step : children) {
+            self.children.add(step.copy());
         }
         return self;
     }

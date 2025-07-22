@@ -91,6 +91,14 @@ public abstract class AbstractProcessor<CONFIG extends ConfigureItem, SELF, T ex
             handleResponse(localContext, (T) localContext.getTestResult());
             extract(context, localContext);
         }
+        if (context == localContext) {
+            return;
+        }
+        if (this instanceof Preprocessor) {
+            context.getTestResult().addPreprocessor(localContext.getTestResult());
+        } else if (this instanceof Postprocessor) {
+            context.getTestResult().addPostprocessor(localContext.getTestResult());
+        }
     }
 
     protected void handleFilters(ContextWrapper contextWrapper) {

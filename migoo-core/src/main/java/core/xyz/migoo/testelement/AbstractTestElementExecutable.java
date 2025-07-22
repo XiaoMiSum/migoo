@@ -143,9 +143,9 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
         if (runtimeFilters.hasNext()) {
             TestFilter next = runtimeFilters.next();
             next.doRun(ctx, this);
-        } else {
-            internalRun(ctx);
+            return;
         }
+        internalRun(ctx);
     }
 
     @Override
@@ -153,9 +153,9 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
         if (executeFilters.hasNext()) {
             TestFilter next = executeFilters.next();
             next.doExecute(ctx, this);
-        } else {
-            execute(ctx, (T) ctx.getTestResult());
+            return;
         }
+        execute(ctx, (T) ctx.getTestResult());
     }
 
 
@@ -170,11 +170,13 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
     }
 
     private void testEnded(Snapshot snapshot) {
-        if (Objects.nonNull(configureElements)) {
-            for (ConfigureElement configureElement : configureElements) {
-                if (configureElement instanceof Closeable closeable) {
-                    closeable.close();
-                }
+        if (Objects.isNull(configureElements)) {
+            snapshot.testResult.testEnd();
+            return;
+        }
+        for (ConfigureElement configureElement : configureElements) {
+            if (configureElement instanceof Closeable closeable) {
+                closeable.close();
             }
         }
         snapshot.testResult.testEnd();
@@ -229,14 +231,12 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
             if (preprocessor.isDisabled()) {
                 continue;
             }
-            //todo 这里要记录测试元件执行结果
             preprocessor.process(contextWrapper);
         }
         // 执行请求
         doExecute(contextWrapper);
         if (Objects.nonNull(assertions)) {
             for (Assertion assertion : assertions) {
-                //todo 这里要记录测试元件执行结果
                 assertion.assertThat(contextWrapper);
             }
         }
@@ -249,7 +249,6 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
             if (postprocessor.isDisabled()) {
                 continue;
             }
-            //todo 这里要记录测试元件执行结果
             postprocessor.process(contextWrapper);
         }
     }

@@ -51,9 +51,9 @@ public abstract class AbstractAssertion implements Assertion, AssertionConstants
     protected String field;
 
     @Override
-    public void assertThat(ContextWrapper ctx) {
-        if (ctx.getTestResult() instanceof SampleResult result) {
-            expected = ctx.eval(expected);
+    public void assertThat(ContextWrapper context) {
+        if (context.getTestResult() instanceof SampleResult result) {
+            expected = context.eval(expected);
             var res = initialized(result);
             var checkRule = ApplicationConfig.getRuleKeyMap().get(rule.toLowerCase(Locale.ROOT));
             if (Objects.isNull(checkRule)) {
@@ -64,6 +64,11 @@ public abstract class AbstractAssertion implements Assertion, AssertionConstants
                 res.setStatus(TestStatus.failed);
                 res.setMessage(String.format("验证 %s %s %s 失败", expected, rule, actualValue));
             }
+            // 任意一个失败则设置执行失败
+            if (TestStatus.failed == res.getStatus()) {
+                result.setStatus(TestStatus.failed);
+            }
+            result.addAssertion(res);
         }
     }
 

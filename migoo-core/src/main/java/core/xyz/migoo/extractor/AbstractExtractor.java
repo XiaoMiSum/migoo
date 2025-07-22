@@ -66,22 +66,21 @@ public abstract class AbstractExtractor implements Extractor, ExtractorConstants
     }
 
     @Override
-    public void process(ContextWrapper ctx) {
-        // todo 这里要捕获测试异常，将
-        if (ctx.getTestResult() instanceof SampleResult result) {
+    public void process(ContextWrapper context) {
+        if (context.getTestResult() instanceof SampleResult result) {
             var res = StringUtils.isBlank(result.getResponse().bytesAsString()) ? broken() : extract(result);
+            result.addExtractor(res);
             if (TestStatus.passed.equals(res.getStatus())) {
-                ctx.getLocalVariablesWrapper().put(refName, res.getValue());
+                context.getLocalVariablesWrapper().put(refName, res.getValue());
                 return;
             }
             if (TestStatus.failed.equals(res.getStatus()) && defaultValue != null) {
                 res.setStatus(TestStatus.passed);
-                ctx.getLocalVariablesWrapper().put(refName, defaultValue);
-                return;
+                context.getLocalVariablesWrapper().put(refName, defaultValue);
             }
-            throw new RuntimeException(res.getMessage(), res.getException());
+            return;
         }
-        throw new RuntimeException("不支持提取的测试组件: " + ctx.getTestElement().getClass());
+        throw new RuntimeException("不支持提取的测试组件: " + context.getTestElement().getClass());
     }
 
     @Override

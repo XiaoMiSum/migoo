@@ -28,7 +28,6 @@ package core.xyz.migoo.report;
 import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.assertion.AssertionResult;
 import core.xyz.migoo.extractor.ExtractResult;
-import core.xyz.migoo.testelement.processor.ProcessResult;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -44,8 +43,8 @@ public abstract class Result implements Serializable {
 
     private final String id;
     private final String title;
-    private final List<ProcessResult> preprocessors = new ArrayList<>();
-    private final List<ProcessResult> postprocessors = new ArrayList<>();
+    private final List<Result> preprocessors = new ArrayList<>();
+    private final List<Result> postprocessors = new ArrayList<>();
     private final List<ExtractResult> extractors = new ArrayList<>();
     private final List<AssertionResult> assertions = new ArrayList<>();
     private final List<Result> children = new ArrayList<>();
@@ -93,15 +92,15 @@ public abstract class Result implements Serializable {
     }
 
 
-    public List<Result> getChildren() {
+    public List<? extends Result> getChildren() {
         return children;
     }
 
-    public List<ProcessResult> getPreprocessors() {
+    public List<? extends Result> getPreprocessors() {
         return preprocessors;
     }
 
-    public List<ProcessResult> getPostprocessors() {
+    public List<? extends Result> getPostprocessors() {
         return postprocessors;
     }
 
@@ -113,11 +112,11 @@ public abstract class Result implements Serializable {
         return assertions;
     }
 
-    public void addPreprocessor(ProcessResult preprocessor) {
+    public void addPreprocessor(Result preprocessor) {
         this.preprocessors.add(preprocessor);
     }
 
-    public void addPostprocessor(ProcessResult postprocessor) {
+    public void addPostprocessor(Result postprocessor) {
         this.postprocessors.add(postprocessor);
     }
 
