@@ -34,6 +34,7 @@ import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.filter.ExecuteSubStepsFilterChain;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.report.Result;
+import support.xyz.migoo.ValidateResult;
 
 import java.util.*;
 
@@ -44,7 +45,7 @@ import java.util.*;
  */
 @SuppressWarnings({"rawtypes"})
 public abstract class TestContainerExecutable
-        <CONFIG extends ConfigureItem, SELF extends TestContainerExecutable<CONFIG, SELF, T>, T extends Result>
+        <CONFIG extends ConfigureItem<CONFIG>, SELF extends TestContainerExecutable<CONFIG, SELF, T>, T extends Result>
         extends AbstractTestElementExecutable<CONFIG, SELF, T> implements ExecuteSubStepsFilterChain {
 
     protected List<TestElement<T>> children;

@@ -28,6 +28,7 @@ package core.xyz.migoo.context;
 
 import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.config.ConfigureGroup;
+import core.xyz.migoo.config.MiGooVariables;
 import core.xyz.migoo.context.variables.*;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.TestElement;
@@ -157,11 +158,12 @@ public class ContextWrapper {
      * @return 计算后的对象 或 obj原值
      */
     public Object eval(Object obj) {
-        // todo 这里要实现变量计算
-        //  1、MiGooVariables 对象自身要计算变量
-        //  2、使用 MiGooVariables 对象替换掉obj中的变量或者函数
-        //  3、如果 obj 不是变量&函数，则返回obj
-        return obj;
+        if (obj instanceof MiGooVariables)
+            // todo 这里要实现变量计算
+            //  1、MiGooVariables 对象自身要计算变量
+            //  2、使用 MiGooVariables 对象替换掉obj中的变量或者函数
+            //  3、如果 obj 不是变量&函数，则返回obj
+            return obj;
     }
 
     public List<Context> getContextChain() {

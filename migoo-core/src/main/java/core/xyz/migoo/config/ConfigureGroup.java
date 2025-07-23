@@ -26,9 +26,11 @@
 package core.xyz.migoo.config;
 
 import com.alibaba.fastjson2.JSON;
-import core.xyz.migoo.testelement.*;
-import core.xyz.migoo.testelement.Cloneable;
-import core.xyz.migoo.variable.MiGooVariables;
+import core.xyz.migoo.testelement.TestElementConstantsInterface;
+import support.xyz.migoo.Cloneable;
+import support.xyz.migoo.Mergeable;
+import support.xyz.migoo.Validatable;
+import support.xyz.migoo.ValidateResult;
 
 import java.util.HashSet;
 import java.util.Map;

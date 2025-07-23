@@ -29,6 +29,7 @@ import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.assertion.Assertion;
 import core.xyz.migoo.config.ConfigureItem;
+import core.xyz.migoo.config.MiGooVariables;
 import core.xyz.migoo.context.Context;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.context.TestStepContext;
@@ -40,7 +41,7 @@ import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.configure.ConfigureElement;
 import core.xyz.migoo.testelement.processor.Postprocessor;
 import core.xyz.migoo.testelement.processor.Preprocessor;
-import core.xyz.migoo.variable.MiGooVariables;
+import support.xyz.migoo.Closeable;
 import support.xyz.migoo.KryoUtil;
 
 import java.util.*;
@@ -51,7 +52,7 @@ import java.util.*;
  * @author xiaomi
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem, SELF extends AbstractTestElementExecutable<CONFIG, SELF, T>, T extends Result>
+public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem<CONFIG>, SELF extends AbstractTestElementExecutable<CONFIG, SELF, T>, T extends Result>
         extends AbstractTestElement<CONFIG, SELF, T>
         implements TestElementExecutable<T>, RunFilterChain, ExecuteFilterChain, TestElementConstantsInterface {
 

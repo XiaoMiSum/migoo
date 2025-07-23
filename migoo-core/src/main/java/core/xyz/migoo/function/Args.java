@@ -37,12 +37,12 @@ import java.util.Collections;
  */
 public interface Args {
 
-
+    @Deprecated(since = "5.3.0")
     static Args newArgs(ContextWrapper context, String origin) {
         if (StringUtils.isBlank(origin)) {
             return new KwArgs(context);
         }
-        if (VariableUtils.isKwArgs(origin)) {
+        if (origin.contains("=")) {
             var args = new KwArgs(context);
             Arrays.stream(origin.split(",")).forEach(args::put);
             return args;
@@ -54,7 +54,7 @@ public interface Args {
 
     default Object getParameterValue(String parameter) {
         if (VariableUtils.isVars(parameter) || VariableUtils.isFunc(parameter)) {
-            return getContext().getLocalVariablesWrapper().getLastVariables().extractVariables(parameter);
+            return getContext().eval(parameter);
         }
         return parameter.trim();
     }

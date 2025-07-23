@@ -25,11 +25,11 @@
 
 package core.xyz.migoo.context.variables;
 
+import core.xyz.migoo.config.MiGooVariables;
 import core.xyz.migoo.context.Context;
 import core.xyz.migoo.context.TestRunContext;
 import core.xyz.migoo.testelement.TestElementConfigure;
 import core.xyz.migoo.testelement.TestElementConstantsInterface;
-import core.xyz.migoo.variable.MiGooVariables;
 
 import java.util.List;
 import java.util.Map;

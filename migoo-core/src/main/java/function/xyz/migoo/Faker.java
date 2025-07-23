@@ -4,24 +4,12 @@ import core.xyz.migoo.function.Args;
 import core.xyz.migoo.function.Function;
 import core.xyz.migoo.function.KwArgs;
 import core.xyz.migoo.function.LsArgs;
-import core.xyz.migoo.variable.MiGooVariables;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.Locale;
 
 public class Faker implements Function {
-
-    public static void main(String[] args) throws Exception {
-        var kwArgs = new KwArgs(new MiGooVariables());
-        kwArgs.put("locale", "zh-CN");
-        kwArgs.put("key", "address.city");
-        System.out.println(new Faker().execute(kwArgs));
-        var lsArgs = new LsArgs(new MiGooVariables());
-        lsArgs.add("name.fullName");
-        lsArgs.addLast("zh-CN");
-        System.out.println(new Faker().execute(lsArgs));
-    }
 
     /**
      * 通过 Faker库生成假数据，支持2个参数

@@ -23,23 +23,44 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package core.xyz.migoo.extractor;
+package core.xyz.migoo.config;
 
-import com.alibaba.fastjson2.annotation.JSONType;
-import core.xyz.migoo.context.ContextWrapper;
-import support.xyz.migoo.Validatable;
-import support.xyz.migoo.fastjson.deserializer.ExtractorObjectReader;
+import com.alibaba.fastjson2.JSONObject;
+
+import java.util.Map;
 
 /**
  * @author xiaomi
  */
-@JSONType(deserializer = ExtractorObjectReader.class)
-public interface Extractor extends Validatable {
+public class MiGooVariables extends JSONObject implements ConfigureItem<MiGooVariables> {
 
-    /**
-     * 提取器执行，从取样器结果中按指定规格提取数据，并保存到变量中
-     *
-     * @param context 测试上下文
-     */
-    void process(ContextWrapper context);
+    public MiGooVariables() {
+    }
+
+    public MiGooVariables(Map<? extends String, ?> variables) {
+        this.putAll(variables);
+    }
+
+    public void putAll(Map<? extends String, ?> variables) {
+        if (variables != null) {
+            super.putAll(variables);
+        }
+    }
+
+    @Override
+    public MiGooVariables merge(MiGooVariables other) {
+        if (other != null) {
+            var copy = new MiGooVariables(this);
+            this.clear();
+            this.putAll(other);
+            this.putAll(copy);
+        }
+        return this;
+    }
+
+    @Override
+    public MiGooVariables copy() {
+        return new MiGooVariables(this);
+    }
+
 }

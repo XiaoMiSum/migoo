@@ -31,7 +31,7 @@ package core.xyz.migoo.testelement.configure;
 import com.alibaba.fastjson2.annotation.JSONType;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.report.Result;
-import core.xyz.migoo.testelement.Validatable;
+import support.xyz.migoo.Validatable;
 import support.xyz.migoo.fastjson.deserializer.ConfigureElementObjectReader;
 
 /**

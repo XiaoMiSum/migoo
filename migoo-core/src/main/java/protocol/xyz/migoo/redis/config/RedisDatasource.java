@@ -28,7 +28,6 @@ package protocol.xyz.migoo.redis.config;
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.Alias;
-import core.xyz.migoo.testelement.Closeable;
 import core.xyz.migoo.testelement.TestSuiteResult;
 import core.xyz.migoo.testelement.configure.AbstractConfigureElement;
 import protocol.xyz.migoo.redis.RedisConstantsInterface;
@@ -36,6 +35,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.util.JedisURIHelper;
+import support.xyz.migoo.Closeable;
 
 import java.net.URI;
 import java.util.Objects;

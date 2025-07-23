@@ -23,45 +23,19 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package core.xyz.migoo.variable;
-
-import com.alibaba.fastjson2.JSONObject;
-import core.xyz.migoo.config.ConfigureItem;
-
-import java.util.Map;
+package support.xyz.migoo;
 
 /**
  * @author xiaomi
  */
-public class MiGooVariables extends JSONObject implements ConfigureItem<MiGooVariables> {
+public interface Mergeable<T> {
 
-    public MiGooVariables() {
-    }
-
-    public MiGooVariables(Map<? extends String, ?> variables) {
-        this.putAll(variables);
-    }
-
-    public void putAll(Map<? extends String, ?> variables) {
-        if (variables != null) {
-            super.putAll(variables);
-        }
-    }
-
-    @Override
-    public MiGooVariables merge(MiGooVariables other) {
-        if (other != null) {
-            var copy = new MiGooVariables(this);
-            this.clear();
-            this.putAll(other);
-            this.putAll(copy);
-        }
-        return this;
-    }
-
-    @Override
-    public MiGooVariables copy() {
-        return new MiGooVariables(this);
-    }
+    /**
+     * 合并相同类型的对象，参数对象的值会覆盖当前对象的值，方法应返回一个新的对象。
+     *
+     * @param other 新的对象
+     * @return 合并后的对象
+     */
+    T merge(T other);
 
 }

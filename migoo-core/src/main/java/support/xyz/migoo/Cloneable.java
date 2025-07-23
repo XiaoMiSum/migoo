@@ -1,4 +1,4 @@
-package core.xyz.migoo.testelement;
+package support.xyz.migoo;
 
 public interface Cloneable<T> {
 

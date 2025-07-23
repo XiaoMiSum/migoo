@@ -57,7 +57,7 @@ public class RandomString implements Function {
     }
 
     private String execute(LsArgs args) {
-        var length = args.getString(0).isEmpty() ? 10 : args.getNumber(0).intValue();
+        var length = args.getString(0).isEmpty() ? 10 : args.getIntValue(0);
         var charsToUse = args.getString(1);
         var upper = args.getBooleanValue(2);
         return execute(length, charsToUse, upper);

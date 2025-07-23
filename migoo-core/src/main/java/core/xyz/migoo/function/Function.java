@@ -29,8 +29,11 @@ import core.xyz.migoo.ApplicationConfig;
 import core.xyz.migoo.context.ContextWrapper;
 
 /**
+ * 已废弃 @see {@link FunctionHandler}
+ *
  * @author xiaomi
  */
+@Deprecated(since = "5.3.0")
 public interface Function {
 
     static Object execute(ContextWrapper context, String fName, String parameter) {
@@ -44,10 +47,13 @@ public interface Function {
 
     /**
      * 扩展函数执行，返回生成的数据
+     * <p>
      *
      * @param args 扩展函数参数
      * @return 生成的数据
      */
+
     Object execute(Args args);
+
 
 }

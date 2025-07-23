@@ -23,7 +23,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package core.xyz.migoo.testelement;
+package support.xyz.migoo;
 
 import org.apache.commons.lang3.StringUtils;
 

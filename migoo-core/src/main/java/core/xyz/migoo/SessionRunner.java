@@ -25,6 +25,7 @@
 
 package core.xyz.migoo;
 
+import core.xyz.migoo.config.MiGooVariables;
 import core.xyz.migoo.context.Context;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.context.SessionContext;
@@ -32,8 +33,7 @@ import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestElementConfigure;
 import core.xyz.migoo.testelement.TestElementConstantsInterface;
-import core.xyz.migoo.testelement.ValidateResult;
-import core.xyz.migoo.variable.MiGooVariables;
+import support.xyz.migoo.ValidateResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;

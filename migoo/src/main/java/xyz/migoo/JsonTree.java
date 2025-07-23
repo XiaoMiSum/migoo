@@ -27,7 +27,7 @@ package xyz.migoo;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import core.xyz.migoo.variable.MiGooVariables;
+import core.xyz.migoo.config.MiGooVariables;
 import support.xyz.migoo.TestDataLoader;
 
 import java.util.List;

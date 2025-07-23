@@ -26,7 +26,7 @@
  *
  */
 
-package core.xyz.migoo.testelement;
+package support.xyz.migoo;
 
 /**
  * @author xiaomi

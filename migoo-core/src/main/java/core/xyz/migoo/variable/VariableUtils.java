@@ -36,7 +36,7 @@ public class VariableUtils {
 
     public static final Pattern VARS_PATTERN = Pattern.compile("\\$\\{(\\w+)?}");
 
-    public static final Pattern FUNC_PATTERN = Pattern.compile("__([A-Za-z0-9]+)\\(([.]*[^)]*)?\\)");
+    public static final Pattern FUNC_PATTERN = Pattern.compile("__(\\w+)\\(([.]*[^)]*)?\\)");
 
     public static final Pattern KWARGS_PATTERN = Pattern.compile("((\\w+)=(.+))+");
 
@@ -59,4 +59,34 @@ public class VariableUtils {
     }
 
 
+    public static void main(String[] args) {
+        System.out.println("${var}: " + VARS_PATTERN.matcher("${var}").matches());
+        System.out.println("${var}${var}: " + VARS_PATTERN.matcher("${var}${var}").matches());
+        System.out.println("${var}${var}qweqwe: " + VARS_PATTERN.matcher("qwe${var}${var}qweqwe").matches());
+        System.out.println("${var}qeqeqwe${var}: " + VARS_PATTERN.matcher("${var}qeqeqwe${var}").matches());
+        System.out.println("__func(): " + FUNC_PATTERN.matcher("__func()").matches());
+        System.out.println("__func(1): " + FUNC_PATTERN.matcher("__func(1)").matches());
+        System.out.println("__func(a=1,b=2): " + FUNC_PATTERN.matcher("__func(a=1,b=2)").matches());
+        // 不支持函数的参数为另一个函数
+        System.out.println("__func(__func()): " + FUNC_PATTERN.matcher("__func(__func())").matches());
+        System.out.println("__func()__func(): " + FUNC_PATTERN.matcher("__func()__func()").matches());
+        System.out.println("__func(a=1,b=2)245234__func(): " + FUNC_PATTERN.matcher("__func(a=1,b=2)245234__func()").matches());
+        System.out.println("__func(a=1,b=2)245234__func()wer: " + FUNC_PATTERN.matcher("__func(a=1,b=2)245234__func()wer").matches());
+        // 不支持函数的参数为另一个函数
+        System.out.println("__func(a=1,b=__func()): " + FUNC_PATTERN.matcher("__func(a=1,b=__func())").matches());
+        System.out.println("__func(a=1,b=${var}): " + FUNC_PATTERN.matcher("__func(a=1,b=${var})").matches());
+        var matcher = FUNC_PATTERN.matcher("__func(1)");
+        if (matcher.find()) {
+            System.out.println("函数名称1: " + matcher.group(1));
+            System.out.println("参数：" + matcher.group(2));
+        }
+        if (matcher.matches()) {
+            System.out.println("函数名称2: " + matcher.group(1));
+            System.out.println("参数：" + matcher.group(2));
+        }
+        if (matcher.find(0)) {
+            System.out.println("函数名称3: " + matcher.group(1));
+            System.out.println("参数：" + matcher.group(2));
+        }
+    }
 }

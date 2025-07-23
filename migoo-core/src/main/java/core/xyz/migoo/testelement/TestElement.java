@@ -28,6 +28,8 @@ package core.xyz.migoo.testelement;
 import com.alibaba.fastjson2.annotation.JSONType;
 import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.report.Result;
+import support.xyz.migoo.Cloneable;
+import support.xyz.migoo.Validatable;
 import support.xyz.migoo.fastjson.deserializer.TestElementObjectReader;
 
 /**

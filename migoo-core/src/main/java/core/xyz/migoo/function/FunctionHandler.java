@@ -23,26 +23,41 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package core.xyz.migoo.testelement;
+package core.xyz.migoo.function;
+
+import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.variable.VariableUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
- * 表示一个类是可自检的类，即验证对象是否合法，提现发现数据问题，提升执行效率
- *
  * @author xiaomi
  */
-public interface Validatable {
+@FunctionalInterface
+public interface FunctionHandler {
+
+    static Args newArgs(ContextWrapper context, String origin) {
+        if (StringUtils.isBlank(origin)) {
+            return new KwArgs(context);
+        }
+        if (VariableUtils.isKwArgs(origin)) {
+            var args = new KwArgs(context);
+            Arrays.stream(origin.split(",")).forEach(args::put);
+            return args;
+        }
+        var args = new LsArgs(context);
+        Collections.addAll(args, origin.split(","));
+        return args;
+    }
 
     /**
-     * 对象自检
+     * 扩展函数执行，返回生成的数据
      *
-     * <p><br>约定：
-     * <li>如果 valid 为 false，必须填入 reason（不能为 null 或空）。</li>
-     * <li>reason 的填写格式："\n" + 数据非法原因。</li>
-     *
-     * @return 验证结果
+     * @param args 扩展函数参数
+     * @return 生成的数据
      */
-    default ValidateResult validate() {
-        return new ValidateResult();
-    }
+    Object apply(Args args);
 
 }

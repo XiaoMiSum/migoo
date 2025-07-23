@@ -23,19 +23,26 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package core.xyz.migoo.testelement;
+package support.xyz.migoo;
 
 /**
+ * 表示一个类是可自检的类，即验证对象是否合法，提现发现数据问题，提升执行效率
+ *
  * @author xiaomi
  */
-public interface Mergeable<T> {
+public interface Validatable {
 
     /**
-     * 合并相同类型的对象，参数对象的值会覆盖当前对象的值，方法应返回一个新的对象。
+     * 对象自检
      *
-     * @param other 新的对象
-     * @return 合并后的对象
+     * <p><br>约定：
+     * <li>如果 valid 为 false，必须填入 reason（不能为 null 或空）。</li>
+     * <li>reason 的填写格式："\n" + 数据非法原因。</li>
+     *
+     * @return 验证结果
      */
-    T merge(T other);
+    default ValidateResult validate() {
+        return new ValidateResult();
+    }
 
 }

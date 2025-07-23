@@ -30,7 +30,6 @@ import core.xyz.migoo.function.Function;
 import core.xyz.migoo.function.KwArgs;
 import core.xyz.migoo.function.LsArgs;
 
-import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -49,8 +48,8 @@ public class Random implements Function {
         if (args instanceof KwArgs kwArgs) {
             return execute(kwArgs.getIntValue("bound"));
         }
-        var bound = ((LsArgs) args).getNumber(0);
-        return execute(Objects.isNull(bound) ? 0 : bound.intValue());
+        var bound = ((LsArgs) args).getIntValue(0);
+        return execute(bound);
     }
 
 
