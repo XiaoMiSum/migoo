@@ -28,7 +28,6 @@ package xyz.migoo;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.config.MiGooVariables;
-import support.xyz.migoo.TestDataLoader;
 
 import java.util.List;
 import java.util.Locale;
@@ -36,24 +35,21 @@ import java.util.Map;
 import java.util.Optional;
 
 import static core.xyz.migoo.testelement.TestElementConstantsInterface.*;
-import static core.xyz.migoo.variable.VariableUtils.FILE_PATTERN;
 
 /**
  * @author xiaomi
  */
 public class JsonTree extends JSONObject {
 
-    private final boolean sampler;
-
     public JsonTree(Map<String, Object> testcase) {
         this(testcase instanceof JSONObject json ? json : new JSONObject(testcase));
     }
+
 
     public JsonTree(JSONObject testcase) {
         replaceExpiredKeys(testcase);
         var json = prepare(testcase);
         initialize(json, isMiGoo(json));
-        sampler = isMiGooSampler(json);
     }
 
     private void initialize(JSONObject json, boolean isMiGoo) {
@@ -97,7 +93,6 @@ public class JsonTree extends JSONObject {
             switch (value) {
                 case Map<?, ?> map -> json.put(keyString, prepare(map));
                 case List<?> objects -> json.put(keyString, prepare(objects));
-                case String s -> json.put(keyString, prepare(s));
                 case null, default -> json.put(keyString, value);
             }
         });
@@ -110,25 +105,12 @@ public class JsonTree extends JSONObject {
             switch (item) {
                 case List<?> objects -> temp.add(prepare(objects));
                 case Map<?, ?> map -> temp.add(prepare(map));
-                case String s -> temp.add(prepare(s));
                 case null, default -> temp.add(item);
             }
         });
         return temp;
     }
 
-    private Object prepare(String value) {
-        var matcher = FILE_PATTERN.matcher(value);
-        if (matcher.find()) {
-            var result = TestDataLoader.toJSON(matcher.group(1));
-            return switch (result) {
-                case List<?> objects -> prepare(objects);
-                case Map<?, ?> object -> prepare(object);
-                case null, default -> result;
-            };
-        }
-        return value;
-    }
 
     private boolean isMiGoo(JSONObject json) {
         return isMiGooSuite(json) || isMiGooSampler(json);
@@ -149,14 +131,5 @@ public class JsonTree extends JSONObject {
         if (json.containsKey(CHILD)) {
             json.put(CHILDREN, json.remove(CHILD));
         }
-    }
-
-    public boolean isSampler() {
-        return sampler;
-    }
-
-
-    public <T> T toJavaObject(Class<T> clazz) {
-        return super.toJavaObject(clazz);
     }
 }

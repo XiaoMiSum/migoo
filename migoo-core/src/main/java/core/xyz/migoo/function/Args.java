@@ -26,11 +26,13 @@
 package core.xyz.migoo.function;
 
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.variable.VariableUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
+
+import static core.xyz.migoo.template.TemplateEngine.FUNC_EXPRESSION;
+import static core.xyz.migoo.template.TemplateEngine.VARS_EXPRESSION;
 
 /**
  * @author xiaomi
@@ -53,7 +55,7 @@ public interface Args {
     }
 
     default Object getParameterValue(String parameter) {
-        if (VariableUtils.isVars(parameter) || VariableUtils.isFunc(parameter)) {
+        if (FUNC_EXPRESSION.matcher(parameter).find() || VARS_EXPRESSION.matcher(parameter).find()) {
             return getContext().eval(parameter);
         }
         return parameter.trim();

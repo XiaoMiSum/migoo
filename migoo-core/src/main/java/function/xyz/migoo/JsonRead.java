@@ -51,7 +51,7 @@ public class JsonRead implements Function {
      * @return jsonpath对应数据
      */
     @Override
-    public Object execute(Args args) {
+    public Object apply(Args args) {
         if (args.isEmpty() || args.size() < 2) {
             throw new IllegalArgumentException("args is empty or invalid args. require args 'json','path'");
         }

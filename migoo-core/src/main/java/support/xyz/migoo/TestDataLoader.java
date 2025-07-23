@@ -29,6 +29,7 @@ package support.xyz.migoo;
 import com.alibaba.fastjson2.JSON;
 import org.yaml.snakeyaml.Yaml;
 import support.xyz.migoo.reader.ReaderFactor;
+import support.xyz.migoo.yaml.IncludeConstructor;
 
 /**
  * @author xiaomi
@@ -71,6 +72,6 @@ public class TestDataLoader {
 
     public static Object toJSON(String path, boolean isClasspath) {
         var content = ReaderFactor.getReader(isClasspath, path).read();
-        return JSON.toJSON(new Yaml().load(content));
+        return JSON.toJSON(new Yaml(new IncludeConstructor()).load(content));
     }
 }

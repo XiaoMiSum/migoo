@@ -45,7 +45,7 @@ public class UrlEncode implements Function {
      * content: 待url encode的字符串，非空
      */
     @Override
-    public String execute(Args args) {
+    public String apply(Args args) {
         if (args.isEmpty()) {
             throw new IllegalArgumentException("content con not be null");
         }

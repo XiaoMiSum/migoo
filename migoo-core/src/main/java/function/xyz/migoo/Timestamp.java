@@ -49,7 +49,7 @@ public class Timestamp implements Function {
      * 当格式化参数未传递时，则返回当前时间戳
      */
     @Override
-    public String execute(Args args) {
+    public String apply(Args args) {
         return execute(args instanceof KwArgs kwArgs ? kwArgs.getString("format") : ((LsArgs) args).getString(0));
     }
 

@@ -44,7 +44,7 @@ public class Random implements Function {
      * 当传入的bound值小于1或空值时，则不限制返回的数据（可能为正数，也可能为负数）
      */
     @Override
-    public Integer execute(Args args) {
+    public Integer apply(Args args) {
         if (args instanceof KwArgs kwArgs) {
             return execute(kwArgs.getIntValue("bound"));
         }

@@ -39,7 +39,7 @@ public class Uuid implements Function {
      * 返回一个UUID，无参数
      */
     @Override
-    public String execute(Args args) {
+    public String apply(Args args) {
         return UUID.randomUUID().toString();
     }
 

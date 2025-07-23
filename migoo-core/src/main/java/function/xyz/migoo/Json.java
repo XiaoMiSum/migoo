@@ -40,7 +40,7 @@ public class Json implements Function {
      * 将传入的参数转换为JSONObject
      */
     @Override
-    public JSONObject execute(Args args) {
+    public JSONObject apply(Args args) {
         if (args.isEmpty()) {
             throw new IllegalArgumentException("parameters con not be null");
         }

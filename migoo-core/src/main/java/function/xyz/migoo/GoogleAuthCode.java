@@ -54,7 +54,7 @@ public class GoogleAuthCode implements Function {
      * secret: 谷歌验证器安全码，非空，通过该安全码生成谷歌验证码
      */
     @Override
-    public String execute(Args args) {
+    public String apply(Args args) {
         if (args.isEmpty()) {
             throw new IllegalArgumentException("secretKey con not be null");
         }

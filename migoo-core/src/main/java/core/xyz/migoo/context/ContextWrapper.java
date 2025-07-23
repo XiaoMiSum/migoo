@@ -26,13 +26,15 @@
 package core.xyz.migoo.context;
 
 
+import core.xyz.migoo.ApplicationConfig;
 import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.config.ConfigureGroup;
-import core.xyz.migoo.config.MiGooVariables;
 import core.xyz.migoo.context.variables.*;
 import core.xyz.migoo.report.Result;
+import core.xyz.migoo.template.TemplateEngine;
 import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestElementConfigure;
+import support.xyz.migoo.Computable;
 
 import java.util.Collections;
 import java.util.List;
@@ -51,6 +53,7 @@ public class ContextWrapper {
     private final ConfigureGroup configureGroup;
     private final AllVariablesWrapper allVariablesWrapper;
     private final LocalVariablesWrapper localVariablesWrapper;
+    private final TemplateEngine templateEngine;
     // 当前上下文，即最后一个上下文对象
     private Context sessionContext;
     private GlobalContext globalContext;
@@ -60,7 +63,6 @@ public class ContextWrapper {
     private SessionVariablesWrapper sessionVariablesWrapper;
     // Runner 相关对象
     private SessionRunner sessionRunner;
-
     // 测试元件信息
     private TestElement<?> testElement;
     private Result testResult;
@@ -96,6 +98,7 @@ public class ContextWrapper {
         }
         this.allVariablesWrapper = new AllVariablesWrapper(Collections.unmodifiableList(rawContextChain));
         this.localVariablesWrapper = new LocalVariablesWrapper(List.of(currentContext));
+        this.templateEngine = new TemplateEngine(this, ApplicationConfig.getFunctionKeyMap());
     }
 
     /**
@@ -153,17 +156,18 @@ public class ContextWrapper {
      * 支持多个变量或函数混合使用
      * <p>
      * 比如 ${var1}migoo__func()${var2}test
+     * <p>
+     * 不支持函数嵌套
+     * 比如：__func(__func())、__func(a=__func())
      *
      * @param obj 待计算的对象
      * @return 计算后的对象 或 obj原值
      */
     public Object eval(Object obj) {
-        if (obj instanceof MiGooVariables)
-            // todo 这里要实现变量计算
-            //  1、MiGooVariables 对象自身要计算变量
-            //  2、使用 MiGooVariables 对象替换掉obj中的变量或者函数
-            //  3、如果 obj 不是变量&函数，则返回obj
-            return obj;
+        if (obj instanceof Computable<?> computable) {
+            return computable.calc(this);
+        }
+        return templateEngine.evaluate(obj);
     }
 
     public List<Context> getContextChain() {

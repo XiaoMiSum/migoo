@@ -51,7 +51,7 @@ public class Digest implements Function {
      * upper: 是否将结果转为大写，允许为空，默认 false
      */
     @Override
-    public String execute(Args args) {
+    public String apply(Args args) {
         if (args.isEmpty()) {
             throw new IllegalArgumentException("parameters con not be null");
         }

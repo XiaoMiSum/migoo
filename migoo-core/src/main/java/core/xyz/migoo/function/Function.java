@@ -25,35 +25,37 @@
 
 package core.xyz.migoo.function;
 
-import core.xyz.migoo.ApplicationConfig;
 import core.xyz.migoo.context.ContextWrapper;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
- * 已废弃 @see {@link FunctionHandler}
- *
  * @author xiaomi
  */
-@Deprecated(since = "5.3.0")
 public interface Function {
 
-    static Object execute(ContextWrapper context, String fName, String parameter) {
-        var function = ApplicationConfig.getFunctionKeyMap().get(fName);
-        if (function == null) {
-            throw new RuntimeException("没有匹配的函数: " + fName);
+    static Args newArgs(ContextWrapper context, String origin) {
+        if (StringUtils.isBlank(origin)) {
+            return new KwArgs(context);
         }
-        var args = Args.newArgs(context, parameter);
-        return function.execute(args);
+        if (origin.contains("=")) {
+            var args = new KwArgs(context);
+            Arrays.stream(origin.split(",")).forEach(args::put);
+            return args;
+        }
+        var args = new LsArgs(context);
+        Collections.addAll(args, origin.split(","));
+        return args;
     }
 
     /**
      * 扩展函数执行，返回生成的数据
-     * <p>
      *
      * @param args 扩展函数参数
      * @return 生成的数据
      */
-
-    Object execute(Args args);
-
+    Object apply(Args args);
 
 }

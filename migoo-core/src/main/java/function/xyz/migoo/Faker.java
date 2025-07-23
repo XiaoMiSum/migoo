@@ -18,7 +18,7 @@ public class Faker implements Function {
      * local: 语言，可控，默认为 zh-CN
      */
     @Override
-    public Object execute(Args args) {
+    public Object apply(Args args) {
         return args instanceof KwArgs kwArgs ? execute(kwArgs) : execute((LsArgs) args);
     }
 

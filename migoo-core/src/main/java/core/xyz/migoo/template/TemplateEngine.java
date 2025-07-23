@@ -2,12 +2,14 @@ package core.xyz.migoo.template;
 
 import com.alibaba.fastjson2.JSON;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.function.FunctionHandler;
+import core.xyz.migoo.function.Function;
 
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class TemplateEngine {
 
     public static final Pattern FUNC_EXPRESSION = Pattern.compile("__(\\w+)\\(([.]*[^)]*)?\\)");
@@ -15,11 +17,40 @@ public class TemplateEngine {
     public static final Pattern VARS_EXPRESSION = Pattern.compile("\\$\\{(\\w+)?}");
 
     private final ContextWrapper context;
-    private final Map<String, FunctionHandler> functions;
+    private final Map<String, Function> functions;
 
-    public TemplateEngine(ContextWrapper context, Map<String, FunctionHandler> functions) {
+    public TemplateEngine(ContextWrapper context, Map<String, Function> functions) {
         this.context = context;
         this.functions = functions;
+    }
+
+    public Map<String, Object> evaluate(Map<String, Object> map) {
+        if (map == null) {
+            return null;
+        }
+        map.replaceAll((k, v) -> evaluate(v));
+        return map;
+    }
+
+    public List<Object> evaluate(List<Object> list) {
+        if (list == null) {
+            return null;
+        }
+        list.replaceAll(this::evaluate);
+        return list;
+    }
+
+    public Object evaluate(Object obj) {
+        if (obj instanceof String template) {
+            return evaluate(template);
+        }
+        if (obj instanceof Map map) {
+            return evaluate(map);
+        }
+        if (obj instanceof List list) {
+            return evaluate(list);
+        }
+        return obj;
     }
 
     public Object evaluate(String template) {
@@ -81,7 +112,7 @@ public class TemplateEngine {
         if (handler == null) {
             throw new IllegalArgumentException("函数未定义: " + funcName);
         }
-        var args = FunctionHandler.newArgs(context, matcher.group(2));
+        var args = Function.newArgs(context, matcher.group(2));
         var value = handler.apply(args);
         if (value == null) {
             throw new IllegalArgumentException("表达式计算结果为 null: " + expr);

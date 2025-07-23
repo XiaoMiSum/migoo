@@ -61,7 +61,7 @@ public class TimeShift implements Function {
      * 当两个参数都未传递时，则返回当前时间戳
      */
     @Override
-    public String execute(Args args) {
+    public String apply(Args args) {
         return args instanceof KwArgs kwArgs ? execute(kwArgs) : execute((LsArgs) args);
     }
 

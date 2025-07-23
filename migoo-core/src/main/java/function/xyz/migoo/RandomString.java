@@ -45,7 +45,7 @@ public class RandomString implements Function {
      * upper: 是否将生成的字符串转为大写，允许为空，默认：false
      */
     @Override
-    public String execute(Args args) {
+    public String apply(Args args) {
         return args instanceof KwArgs kwArgs ? execute(kwArgs) : execute((LsArgs) args);
     }
 

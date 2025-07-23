@@ -26,13 +26,15 @@
 package core.xyz.migoo.config;
 
 import com.alibaba.fastjson2.JSONObject;
+import core.xyz.migoo.context.ContextWrapper;
+import support.xyz.migoo.Computable;
 
 import java.util.Map;
 
 /**
  * @author xiaomi
  */
-public class MiGooVariables extends JSONObject implements ConfigureItem<MiGooVariables> {
+public class MiGooVariables extends JSONObject implements ConfigureItem<MiGooVariables>, Computable<MiGooVariables> {
 
     public MiGooVariables() {
     }
@@ -63,4 +65,9 @@ public class MiGooVariables extends JSONObject implements ConfigureItem<MiGooVar
         return new MiGooVariables(this);
     }
 
+    @Override
+    public MiGooVariables calc(ContextWrapper context) {
+        // todo 这里要实现 变量自检
+        return null;
+    }
 }
