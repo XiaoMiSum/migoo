@@ -18,7 +18,7 @@ public class TestSuiteExecutable extends TestContainerExecutable<EmptyConfigureI
 
     @Override
     protected void execute(ContextWrapper ctx, TestSuiteResult testResult) {
-        executeSubSteps(ctx);
+        executeChildren(ctx);
     }
 
     @Override

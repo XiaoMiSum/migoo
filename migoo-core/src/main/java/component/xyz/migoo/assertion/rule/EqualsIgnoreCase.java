@@ -32,7 +32,7 @@ import core.xyz.migoo.testelement.Alias;
  * @author xiaomi
  * @date 2019-08-13 22:17
  */
-@Alias({"equalsIgnoreCase", "ignoreCase"})
+@Alias({"equalsIgnoreCase", "ignoreCase", "eqic"})
 public class EqualsIgnoreCase extends BaseRule implements Rule {
 
     @Override

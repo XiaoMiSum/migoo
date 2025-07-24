@@ -68,8 +68,8 @@ public interface TestFilter {
      * @param ctx   测试上下文
      * @param chain 执行子步骤过滤器链
      */
-    default void doExecuteSubSteps(ContextWrapper ctx, ExecuteSubStepsFilterChain chain) {
-        chain.doExecuteSubSteps(ctx);
+    default void doExecuteChildren(ContextWrapper ctx, ExecuteChildrenFilterChain chain) {
+        chain.doExecuteChildren(ctx);
     }
 
     /**

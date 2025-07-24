@@ -30,8 +30,8 @@ import core.xyz.migoo.context.ContextWrapper;
 /**
  * @author xiaomi
  */
-public interface ExecuteSubStepsFilterChain {
+public interface ExecuteChildrenFilterChain {
 
-    void doExecuteSubSteps(ContextWrapper ctx);
+    void doExecuteChildren(ContextWrapper ctx);
 
 }

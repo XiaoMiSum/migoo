@@ -3,7 +3,7 @@ package component.xyz.migoo.assertion.rule;
 import core.xyz.migoo.assertion.Rule;
 import core.xyz.migoo.testelement.Alias;
 
-@Alias({"equalsAnyIgnoreCase", "AnyIgnoreCase"})
+@Alias({"equalsAnyIgnoreCase", "AnyIgnoreCase", "anyic"})
 public class EqualsAnyIgnoreCase extends AnyBase implements Rule {
 
     @Override

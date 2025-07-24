@@ -31,7 +31,7 @@ package core.xyz.migoo.testelement;
 import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.filter.ExecuteSubStepsFilterChain;
+import core.xyz.migoo.filter.ExecuteChildrenFilterChain;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.report.Result;
 import support.xyz.migoo.ValidateResult;
@@ -46,30 +46,30 @@ import java.util.*;
 @SuppressWarnings({"rawtypes"})
 public abstract class TestContainerExecutable
         <CONFIG extends ConfigureItem<CONFIG>, SELF extends TestContainerExecutable<CONFIG, SELF, T>, T extends Result>
-        extends AbstractTestElementExecutable<CONFIG, SELF, T> implements ExecuteSubStepsFilterChain {
+        extends AbstractTestElementExecutable<CONFIG, SELF, T> implements ExecuteChildrenFilterChain {
 
     protected List<TestElement<T>> children;
 
-    protected Iterator<TestFilter> executeSubStepsFilters;
+    protected Iterator<TestFilter> executeChildrenFilters;
 
     public TestContainerExecutable() {
     }
 
     @Override
-    public void doExecuteSubSteps(ContextWrapper context) {
+    public void doExecuteChildren(ContextWrapper context) {
         if (children == null) {
             return;
         }
-        if (executeSubStepsFilters.hasNext()) {
-            TestFilter next = executeSubStepsFilters.next();
-            next.doExecuteSubSteps(context, this);
+        if (executeChildrenFilters.hasNext()) {
+            TestFilter next = executeChildrenFilters.next();
+            next.doExecuteChildren(context, this);
             return;
         }
-        for (TestElement<T> step : children) {
-            if (step == null) {
+        for (TestElement<T> child : children) {
+            if (child == null) {
                 continue;
             }
-            T result = context.getSessionRunner().runTest(step);
+            T result = context.getSessionRunner().runTest(child);
             if (TestStatus.failed == result.getStatus()) {
                 context.getTestResult().setStatus(TestStatus.failed);
             }
@@ -77,19 +77,20 @@ public abstract class TestContainerExecutable
         }
     }
 
-    protected void executeSubSteps(ContextWrapper contextWrapper) {
-        executeSubStepsFilters = Objects.isNull(filters) ? Collections.emptyIterator() : filters.iterator();
-        doExecuteSubSteps(contextWrapper);
+    protected void executeChildren(ContextWrapper contextWrapper) {
+        executeChildrenFilters = Objects.isNull(filters) ? Collections.emptyIterator() : filters.iterator();
+        doExecuteChildren(contextWrapper);
     }
 
     @Override
     public ValidateResult validate() {
         ValidateResult result = super.validate();
         if (children == null) {
+            result.append("\n容器类测试元件 %s 字段值缺失或为空，当前值：%s", CHILDREN, toString());
             return result;
         }
-        for (TestElement<?> step : children) {
-            result.append(step);
+        for (TestElement<?> child : children) {
+            result.append(child);
         }
         return result;
     }
