@@ -50,13 +50,11 @@ import static xyz.migoo.Constants.REPORT_ENABLE;
 public class MiGoo {
 
     static {
-        try {
-            var config = TestDataLoader.toJavaObject("props.migoo.yml", JSONObject.class);
-            config.forEach((key, value) -> System.setProperty(key, String.valueOf(value)));
-            printLogo();
-        } catch (IOException ignored) {
+        // todo 这里要重新设置配置
+        //   var config = TestDataLoader.toJavaObject("props.migoo.yml", JSONObject.class);
+        //   config.forEach((key, value) -> System.setProperty(key, String.valueOf(value)));
+        //  printLogo();
 
-        }
     }
 
     private final JsonTree testcase;
@@ -79,9 +77,13 @@ public class MiGoo {
         System.out.println("    GitHub: https://github.com/XiaoMiSum/migoo");
     }
 
-    public static Result start(String filePath) throws IOException {
-        var testcase = TestDataLoader.toJavaObject(filePath, JSONObject.class);
-        return start(testcase);
+    public static Result start(String filePath) {
+        try {
+            var testcase = TestDataLoader.toJavaObject(filePath, JSONObject.class);
+            return start(testcase);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

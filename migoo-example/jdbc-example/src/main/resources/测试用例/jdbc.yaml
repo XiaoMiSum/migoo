@@ -1,10 +1,10 @@
 title: 测试用例 # 包含配置原件、前置处理器、后置处理器、多个取样器（执行步骤）
 configelements:
-  - '@F(classpath:配置元件/jdbc_defaults.yaml)'
+  - '配置元件/jdbc_defaults.yaml'
 PreProcessors: # 前置处理器
-  - '@F(classpath:处理器/jdbc_preprocessor.yaml)'
+  - '处理器/jdbc_preprocessor.yaml'
 PostProcessors: # 后置处理器
-  - '@F(classpath:处理器/jdbc_postprocessor.yaml)'
+  - '处理器/jdbc_postprocessor.yaml'
 children: # 执行步骤
   - title: 步骤1
     testclass: jdbcSampler
@@ -13,8 +13,9 @@ children: # 执行步骤
     config:
       datasource: jdbc_source
       sql: 'select * from t_001  where tick = "jdbc_preprocessor";'  # sql语句
-    validators:
-      - { testclass: json_assertion, field: '$.name', expected: jdbc_preprocessor }
+      validators:
+        - { testclass:
+              json_assertion, field: '$.name', expected: jdbc_preprocessor }
   - title: 步骤2
     testclass: jdbcSampler
     config:

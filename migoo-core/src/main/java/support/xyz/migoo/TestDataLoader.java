@@ -49,11 +49,11 @@ public class TestDataLoader {
      * @return java对象
      */
     public static <T> T toJavaObject(String path, Class<T> clazz) throws IOException {
-        var result = toJSON(path);
-        return JSON.parseObject(result.toString(), clazz);
+        var result = readFile(path);
+        return JSON.parseObject(JSON.toJSONString(result), clazz);
     }
 
-    public static Object toJSON(String path) throws IOException {
+    public static Object readFile(String path) throws IOException {
         InputStream stream = null;
         try {
             var file = new File(path);

@@ -1,10 +1,10 @@
 title: 测试用例 # 包含配置原件、前置处理器、后置处理器、多个取样器（执行步骤）
 configelements:
-  - '@F(classpath:jdbc/配置元件/jdbc_defaults.yaml)'
+  - !include 'jdbc/配置元件/jdbc_defaults.yaml'
 preprocessors: # 前置处理器
-  - '@F(classpath:jdbc/处理器/jdbc_preprocessor.yaml)'
+  - !include 'jdbc/处理器/jdbc_preprocessor.yaml'
 postprocessors: # 后置处理器
-  - '@F(classpath:jdbc/处理器/jdbc_postprocessor.yaml)'
+  - !include 'jdbc/处理器/jdbc_postprocessor.yaml'
 children: # 执行步骤
   - title: 查询用户的角色id
     testclass: jdbcSampler

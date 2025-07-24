@@ -63,9 +63,9 @@ public class IncludeConstructor extends Constructor {
         public Object construct(Node node) {
             if (node instanceof ScalarNode scalarNode) {
                 String filename = constructScalar(scalarNode);
-                String path = Paths.get(filename).isAbsolute() ? filename : new File(basePath, filename).getAbsolutePath();
+                String path = Paths.get(filename).isAbsolute() ? filename : basePath == null ? filename : new File(basePath, filename).getAbsolutePath();
                 try {
-                    return TestDataLoader.toJSON(path);
+                    return TestDataLoader.readFile(path);
                 } catch (Exception e) {
                     throw new RuntimeException("加载 !include YAML文件错误: " + path, e);
                 }
