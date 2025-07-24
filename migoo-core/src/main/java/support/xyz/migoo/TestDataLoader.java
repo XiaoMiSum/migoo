@@ -28,15 +28,18 @@ package support.xyz.migoo;
 
 import com.alibaba.fastjson2.JSON;
 import org.yaml.snakeyaml.Yaml;
-import support.xyz.migoo.reader.ReaderFactor;
 import support.xyz.migoo.yaml.IncludeConstructor;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 /**
  * @author xiaomi
  */
 public class TestDataLoader {
-
-    public static final String CLASSPATH = "classpath:";
 
     /**
      * 将文件内容反序列化为java对象
@@ -45,33 +48,39 @@ public class TestDataLoader {
      * @param <T>   java 类型
      * @return java对象
      */
-    public static <T> T toJavaObject(String path, Class<T> clazz) {
-        var isClasspath = path.startsWith(CLASSPATH);
-        path = isClasspath ? path.substring(CLASSPATH.length()) : path;
-        return toJavaObject(path, isClasspath, clazz);
-    }
-
-    /**
-     * 将文件内容反序列化为java对象
-     *
-     * @param clazz       类型
-     * @param isClasspath 是否为 class path
-     * @param <T>         java 类型
-     * @return java对象
-     */
-    public static <T> T toJavaObject(String path, boolean isClasspath, Class<T> clazz) {
-        var result = toJSON(path, isClasspath);
+    public static <T> T toJavaObject(String path, Class<T> clazz) throws IOException {
+        var result = toJSON(path);
         return JSON.parseObject(result.toString(), clazz);
     }
 
-    public static Object toJSON(String path) {
-        var isClasspath = path.startsWith(CLASSPATH);
-        path = isClasspath ? path.substring(CLASSPATH.length()) : path;
-        return toJSON(path, isClasspath);
+    public static Object toJSON(String path) throws IOException {
+        InputStream stream = null;
+        try {
+            var file = new File(path);
+            if (file.exists()) {
+                if (file.isDirectory()) {
+                    throw new RuntimeException("传入文件路径不能是目录: " + path);
+                }
+                stream = Files.newInputStream(file.toPath());
+            } else {
+                path = path.startsWith("/") ? path.substring(1) : path;
+                stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
+            }
+            if (stream != null) {
+                if (path.endsWith(".yml") || path.endsWith(".yaml")) {
+                    return new Yaml(new IncludeConstructor(file.exists() ? file : null)).load(stream);
+                }
+                var bytes = new byte[stream.available()];
+                stream.read(bytes);
+                return new String(bytes, StandardCharsets.UTF_8);
+            }
+            throw new RuntimeException("读取文件失败: " + path);
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
+        }
     }
 
-    public static Object toJSON(String path, boolean isClasspath) {
-        var content = ReaderFactor.getReader(isClasspath, path).read();
-        return JSON.toJSON(new Yaml(new IncludeConstructor()).load(content));
-    }
+
 }

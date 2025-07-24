@@ -25,25 +25,28 @@ class Cli implements Runnable {
 
     @Override
     public void run() {
-
-        if (StringUtils.isNotBlank(file)) {
-            System.setProperty(Constants.REPORT_ENABLE, StringUtils.isNotBlank(report) ? "true" : "false");
-            System.setProperty(Constants.REPORT_OUTPUT, StringUtils.isNotBlank(report) ? report : "");
-            var yaml = TestDataLoader.toJavaObject(file, JSONObject.class);
-            System.out.println("用例解析完成....");
-            MiGoo.start(yaml);
-            System.out.println("测试执行完成....");
-            System.out.println("测试报告路径: " + report);
-        } else if (StringUtils.isNoneBlank(h2m, p2m)) {
-            var f = new File(StringUtils.isNotBlank(h2m) ? h2m : p2m);
-            if (f.exists() && f.isFile()) {
-                ConvertFactory.convert(StringUtils.isNotBlank(h2m) ? "h2m" : "p2m", f);
-                System.out.println("取样器转换结束....");
+        try {
+            if (StringUtils.isNotBlank(file)) {
+                System.setProperty(Constants.REPORT_ENABLE, StringUtils.isNotBlank(report) ? "true" : "false");
+                System.setProperty(Constants.REPORT_OUTPUT, StringUtils.isNotBlank(report) ? report : "");
+                var yaml = TestDataLoader.toJavaObject(file, JSONObject.class);
+                System.out.println("用例解析完成....");
+                MiGoo.start(yaml);
+                System.out.println("测试执行完成....");
+                System.out.println("测试报告路径: " + report);
+            } else if (StringUtils.isNoneBlank(h2m, p2m)) {
+                var f = new File(StringUtils.isNotBlank(h2m) ? h2m : p2m);
+                if (f.exists() && f.isFile()) {
+                    ConvertFactory.convert(StringUtils.isNotBlank(h2m) ? "h2m" : "p2m", f);
+                    System.out.println("取样器转换结束....");
+                } else {
+                    System.out.println("文件不存在或不是一个文件");
+                }
             } else {
-                System.out.println("文件不存在或不是一个文件");
+                System.out.println("没有找到有效操作参数，请通过 -h 查看帮助");
             }
-        } else {
-            System.out.println("没有找到有效操作参数，请通过 -h 查看帮助");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

@@ -35,6 +35,7 @@ import picocli.CommandLine;
 import support.xyz.migoo.TestDataLoader;
 import xyz.migoo.report.StandardReporter;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
@@ -49,9 +50,13 @@ import static xyz.migoo.Constants.REPORT_ENABLE;
 public class MiGoo {
 
     static {
-        var config = TestDataLoader.toJavaObject("props.migoo.yml", true, JSONObject.class);
-        config.forEach((key, value) -> System.setProperty(key, String.valueOf(value)));
-        printLogo();
+        try {
+            var config = TestDataLoader.toJavaObject("props.migoo.yml", JSONObject.class);
+            config.forEach((key, value) -> System.setProperty(key, String.valueOf(value)));
+            printLogo();
+        } catch (IOException ignored) {
+
+        }
     }
 
     private final JsonTree testcase;
@@ -74,15 +79,11 @@ public class MiGoo {
         System.out.println("    GitHub: https://github.com/XiaoMiSum/migoo");
     }
 
-    public static Result start(String filePath) {
+    public static Result start(String filePath) throws IOException {
         var testcase = TestDataLoader.toJavaObject(filePath, JSONObject.class);
         return start(testcase);
     }
 
-    public static Result start(String filePath, boolean isClassPath) {
-        var testcase = TestDataLoader.toJavaObject(filePath, isClassPath, JSONObject.class);
-        return start(testcase);
-    }
 
     public static Result start(Map<String, Object> testcase) {
         return start(new JsonTree(testcase));

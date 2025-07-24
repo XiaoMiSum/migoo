@@ -29,21 +29,21 @@
 package support.xyz.migoo.yaml;
 
 import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.AbstractConstruct;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
+import org.yaml.snakeyaml.nodes.SequenceNode;
 import org.yaml.snakeyaml.nodes.Tag;
-import support.xyz.migoo.reader.ReaderFactor;
+import support.xyz.migoo.TestDataLoader;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
-import static support.xyz.migoo.TestDataLoader.CLASSPATH;
-
+/**
+ * @author xiaomi
+ */
 public class IncludeConstructor extends Constructor {
 
     private final File basePath;
@@ -58,32 +58,24 @@ public class IncludeConstructor extends Constructor {
         this.yamlConstructors.put(new Tag("!include"), new IncludeConstruct());
     }
 
-    // For demonstration
-    public static void main(String[] args) throws Exception {
-        File basePath = new File(System.getProperty("user.dir")); // Current directory
-        InputStream input = new FileInputStream(new File(basePath, "b.yaml"));
-        Yaml yaml = new Yaml(new IncludeConstructor(basePath));
-
-        Object data = yaml.load(input);
-        System.out.println(data);
-    }
-
     private class IncludeConstruct extends AbstractConstruct {
         @Override
         public Object construct(Node node) {
             if (node instanceof ScalarNode scalarNode) {
                 String filename = constructScalar(scalarNode);
-                var isClasspath = filename.startsWith(CLASSPATH);
-                String path = isClasspath ? filename.substring(CLASSPATH.length()) :
-                        Paths.get(filename).isAbsolute() ? filename : new File(basePath, filename).getAbsolutePath();
+                String path = Paths.get(filename).isAbsolute() ? filename : new File(basePath, filename).getAbsolutePath();
                 try {
-                    var file = ReaderFactor.getReader(isClasspath, path).read();
-                    return new Yaml(new IncludeConstructor(basePath)).load(file);
+                    return TestDataLoader.toJSON(path);
                 } catch (Exception e) {
                     throw new RuntimeException("加载 !include YAML文件错误: " + path, e);
                 }
             }
-            throw new RuntimeException("暂不支持导入多个文件");
+            if (node instanceof SequenceNode sequenceNode) {
+                var resp = new ArrayList<>();
+                sequenceNode.getValue().forEach(item -> resp.add(construct(item)));
+                return resp;
+            }
+            throw new RuntimeException("节点内容格式错误，请使用: !include file 或 !include [ file1, file2 ]");
         }
     }
 }
