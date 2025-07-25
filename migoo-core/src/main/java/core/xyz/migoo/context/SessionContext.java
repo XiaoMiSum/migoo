@@ -26,7 +26,7 @@
 package core.xyz.migoo.context;
 
 /**
- * 测试上下文
+ * 测试上下文 每个 Session对应一个 SessionContext
  *
  * @author xiaomi
  */

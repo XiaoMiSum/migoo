@@ -26,7 +26,7 @@
 #
 
 
-core.xyz.migoo.testelement.TestSuiteExecutable
+core.xyz.migoo.testelement.TestSuite
 protocol.xyz.migoo.debug.sampler.DebugSampler
 protocol.xyz.migoo.http.sampler.HTTPSampler
 protocol.xyz.migoo.jdbc.sampler.JDBCSampler

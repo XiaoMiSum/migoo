@@ -31,7 +31,7 @@ package core.xyz.migoo.filter.report;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.filter.RunFilterChain;
 import core.xyz.migoo.filter.SampleFilterChain;
-import core.xyz.migoo.testelement.TestSuiteExecutable;
+import core.xyz.migoo.testelement.TestSuite;
 import core.xyz.migoo.testelement.sampler.SampleResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +46,7 @@ public class TestLogFilter implements ReportFilter {
 
     @Override
     public void doRun(ContextWrapper context, RunFilterChain chain) {
-        if (TestSuiteExecutable.class.isAssignableFrom(chain.getClass())) {
+        if (TestSuite.class.isAssignableFrom(chain.getClass())) {
             log.info("开始测试：{}", context.getTestResult().getTitle());
         }
         chain.doRun(context);

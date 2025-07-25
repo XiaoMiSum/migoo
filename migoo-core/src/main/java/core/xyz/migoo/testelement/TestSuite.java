@@ -25,15 +25,25 @@
 
 package core.xyz.migoo.testelement;
 
-import core.xyz.migoo.report.Result;
+import core.xyz.migoo.config.EmptyConfigureItem;
+import core.xyz.migoo.context.ContextWrapper;
 
-public class TestSuiteResult extends Result {
+/**
+ * 测试集合执行类
+ *
+ * @author xiaomi
+ */
+@Alias("__testsuite__")
+public class TestSuite extends TestContainerExecutable<EmptyConfigureItem, TestSuite, TestSuiteResult> {
 
-    public TestSuiteResult(String title) {
-        super(title);
+    @Override
+    protected TestSuiteResult getTestResult() {
+        return new TestSuiteResult(runtime.id, runtime.title);
     }
 
-    public TestSuiteResult(String id, String title) {
-        super(id, title);
+    @Override
+    protected void execute(ContextWrapper ctx, TestSuiteResult testResult) {
+        executeChildren(ctx);
     }
+
 }
