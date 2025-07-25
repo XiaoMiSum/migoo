@@ -44,6 +44,7 @@ import static core.xyz.migoo.testelement.TestElementConstantsInterface.DATASOURC
  * @author xiaomi
  * Created at 2025/7/19 20:17
  */
+@SuppressWarnings("unchecked")
 public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTPConstantsInterface {
 
     @JSONField(name = DATASOURCE)
@@ -115,12 +116,24 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
         self.query = self.query == null ? localOther.query : self.query;
         self.data = self.data == null ? localOther.data : self.data;
         self.body = self.body == null ? localOther.body : self.body;
+        self.bytes = self.bytes == null ? localOther.bytes : self.bytes;
+        self.binary = self.binary == null ? localOther.binary : self.binary;
         return self;
     }
 
     @Override
     public HTTPConfigureItem calc(ContextWrapper context) {
-        // todo 这里要实现 变量替换
+        protocol = (String) context.eval(protocol);
+        host = (String) context.eval(host);
+        port = (String) context.eval(port);
+        path = (String) context.eval(path);
+        method = (String) context.eval(method);
+        headers = (Map<String, String>) context.eval(headers);
+        cookie = (Map<String, String>) context.eval(cookie);
+        query = (Map<String, String>) context.eval(query);
+        data = (Map<String, String>) context.eval(data);
+        body = context.eval(body);
+        binary = context.eval(binary);
         return this;
     }
 

@@ -48,7 +48,10 @@ public class RedisConfigureItem implements ConfigureItem<RedisConfigureItem>, Re
 
     @Override
     public RedisConfigureItem calc(ContextWrapper context) {
-        // todo 这里要实现 变量替换
+        datasource = (String) context.eval(datasource);
+        url = (String) context.eval(url);
+        command = (String) context.eval(command);
+        send = (String) context.eval(send);
         return this;
     }
 

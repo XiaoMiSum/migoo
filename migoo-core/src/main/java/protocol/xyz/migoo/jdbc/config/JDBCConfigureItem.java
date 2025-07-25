@@ -53,7 +53,12 @@ public class JDBCConfigureItem implements ConfigureItem<JDBCConfigureItem>, JDBC
 
     @Override
     public JDBCConfigureItem calc(ContextWrapper context) {
-        // todo 这里要实现 变量替换
+        datasource = (String) context.eval(datasource);
+        driver = (String) context.eval(driver);
+        url = (String) context.eval(url);
+        username = (String) context.eval(username);
+        password = (String) context.eval(password);
+        sql = (String) context.eval(sql);
         return this;
     }
 
