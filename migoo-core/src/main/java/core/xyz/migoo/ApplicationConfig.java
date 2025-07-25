@@ -34,6 +34,7 @@ import core.xyz.migoo.extractor.Extractor;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.filter.report.ReportFilter;
 import core.xyz.migoo.function.Function;
+import core.xyz.migoo.template.TemplateEngine;
 import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.configure.ConfigureElement;
 import core.xyz.migoo.testelement.processor.Postprocessor;
@@ -71,6 +72,7 @@ public class ApplicationConfig {
     private static final ReadWriteLock REPORT_FILTERS_LOCK = new ReentrantReadWriteLock(false);
     private static final ReadWriteLock TEST_FILTER_KEY_MAP_LOCK = new ReentrantReadWriteLock(false);
     private static final ReadWriteLock globalContextLock = new ReentrantReadWriteLock(false);
+    private static final ReadWriteLock TEMPLATE_ENGINE_LIST_LOCK = new ReentrantReadWriteLock(false);
 
     private static Map<String, Class<? extends TestElement>> TEST_ELEMENT_KEY_MAP;
     private static Map<String, Class<? extends ConfigureElement>> CONFIG_ELEMENT_KEY_MAP;
@@ -84,6 +86,8 @@ public class ApplicationConfig {
     private static Map<String, Class<? extends TestFilter>> TEST_FILTER_KEY_MAP;
     private static Map<Class<?>, JSONInterceptor> JSON_INTERCEPTOR_KEY_MAP;
     private static GlobalContext globalContext;
+    private static List<Class<? extends TemplateEngine>> TEMPLATE_ENGINE_LIST;
+
 
     public static Map<String, Class<? extends TestElement>> getTestElementKeyMap() {
         return getDataMap(TEST_ELEMENT_KEY_MAP_LOCK,
@@ -197,7 +201,6 @@ public class ApplicationConfig {
         );
     }
 
-
     public static GlobalContext getGlobalContext() {
         return getDataMap(globalContextLock,
                 () -> ApplicationConfig.globalContext,
@@ -207,6 +210,16 @@ public class ApplicationConfig {
                     items.addAll(getReportFilters());
                     ApplicationConfig.globalContext.getConfigGroup().put(FILTERS, items);
                     return ApplicationConfig.globalContext;
+                }
+        );
+    }
+
+    public static List<Class<? extends TemplateEngine>> getTemplateEngines() {
+        return getDataMap(TEMPLATE_ENGINE_LIST_LOCK,
+                () -> ApplicationConfig.TEMPLATE_ENGINE_LIST,
+                () -> {
+                    ApplicationConfig.TEMPLATE_ENGINE_LIST = MiGooServiceLoader.loadAsListBySPI(TemplateEngine.class);
+                    return ApplicationConfig.TEMPLATE_ENGINE_LIST;
                 }
         );
     }

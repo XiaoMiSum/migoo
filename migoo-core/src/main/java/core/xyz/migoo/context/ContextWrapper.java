@@ -31,6 +31,7 @@ import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.config.ConfigureGroup;
 import core.xyz.migoo.context.variables.*;
 import core.xyz.migoo.report.Result;
+import core.xyz.migoo.template.DefaultTemplateEngine;
 import core.xyz.migoo.template.TemplateEngine;
 import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestElementConfigure;
@@ -53,7 +54,7 @@ public class ContextWrapper {
     private final ConfigureGroup configureGroup;
     private final AllVariablesWrapper allVariablesWrapper;
     private final LocalVariablesWrapper localVariablesWrapper;
-    private final TemplateEngine templateEngine;
+    private TemplateEngine templateEngine;
     // 当前上下文，即最后一个上下文对象
     private Context sessionContext;
     private GlobalContext globalContext;
@@ -98,7 +99,15 @@ public class ContextWrapper {
         }
         this.allVariablesWrapper = new AllVariablesWrapper(Collections.unmodifiableList(rawContextChain));
         this.localVariablesWrapper = new LocalVariablesWrapper(List.of(currentContext));
-        this.templateEngine = new TemplateEngine(this, ApplicationConfig.getFunctionKeyMap());
+        try {
+            var templateEngines = ApplicationConfig.getTemplateEngines();
+            this.templateEngine = templateEngines.isEmpty() ? new DefaultTemplateEngine() :
+                    templateEngines.getFirst().getConstructor().newInstance();
+        } catch (Exception e) {
+            this.templateEngine = new DefaultTemplateEngine();
+        }
+        this.templateEngine.setContext(this);
+        this.templateEngine.setFunctions(ApplicationConfig.getFunctionKeyMap());
     }
 
     /**

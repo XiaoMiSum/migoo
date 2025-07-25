@@ -27,6 +27,17 @@ public class MiGooServiceLoader {
         return Collections.unmodifiableMap(keyMap);
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> List<Class<? extends T>> loadAsListBySPI(Class<T> clazz) {
+        // SPI 查找并注册
+        var collections = new ArrayList<Class<? extends T>>();
+        var serviceLoader = ServiceLoader.load(clazz);
+        serviceLoader.iterator().forEachRemaining(t -> {
+            collections.add((Class<T>) t.getClass());
+        });
+        return Collections.unmodifiableList(collections);
+    }
+
     /**
      * 通过 SPI 查找并返回指定接口或抽象类的关键字字典
      *

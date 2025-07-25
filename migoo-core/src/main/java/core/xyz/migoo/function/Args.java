@@ -31,8 +31,9 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static core.xyz.migoo.template.TemplateEngine.FUNC_EXPRESSION;
-import static core.xyz.migoo.template.TemplateEngine.VARS_EXPRESSION;
+import static core.xyz.migoo.template.DefaultTemplateEngine.FUNC_EXPRESSION;
+import static core.xyz.migoo.template.DefaultTemplateEngine.VARS_EXPRESSION;
+
 
 /**
  * @author xiaomi
