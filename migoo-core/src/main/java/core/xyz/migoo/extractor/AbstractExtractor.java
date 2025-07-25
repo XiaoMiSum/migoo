@@ -70,14 +70,13 @@ public abstract class AbstractExtractor implements Extractor, ExtractorConstants
         if (context.getTestResult() instanceof SampleResult result) {
             var res = StringUtils.isBlank(result.getResponse().bytesAsString()) ? broken() : extract(result);
             result.addExtractor(res);
-            // todo 提取器的提取的变量需要优化 目前存在 session 层  考虑一下 local层是否需要
             if (TestStatus.passed.equals(res.getStatus())) {
-                context.getSessionVariablesWrapper().put(refName, res.getValue());
+                context.getLocalVariablesWrapper().put(refName, res.getValue());
                 return;
             }
             if (TestStatus.failed.equals(res.getStatus()) && defaultValue != null) {
                 res.setStatus(TestStatus.passed);
-                context.getSessionVariablesWrapper().put(refName, defaultValue);
+                context.getLocalVariablesWrapper().put(refName, defaultValue);
             }
             return;
         }

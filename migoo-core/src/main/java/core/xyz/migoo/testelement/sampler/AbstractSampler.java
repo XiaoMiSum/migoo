@@ -29,14 +29,15 @@
 package core.xyz.migoo.testelement.sampler;
 
 import core.xyz.migoo.config.ConfigureItem;
+import core.xyz.migoo.config.MiGooVariables;
+import core.xyz.migoo.context.Context;
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.context.TestRunContext;
 import core.xyz.migoo.filter.SampleFilterChain;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.testelement.AbstractTestElementExecutable;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Sampler 抽象实现类。
@@ -52,6 +53,25 @@ public abstract class AbstractSampler<CONFIG extends ConfigureItem<CONFIG>, SELF
     private Iterator<TestFilter> sampleFilters;
 
     public AbstractSampler() {
+    }
+
+    /**
+     * 覆盖父类该方法，取样器无需创建新的 context, 返回最后一个  context
+     *
+     * @param parentContext 测试上下文链路
+     * @return 拷贝的新上下文链路
+     */
+    protected List<Context> getContextChain(List<Context> parentContext) {
+        List<Context> contextChain = new ArrayList<>(parentContext);
+        Context context = parentContext.getLast();
+        if (Objects.isNull(variables)) {
+            variables = new MiGooVariables();
+        }
+        runtime.configGroup.put(VARIABLES, variables.merge(context.getConfigGroup().getVariables()));
+        if (context instanceof TestRunContext testRunContext) {
+            testRunContext.setConfigGroup(runtime.configGroup);
+        }
+        return contextChain;
     }
 
     protected void handleFilters(ContextWrapper contextWrapper) {

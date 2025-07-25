@@ -10,7 +10,7 @@ children: # 执行步骤
     configelements:
       - testclass: jdbc_datasource # 配置元件类型
         ref_name: jdbc_source
-        url: 'jdbc:mysql://127.0.0.1:3306/quick-click?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2b8&failOverReadOnly=false'
+        url: 'jdbc:mysql://127.0.0.1:3306/quick-click?characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2b8&failOverReadOnly=false'
         username: 'root'
         password: '123456qq!'
     children: # 执行步骤

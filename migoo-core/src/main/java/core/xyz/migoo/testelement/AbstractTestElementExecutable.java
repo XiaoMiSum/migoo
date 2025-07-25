@@ -32,7 +32,7 @@ import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.config.MiGooVariables;
 import core.xyz.migoo.context.Context;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.context.TestStepContext;
+import core.xyz.migoo.context.TestSuiteContext;
 import core.xyz.migoo.extractor.Extractor;
 import core.xyz.migoo.filter.ExecuteFilterChain;
 import core.xyz.migoo.filter.RunFilterChain;
@@ -87,30 +87,23 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
     }
 
     /**
-     * 当前测试元件的上下文链
+     * 当前测试元件的上下文链, 当子类有额外的需求时重写该方法
      *
      * @param parentContext 父上下文链
      */
     protected List<Context> getContextChain(List<Context> parentContext) {
         List<Context> contextChain = new ArrayList<>(parentContext);
-        contextChain.add(createCurrentContext(parentContext.getLast()));
-        return contextChain;
-    }
 
-    /**
-     * 创建当前测试元件的上下文对象，当子类有额外的需求时重写该方法
-     *
-     * @return 当前测试元件的上下文对象
-     */
-    protected TestStepContext createCurrentContext(Context parentContext) {
-        TestStepContext context = new TestStepContext();
+        TestSuiteContext context = new TestSuiteContext();
         if (Objects.isNull(variables)) {
             variables = new MiGooVariables();
         }
-        runtime.configGroup.put(VARIABLES, variables.merge(parentContext.getConfigGroup().getVariables()));
+        runtime.configGroup.put(VARIABLES, variables.merge(parentContext.getLast().getConfigGroup().getVariables()));
         context.setConfigGroup(runtime.getConfigGroup());
-        return context;
+        contextChain.add(context);
+        return contextChain;
     }
+
 
     protected void evalVariableConfigItem(ContextWrapper ctx) {
         MiGooVariables item;
