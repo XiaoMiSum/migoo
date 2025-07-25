@@ -56,6 +56,7 @@ public class IncludeConstructor extends Constructor {
         super(new LoaderOptions());
         this.basePath = basePath;
         this.yamlConstructors.put(new Tag("!include"), new IncludeConstruct());
+        this.yamlConstructors.put(new Tag("!import"), new IncludeConstruct());
     }
 
     private class IncludeConstruct extends AbstractConstruct {
