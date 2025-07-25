@@ -28,6 +28,8 @@
 
 package core.xyz.migoo.config;
 
+import core.xyz.migoo.context.ContextWrapper;
+
 /**
  * @author xiaomi
  * Created at 2025/7/20 12:29
@@ -35,6 +37,11 @@ package core.xyz.migoo.config;
 public class EmptyConfigureItem implements ConfigureItem<EmptyConfigureItem> {
     @Override
     public EmptyConfigureItem merge(EmptyConfigureItem other) {
+        return this;
+    }
+
+    @Override
+    public EmptyConfigureItem calc(ContextWrapper context) {
         return this;
     }
 }

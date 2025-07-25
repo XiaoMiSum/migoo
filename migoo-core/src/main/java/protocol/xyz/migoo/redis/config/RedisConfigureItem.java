@@ -3,6 +3,7 @@ package protocol.xyz.migoo.redis.config;
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.alibaba.fastjson2.annotation.JSONType;
 import core.xyz.migoo.config.ConfigureItem;
+import core.xyz.migoo.context.ContextWrapper;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.redis.RedisConstantsInterface;
 
@@ -45,6 +46,11 @@ public class RedisConfigureItem implements ConfigureItem<RedisConfigureItem>, Re
         return self;
     }
 
+    @Override
+    public RedisConfigureItem calc(ContextWrapper context) {
+        // todo 这里要实现 变量替换
+        return this;
+    }
 
     public String getDatasource() {
         return datasource;

@@ -30,6 +30,7 @@ package protocol.xyz.migoo.http.config;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.config.ConfigureItem;
+import core.xyz.migoo.context.ContextWrapper;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.http.HTTPConstantsInterface;
 
@@ -54,7 +55,7 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
     private String host;
 
     @JSONField(name = PORT, ordinal = 2)
-    private int port;
+    private String port;
 
     @JSONField(name = PATH, ordinal = 3)
     private String path;
@@ -105,7 +106,7 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
         var self = copy();
         self.protocol = StringUtils.isBlank(self.protocol) ? localOther.protocol : self.protocol;
         self.host = StringUtils.isBlank(self.host) ? localOther.host : self.host;
-        self.port = self.port == 0 ? localOther.port : self.port;
+        self.port = StringUtils.isBlank(self.port) ? localOther.port : self.port;
         self.path = StringUtils.isBlank(self.path) ? localOther.path : self.path;
         self.method = StringUtils.isBlank(self.method) ? localOther.method : self.method;
         self.http2 = self.http2 == null ? localOther.http2 : self.http2;
@@ -115,6 +116,12 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
         self.data = self.data == null ? localOther.data : self.data;
         self.body = self.body == null ? localOther.body : self.body;
         return self;
+    }
+
+    @Override
+    public HTTPConfigureItem calc(ContextWrapper context) {
+        // todo 这里要实现 变量替换
+        return this;
     }
 
     private Map<String, String> handleMap(Map<String, String> other, Map<String, String> self) {
@@ -152,11 +159,11 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
         this.host = host;
     }
 
-    public int getPort() {
+    public String getPort() {
         return port;
     }
 
-    public void setPort(int port) {
+    public void setPort(String port) {
         this.port = port;
     }
 
@@ -239,4 +246,5 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
     public void setBinary(Object binary) {
         this.binary = binary;
     }
+
 }

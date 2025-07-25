@@ -30,6 +30,7 @@ package protocol.xyz.migoo.debug.config;
 
 import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.config.ConfigureItem;
+import core.xyz.migoo.context.ContextWrapper;
 
 /**
  * @author xiaomi
@@ -62,5 +63,11 @@ public class DebugConfigureItem extends JSONObject implements ConfigureItem<Debu
         var self = other.copy();
         self.putAll(this);
         return self;
+    }
+
+    @Override
+    public DebugConfigureItem calc(ContextWrapper context) {
+        this.replaceAll((key, value) -> context.eval(value));
+        return this;
     }
 }

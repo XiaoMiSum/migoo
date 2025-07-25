@@ -76,6 +76,11 @@ public class SyncTimer extends AbstractProcessor<SyncTimer.TimerConfigureItem, S
             return res;
         }
 
+        @Override
+        public TimerConfigureItem calc(ContextWrapper context) {
+            return this;
+        }
+
         public int getTimeout() {
             return timeout;
         }

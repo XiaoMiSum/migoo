@@ -65,7 +65,7 @@ public class HTTPClient extends Request implements HTTPConstantsInterface {
     }
 
     public static Request build(HTTPConfigureItem config) {
-        var port = config.getPort() > 0 ? ":" + config.getPort() : "";
+        var port = (StringUtils.isNotBlank(config.getPort()) ? ":" : "") + config.getPort();
         var path = Strings.CS.startsWith(config.getPath(), "/") ? config.getPath() : "/" + config.getPath();
         var url = "%s://%s%s%s".formatted(config.getProtocol(), config.getHost(), port, path);
         // bytes body data(binary) 不会同时出现

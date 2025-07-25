@@ -105,18 +105,15 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
     }
 
 
-    protected void evalVariableConfigItem(ContextWrapper ctx) {
+    protected void evalConfig(ContextWrapper ctx) {
+        // 变量与config
         MiGooVariables item;
-        // 1、计算 MiGooVariables 对象自身的变量
         if (runtime.variables != null && (item = runtime.configGroup.getVariables()) != null) {
-            runtime.variables = (MiGooVariables) ctx.eval(item);
-            runtime.configGroup.put(VARIABLES, item);
+            ctx.eval(item);
         }
-        // 2、 计算 config 中的变量
         CONFIG config;
         if (runtime.config != null && (config = runtime.configGroup.get(CONFIG)) != null) {
-            runtime.config = (CONFIG) ctx.eval(config);
-            runtime.configGroup.put(CONFIG, config);
+            ctx.eval(config);
         }
     }
 
@@ -220,7 +217,7 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
 
     private void internalRun(ContextWrapper contextWrapper) {
         // 模板计算：当前元件的变量配置项（不会计算父级元件）
-        evalVariableConfigItem(contextWrapper);
+        evalConfig(contextWrapper);
         // 处理配置元件
         if (Objects.nonNull(configureElements)) {
             for (ConfigureElement configureElement : configureElements) {

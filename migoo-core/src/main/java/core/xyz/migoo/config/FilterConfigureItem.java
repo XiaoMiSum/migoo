@@ -28,6 +28,7 @@
 
 package core.xyz.migoo.config;
 
+import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.filter.TestFilter;
 
 import java.util.ArrayList;
@@ -52,5 +53,10 @@ public class FilterConfigureItem<T extends TestFilter> extends ArrayList<T> impl
         FilterConfigureItem<T> filterConfigItem = new FilterConfigureItem<>();
         filterConfigItem.addAll(this);
         return filterConfigItem;
+    }
+
+    @Override
+    public FilterConfigureItem<T> calc(ContextWrapper context) {
+        return this;
     }
 }

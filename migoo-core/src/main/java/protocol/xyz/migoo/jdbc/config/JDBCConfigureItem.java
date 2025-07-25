@@ -2,6 +2,7 @@ package protocol.xyz.migoo.jdbc.config;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.config.ConfigureItem;
+import core.xyz.migoo.context.ContextWrapper;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.jdbc.JDBCConstantsInterface;
 
@@ -48,6 +49,12 @@ public class JDBCConfigureItem implements ConfigureItem<JDBCConfigureItem>, JDBC
         self.maxActive = (self.maxActive = self.maxActive > 0 ? localOther.maxActive : self.maxActive) > 0 ? self.maxActive : 10;
         self.maxWait = (self.maxWait = self.maxWait > 0 ? localOther.maxWait : self.maxWait) > 0 ? self.maxWait : 5000;
         return self;
+    }
+
+    @Override
+    public JDBCConfigureItem calc(ContextWrapper context) {
+        // todo 这里要实现 变量替换
+        return this;
     }
 
     public String getDatasource() {
