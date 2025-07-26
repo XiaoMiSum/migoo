@@ -32,6 +32,8 @@ import core.xyz.migoo.testelement.TestElementConstantsInterface;
  */
 public interface RedisConstantsInterface extends TestElementConstantsInterface {
 
+    String DATASOURCE = "datasource";
+
     String REDIS_URL_TEMPLATE = "redis://";
     /**
      * redis://[username:password@]host[:port][/db]

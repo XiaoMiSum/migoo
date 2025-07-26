@@ -38,7 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static core.xyz.migoo.testelement.TestElementConstantsInterface.DATASOURCE;
+import static core.xyz.migoo.testelement.TestElementConstantsInterface.REF;
 
 /**
  * @author xiaomi
@@ -47,8 +47,8 @@ import static core.xyz.migoo.testelement.TestElementConstantsInterface.DATASOURC
 @SuppressWarnings("unchecked")
 public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTPConstantsInterface {
 
-    @JSONField(name = DATASOURCE)
-    protected String datasource;
+    @JSONField(name = REF)
+    protected String ref;
     @JSONField(name = PROTOCOL, ordinal = 1)
     private String protocol;
 
@@ -148,12 +148,12 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
         return resp;
     }
 
-    public String getDatasource() {
-        return StringUtils.isBlank(datasource) ? DEF_REF_NAME_KEY : datasource;
+    public String getRef() {
+        return StringUtils.isBlank(ref) ? DEF_REF_NAME_KEY : ref;
     }
 
-    public void setDatasource(String datasource) {
-        this.datasource = datasource;
+    public void setRef(String ref) {
+        this.ref = ref;
     }
 
     public String getProtocol() {

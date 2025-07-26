@@ -60,10 +60,6 @@ public class HTTPClient extends Request implements HTTPConstantsInterface {
         super(method, url);
     }
 
-    public static HTTPClient getInstance(String method, String url) {
-        return new HTTPClient(method, url);
-    }
-
     public static Request build(HTTPConfigureItem config) {
         var port = StringUtils.isNotBlank(config.getPort()) ? ":" + config.getPort() : "";
         var path = Strings.CS.startsWith(config.getPath(), "/") ? config.getPath() : "/" + config.getPath();

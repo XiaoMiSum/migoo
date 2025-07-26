@@ -31,7 +31,7 @@ import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.context.SessionContext;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.TestElement;
-import core.xyz.migoo.testelement.TestElementConfigure;
+import core.xyz.migoo.testelement.TestElementConfigureGroup;
 import core.xyz.migoo.testelement.TestElementConstantsInterface;
 import support.xyz.migoo.ValidateResult;
 
@@ -89,7 +89,7 @@ public class SessionRunner {
         // 会话上下文默认值：添加一个空的变量配置
         // SessionRunner 可能直接运行某个 Sampler，而不是 TestCase，比如 Groovy/Java 用例
         // 示例：SessionRunner 连续运行多个 Http 请求，Http 请求中设置和读取 Session 变量
-        TestElementConfigure testElementConfig = new TestElementConfigure();
+        TestElementConfigureGroup testElementConfig = new TestElementConfigureGroup();
         testElementConfig.put(TestElementConstantsInterface.VARIABLES, new MiGooVariables());
         sessionContext.setConfigGroup(testElementConfig);
 
@@ -99,8 +99,8 @@ public class SessionRunner {
     /**
      * Session 上下文配置，如变量配置、Http 配置等。
      */
-    public void config(TestElementConfigure config) {
-        var oldConfig = (TestElementConfigure) sessionContext.getConfigGroup();
+    public void config(TestElementConfigureGroup config) {
+        var oldConfig = (TestElementConfigureGroup) sessionContext.getConfigGroup();
         sessionContext.setConfigGroup(oldConfig.merge(config));
     }
 

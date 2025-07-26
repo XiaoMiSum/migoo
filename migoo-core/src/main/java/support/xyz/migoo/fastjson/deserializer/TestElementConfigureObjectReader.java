@@ -33,7 +33,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.reader.ObjectReader;
 import core.xyz.migoo.testelement.TestElement;
-import core.xyz.migoo.testelement.TestElementConfigure;
+import core.xyz.migoo.testelement.TestElementConfigureGroup;
 import core.xyz.migoo.testelement.processor.Preprocessor;
 
 import java.lang.reflect.Type;
@@ -42,7 +42,7 @@ import java.lang.reflect.Type;
  * @author xiaomi
  * Created at 2025/7/19 22:16
  */
-public class TestElementConfigureObjectReader implements ObjectReader<TestElementConfigure> {
+public class TestElementConfigureObjectReader implements ObjectReader<TestElementConfigureGroup> {
 
     public static void main(String[] args) {
         var str = """
@@ -60,8 +60,8 @@ public class TestElementConfigureObjectReader implements ObjectReader<TestElemen
     }
 
     @Override
-    public TestElementConfigure readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
+    public TestElementConfigureGroup readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
         var value = jsonReader.readObject();
-        return JSONObject.parseObject(JSON.toJSONString(value), TestElementConfigure.class);
+        return JSONObject.parseObject(JSON.toJSONString(value), TestElementConfigureGroup.class);
     }
 }

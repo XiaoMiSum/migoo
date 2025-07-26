@@ -51,7 +51,7 @@ public class HTTPDefaults extends AbstractConfigureElement<HTTPConfigureItem, HT
     protected void doProcess(ContextWrapper context) {
         refName = StringUtils.isBlank(refName) ? DEF_REF_NAME_KEY : refName;
         var localConfig = runtime.getConfig();
-        var otherRefName = StringUtils.isBlank(localConfig.datasource) ? DEF_REF_NAME_KEY : localConfig.datasource;
+        var otherRefName = StringUtils.isBlank(localConfig.ref) ? DEF_REF_NAME_KEY : localConfig.ref;
         var config = (HTTPConfigureItem) context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().get(otherRefName);
         if (Objects.nonNull(config)) {
             runtime.setConfig(localConfig = localConfig.merge(config));

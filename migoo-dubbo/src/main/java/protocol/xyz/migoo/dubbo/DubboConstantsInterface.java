@@ -2,7 +2,7 @@
  *
  *  * The MIT License (MIT)
  *  *
- *  * Copyright (c) 2018. Lorem XiaoMiSum (mi_xiao@qq.com)
+ *  * Copyright (c) 2025.  Lorem XiaoMiSum (mi_xiao@qq.com)
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining
  *  * a copy of this software and associated documentation files (the
@@ -23,16 +23,19 @@
  *  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  *  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
+ *
  */
 
-package protocol.xyz.migoo.dubbo.util;
+package protocol.xyz.migoo.dubbo;
+
+import core.xyz.migoo.testelement.TestElementConstantsInterface;
 
 /**
  * @author xiaomi
  */
-public interface DubboConstantsInterface {
+public interface DubboConstantsInterface extends TestElementConstantsInterface {
 
-    String DUBBO_DEFAULT = "migoo_protocol_dubbo_element_defaults";
+    String DEF_REF_NAME_KEY = "__dubbo_configure_element_default_ref_name__";
 
     String REGISTRY = "registry";
 

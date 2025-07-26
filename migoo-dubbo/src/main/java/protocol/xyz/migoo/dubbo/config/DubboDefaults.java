@@ -25,9 +25,12 @@
 
 package protocol.xyz.migoo.dubbo.config;
 
-import core.xyz.migoo.testelement.AbstractTestElement;
+import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.Alias;
-import protocol.xyz.migoo.dubbo.util.DubboConstantsInterface;
+import core.xyz.migoo.testelement.TestSuiteResult;
+import core.xyz.migoo.testelement.configure.AbstractConfigureElement;
+import org.apache.commons.lang3.StringUtils;
+import protocol.xyz.migoo.dubbo.DubboConstantsInterface;
 
 import java.util.Objects;
 
@@ -35,21 +38,24 @@ import java.util.Objects;
  * @author mi.xiao
  * @date 2021/4/10 20:38
  */
-@Alias(value = {"Dubbo_Default", "DubboDefault", "Dubbo_Defaults"})
-public class DubboDefaults extends AbstractTestElement implements TestStateListener, DubboConstantsInterface {
+@Alias(value = {"Dubbo_Default", "DubboDefault", "Dubbo_Defaults", "dubbo"})
+public class DubboDefaults extends AbstractConfigureElement<DubboConfigureItem, DubboDefaults, TestSuiteResult> implements DubboConstantsInterface {
 
     @Override
-    public void testStarted() {
-        var defaults = (DubboDefaults) getVariables().get(DUBBO_DEFAULT);
-        if (Objects.nonNull(defaults)) {
-            // 合并已存在的, 重复Key 以当前对象为准
-            setProperties(defaults.getProperty());
+    protected void doProcess(ContextWrapper context) {
+        refName = StringUtils.isBlank(refName) ? DEF_REF_NAME_KEY : refName;
+        var localConfig = runtime.getConfig();
+        var otherRefName = StringUtils.isBlank(localConfig.getRef()) ? DEF_REF_NAME_KEY : localConfig.getRef();
+        var config = (DubboConfigureItem) context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().get(otherRefName);
+        if (Objects.nonNull(config)) {
+            runtime.setConfig(localConfig = localConfig.merge(config));
         }
-        getVariables().put(DUBBO_DEFAULT, this);
+        context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().put(refName, localConfig);
     }
 
+
     @Override
-    public void testEnded() {
-        // nothing to do
+    protected TestSuiteResult getTestResult() {
+        return new TestSuiteResult("Dubbo 默认配置");
     }
 }

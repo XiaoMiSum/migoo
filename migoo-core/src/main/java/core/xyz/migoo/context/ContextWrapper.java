@@ -34,7 +34,7 @@ import core.xyz.migoo.report.Result;
 import core.xyz.migoo.template.DefaultTemplateEngine;
 import core.xyz.migoo.template.TemplateEngine;
 import core.xyz.migoo.testelement.TestElement;
-import core.xyz.migoo.testelement.TestElementConfigure;
+import core.xyz.migoo.testelement.TestElementConfigureGroup;
 import support.xyz.migoo.Computable;
 
 import java.util.Collections;
@@ -147,7 +147,7 @@ public class ContextWrapper {
     }
 
     private ConfigureGroup mergeConfigGroup() {
-        ConfigureGroup config = new TestElementConfigure();
+        ConfigureGroup config = new TestElementConfigureGroup();
         for (var context : rawContextChain) {
             var configureGroup = context.getConfigGroup();
             config = config.merge(configureGroup);

@@ -42,7 +42,7 @@ import java.util.HashMap;
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @JSONType(deserializer = TestElementConfigureObjectReader.class)
-public class TestElementConfigure extends HashMap<String, ConfigureItem> implements ConfigureGroup {
+public class TestElementConfigureGroup extends HashMap<String, ConfigureItem> implements ConfigureGroup {
 
     @Override
     public <T extends ConfigureItem<T>> T get(String key) {
@@ -50,11 +50,11 @@ public class TestElementConfigure extends HashMap<String, ConfigureItem> impleme
     }
 
     @Override
-    public TestElementConfigure copy() {
-        TestElementConfigure testElementConfigure = new TestElementConfigure();
+    public TestElementConfigureGroup copy() {
+        TestElementConfigureGroup testElementConfigureGroup = new TestElementConfigureGroup();
         entrySet().stream().filter(entry -> entry.getValue() != null)
-                .forEach(entry -> testElementConfigure.put(entry.getKey(), entry.getValue()));
-        return testElementConfigure;
+                .forEach(entry -> testElementConfigureGroup.put(entry.getKey(), entry.getValue()));
+        return testElementConfigureGroup;
     }
 
     @Override

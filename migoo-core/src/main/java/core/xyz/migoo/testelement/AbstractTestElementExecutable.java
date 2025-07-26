@@ -75,7 +75,7 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
     protected List<Extractor> extractors;
 
 
-    protected TestElementConfigure configGroup = new TestElementConfigure();
+    protected TestElementConfigureGroup configGroup = new TestElementConfigureGroup();
     private Iterator<TestFilter> runtimeFilters;
     private Iterator<TestFilter> executeFilters;
 
@@ -279,11 +279,11 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
         this.variables = variables;
     }
 
-    public TestElementConfigure getConfigGroup() {
+    public TestElementConfigureGroup getConfigGroup() {
         return configGroup;
     }
 
-    public void setConfigGroup(TestElementConfigure configGroup) {
+    public void setConfigGroup(TestElementConfigureGroup configGroup) {
         this.configGroup = configGroup;
     }
 

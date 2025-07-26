@@ -32,6 +32,8 @@ import core.xyz.migoo.testelement.TestElementConstantsInterface;
  */
 public interface JDBCConstantsInterface extends TestElementConstantsInterface {
 
+    String DATASOURCE = "datasource";
+
     String DRIVER = "driver";
 
     String URL = "url";

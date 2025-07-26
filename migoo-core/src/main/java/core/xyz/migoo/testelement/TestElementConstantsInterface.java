@@ -60,6 +60,6 @@ public interface TestElementConstantsInterface {
 
     String FILTERS = "filters";
 
-    String DATASOURCE = "datasource";
+    String REF = "ref";
 
 }
