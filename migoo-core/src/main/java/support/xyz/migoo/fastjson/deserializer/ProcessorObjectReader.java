@@ -50,11 +50,11 @@ public abstract class ProcessorObjectReader implements ObjectReader<Processor> {
     @Override
     public Processor readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
         var testElementMap = jsonReader.readObject();
-        var pair = checkTestElement(testElementMap);
+        var pair = checkTestElement(testElementMap, fieldName);
         return JSON.parseObject(JSON.toJSONString(testElementMap), pair.getLeft());
     }
 
-    private Pair<Class<? extends Processor>, String> checkTestElement(Map<String, Object> testElementMap) {
+    private Pair<Class<? extends Processor>, String> checkTestElement(Map<String, Object> testElementMap, Object fieldName) {
         var keyMap = getClass().equals(PreprocessorObjectReader.class) ?
                 ApplicationConfig.getPreprocessorKeyMap() : ApplicationConfig.getPostprocessorKeyMap();
         var key = testElementMap.get(TEST_CLASS).toString().toLowerCase();
@@ -62,6 +62,6 @@ public abstract class ProcessorObjectReader implements ObjectReader<Processor> {
         if (Objects.nonNull(clazz)) {
             return Pair.of(clazz, key);
         }
-        throw new JSONException("没有匹配的处理器, JSON String: " + JSON.toJSONString(testElementMap));
+        throw new JSONException("没有匹配的 %s 处理器, JSON String: %s".formatted(fieldName, JSON.toJSONString(testElementMap)));
     }
 }

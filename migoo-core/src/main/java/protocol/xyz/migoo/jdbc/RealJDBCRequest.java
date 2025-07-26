@@ -29,6 +29,7 @@
 package protocol.xyz.migoo.jdbc;
 
 import core.xyz.migoo.testelement.sampler.SampleResult;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author xiaomi
@@ -62,8 +63,8 @@ public class RealJDBCRequest extends SampleResult.Real implements JDBCConstantsI
     public String format() {
         return url + "\n" +
                 USERNAME + ": " + username + "\n" +
-                PASSWORD + ": " + password + "\n\n" +
-                bytesAsString();
+                PASSWORD + ": " + password +
+                (StringUtils.isNotBlank(bytesAsString()) ? "\n\n" + bytesAsString() : "");
     }
 
 }

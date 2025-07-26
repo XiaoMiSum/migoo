@@ -77,13 +77,13 @@ public class RealHTTPRequest extends HTTP {
     @Override
     public String format() {
         var buf = new StringBuilder();
-        buf.append(method).append(" ").append(url).append(" ").append(version).append("\n");
+        buf.append(method).append(" ").append(url).append(" ").append(version);
         header(buf);
         if (StringUtils.isNotBlank(query)) {
-            buf.append("QueryParams in JSON:").append(query).append("\n\n");
+            buf.append("\n").append("QueryParams as JSON:").append(query);
         }
         if (body != null && body.length > 0) {
-            buf.append("BodyParams in JSON:").append(JSON.toJSONString(body));
+            buf.append("\n").append("BodyParams as JSON:").append(JSON.toJSONString(body));
         }
         return buf.toString();
     }

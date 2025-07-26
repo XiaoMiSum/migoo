@@ -27,7 +27,12 @@ package core.xyz.migoo.testelement;
 
 import core.xyz.migoo.report.Result;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TestSuiteResult extends Result {
+
+    private final List<Result> children = new ArrayList<>();
 
     public TestSuiteResult(String title) {
         super(title);
@@ -35,5 +40,13 @@ public class TestSuiteResult extends Result {
 
     public TestSuiteResult(String id, String title) {
         super(id, title);
+    }
+
+    public List<? extends Result> getChildren() {
+        return children;
+    }
+
+    public void addChild(Result child) {
+        this.children.add(child);
     }
 }

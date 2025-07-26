@@ -27,6 +27,7 @@ package core.xyz.migoo.testelement;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.SessionRunner;
+import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.assertion.Assertion;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.config.MiGooVariables;
@@ -215,39 +216,39 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
     }
 
 
-    private void internalRun(ContextWrapper contextWrapper) {
+    private void internalRun(ContextWrapper context) {
         // 模板计算：当前元件的变量配置项（不会计算父级元件）
-        evalConfig(contextWrapper);
+        evalConfig(context);
         // 处理配置元件
         if (Objects.nonNull(configureElements)) {
             for (ConfigureElement configureElement : configureElements) {
-                configureElement.process(contextWrapper);
+                configureElement.process(context);
             }
         }
         // 执行前置动作
         for (Preprocessor preprocessor : preprocessors) {
-            if (preprocessor.isDisabled()) {
+            if (preprocessor.isDisabled() || context.getTestResult().getStatus() != TestStatus.passed) {
                 continue;
             }
-            preprocessor.process(contextWrapper);
+            preprocessor.process(context);
         }
         // 执行请求
-        doExecute(contextWrapper);
-        if (Objects.nonNull(assertions)) {
+        doExecute(context);
+        if (Objects.nonNull(assertions) && context.getTestResult().getStatus() == TestStatus.passed) {
             for (Assertion assertion : assertions) {
-                assertion.assertThat(contextWrapper);
+                assertion.assertThat(context);
             }
         }
-        if (Objects.nonNull(extractors)) {
+        if (Objects.nonNull(extractors) && context.getTestResult().getStatus() == TestStatus.passed) {
             for (Extractor extractor : extractors) {
-                extractor.process(contextWrapper);
+                extractor.process(context);
             }
         }
         for (Postprocessor postprocessor : postprocessors) {
-            if (postprocessor.isDisabled()) {
+            if (postprocessor.isDisabled() || context.getTestResult().getStatus() != TestStatus.passed) {
                 continue;
             }
-            postprocessor.process(contextWrapper);
+            postprocessor.process(context);
         }
     }
 

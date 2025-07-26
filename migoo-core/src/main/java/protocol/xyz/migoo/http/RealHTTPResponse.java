@@ -84,10 +84,10 @@ public class RealHTTPResponse extends HTTP {
     @Override
     public String format() {
         var buf = new StringBuilder();
-        buf.append(version).append(" ").append(statusCode).append(" ").append(message).append("\n");
+        buf.append(version).append(" ").append(statusCode).append(" ").append(message);
         header(buf);
         if (StringUtils.isNotBlank(bytesAsString())) {
-            buf.append("BodyParams in JSON:").append(JSON.toJSONString(bytesAsString()));
+            buf.append("\n").append("Response body: ").append(JSON.toJSONString(bytesAsString()));
         }
         return buf.toString();
     }

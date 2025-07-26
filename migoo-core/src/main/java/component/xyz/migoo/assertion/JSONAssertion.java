@@ -41,7 +41,7 @@ public class JSONAssertion extends AbstractAssertion {
 
     @Override
     protected AssertionResult initialized(SampleResult result) {
-        var res = new AssertionResult("JSON断言: " + field);
+        var res = new AssertionResult("JSON断言: ");
         var target = result.getResponse().bytesAsString();
         try {
             actualValue = JSONPath.extract(target, field);

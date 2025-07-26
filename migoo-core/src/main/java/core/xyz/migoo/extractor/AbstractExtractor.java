@@ -78,6 +78,9 @@ public abstract class AbstractExtractor implements Extractor, ExtractorConstants
                 res.setStatus(TestStatus.passed);
                 context.getLocalVariablesWrapper().put(refName, defaultValue);
             }
+            if (!TestStatus.passed.equals(res.getStatus())) {
+                context.getTestResult().setStatus(res.getStatus());
+            }
             return;
         }
         throw new RuntimeException("不支持提取的测试组件: " + context.getTestElement().getClass());

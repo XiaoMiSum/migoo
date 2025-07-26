@@ -65,7 +65,7 @@ public class HTTPClient extends Request implements HTTPConstantsInterface {
     }
 
     public static Request build(HTTPConfigureItem config) {
-        var port = (StringUtils.isNotBlank(config.getPort()) ? ":" : "") + config.getPort();
+        var port = StringUtils.isNotBlank(config.getPort()) ? ":" + config.getPort() : "";
         var path = Strings.CS.startsWith(config.getPath(), "/") ? config.getPath() : "/" + config.getPath();
         var url = "%s://%s%s%s".formatted(config.getProtocol(), config.getHost(), port, path);
         // bytes body data(binary) 不会同时出现
@@ -74,12 +74,11 @@ public class HTTPClient extends Request implements HTTPConstantsInterface {
                 .cookie(config.getCookie())
                 .query(config.getQuery())
                 // bytes body data(binary) 不会同时出现
-                .bytes(config.getBytes(), config.getHeaders().get(HEADER_CONTENT_TYPE))
+                .bytes(config.getBytes(), config.getHeaders())
                 .body(config.getBody())
                 .body(config.getBinary(), config.getData())
                 .version(config.isHttp2() ? HTTP_2 : HTTP_1_1);
     }
-
 
     public HTTPClient query(Map<String, ?> query) {
         if (query != null && !query.isEmpty()) {
@@ -88,9 +87,12 @@ public class HTTPClient extends Request implements HTTPConstantsInterface {
         return this;
     }
 
-    public HTTPClient bytes(byte[] bytes, String contentType) {
-        if (Objects.nonNull(bytes)) {
-            super.body(RequestEntity.bytes(bytes, contentType));
+    public HTTPClient bytes(byte[] bytes, Map<String, String> headers) {
+        if (Objects.nonNull(bytes) && bytes.length > 0) {
+            if (Objects.isNull(headers) || headers.isEmpty() || StringUtils.isBlank(headers.get("Content-Type"))) {
+                throw new IllegalArgumentException("使用bytes作为请求数据时， 请求头必须添加 Content-Type");
+            }
+            super.body(RequestEntity.bytes(bytes, headers.get("Content-Type")));
         }
         return this;
     }
@@ -149,7 +151,7 @@ public class HTTPClient extends Request implements HTTPConstantsInterface {
     }
 
     public HTTPClient headers(Map<String, String> headers) {
-        if (headers == null) {
+        if (headers == null || headers.isEmpty()) {
             return this;
         }
         headers.entrySet().stream().filter(entry -> StringUtils.isNotBlank(entry.getValue()))
@@ -158,7 +160,7 @@ public class HTTPClient extends Request implements HTTPConstantsInterface {
     }
 
     public HTTPClient cookie(Map<String, String> cookie) {
-        if (cookie == null) {
+        if (cookie == null || cookie.isEmpty()) {
             return this;
         }
         var localCookie = new BasicClientCookie(cookie.get(COOKIE_NAME), cookie.get(COOKIE_VALUE));

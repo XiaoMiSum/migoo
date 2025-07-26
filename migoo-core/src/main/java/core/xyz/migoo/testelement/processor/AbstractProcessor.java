@@ -30,6 +30,7 @@ package core.xyz.migoo.testelement.processor;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.SessionRunner;
+import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.extractor.Extractor;
@@ -98,6 +99,9 @@ public abstract class AbstractProcessor<CONFIG extends ConfigureItem, SELF, T ex
             context.getTestResult().addPreprocessor(localContext.getTestResult());
         } else if (this instanceof Postprocessor) {
             context.getTestResult().addPostprocessor(localContext.getTestResult());
+        }
+        if (localContext.getTestResult().getStatus() != TestStatus.passed) {
+            context.getTestResult().setStatus(localContext.getTestResult().getStatus());
         }
     }
 

@@ -29,6 +29,7 @@
 package protocol.xyz.migoo.redis;
 
 import core.xyz.migoo.testelement.sampler.SampleResult;
+import org.apache.commons.lang3.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 
@@ -56,7 +57,7 @@ public class RealRedisRequest extends SampleResult.Real implements RedisConstant
      */
     @Override
     public String format() {
-        return url + "\n" + bytesAsString();
+        return url + (StringUtils.isNotBlank(bytesAsString()) ? "\n" + bytesAsString() : "");
     }
 
 }

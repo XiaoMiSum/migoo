@@ -50,7 +50,7 @@ public class HTTPResponseAssertion extends AbstractAssertion {
 
     @Override
     protected AssertionResult initialized(SampleResult result) {
-        var res = new AssertionResult("HTTP响应断言: " + field);
+        var res = new AssertionResult("HTTP响应断言: ");
         var response = (RealHTTPResponse) result.getResponse();
         field = StringUtils.isBlank(field) ? BODY : field;
         var matcher = PATTERN.matcher(field);

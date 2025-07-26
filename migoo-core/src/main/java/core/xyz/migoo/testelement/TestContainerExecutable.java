@@ -73,7 +73,10 @@ public abstract class TestContainerExecutable
             if (TestStatus.failed == result.getStatus()) {
                 context.getTestResult().setStatus(TestStatus.failed);
             }
-            context.getTestResult().addChild(result);
+            if (context.getTestResult() instanceof TestSuiteResult suiteResult) {
+                suiteResult.addChild(result);
+            }
+
         }
     }
 

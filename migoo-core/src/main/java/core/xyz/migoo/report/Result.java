@@ -26,8 +26,6 @@
 package core.xyz.migoo.report;
 
 import core.xyz.migoo.TestStatus;
-import core.xyz.migoo.assertion.AssertionResult;
-import core.xyz.migoo.extractor.ExtractResult;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -45,9 +43,6 @@ public abstract class Result implements Serializable {
     private final String title;
     private final List<Result> preprocessors = new ArrayList<>();
     private final List<Result> postprocessors = new ArrayList<>();
-    private final List<ExtractResult> extractors = new ArrayList<>();
-    private final List<AssertionResult> assertions = new ArrayList<>();
-    private final List<Result> children = new ArrayList<>();
     private TestStatus status = TestStatus.passed;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -91,11 +86,6 @@ public abstract class Result implements Serializable {
         this.status = status;
     }
 
-
-    public List<? extends Result> getChildren() {
-        return children;
-    }
-
     public List<? extends Result> getPreprocessors() {
         return preprocessors;
     }
@@ -104,32 +94,12 @@ public abstract class Result implements Serializable {
         return postprocessors;
     }
 
-    public List<ExtractResult> getExtractors() {
-        return extractors;
-    }
-
-    public List<AssertionResult> getAssertions() {
-        return assertions;
-    }
-
     public void addPreprocessor(Result preprocessor) {
         this.preprocessors.add(preprocessor);
     }
 
     public void addPostprocessor(Result postprocessor) {
         this.postprocessors.add(postprocessor);
-    }
-
-    public void addExtractor(ExtractResult extractor) {
-        this.extractors.add(extractor);
-    }
-
-    public void addAssertion(AssertionResult assertion) {
-        this.assertions.add(assertion);
-    }
-
-    public void addChild(Result child) {
-        this.children.add(child);
     }
 
     public LocalDateTime getStartTime() {
@@ -158,6 +128,7 @@ public abstract class Result implements Serializable {
 
     public void setTrack(Throwable track) {
         this.testStart();
+        this.status = TestStatus.failed;
         this.track = track;
         this.testEnd();
     }

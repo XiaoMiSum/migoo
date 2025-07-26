@@ -69,7 +69,7 @@ public class ConfigureElementObjectReader implements ObjectReader<ConfigureEleme
 
     private Pair<Class<? extends ConfigureElement>, String> checkTestElement(Map<String, Object> elementMap) {
         var keyMap = ApplicationConfig.getConfigureElementKeyMap();
-        var key = elementMap.get(TEST_CLASS).toString();
+        var key = elementMap.get(TEST_CLASS).toString().toLowerCase();
         var clazz = keyMap.get(key);
         if (Objects.nonNull(clazz)) {
             return Pair.of(clazz, key);

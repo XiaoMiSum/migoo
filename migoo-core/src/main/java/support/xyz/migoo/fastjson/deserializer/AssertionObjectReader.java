@@ -39,6 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.reflect.Type;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -68,7 +69,7 @@ public class AssertionObjectReader implements ObjectReader<Assertion> {
 
     private Pair<Class<? extends Assertion>, String> checkTestElement(Map<String, Object> testElementMap) {
         var keyMap = ApplicationConfig.getAssertionKeyMap();
-        var key = testElementMap.get(TEST_CLASS).toString();
+        var key = testElementMap.get(TEST_CLASS).toString().toLowerCase(Locale.ROOT);
         var clazz = keyMap.get(key);
         if (Objects.nonNull(clazz)) {
             return Pair.of(clazz, key);

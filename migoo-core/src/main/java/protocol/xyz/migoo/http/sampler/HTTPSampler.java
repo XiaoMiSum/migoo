@@ -17,6 +17,8 @@ import protocol.xyz.migoo.http.config.HTTPConfigureItem;
 import xyz.migoo.simplehttp.Request;
 import xyz.migoo.simplehttp.Response;
 
+import java.util.Objects;
+
 @Alias(value = {"http", "http_sampler"})
 public class HTTPSampler extends AbstractSampler<HTTPConfigureItem, HTTPSampler, DefaultSampleResult> implements Sampler<DefaultSampleResult>, HTTPConstantsInterface {
 
@@ -52,11 +54,13 @@ public class HTTPSampler extends AbstractSampler<HTTPConfigureItem, HTTPSampler,
     protected void handleRequest(ContextWrapper context, DefaultSampleResult result) {
         super.handleRequest(context, result);
         // 1. 合并配置项
-        var datasource = StringUtils.isBlank(config.getDatasource()) ? DEF_REF_NAME_KEY : config.getDatasource();
+        var localConfig = Objects.isNull(runtime.getConfig()) ? new HTTPConfigureItem() : runtime.getConfig();
+        var datasource = StringUtils.isBlank(localConfig.getDatasource()) ?
+                DEF_REF_NAME_KEY : localConfig.getDatasource();
         var otherConfig = (HTTPConfigureItem) context.getLocalVariablesWrapper().get(datasource);
-        runtime.config = runtime.config.merge(otherConfig);
+        runtime.setConfig(localConfig.merge(otherConfig));
         // 2. 创建http对象
-        request = HTTPClient.build(runtime.config);
+        request = HTTPClient.build(runtime.getConfig());
     }
 
     @Override

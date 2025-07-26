@@ -28,7 +28,8 @@
 
 package core.xyz.migoo.testelement.sampler;
 
-import com.alibaba.fastjson2.JSON;
+import core.xyz.migoo.assertion.AssertionResult;
+import core.xyz.migoo.extractor.ExtractResult;
 import core.xyz.migoo.report.Result;
 
 import java.math.BigDecimal;
@@ -36,12 +37,16 @@ import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author xiaomi
  */
 public abstract class SampleResult extends Result {
 
+    private final List<ExtractResult> extractors = new ArrayList<>();
+    private final List<AssertionResult> assertions = new ArrayList<>();
     private LocalDateTime sampleStartTime;
     private LocalDateTime sampleEndTime;
     private Real request;
@@ -65,6 +70,22 @@ public abstract class SampleResult extends Result {
         if (sampleEndTime == null) {
             setSampleEndTime(LocalDateTime.now(ZoneId.systemDefault()));
         }
+    }
+
+    public void addExtractor(ExtractResult extractor) {
+        this.extractors.add(extractor);
+    }
+
+    public void addAssertion(AssertionResult assertion) {
+        this.assertions.add(assertion);
+    }
+
+    public List<ExtractResult> getExtractors() {
+        return extractors;
+    }
+
+    public List<AssertionResult> getAssertions() {
+        return assertions;
     }
 
     public LocalDateTime getSampleStartTime() {
@@ -140,7 +161,7 @@ public abstract class SampleResult extends Result {
 
         @Override
         public String format() {
-            return JSON.toJSONString(bytes());
+            return bytesAsString();
         }
     }
 }

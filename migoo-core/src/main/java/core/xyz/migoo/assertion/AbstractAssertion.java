@@ -59,10 +59,11 @@ public abstract class AbstractAssertion implements Assertion, AssertionConstants
             if (Objects.isNull(checkRule)) {
                 res.setStatus(TestStatus.failed);
                 res.setMessage(String.format("没有匹配的验证规则：%s", rule));
-            }
-            if (!checkRule.assertThat(actualValue, expected)) {
-                res.setStatus(TestStatus.failed);
-                res.setMessage(String.format("验证 %s %s %s 失败", expected, rule, actualValue));
+            } else {
+                var bool = checkRule.assertThat(actualValue, expected);
+                res.setStatus(bool ? TestStatus.passed : TestStatus.failed);
+                res.setMessage(String.format("%s %s %s %s %s", field, rule, expected == null ? "" : expected, res.getStatus(),
+                        res.getStatus() == TestStatus.passed ? "" : "实际值: " + actualValue));
             }
             // 任意一个失败则设置执行失败
             if (TestStatus.failed == res.getStatus()) {

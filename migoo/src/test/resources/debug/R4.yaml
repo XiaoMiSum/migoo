@@ -13,7 +13,7 @@ preprocessors:
     extractors:
       - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "data_time3" }
 postprocessors:
-  - testclass: httppostprocessor
+  - testclass: http
     extractors:
       - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "data_time5" }
       - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "data_time6" }

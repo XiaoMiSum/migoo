@@ -52,7 +52,7 @@ public abstract class HTTP extends SampleResult.Real {
         if (headers == null || headers.isEmpty()) {
             return;
         }
-        headers.forEach(header -> buf.append(header.getName()).append(": ").append(header.getValue()).append("\n"));
         buf.append("\n");
+        headers.forEach(header -> buf.append(header.getName()).append(": ").append(header.getValue()).append("\n"));
     }
 }

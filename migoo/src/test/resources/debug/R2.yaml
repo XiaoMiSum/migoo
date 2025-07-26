@@ -55,4 +55,4 @@ children:
           - { testclass: "HTTPAssertion", field: status, rule: '>', expected: 200 }
           - { testclass: "JSONAssertion", field: '$.data', rule: notNull }
     postprocessors:
-      - testclass: httppreprocessor
+      - testclass: http

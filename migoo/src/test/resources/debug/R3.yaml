@@ -9,7 +9,7 @@ configelements:
       Test: test
 preprocessors:
   - testclass: httppreprocessor
-    title: 步骤1前置处理器
+    title: R3 前置处理器
     extractors:
       - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "hhh" }
 children:
@@ -42,5 +42,5 @@ children:
       - { testclass: "HTTPAssertion", field: status, rule: '>', expected: 200 }
       - { testclass: "JSONAssertion", field: '$.data', rule: notNull }
 postprocessors:
-  - testclass: httppreprocessor
-    title: R3后置处理器
+  - testclass: http
+    title: R3 后置处理器

@@ -10,10 +10,12 @@ configelements:
     path: '/home/historynum'
 preprocessors:
   - testclass: httppreprocessor
+    title: "R! 前置处理"
     extractors:
       - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "data_time1" }
 postprocessors:
   - testclass: httppostprocessor
+    title: "R! 后置处理"
 children:
   - title: 接口
     configelements:
@@ -24,10 +26,12 @@ children:
         path: '/home/historynum'
     preprocessors:
       - testclass: httppreprocessor
+        title: "接口 前置处理"
         extractors:
           - { testclass: "JSONExtractor", field: "$.data.currentDataTime", variable_name: "data_time2" }
     postprocessors:
       - testclass: httppostprocessor
+        title: "接口 后置处理"
     children:
       - title: 测试用例
         configelements:
