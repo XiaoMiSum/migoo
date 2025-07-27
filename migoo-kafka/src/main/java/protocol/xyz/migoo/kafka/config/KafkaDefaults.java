@@ -25,9 +25,12 @@
 
 package protocol.xyz.migoo.kafka.config;
 
-import core.xyz.migoo.testelement.AbstractTestElement;
+import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.Alias;
-import protocol.xyz.migoo.kafka.util.KafkaConstantsInterface;
+import core.xyz.migoo.testelement.TestSuiteResult;
+import core.xyz.migoo.testelement.configure.AbstractConfigureElement;
+import org.apache.commons.lang3.StringUtils;
+import protocol.xyz.migoo.kafka.KafkaConstantsInterface;
 
 import java.util.Objects;
 
@@ -35,21 +38,24 @@ import java.util.Objects;
  * @author xiaomi
  * Created in 2021/11/11 11:06
  */
-@Alias({"kafka_defaults", "KafkaDefault", "Kafka_Default"})
-public class KafkaDefaults extends AbstractTestElement implements TestStateListener, KafkaConstantsInterface {
+@Alias({"kafka_defaults", "KafkaDefault", "Kafka_Default", "kafka"})
+public class KafkaDefaults extends AbstractConfigureElement<KafkaConfigureItem, KafkaDefaults, TestSuiteResult> implements KafkaConstantsInterface {
 
     @Override
-    public void testStarted() {
-        var defaults = (KafkaDefaults) getVariables().get(KAFKA_DEFAULT);
-        if (Objects.nonNull(defaults)) {
-            // 合并已存在的, 重复Key 以当前对象为准
-            setProperties(defaults.getProperty());
+    protected void doProcess(ContextWrapper context) {
+        refName = StringUtils.isBlank(refName) ? DEF_REF_NAME_KEY : refName;
+        var localConfig = runtime.getConfig();
+        var otherRefName = StringUtils.isBlank(localConfig.getRef()) ? DEF_REF_NAME_KEY : localConfig.getRef();
+        var config = (KafkaConfigureItem) context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().get(otherRefName);
+        if (Objects.nonNull(config)) {
+            runtime.setConfig(localConfig = localConfig.merge(config));
         }
-        getVariables().put(KAFKA_DEFAULT, this);
+        context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().put(refName, localConfig);
     }
 
-    @Override
-    public void testEnded() {
 
+    @Override
+    protected TestSuiteResult getTestResult() {
+        return new TestSuiteResult("Kafka 默认配置");
     }
 }

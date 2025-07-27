@@ -106,9 +106,10 @@
         <module>migoo-coder</module>
         <module>migoo-core</module>
         <module>migoo-dubbo</module>
+        <module>migoo-kafka</module>
         <!--   <module>migoo-activemq</module>
 
-           <module>migoo-kafka</module>
+
            <module>migoo-rabbitmq</module>-->
     </modules>
 

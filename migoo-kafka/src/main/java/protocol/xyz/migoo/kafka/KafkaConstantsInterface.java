@@ -23,17 +23,20 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package protocol.xyz.migoo.kafka.util;
+package protocol.xyz.migoo.kafka;
 
+import core.xyz.migoo.testelement.TestElementConstantsInterface;
 import org.apache.kafka.clients.producer.ProducerConfig;
 
 /**
  * @author xiaomi
  * Created in 2021/11/11 11:08
  */
-public interface KafkaConstantsInterface {
+public interface KafkaConstantsInterface extends TestElementConstantsInterface {
 
-    String KAFKA_DEFAULT = "migoo_protocol_kafka_element_defaults";
+    String REF = "ref";
+
+    String DEF_REF_NAME_KEY = "__kafka_configure_element_default_ref_name__";
 
     String KAFKA_MESSAGE = "message";
 
@@ -41,16 +44,16 @@ public interface KafkaConstantsInterface {
 
     String KAFKA_KEY = "key";
 
-    String BOOTSTRAP_SERVERS_CONFIG = ProducerConfig.BOOTSTRAP_SERVERS_CONFIG;
+    String BOOTSTRAP_SERVERS = ProducerConfig.BOOTSTRAP_SERVERS_CONFIG;
 
-    String ACKS_CONFIG = ProducerConfig.ACKS_CONFIG;
+    String ACKS = ProducerConfig.ACKS_CONFIG;
 
-    String RETRIES_CONFIG = ProducerConfig.RETRIES_CONFIG;
+    String RETRIES = ProducerConfig.RETRIES_CONFIG;
 
-    String LINGER_MS_CONFIG = ProducerConfig.LINGER_MS_CONFIG;
+    String LINGER_MS = ProducerConfig.LINGER_MS_CONFIG;
 
-    String KEY_SERIALIZER_CLASS_CONFIG = ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
+    String KEY_SERIALIZER = ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
 
-    String VALUE_SERIALIZER_CLASS_CONFIG = ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
+    String VALUE_SERIALIZER = ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
 
 }

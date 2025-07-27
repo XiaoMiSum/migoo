@@ -25,18 +25,95 @@
 
 package protocol.xyz.migoo.kafka.sampler;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.annotation.JSONField;
+import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.Alias;
-import protocol.xyz.migoo.kafka.AbstractKafkaTestElement;
+import core.xyz.migoo.testelement.sampler.AbstractSampler;
+import core.xyz.migoo.testelement.sampler.DefaultSampleResult;
+import core.xyz.migoo.testelement.sampler.SampleResult;
+import core.xyz.migoo.testelement.sampler.Sampler;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import protocol.xyz.migoo.kafka.KafkaConstantsInterface;
+import protocol.xyz.migoo.kafka.RealKafkaRequest;
+import protocol.xyz.migoo.kafka.config.KafkaConfigureItem;
+
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.concurrent.Future;
 
 /**
  * @author mi.xiao
  * @date 2021/4/10 21:10
  */
 @Alias({"kafka_sampler", "kafka"})
-public class KafkaSampler extends AbstractKafkaTestElement implements Sampler, TestStateListener {
+@SuppressWarnings({"unchecked", "rawtypes"})
+public class KafkaSampler extends AbstractSampler<KafkaConfigureItem, KafkaSampler, DefaultSampleResult> implements Sampler<DefaultSampleResult>, KafkaConstantsInterface {
+
+    @JSONField(serialize = false)
+    private RealKafkaRequest request;
+
+    @JSONField(serialize = false)
+    private KafkaProducer<String, String> producer;
+    @JSONField(serialize = false)
+    private byte[] response;
 
     @Override
-    public SampleResult sample() {
-        return super.execute(new SampleResult(getPropertyAsString(TITLE)));
+    protected DefaultSampleResult getTestResult() {
+        return new DefaultSampleResult(id, title);
+    }
+
+    @Override
+    protected void sample(ContextWrapper context, DefaultSampleResult result) {
+        var message = switch (runtime.config.getMessage()) {
+            case Map map -> JSON.toJSONString(map);
+            case List list -> JSON.toJSONString(list);
+            case null -> "";
+            default -> runtime.config.getMessage().toString();
+        };
+        try {
+            result.sampleStart();
+            var record = new ProducerRecord<>(runtime.config.getTopic(), runtime.config.getKey(), message);
+            Future<RecordMetadata> future = producer.send(record);
+            response = ("offset: " + future.get().offset()).getBytes(StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            result.setTrack(e);
+        } finally {
+            result.sampleEnd();
+            this.request = RealKafkaRequest.build(runtime.config, message);
+        }
+    }
+
+
+    @Override
+    protected void handleRequest(ContextWrapper context, DefaultSampleResult result) {
+        super.handleRequest(context, result);
+        // 1. 合并配置项
+        var localConfig = Objects.isNull(runtime.getConfig()) ? new KafkaConfigureItem() : runtime.getConfig();
+        var ref = StringUtils.isBlank(localConfig.getRef()) ? DEF_REF_NAME_KEY : localConfig.getRef();
+        var otherConfig = (KafkaConfigureItem) context.getLocalVariablesWrapper().get(ref);
+        runtime.setConfig(localConfig.merge(otherConfig));
+        // 2. 创建Kafka对象
+        var props = new Properties();
+        props.put(BOOTSTRAP_SERVERS, runtime.config.getBootstrapServers());
+        props.put(ACKS, runtime.config.getAcks());
+        props.put(RETRIES, runtime.config.getRetries());
+        props.put(LINGER_MS, runtime.config.getLingerMs());
+        props.put(KEY_SERIALIZER, runtime.config.getKeySerializer());
+        props.put(VALUE_SERIALIZER, runtime.config.getValueSerializer());
+        this.producer = new KafkaProducer<>(props);
+    }
+
+    @Override
+    protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
+        super.handleResponse(context, result);
+        result.setRequest(request);
+        result.setResponse(SampleResult.DefaultReal.build(response));
     }
 }
