@@ -23,14 +23,16 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package protocol.xyz.migoo.rabbitmq.util;
+package protocol.xyz.migoo.rabbitmq;
 
+
+import core.xyz.migoo.testelement.TestElementConstantsInterface;
 
 /**
  * @author xiaomi
  * Created in 2021/11/11 11:08
  */
-public interface RabbitMQConstantsInterface {
+public interface RabbitMQConstantsInterface extends TestElementConstantsInterface {
 
     String RABBIT_MQ_DEFAULT = "migoo_protocol_rabbitmq_element_defaults";
 
