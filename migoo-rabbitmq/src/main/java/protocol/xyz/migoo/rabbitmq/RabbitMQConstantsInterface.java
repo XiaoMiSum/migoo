@@ -34,7 +34,7 @@ import core.xyz.migoo.testelement.TestElementConstantsInterface;
  */
 public interface RabbitMQConstantsInterface extends TestElementConstantsInterface {
 
-    String RABBIT_MQ_DEFAULT = "migoo_protocol_rabbitmq_element_defaults";
+    String DEF_REF_NAME_KEY = "__rabbit_configure_element_default_ref_name__";
 
     String VIRTUAL_HOST = "virtual_host";
 

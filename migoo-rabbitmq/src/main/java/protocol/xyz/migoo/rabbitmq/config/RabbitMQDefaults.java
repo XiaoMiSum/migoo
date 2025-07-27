@@ -25,8 +25,11 @@
 
 package protocol.xyz.migoo.rabbitmq.config;
 
-import core.xyz.migoo.testelement.AbstractTestElement;
+import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.Alias;
+import core.xyz.migoo.testelement.TestSuiteResult;
+import core.xyz.migoo.testelement.configure.AbstractConfigureElement;
+import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.rabbitmq.RabbitMQConstantsInterface;
 
 import java.util.Objects;
@@ -35,20 +38,24 @@ import java.util.Objects;
  * @author mi.xiao
  * @date 2024/11/04 20:38
  */
-@Alias({"rabbitmq_defaults", "rabbitmq_default", "rabbitmq_def", "rabbitmqDef", "rabbitmqDefault", "rabbit_defaults", "rabbit_default"})
-public class RabbitMQDefaults extends AbstractTestElement implements TestStateListener, RabbitMQConstantsInterface {
+@Alias({"rabbitmq", "rabbit", "rabbit_mq", "rabbitmq_defaults", "rabbitmq_default", "rabbitmq_def", "rabbitmqDef", "rabbitmqDefault", "rabbit_defaults", "rabbit_default"})
+public class RabbitMQDefaults extends AbstractConfigureElement<RabbitMQConfigureItem, RabbitMQDefaults, TestSuiteResult> implements RabbitMQConstantsInterface {
 
     @Override
-    public void testStarted() {
-        var defaults = (RabbitMQDefaults) getVariables().get(RABBIT_MQ_DEFAULT);
-        if (Objects.nonNull(defaults)) {
-            // 合并已存在的, 重复Key 以当前对象为准
-            setProperties(defaults.getProperty());
+    protected void doProcess(ContextWrapper context) {
+        refName = StringUtils.isBlank(refName) ? DEF_REF_NAME_KEY : refName;
+        var localConfig = runtime.getConfig();
+        var otherRefName = StringUtils.isBlank(localConfig.getRef()) ? DEF_REF_NAME_KEY : localConfig.getRef();
+        var config = (RabbitMQConfigureItem) context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().get(otherRefName);
+        if (Objects.nonNull(config)) {
+            runtime.setConfig(localConfig = localConfig.merge(config));
         }
-        getVariables().put(RABBIT_MQ_DEFAULT, this);
+        context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().put(refName, localConfig);
     }
 
+
     @Override
-    public void testEnded() {
+    protected TestSuiteResult getTestResult() {
+        return new TestSuiteResult("Rabbit MQ 默认配置");
     }
 }
