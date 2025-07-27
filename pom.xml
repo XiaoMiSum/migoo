@@ -108,10 +108,7 @@
         <module>migoo-activemq</module>
         <module>migoo-dubbo</module>
         <module>migoo-kafka</module>
-        <!--
-
-
-           <module>migoo-rabbitmq</module>-->
+        <module>migoo-rabbitmq</module>
     </modules>
 
     <dependencyManagement>
