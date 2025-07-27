@@ -25,9 +25,12 @@
 
 package protocol.xyz.migoo.activemq.config;
 
-import core.xyz.migoo.testelement.AbstractTestElement;
+import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.Alias;
-import protocol.xyz.migoo.activemq.util.ActiveMqConstantsInterface;
+import core.xyz.migoo.testelement.TestSuiteResult;
+import core.xyz.migoo.testelement.configure.AbstractConfigureElement;
+import org.apache.commons.lang3.StringUtils;
+import protocol.xyz.migoo.activemq.ActiveMqConstantsInterface;
 
 import java.util.Objects;
 
@@ -35,20 +38,24 @@ import java.util.Objects;
  * @author mi.xiao
  * @date 2021/4/10 20:38
  */
-@Alias({"activemq_Defaults", "activemq_Default", "activemq_Def", "activemqDef", "activemqDefault"})
-public class ActiveMqDefaults extends AbstractTestElement implements TestStateListener, ActiveMqConstantsInterface {
+@Alias({"activemq_Defaults", "activemq_Default", "activemq_Def", "activemqDef", "activemqDefault", "activemq", "active_mq", "active"})
+public class ActiveMqDefaults extends AbstractConfigureElement<ActiveConfigureItem, ActiveMqDefaults, TestSuiteResult> implements ActiveMqConstantsInterface {
 
     @Override
-    public void testStarted() {
-        var defaults = (ActiveMqDefaults) getVariables().get(ACTIVEMQ_DEFAULT);
-        if (Objects.nonNull(defaults)) {
-            // 合并已存在的, 重复Key 以当前对象为准
-            setProperties(defaults.getProperty());
+    protected void doProcess(ContextWrapper context) {
+        refName = StringUtils.isBlank(refName) ? DEF_REF_NAME_KEY : refName;
+        var localConfig = runtime.getConfig();
+        var otherRefName = StringUtils.isBlank(localConfig.getRef()) ? DEF_REF_NAME_KEY : localConfig.getRef();
+        var config = (ActiveConfigureItem) context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().get(otherRefName);
+        if (Objects.nonNull(config)) {
+            runtime.setConfig(localConfig = localConfig.merge(config));
         }
-        getVariables().put(ACTIVEMQ_DEFAULT, this);
+        context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().put(refName, localConfig);
     }
 
+
     @Override
-    public void testEnded() {
+    protected TestSuiteResult getTestResult() {
+        return new TestSuiteResult("Active MQ 默认配置");
     }
 }

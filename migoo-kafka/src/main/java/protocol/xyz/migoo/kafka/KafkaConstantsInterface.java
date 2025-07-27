@@ -34,8 +34,6 @@ import org.apache.kafka.clients.producer.ProducerConfig;
  */
 public interface KafkaConstantsInterface extends TestElementConstantsInterface {
 
-    String REF = "ref";
-
     String DEF_REF_NAME_KEY = "__kafka_configure_element_default_ref_name__";
 
     String KAFKA_MESSAGE = "message";

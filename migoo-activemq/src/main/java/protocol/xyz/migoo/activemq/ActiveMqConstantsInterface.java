@@ -23,17 +23,27 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package protocol.xyz.migoo.activemq.processor;
+package protocol.xyz.migoo.activemq;
 
-import protocol.xyz.migoo.activemq.AbstractActiveMqTestElement;
+import core.xyz.migoo.testelement.TestElementConstantsInterface;
 
 /**
- * @author mi.xiao
- * @date 2021/4/13 20:09
+ * @author xiaomi
  */
-public abstract class AbstractActiveMqProcessor extends AbstractActiveMqTestElement implements TestStateListener {
+public interface ActiveMqConstantsInterface extends TestElementConstantsInterface {
 
-    public SampleResult process() {
-        return super.execute(new SampleResult(getPropertyAsString(TITLE)));
-    }
+    String DEF_REF_NAME_KEY = "__active_mq_configure_element_default_ref_name__";
+
+    String ACTIVEMQ_USERNAME = "username";
+
+    String ACTIVEMQ_PASSWORD = "password";
+
+    String BROKER_URL = "broker.url";
+
+    String ACTIVEMQ_MESSAGE = "message";
+
+    String ACTIVEMQ_TOPIC = "topic";
+
+    String ACTIVEMQ_QUEUE = "queue";
+
 }
