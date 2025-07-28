@@ -327,6 +327,33 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
         this.assertions = assertions;
     }
 
+    public static abstract class Builder<ELE extends AbstractTestElementExecutable<CONFIG, ELE, ? extends Result>,
+            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, VARIABLES_BUILDER, CONFIGURE_ELEMENT_BUILDER, PREPROCESSOR_BUILDER, POSTPROCESSOR_BUILDER, EXTRACTOR_BUILDER, ASSERTION_BUILDER>,
+            CONFIG extends ConfigureItem<CONFIG>,
+            CONFIGURE_BUILDER extends ConfigureBuilder,
+            VARIABLES_BUILDER,
+            CONFIGURE_ELEMENT_BUILDER,
+            PREPROCESSOR_BUILDER,
+            POSTPROCESSOR_BUILDER,
+            EXTRACTOR_BUILDER,
+            ASSERTION_BUILDER>
+            extends AbstractTestElement.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER> {
+
+
+        protected MiGooVariables variables;
+        protected List<ConfigureElement> configureElements;
+
+        protected List<Preprocessor> preprocessors;
+
+        protected List<Postprocessor> postprocessors;
+
+        protected List<Assertion> assertions;
+
+        protected List<Extractor> extractors;
+
+
+    }
+
     private final class Snapshot {
 
         private List<Context> parentContextChain;

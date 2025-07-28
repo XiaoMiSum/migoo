@@ -27,6 +27,7 @@ package core.xyz.migoo.testelement;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.SessionRunner;
+import core.xyz.migoo.builder.IBuilder;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.filter.TestFilter;
@@ -36,6 +37,7 @@ import support.xyz.migoo.KryoUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * 测试组件抽象类，提供公共属性和方法
@@ -157,5 +159,95 @@ public abstract class AbstractTestElement<CONFIG extends ConfigureItem, SELF ext
     public void setRawData(Map<String, Object> rawData) {
         this.rawData = rawData;
     }
+
+
+    /**
+     * 测试元件基础构建实现类
+     *
+     * @param <ELE>测试元件类型
+     * @param <SELF>              构建类自身
+     * @param <CONFIGURE_BUILDER> 配置构建类
+     */
+    public static abstract class Builder<ELE extends AbstractTestElement<CONFIG, ELE, ? extends Result>,
+            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER>,
+            CONFIG extends ConfigureItem,
+            CONFIGURE_BUILDER extends ConfigureBuilder>
+            implements TestElementBuilder<ELE> {
+
+        protected String id;
+
+        protected String title;
+
+        protected boolean disabled;
+
+        protected CONFIG config;
+
+        protected List<TestFilter> filters;
+
+        protected Map<String, Object> metadata = new HashMap<>();
+
+        protected SELF self;
+
+        protected Builder() {
+            self = (SELF) this;
+        }
+
+        public SELF id(String id) {
+            this.id = id;
+            return self;
+        }
+
+        public SELF title(String title) {
+            this.title = title;
+            return self;
+        }
+
+        public SELF disabled(boolean disabled) {
+            this.disabled = disabled;
+            return self;
+        }
+
+        public SELF config(Consumer<CONFIGURE_BUILDER> consumer) {
+            CONFIGURE_BUILDER builder = getConfigureBuilder();
+            consumer.accept(builder);
+            this.config = (CONFIG) builder.build();
+            return self;
+        }
+
+        public SELF config(CONFIGURE_BUILDER builder) {
+            this.config = (CONFIG) builder.build();
+            return self;
+        }
+
+        public SELF config(CONFIG config) {
+            this.config = config;
+            return self;
+        }
+
+        public SELF metadata(Map<String, Object> metadata) {
+            this.metadata = metadata;
+            return self;
+        }
+
+        public SELF filters(List<TestFilter> filters) {
+            this.filters = filters;
+            return self;
+        }
+
+        public abstract CONFIGURE_BUILDER getConfigureBuilder();
+
+    }
+
+    /**
+     * 测试配置基础构建实现类
+     *
+     * @param <SELF> 构建类自身
+     */
+    public static abstract class ConfigureBuilder<SELF extends ConfigureBuilder<SELF>>
+            implements IBuilder<SELF> {
+
+
+    }
+
 
 }
