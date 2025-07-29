@@ -28,6 +28,7 @@ package core.xyz.migoo.assertion;
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.ApplicationConfig;
 import core.xyz.migoo.TestStatus;
+import core.xyz.migoo.builder.IBuilder;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.sampler.SampleResult;
 
@@ -37,6 +38,7 @@ import java.util.Objects;
 /**
  * @author xiaomi
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class AbstractAssertion implements Assertion, AssertionConstantsInterface {
 
     protected Object actualValue;
@@ -105,5 +107,42 @@ public abstract class AbstractAssertion implements Assertion, AssertionConstants
 
     public void setField(String field) {
         this.field = field;
+    }
+
+    /**
+     * 验证器基础构建器
+     *
+     * @param <SELF> 构建类自身
+     */
+    public static abstract class Builder<SELF extends Builder<SELF, ASSERTION>, ASSERTION extends AbstractAssertion>
+            implements IBuilder<ASSERTION> {
+        private final ASSERTION assertion;
+        protected SELF self;
+
+
+        protected Builder(ASSERTION assertion) {
+            self = (SELF) this;
+            this.assertion = assertion;
+        }
+
+        public Builder field(String field) {
+            this.assertion.rule = field;
+            return self;
+        }
+
+        public Builder rule(String rule) {
+            this.assertion.rule = rule;
+            return self;
+        }
+
+        public Builder expected(Object expected) {
+            this.assertion.expected = expected;
+            return self;
+        }
+
+        @Override
+        public ASSERTION build() {
+            return assertion;
+        }
     }
 }

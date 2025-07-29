@@ -51,7 +51,7 @@ import java.util.Objects;
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
 @Alias({"rabbitmq", "rabbit", "rabbit_mq", "rabbitmq_preprocessor", "rabbit_mq_preprocessor", "rabbit_mq_pre_processor", "rabbit_pre_processor", "rabbit_preprocessor"})
-public class RabbitMqPreprocessor extends AbstractProcessor<RabbitMQConfigureItem, RabbitMqPreprocessor, DefaultSampleResult> implements Preprocessor, RabbitMQConstantsInterface {
+public class RabbitMqPreprocessor extends AbstractProcessor<RabbitMqPreprocessor, RabbitMQConfigureItem, DefaultSampleResult> implements Preprocessor, RabbitMQConstantsInterface {
 
     @JSONField(serialize = false)
     private RealRabbitRequest request;

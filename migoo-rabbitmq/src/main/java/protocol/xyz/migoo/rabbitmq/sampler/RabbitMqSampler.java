@@ -51,7 +51,7 @@ import java.util.Objects;
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
 @Alias({"rabbitmq", "rabbit", "rabbit_mq", "rabbitmq_sampler", "rabbit_mq_sampler", "rabbit_sampler", "RabbitSampler", "rabbit"})
-public class RabbitMqSampler extends AbstractSampler<RabbitMQConfigureItem, RabbitMqSampler, DefaultSampleResult> implements Sampler<DefaultSampleResult>, RabbitMQConstantsInterface {
+public class RabbitMqSampler extends AbstractSampler<RabbitMqSampler, RabbitMQConfigureItem, DefaultSampleResult> implements Sampler<DefaultSampleResult>, RabbitMQConstantsInterface {
 
     @JSONField(serialize = false)
     private RealRabbitRequest request;

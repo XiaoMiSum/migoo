@@ -40,6 +40,10 @@ import java.util.regex.Pattern;
 @Alias({"RegexExtractor", "regex_extractor", "regex"})
 public class RegexExtractor extends AbstractExtractor {
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     @Override
     protected ExtractResult extract(SampleResult result) {
         var res = new ExtractResult("正则表达式 提取: %s ，匹配第 %s 个".formatted(field, matchNum + 1));
@@ -63,5 +67,12 @@ public class RegexExtractor extends AbstractExtractor {
             res.setMessage(String.format("目标字符串没有匹配的数据 %s，目标字符串：\n%s", field, target));
         }
         return res;
+    }
+
+    public static class Builder extends AbstractExtractor.Builder<Builder, RegexExtractor> {
+
+        protected Builder() {
+            super(new RegexExtractor());
+        }
     }
 }

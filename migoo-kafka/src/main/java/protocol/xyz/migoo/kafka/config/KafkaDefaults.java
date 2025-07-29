@@ -39,7 +39,19 @@ import java.util.Objects;
  * Created in 2021/11/11 11:06
  */
 @Alias({"kafka_defaults", "KafkaDefault", "Kafka_Default", "kafka"})
-public class KafkaDefaults extends AbstractConfigureElement<KafkaConfigureItem, KafkaDefaults, TestSuiteResult> implements KafkaConstantsInterface {
+public class KafkaDefaults extends AbstractConfigureElement<KafkaDefaults, KafkaConfigureItem, TestSuiteResult> implements KafkaConstantsInterface {
+
+    public KafkaDefaults(Builder builder) {
+        super(builder);
+    }
+
+    public KafkaDefaults() {
+        super();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
     protected void doProcess(ContextWrapper context) {
@@ -57,5 +69,21 @@ public class KafkaDefaults extends AbstractConfigureElement<KafkaConfigureItem, 
     @Override
     protected TestSuiteResult getTestResult() {
         return new TestSuiteResult("Kafka 默认配置");
+    }
+
+    /**
+     * Kafka默认配置 测试元件 构建类
+     */
+    public static class Builder extends AbstractConfigureElement.Builder<KafkaDefaults, Builder, KafkaConfigureItem, KafkaConfigureItem.Builder, TestSuiteResult> {
+
+        @Override
+        public KafkaConfigureItem.Builder getConfigureBuilder() {
+            return KafkaConfigureItem.builder();
+        }
+
+        @Override
+        public KafkaDefaults build() {
+            return new KafkaDefaults(this);
+        }
     }
 }

@@ -28,11 +28,15 @@ package protocol.xyz.migoo.rabbitmq.config;
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.rabbitmq.RabbitMQConstantsInterface;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * @author xiaomi
@@ -41,39 +45,43 @@ import java.util.Objects;
 public class RabbitMQConfigureItem implements ConfigureItem<RabbitMQConfigureItem>, RabbitMQConstantsInterface {
 
     @JSONField(name = REF)
-    private String ref;
+    protected String ref;
 
     @JSONField(name = VIRTUAL_HOST, ordinal = 1)
-    private String virtualHost;
+    protected String virtualHost;
 
     @JSONField(name = HOST, ordinal = 2)
-    private String host;
+    protected String host;
 
     @JSONField(name = PORT, ordinal = 3)
-    private String port;
+    protected String port;
 
     @JSONField(name = USERNAME, ordinal = 4)
-    private String username;
+    protected String username;
 
     @JSONField(name = PASSWORD, ordinal = 5)
-    private String password;
+    protected String password;
 
     @JSONField(name = MESSAGE, ordinal = 6)
-    private Object message;
+    protected Object message;
 
     @JSONField(name = TIMEOUT, ordinal = 7)
-    private Integer timeout;
+    protected Integer timeout;
 
     @JSONField(name = QUEUE_CONFIG, ordinal = 8)
-    private Queue queue;
+    protected Queue queue;
 
     @JSONField(name = EXCHANGE, ordinal = 9)
-    private Exchange exchange;
+    protected Exchange exchange;
 
     @JSONField(name = PROPS, ordinal = 10)
-    private Props props;
+    protected Props props;
 
     public RabbitMQConfigureItem() {
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     @Override
@@ -203,19 +211,19 @@ public class RabbitMQConfigureItem implements ConfigureItem<RabbitMQConfigureIte
     public static class Queue implements ConfigureItem<Queue> {
 
         @JSONField(name = QUEUE_NAME)
-        private String name;
+        protected String name;
 
         @JSONField(name = QUEUE_DURABLE, ordinal = 1)
-        private Boolean durable;
+        protected Boolean durable;
 
         @JSONField(name = QUEUE_EXCLUSIVE, ordinal = 2)
-        private Boolean exclusive;
+        protected Boolean exclusive;
 
         @JSONField(name = QUEUE_AUTO_DELETE, ordinal = 3)
-        private Boolean autoDelete;
+        protected Boolean autoDelete;
 
         @JSONField(name = QUEUE_ARGUMENTS, ordinal = 4)
-        private Map<String, Object> arguments;
+        protected Map<String, Object> arguments;
 
         public Queue() {
         }
@@ -284,16 +292,72 @@ public class RabbitMQConfigureItem implements ConfigureItem<RabbitMQConfigureIte
         public void setArguments(Map<String, Object> arguments) {
             this.arguments = arguments;
         }
+
+        public static class Builder extends AbstractTestElement.ConfigureBuilder<Builder, Queue> {
+
+            private Queue queue = new Queue();
+
+            public static Builder builder() {
+                return new Builder();
+            }
+
+            public Builder name(String name) {
+                queue.name = name;
+                return self;
+            }
+
+            public Builder durable() {
+                queue.durable = true;
+                return self;
+            }
+
+            public Builder exclusive() {
+                queue.exclusive = true;
+                return self;
+            }
+
+            public Builder autoDelete() {
+                queue.autoDelete = true;
+                return self;
+            }
+
+            public Builder arguments(Map<String, Object> arguments) {
+                queue.arguments = arguments;
+                return self;
+            }
+
+            public Builder argument(String name, Object value) {
+                synchronized (this) {
+                    if (queue.arguments == null) {
+                        synchronized (this) {
+                            this.queue.arguments = new HashMap<>();
+                        }
+                    }
+                }
+                queue.arguments.put(name, value);
+                return self;
+            }
+
+            public Builder config(Queue queue) {
+                this.queue = this.queue.merge(queue);
+                return self;
+            }
+
+            @Override
+            public Queue build() {
+                return queue;
+            }
+        }
     }
 
     public static class Exchange implements ConfigureItem<Exchange> {
 
         @JSONField(name = EXCHANGE_NAME)
-        private String name;
+        protected String name;
         @JSONField(name = EXCHANGE_TYPE, ordinal = 1)
-        private String type;
+        protected String type;
         @JSONField(name = EXCHANGE_ROUTING_KEY, ordinal = 2)
-        private String routingKey;
+        protected String routingKey;
 
         public Exchange() {
         }
@@ -342,36 +406,70 @@ public class RabbitMQConfigureItem implements ConfigureItem<RabbitMQConfigureIte
         public void setRoutingKey(String routingKey) {
             this.routingKey = routingKey;
         }
+
+        public static class Builder extends AbstractTestElement.ConfigureBuilder<Builder, Exchange> {
+
+            private Exchange exchange = new Exchange();
+
+            public static Builder builder() {
+                return new Builder();
+            }
+
+            public Builder name(String name) {
+                exchange.name = name;
+                return self;
+            }
+
+            public Builder type(String type) {
+                exchange.type = type;
+                return self;
+            }
+
+            public Builder routingKey(String routingKey) {
+                exchange.routingKey = routingKey;
+                return self;
+            }
+
+            public Builder config(Exchange queue) {
+                this.exchange = this.exchange.merge(queue);
+                return self;
+            }
+
+            @Override
+            public Exchange build() {
+                return exchange;
+            }
+        }
     }
 
     public static class Props implements ConfigureItem<Props> {
 
         @JSONField(name = PROPS_CONTENT_TYPE)
-        private String contentType;
+        protected String contentType;
         @JSONField(name = PROPS_CONTENT_ENCODING, ordinal = 1)
-        private String contentEncoding;
+        protected String contentEncoding;
         @JSONField(name = PROPS_HEADERS, ordinal = 2)
-        private Map<String, Object> headers;
+        protected Map<String, Object> headers;
         @JSONField(name = PROPS_DELIVERY_MODE, ordinal = 3)
-        private Integer deliveryMode;
+        protected Integer deliveryMode;
         @JSONField(name = PROPS_PRIORITY, ordinal = 4)
-        private Integer priority;
+        protected Integer priority;
         @JSONField(name = PROPS_CORRELATION_ID, ordinal = 5)
-        private String correlationId;
+        protected String correlationId;
         @JSONField(name = PROPS_REPLY_TO, ordinal = 6)
-        private String replyTo;
+        protected String replyTo;
         @JSONField(name = PROPS_EXPIRATION, ordinal = 7)
-        private String expiration;
+        protected String expiration;
         @JSONField(name = PROPS_MESSAGE_ID, ordinal = 8)
-        private String messageId;
+        protected String messageId;
         @JSONField(name = PROPS_TIMESTAMP, ordinal = 9)
-        private String type;
+        protected String type;
         @JSONField(name = PROPS_USER_ID, ordinal = 11)
-        private String userId;
+        protected String userId;
         @JSONField(name = PROPS_APP_ID, ordinal = 12)
-        private String appId;
+        protected String appId;
         @JSONField(name = PROPS_CLUSTER_ID, ordinal = 13)
-        private String clusterId;
+        protected String clusterId;
 
         public Props() {
         }
@@ -520,7 +618,209 @@ public class RabbitMQConfigureItem implements ConfigureItem<RabbitMQConfigureIte
         public void setClusterId(String clusterId) {
             this.clusterId = clusterId;
         }
+
+        public static class Builder extends AbstractTestElement.ConfigureBuilder<Builder, Props> {
+
+            private Props props = new Props();
+
+            public static Builder builder() {
+                return new Builder();
+            }
+
+            public Builder contentType(String contentType) {
+                this.props.contentType = contentType;
+                return self;
+            }
+
+            public Builder contentEncoding(String contentEncoding) {
+                this.props.contentEncoding = contentEncoding;
+                return self;
+            }
+
+            public Builder headers(Map<String, Object> headers) {
+                this.props.headers = headers;
+                return self;
+            }
+
+            public Builder deliveryMode(Integer deliveryMode) {
+                this.props.deliveryMode = deliveryMode;
+                return self;
+            }
+
+            public Builder priority(Integer priority) {
+                this.props.priority = priority;
+                return self;
+            }
+
+            public Builder correlationId(String correlationId) {
+                this.props.correlationId = correlationId;
+                return self;
+            }
+
+            public Builder replyTo(String replyTo) {
+                this.props.replyTo = replyTo;
+                return self;
+            }
+
+            public Builder expiration(String expiration) {
+                this.props.expiration = expiration;
+                return self;
+            }
+
+            public Builder messageId(String messageId) {
+                this.props.messageId = messageId;
+                return self;
+            }
+
+            public Builder type(String type) {
+                this.props.type = type;
+                return self;
+            }
+
+            public Builder userId(String userId) {
+                this.props.userId = userId;
+                return self;
+            }
+
+            public Builder appId(String appId) {
+                this.props.appId = appId;
+                return self;
+            }
+
+            public Builder clusterId(String clusterId) {
+                this.props.clusterId = clusterId;
+                return self;
+            }
+
+            public Builder config(Props props) {
+                this.props = this.props.merge(props);
+                return self;
+            }
+
+            @Override
+            public Props build() {
+                return props;
+            }
+        }
     }
 
+    /**
+     * Rabbit 配置属性 构建器
+     */
+    public static class Builder extends AbstractTestElement.ConfigureBuilder<Builder, RabbitMQConfigureItem> {
+
+        private RabbitMQConfigureItem configure = new RabbitMQConfigureItem();
+
+        public Builder ref(String ref) {
+            this.configure.ref = ref;
+            return self;
+        }
+
+        public Builder virtualHost(String virtualHost) {
+            this.configure.virtualHost = virtualHost;
+            return self;
+        }
+
+        public Builder host(String host) {
+            this.configure.host = host;
+            return self;
+        }
+
+        public Builder port(String port) {
+            this.configure.port = port;
+            return self;
+        }
+
+        public Builder username(String username) {
+            this.configure.username = username;
+            return self;
+        }
+
+        public Builder password(String password) {
+            this.configure.password = password;
+            return self;
+        }
+
+        public Builder message(Object message) {
+            this.configure.message = message;
+            return self;
+        }
+
+        public Builder message(List<?> message) {
+            this.configure.message = message;
+            return self;
+        }
+
+        public Builder message(Map<?, ?> message) {
+            this.configure.message = message;
+            return self;
+        }
+
+        public Builder timeout(Integer timeout) {
+            this.configure.timeout = timeout;
+            return self;
+        }
+
+        public Builder queue(Queue queue) {
+            this.configure.queue = queue;
+            return self;
+        }
+
+        public Builder queue(Queue.Builder builder) {
+            this.configure.queue = builder.build();
+            return self;
+        }
+
+        public Builder queue(Consumer<Queue.Builder> consumer) {
+            var builder = Queue.Builder.builder();
+            consumer.accept(builder);
+            this.configure.queue = builder.build();
+            return self;
+        }
+
+        public Builder exchange(Exchange exchange) {
+            this.configure.exchange = exchange;
+            return self;
+        }
+
+        public Builder exchange(Exchange.Builder builder) {
+            this.configure.exchange = builder.build();
+            return self;
+        }
+
+        public Builder exchange(Consumer<Exchange.Builder> consumer) {
+            var builder = Exchange.Builder.builder();
+            consumer.accept(builder);
+            this.configure.exchange = builder.build();
+            return self;
+        }
+
+        public Builder props(Props props) {
+            this.configure.props = props;
+            return self;
+        }
+
+        public Builder props(Props.Builder builder) {
+            this.configure.props = builder.build();
+            return self;
+        }
+
+        public Builder props(Consumer<Props.Builder> consumer) {
+            var builder = Props.Builder.builder();
+            consumer.accept(builder);
+            this.configure.props = builder.build();
+            return self;
+        }
+
+        public Builder config(RabbitMQConfigureItem config) {
+            this.configure = configure.merge(config);
+            return self;
+        }
+
+        @Override
+        public RabbitMQConfigureItem build() {
+            return configure;
+        }
+    }
 
 }

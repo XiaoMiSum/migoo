@@ -39,7 +39,19 @@ import java.util.Objects;
  * @date 2021/4/10 20:38
  */
 @Alias({"activemq_Defaults", "activemq_Default", "activemq_Def", "activemqDef", "activemqDefault", "activemq", "active_mq", "active"})
-public class ActiveMqDefaults extends AbstractConfigureElement<ActiveConfigureItem, ActiveMqDefaults, TestSuiteResult> implements ActiveMqConstantsInterface {
+public class ActiveMqDefaults extends AbstractConfigureElement<ActiveMqDefaults, ActiveConfigureItem, TestSuiteResult> implements ActiveMqConstantsInterface {
+
+    public ActiveMqDefaults(Builder builder) {
+        super(builder);
+    }
+
+    public ActiveMqDefaults() {
+        super();
+    }
+    
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
     protected void doProcess(ContextWrapper context) {
@@ -57,5 +69,21 @@ public class ActiveMqDefaults extends AbstractConfigureElement<ActiveConfigureIt
     @Override
     protected TestSuiteResult getTestResult() {
         return new TestSuiteResult("Active MQ 默认配置");
+    }
+
+    /**
+     * ActiveMQ默认配置 测试元件 构建类
+     */
+    public static class Builder extends AbstractConfigureElement.Builder<ActiveMqDefaults, Builder, ActiveConfigureItem, ActiveConfigureItem.Builder, TestSuiteResult> {
+
+        @Override
+        public ActiveConfigureItem.Builder getConfigureBuilder() {
+            return ActiveConfigureItem.builder();
+        }
+
+        @Override
+        public ActiveMqDefaults build() {
+            return new ActiveMqDefaults(this);
+        }
     }
 }

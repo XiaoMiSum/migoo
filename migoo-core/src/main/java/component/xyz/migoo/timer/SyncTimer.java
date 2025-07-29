@@ -38,7 +38,7 @@ import org.apache.commons.lang3.StringUtils;
  * @date 2021/4/7 19:49
  */
 @Alias({"SyncTimer", "Timer", "sync_timer", "def_timer", "defTimer"})
-public class SyncTimer extends AbstractProcessor<SyncTimer.TimerConfigureItem, SyncTimer, DefaultSampleResult> implements Postprocessor {
+public class SyncTimer extends AbstractProcessor<SyncTimer, SyncTimer.TimerConfigureItem, DefaultSampleResult> implements Postprocessor {
 
     @Override
     protected DefaultSampleResult getTestResult() {
@@ -48,7 +48,7 @@ public class SyncTimer extends AbstractProcessor<SyncTimer.TimerConfigureItem, S
 
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
-        if (config.getTimeout() > 0) {
+        if (config.timeout > 0) {
             synchronized (this) {
                 try {
                     this.wait(config.getTimeout() * 1000L);

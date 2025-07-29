@@ -18,7 +18,7 @@ import xyz.migoo.simplehttp.Response;
 import java.util.Objects;
 
 @Alias(value = {"http", "http_sampler"})
-public class HTTPSampler extends AbstractSampler<HTTPConfigureItem, HTTPSampler, DefaultSampleResult> implements Sampler<DefaultSampleResult>, HTTPConstantsInterface {
+public class HTTPSampler extends AbstractSampler<HTTPSampler, HTTPConfigureItem, DefaultSampleResult> implements Sampler<DefaultSampleResult>, HTTPConstantsInterface {
 
     @JSONField(serialize = false)
     private Request request;

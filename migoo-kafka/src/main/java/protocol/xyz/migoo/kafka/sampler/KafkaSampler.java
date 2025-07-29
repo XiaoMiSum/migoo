@@ -54,7 +54,7 @@ import java.util.concurrent.Future;
  */
 @Alias({"kafka_sampler", "kafka"})
 @SuppressWarnings({"unchecked", "rawtypes"})
-public class KafkaSampler extends AbstractSampler<KafkaConfigureItem, KafkaSampler, DefaultSampleResult> implements Sampler<DefaultSampleResult>, KafkaConstantsInterface {
+public class KafkaSampler extends AbstractSampler<KafkaSampler, KafkaConfigureItem, DefaultSampleResult> implements Sampler<DefaultSampleResult>, KafkaConstantsInterface {
 
     @JSONField(serialize = false)
     private RealKafkaRequest request;

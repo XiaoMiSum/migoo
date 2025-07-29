@@ -45,7 +45,7 @@ import java.util.Locale;
  * @author xiaomi
  */
 @Alias(value = {"redis", "redis_sampler"})
-public class RedisSampler extends AbstractSampler<RedisConfigureItem, RedisSampler, DefaultSampleResult> implements Sampler<DefaultSampleResult>, JDBCConstantsInterface {
+public class RedisSampler extends AbstractSampler<RedisSampler, RedisConfigureItem, DefaultSampleResult> implements Sampler<DefaultSampleResult>, JDBCConstantsInterface {
 
     @JSONField(serialize = false)
     private RedisDatasource datasource;

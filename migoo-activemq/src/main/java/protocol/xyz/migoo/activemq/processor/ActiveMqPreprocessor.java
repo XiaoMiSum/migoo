@@ -52,7 +52,7 @@ import java.util.Objects;
  * @date 2021/4/13 20:08
  */
 @Alias({"activemq_preprocessor", "active_mq_preprocessor", "active_mq_pre_processor", "active_mq", "activemq", "active"})
-public class ActiveMqPreprocessor extends AbstractProcessor<ActiveConfigureItem, ActiveMqPreprocessor, DefaultSampleResult> implements Preprocessor, ActiveMqConstantsInterface {
+public class ActiveMqPreprocessor extends AbstractProcessor<ActiveMqPreprocessor, ActiveConfigureItem, DefaultSampleResult> implements Preprocessor, ActiveMqConstantsInterface {
 
     @JSONField(serialize = false)
     private RealActiveRequest request;

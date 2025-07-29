@@ -35,9 +35,21 @@ import org.apache.commons.lang3.StringUtils;
  * @author xiaomi
  */
 @Alias(value = {"debugconfig", "debug_config", "debug"})
-public class DebugDefaults extends AbstractConfigureElement<DebugConfigureItem, DebugDefaults, TestSuiteResult> {
+public class DebugDefaults extends AbstractConfigureElement<DebugDefaults, DebugConfigureItem, TestSuiteResult> {
 
     public static final String DEF_REF_NAME_KEY = "__debug_configure_element_default_ref_name__";
+
+    public DebugDefaults(Builder builder) {
+        super(builder);
+    }
+
+    public DebugDefaults() {
+        super();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
     protected void doProcess(ContextWrapper context) {
@@ -48,5 +60,18 @@ public class DebugDefaults extends AbstractConfigureElement<DebugConfigureItem, 
     @Override
     protected TestSuiteResult getTestResult() {
         return new TestSuiteResult("Debug 默认配置");
+    }
+
+    public static class Builder extends AbstractConfigureElement.Builder<DebugDefaults, Builder, DebugConfigureItem, DebugConfigureItem.Builder, TestSuiteResult> {
+
+        @Override
+        public DebugConfigureItem.Builder getConfigureBuilder() {
+            return DebugConfigureItem.builder();
+        }
+
+        @Override
+        public DebugDefaults build() {
+            return new DebugDefaults(this);
+        }
     }
 }

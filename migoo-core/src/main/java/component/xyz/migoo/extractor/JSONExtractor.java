@@ -38,6 +38,10 @@ import core.xyz.migoo.testelement.sampler.SampleResult;
 @Alias({"JSONExtractor", "json_extractor", "json"})
 public class JSONExtractor extends AbstractExtractor {
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     @Override
     protected ExtractResult extract(SampleResult result) {
         var res = new ExtractResult("JSON 提取: " + field);
@@ -54,5 +58,12 @@ public class JSONExtractor extends AbstractExtractor {
             res.setMessage(String.format("目标字符串不存在 JsonPath %s，目标字符串：\n%s", field, target));
         }
         return res;
+    }
+
+    public static class Builder extends AbstractExtractor.Builder<Builder, JSONExtractor> {
+
+        protected Builder() {
+            super(new JSONExtractor());
+        }
     }
 }

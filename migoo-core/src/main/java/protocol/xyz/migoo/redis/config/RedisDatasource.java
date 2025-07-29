@@ -44,23 +44,35 @@ import java.util.Objects;
  * @author xiaomi
  */
 @Alias(value = {"redis", "redis_datasource", "redis_data_source"})
-public class RedisDatasource extends AbstractConfigureElement<RedisConfigureItem, RedisDatasource, TestSuiteResult>
+public class RedisDatasource extends AbstractConfigureElement<RedisDatasource, RedisConfigureItem, TestSuiteResult>
         implements Closeable, RedisConstantsInterface {
 
     @JSONField(serialize = false)
     private JedisPool jedisPool;
 
+    public RedisDatasource() {
+        super();
+    }
+
+    public RedisDatasource(Builder builder) {
+        super(builder);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     @Override
     protected void doProcess(ContextWrapper context) {
         var poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxTotal(runtime.getConfig().getMaxTotal());
-        poolConfig.setMaxIdle(runtime.getConfig().getMaxIdle());
-        poolConfig.setMinIdle(runtime.getConfig().getMinIdle());
-        var uri = URI.create(runtime.getConfig().getUrl());
+        poolConfig.setMaxTotal(runtime.getConfig().maxTotal);
+        poolConfig.setMaxIdle(runtime.getConfig().maxIdle);
+        poolConfig.setMinIdle(runtime.getConfig().minIdle);
+        var uri = URI.create(runtime.getConfig().url);
         var username = JedisURIHelper.getUser(uri);
         var password = JedisURIHelper.getPassword(uri);
         var database = JedisURIHelper.getDBIndex(uri);
-        jedisPool = new JedisPool(poolConfig, uri.getHost(), uri.getPort(), runtime.getConfig().getTimeout(), username, password, database);
+        jedisPool = new JedisPool(poolConfig, uri.getHost(), uri.getPort(), runtime.getConfig().timeout, username, password, database);
         context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().put(refName, this);
     }
 
@@ -77,12 +89,27 @@ public class RedisDatasource extends AbstractConfigureElement<RedisConfigureItem
         jedisPool.close();
     }
 
-
     public Jedis getConnection() {
         return jedisPool.getResource();
     }
 
     public String getUrl() {
         return runtime.getConfig().getUrl();
+    }
+
+    /**
+     * Redis数据源 测试元件 构建类
+     */
+    public static class Builder extends AbstractConfigureElement.Builder<RedisDatasource, Builder, RedisConfigureItem, RedisConfigureItem.Builder, TestSuiteResult> {
+
+        @Override
+        public RedisConfigureItem.Builder getConfigureBuilder() {
+            return RedisConfigureItem.builder();
+        }
+
+        @Override
+        public RedisDatasource build() {
+            return new RedisDatasource(this);
+        }
     }
 }

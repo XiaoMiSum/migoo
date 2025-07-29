@@ -46,7 +46,7 @@ import java.util.Locale;
  * @author xiaomi
  */
 @Alias(value = {"redis_postprocessor", "redis_post_processor", "redis"})
-public class RedisPostprocessor extends AbstractProcessor<RedisConfigureItem, RedisPostprocessor, DefaultSampleResult> implements Postprocessor, JDBCConstantsInterface {
+public class RedisPostprocessor extends AbstractProcessor<RedisPostprocessor, RedisConfigureItem, DefaultSampleResult> implements Postprocessor, JDBCConstantsInterface {
 
     @JSONField(serialize = false)
     private RedisDatasource datasource;

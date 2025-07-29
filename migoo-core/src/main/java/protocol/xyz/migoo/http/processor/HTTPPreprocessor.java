@@ -49,7 +49,7 @@ import java.util.Objects;
  * @author xiaomi
  */
 @Alias(value = {"http_preprocessor", "http_pre_processor", "http"})
-public class HTTPPreprocessor extends AbstractProcessor<HTTPConfigureItem, HTTPPreprocessor, DefaultSampleResult> implements Preprocessor, HTTPConstantsInterface {
+public class HTTPPreprocessor extends AbstractProcessor<HTTPPreprocessor, HTTPConfigureItem, DefaultSampleResult> implements Preprocessor, HTTPConstantsInterface {
 
     @JSONField(serialize = false)
     private Request request;

@@ -44,7 +44,7 @@ import static protocol.xyz.migoo.jdbc.JDBC.toJSONBytes;
  * @author xiaomi
  */
 @Alias(value = {"jdbc_postprocessor", "jdbc_post_processor", "jdbc"})
-public class JDBCPostprocessor extends AbstractProcessor<JDBCConfigureItem, JDBCPostprocessor, DefaultSampleResult> implements Postprocessor, JDBCConstantsInterface {
+public class JDBCPostprocessor extends AbstractProcessor<JDBCPostprocessor, JDBCConfigureItem, DefaultSampleResult> implements Postprocessor, JDBCConstantsInterface {
 
     @JSONField(serialize = false)
     private DruidDataSource datasource;

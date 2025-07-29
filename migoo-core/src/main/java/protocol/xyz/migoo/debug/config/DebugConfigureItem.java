@@ -31,6 +31,7 @@ package protocol.xyz.migoo.debug.config;
 import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.testelement.AbstractTestElement;
 
 /**
  * @author xiaomi
@@ -44,6 +45,10 @@ public class DebugConfigureItem extends JSONObject implements ConfigureItem<Debu
 
     public DebugConfigureItem(DebugConfigureItem debugConfigureItem) {
         super(debugConfigureItem);
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public static DebugConfigureItem of(Object... keyWords) {
@@ -69,5 +74,23 @@ public class DebugConfigureItem extends JSONObject implements ConfigureItem<Debu
     public DebugConfigureItem calc(ContextWrapper context) {
         this.replaceAll((key, value) -> context.eval(value));
         return this;
+    }
+
+    public static class Builder extends AbstractTestElement.ConfigureBuilder<Builder, DebugConfigureItem> {
+
+        private final DebugConfigureItem configure = new DebugConfigureItem();
+
+        public Builder() {
+        }
+
+        public Builder add(String key, Object value) {
+            configure.put(key, value);
+            return self;
+        }
+
+        @Override
+        public DebugConfigureItem build() {
+            return configure;
+        }
     }
 }

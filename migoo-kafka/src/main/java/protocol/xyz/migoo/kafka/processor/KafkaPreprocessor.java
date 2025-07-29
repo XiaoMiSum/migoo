@@ -54,7 +54,7 @@ import java.util.concurrent.Future;
  */
 @Alias({"kafka_preprocessor", "kafka_pre_processor", "kafka"})
 @SuppressWarnings({"unchecked", "rawtypes"})
-public class KafkaPreprocessor extends AbstractProcessor<KafkaConfigureItem, KafkaPreprocessor, DefaultSampleResult> implements Preprocessor, KafkaConstantsInterface {
+public class KafkaPreprocessor extends AbstractProcessor<KafkaPreprocessor, KafkaConfigureItem, DefaultSampleResult> implements Preprocessor, KafkaConstantsInterface {
 
     @JSONField(serialize = false)
     private RealKafkaRequest request;

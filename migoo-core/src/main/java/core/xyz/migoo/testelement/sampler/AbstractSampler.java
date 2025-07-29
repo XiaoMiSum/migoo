@@ -28,14 +28,20 @@
 
 package core.xyz.migoo.testelement.sampler;
 
+import com.alibaba.fastjson2.annotation.JSONField;
+import core.xyz.migoo.TestStatus;
+import core.xyz.migoo.assertion.Assertion;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.config.MiGooVariables;
 import core.xyz.migoo.context.Context;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.context.TestRunContext;
+import core.xyz.migoo.extractor.Extractor;
 import core.xyz.migoo.filter.SampleFilterChain;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.testelement.AbstractTestElementExecutable;
+import core.xyz.migoo.testelement.configure.AbstractConfigureElement;
+import support.xyz.migoo.KryoUtil;
 
 import java.util.*;
 
@@ -47,9 +53,16 @@ import java.util.*;
  * @author xiaomi
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public abstract class AbstractSampler<CONFIG extends ConfigureItem<CONFIG>, SELF extends AbstractSampler<CONFIG, SELF, T>, T extends SampleResult>
-        extends AbstractTestElementExecutable<CONFIG, SELF, T> implements Sampler<T>, SampleFilterChain {
+public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG, R>, CONFIG extends ConfigureItem<CONFIG>, R extends SampleResult>
+        extends AbstractTestElementExecutable<SELF, CONFIG, R> implements Sampler<R>, SampleFilterChain {
 
+    @JSONField(name = VALIDATORS, ordinal = 9)
+    protected List<Assertion> assertions;
+
+    @JSONField(name = EXTRACTORS, ordinal = 10)
+    protected List<Extractor> extractors;
+
+    @JSONField(serialize = false)
     private Iterator<TestFilter> sampleFilters;
 
     public AbstractSampler() {
@@ -84,7 +97,7 @@ public abstract class AbstractSampler<CONFIG extends ConfigureItem<CONFIG>, SELF
     // ---------------------------------------------------------------------
 
     @Override
-    protected final void execute(ContextWrapper ctx, T result) {
+    protected final void execute(ContextWrapper ctx, R result) {
         doSample(ctx);
     }
 
@@ -93,21 +106,39 @@ public abstract class AbstractSampler<CONFIG extends ConfigureItem<CONFIG>, SELF
     // ---------------------------------------------------------------------
 
     @Override
-    public final void doSample(ContextWrapper ctx) {
-        runtime.config = (CONFIG) ctx.eval(runtime.config);
+    public final void doSample(ContextWrapper context) {
+        runtime.config = (CONFIG) context.eval(runtime.config);
         if (sampleFilters.hasNext()) {
             TestFilter next = sampleFilters.next();
-            next.doSample(ctx, this);
-        } else {
-            T result = (T) ctx.getTestResult();
-            handleRequest(ctx, result);
-            // 子类可以在 sample 方法或其子方法内，在合适的时机再次调用 sampleStart 和 sampleEnd 方法，
-            // 以获取更准确的 sample 时间
-            result.sampleStart();
-            sample(ctx, (T) ctx.getTestResult());
-            result.sampleEnd();
-            handleResponse(ctx, result);
+            next.doSample(context, this);
+            return;
         }
+        R result = (R) context.getTestResult();
+        handleRequest(context, result);
+        // 子类可以在 sample 方法或其子方法内，在合适的时机再次调用 sampleStart 和 sampleEnd 方法，
+        // 以获取更准确的 sample 时间
+        result.sampleStart();
+        sample(context, (R) context.getTestResult());
+        result.sampleEnd();
+        handleResponse(context, result);
+        if (Objects.nonNull(assertions) && context.getTestResult().getStatus() == TestStatus.passed) {
+            for (Assertion assertion : assertions) {
+                assertion.assertThat(context);
+            }
+        }
+        if (Objects.nonNull(extractors) && context.getTestResult().getStatus() == TestStatus.passed) {
+            for (Extractor extractor : extractors) {
+                extractor.process(context);
+            }
+        }
+    }
+
+    @Override
+    public SELF copy() {
+        SELF self = super.copy();
+        self.assertions = KryoUtil.copy(assertions);
+        self.extractors = KryoUtil.copy(extractors);
+        return self;
     }
 
     /**
@@ -115,7 +146,7 @@ public abstract class AbstractSampler<CONFIG extends ConfigureItem<CONFIG>, SELF
      *
      * <p>该方法在 {@link TestFilter#doSample} 之前调用。
      */
-    protected void handleRequest(ContextWrapper context, T result) {
+    protected void handleRequest(ContextWrapper context, R result) {
         // do nothing.
     }
 
@@ -123,14 +154,59 @@ public abstract class AbstractSampler<CONFIG extends ConfigureItem<CONFIG>, SELF
      * 执行请求。
      * <p>不要在该方法内进行请求的动态数据替换，请使用 {@link AbstractSampler#handleRequest(ContextWrapper, SampleResult)}。
      */
-    protected abstract void sample(ContextWrapper context, T result);
+    protected abstract void sample(ContextWrapper context, R result);
 
     /**
      * 请求执行后处理。
      *
      * <p>该方法在 {@link TestFilter#doSample} 之后调用。
      */
-    protected void handleResponse(ContextWrapper context, T result) {
+    protected void handleResponse(ContextWrapper context, R result) {
         // do nothing.
     }
+
+
+    public List<Extractor> getExtractors() {
+        return extractors;
+    }
+
+    public void setExtractors(List<Extractor> extractors) {
+        this.extractors = extractors;
+    }
+
+    public List<Assertion> getAssertions() {
+        return assertions;
+    }
+
+    public void setAssertions(List<Assertion> assertions) {
+        this.assertions = assertions;
+    }
+
+    /**
+     * 取样器基础构建器
+     *
+     * @param <ELE>                       取样器类型
+     * @param <SELF>                      自己的类型
+     * @param <CONFIG>                    取样器配置类型
+     * @param <CONFIGURE_BUILDER>         取样器配置类型构建器
+     * @param <CONFIGURE_ELEMENT_BUILDER> 协议默认配置元件构建器
+     * @param <R>                         处理结果类型
+     */
+    public static abstract class Builder<ELE extends AbstractSampler<ELE, CONFIG, R>,
+            SELF extends AbstractSampler.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, CONFIGURE_ELEMENT_BUILDER, R>,
+            CONFIG extends ConfigureItem<CONFIG>,
+            CONFIGURE_BUILDER extends ConfigureBuilder<?, CONFIG>,
+            CONFIGURE_ELEMENT_BUILDER extends AbstractConfigureElement.Builder<?, ?, CONFIG, ?, ?>,
+            R extends SampleResult>
+            extends AbstractTestElementExecutable.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, CONFIGURE_ELEMENT_BUILDER, R> {
+
+        protected List<Assertion> assertions;
+
+        protected List<Extractor> extractors;
+
+        // todo 这里设置 验证器 和 提取器 的构建器
+
+
+    }
+
 }

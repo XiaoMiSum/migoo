@@ -44,7 +44,7 @@ import protocol.xyz.migoo.debug.config.DebugConfigureItem;
  * @author xiaomi
  */
 @Alias(value = {"debug_preprocessor", "debug_pre_processor", "debug"})
-public class DebugPreprocessor extends AbstractProcessor<DebugConfigureItem, DebugPreprocessor, DefaultSampleResult> implements Preprocessor {
+public class DebugPreprocessor extends AbstractProcessor<DebugPreprocessor, DebugConfigureItem, DefaultSampleResult> implements Preprocessor {
 
     static Logger logger = LoggerFactory.getLogger(DebugPreprocessor.class);
 

@@ -37,6 +37,11 @@ import support.xyz.migoo.ValidateResult;
  */
 @Alias({"ResultExtractor", "result_extractor", "result"})
 public class ResultExtractor extends AbstractExtractor {
+
+    public static RegexExtractor.Builder builder() {
+        return new RegexExtractor.Builder();
+    }
+
     @Override
     protected ExtractResult extract(SampleResult result) {
         var res = new ExtractResult("Result 提取");
@@ -51,5 +56,12 @@ public class ResultExtractor extends AbstractExtractor {
             result.append("\n提取变量引用名称 %s 字段值缺失或为空，当前值：%s", REF_NAME, toString());
         }
         return result;
+    }
+
+    public static class Builder extends AbstractExtractor.Builder<ResultExtractor.Builder, ResultExtractor> {
+
+        protected Builder() {
+            super(new ResultExtractor());
+        }
     }
 }

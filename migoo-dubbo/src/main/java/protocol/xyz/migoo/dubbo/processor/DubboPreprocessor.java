@@ -50,7 +50,7 @@ import java.util.Objects;
  * @date 2021/4/13 20:08
  */
 @Alias({"dubbo_preprocessor", "dubbo_pre_processor", "dubbo"})
-public class DubboPreprocessor extends AbstractProcessor<DubboConfigureItem, DubboPreprocessor, DefaultSampleResult> implements Preprocessor, DubboConstantsInterface {
+public class DubboPreprocessor extends AbstractProcessor<DubboPreprocessor, DubboConfigureItem, DefaultSampleResult> implements Preprocessor, DubboConstantsInterface {
 
 
     @JSONField(serialize = false)

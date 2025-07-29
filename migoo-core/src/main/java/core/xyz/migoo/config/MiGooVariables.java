@@ -27,8 +27,10 @@ package core.xyz.migoo.config;
 
 import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.testelement.AbstractTestElement;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * @author xiaomi
@@ -42,10 +44,19 @@ public class MiGooVariables extends JSONObject implements ConfigureItem<MiGooVar
         this.putAll(variables);
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public void putAll(Map<? extends String, ?> variables) {
         if (variables != null) {
             super.putAll(variables);
         }
+    }
+
+    public MiGooVariables add(String key, Object value) {
+        super.put(key, value);
+        return this;
     }
 
     @Override
@@ -68,5 +79,35 @@ public class MiGooVariables extends JSONObject implements ConfigureItem<MiGooVar
     public MiGooVariables calc(ContextWrapper context) {
         this.replaceAll((key, value) -> context.eval(value));
         return this;
+    }
+
+    public static class Builder extends AbstractTestElement.ConfigureBuilder<Builder, MiGooVariables> {
+
+        private final MiGooVariables variables = new MiGooVariables();
+
+        public Builder variables(Map<? extends String, ?> variables) {
+            this.variables.putAll(variables);
+            return this;
+        }
+
+        public Builder variables(MiGooVariables variables) {
+            this.variables.merge(variables);
+            return this;
+        }
+
+        public Builder variables(Consumer<MiGooVariables> consumer) {
+            consumer.accept(variables);
+            return this;
+        }
+
+        public Builder variables(String name, Object value) {
+            this.variables.put(name, value);
+            return this;
+        }
+
+        @Override
+        public MiGooVariables build() {
+            return variables;
+        }
     }
 }

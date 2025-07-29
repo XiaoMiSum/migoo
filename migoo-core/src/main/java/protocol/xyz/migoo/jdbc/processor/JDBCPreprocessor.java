@@ -44,7 +44,7 @@ import static protocol.xyz.migoo.jdbc.JDBC.toJSONBytes;
  * @author xiaomi
  */
 @Alias(value = {"jdbc_preprocessor", "jdbc_pre_processor", "jdbc"})
-public class JDBCPreprocessor extends AbstractProcessor<JDBCConfigureItem, JDBCPreprocessor, DefaultSampleResult> implements Preprocessor, JDBCConstantsInterface {
+public class JDBCPreprocessor extends AbstractProcessor<JDBCPreprocessor, JDBCConfigureItem, DefaultSampleResult> implements Preprocessor, JDBCConstantsInterface {
 
     @JSONField(serialize = false)
     private DruidDataSource datasource;

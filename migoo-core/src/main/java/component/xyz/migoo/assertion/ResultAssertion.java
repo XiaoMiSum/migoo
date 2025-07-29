@@ -36,10 +36,21 @@ import core.xyz.migoo.testelement.sampler.SampleResult;
 @Alias({"ResultAssertion", "Result_Assertion", "result"})
 public class ResultAssertion extends AbstractAssertion {
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     @Override
     protected AssertionResult initialized(SampleResult result) {
         var res = new AssertionResult("响应断言: ");
         actualValue = result.getResponse().bytesAsString();
         return res;
+    }
+
+    public static class Builder extends AbstractAssertion.Builder<Builder, ResultAssertion> {
+
+        protected Builder() {
+            super(new ResultAssertion());
+        }
     }
 }

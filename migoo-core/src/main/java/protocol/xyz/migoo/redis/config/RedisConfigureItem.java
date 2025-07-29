@@ -29,6 +29,7 @@ import com.alibaba.fastjson2.annotation.JSONField;
 import com.alibaba.fastjson2.annotation.JSONType;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.redis.RedisConstantsInterface;
 
@@ -39,21 +40,28 @@ import protocol.xyz.migoo.redis.RedisConstantsInterface;
 public class RedisConfigureItem implements ConfigureItem<RedisConfigureItem>, RedisConstantsInterface {
 
     @JSONField(name = DATASOURCE)
-    private String datasource;
+    protected String datasource;
     @JSONField(name = URL, ordinal = 1)
-    private String url;
+    protected String url;
     @JSONField(name = COMMAND, ordinal = 6)
-    private String command;
+    protected String command;
     @JSONField(name = SEND, ordinal = 7)
-    private String send;
+    protected String send;
     @JSONField(name = TIMEOUT, ordinal = 2)
-    private int timeout;
+    protected int timeout;
     @JSONField(name = MAX_TOTAL, ordinal = 3)
-    private int maxTotal;
+    protected int maxTotal;
     @JSONField(name = MAX_IDLE, ordinal = 4)
-    private int maxIdle;
+    protected int maxIdle;
     @JSONField(name = MIN_IDLE, ordinal = 5)
-    private int minIdle;
+    protected int minIdle;
+
+    public RedisConfigureItem() {
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
 
     @Override
@@ -145,5 +153,63 @@ public class RedisConfigureItem implements ConfigureItem<RedisConfigureItem>, Re
 
     public void setMinIdle(int minIdle) {
         this.minIdle = minIdle;
+    }
+
+    /**
+     * Redis 协议配置项构建类
+     */
+    public static class Builder extends AbstractTestElement.ConfigureBuilder<Builder, RedisConfigureItem> {
+
+        private RedisConfigureItem configure = new RedisConfigureItem();
+
+        public Builder datasource(String datasource) {
+            configure.datasource = datasource;
+            return self;
+        }
+
+        public Builder url(String url) {
+            configure.url = url;
+            return self;
+        }
+
+        public Builder command(String command) {
+            configure.command = command;
+            return self;
+        }
+
+        public Builder send(String send) {
+            configure.send = send;
+            return self;
+        }
+
+        public Builder timeout(int timeout) {
+            configure.timeout = timeout;
+            return self;
+        }
+
+        public Builder maxTotal(int maxTotal) {
+            configure.maxTotal = maxTotal;
+            return self;
+        }
+
+        public Builder maxIdle(int maxIdle) {
+            configure.maxIdle = maxIdle;
+            return self;
+        }
+
+        public Builder minIdle(int minIdle) {
+            configure.minIdle = minIdle;
+            return self;
+        }
+
+        public Builder config(RedisConfigureItem config) {
+            configure = configure.merge(config);
+            return self;
+        }
+
+        @Override
+        public RedisConfigureItem build() {
+            return configure;
+        }
     }
 }

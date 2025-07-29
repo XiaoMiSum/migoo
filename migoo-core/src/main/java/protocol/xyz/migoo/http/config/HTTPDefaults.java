@@ -38,7 +38,18 @@ import java.util.Objects;
  * @author xiaomi
  */
 @Alias(value = {"http_defaults", "http"})
-public class HTTPDefaults extends AbstractConfigureElement<HTTPConfigureItem, HTTPDefaults, TestSuiteResult> implements HTTPConstantsInterface {
+public class HTTPDefaults extends AbstractConfigureElement<HTTPDefaults, HTTPConfigureItem, TestSuiteResult> implements HTTPConstantsInterface {
+
+    public HTTPDefaults() {
+    }
+
+    public HTTPDefaults(Builder builder) {
+        super(builder);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     /**
      * HTTP默认配置元件处理
@@ -62,5 +73,21 @@ public class HTTPDefaults extends AbstractConfigureElement<HTTPConfigureItem, HT
     @Override
     protected TestSuiteResult getTestResult() {
         return new TestSuiteResult("HTTP 默认配置");
+    }
+
+    /**
+     * HTTP默认配置 测试元件 构建类
+     */
+    public static class Builder extends AbstractConfigureElement.Builder<HTTPDefaults, HTTPDefaults.Builder, HTTPConfigureItem, HTTPConfigureItem.Builder, TestSuiteResult> {
+
+        @Override
+        public HTTPConfigureItem.Builder getConfigureBuilder() {
+            return HTTPConfigureItem.builder();
+        }
+
+        @Override
+        public HTTPDefaults build() {
+            return new HTTPDefaults(this);
+        }
     }
 }

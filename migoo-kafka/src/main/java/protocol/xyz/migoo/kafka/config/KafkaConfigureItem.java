@@ -28,6 +28,7 @@ package protocol.xyz.migoo.kafka.config;
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.kafka.KafkaConstantsInterface;
 
@@ -39,34 +40,41 @@ import java.util.Objects;
 public class KafkaConfigureItem implements ConfigureItem<KafkaConfigureItem>, KafkaConstantsInterface {
 
     @JSONField(name = REF)
-    private String ref;
+    protected String ref;
 
     @JSONField(name = BOOTSTRAP_SERVERS)
-    private String bootstrapServers;
+    protected String bootstrapServers;
 
     @JSONField(name = KAFKA_TOPIC, ordinal = 1)
-    private String topic;
+    protected String topic;
 
     @JSONField(name = KAFKA_KEY, ordinal = 2)
-    private String key;
+    protected String key;
 
     @JSONField(name = KAFKA_MESSAGE, ordinal = 3)
-    private Object message;
+    protected Object message;
 
     @JSONField(name = KEY_SERIALIZER, ordinal = 5)
-    private String keySerializer;
+    protected String keySerializer;
 
     @JSONField(name = VALUE_SERIALIZER, ordinal = 6)
-    private String valueSerializer;
+    protected String valueSerializer;
 
     @JSONField(name = ACKS, ordinal = 7)
-    private Integer acks;
+    protected Integer acks;
 
     @JSONField(name = RETRIES, ordinal = 8)
-    private Integer retries;
+    protected Integer retries;
 
     @JSONField(name = LINGER_MS, ordinal = 9)
-    private Integer lingerMs;
+    protected Integer lingerMs;
+
+    public KafkaConfigureItem() {
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
     public KafkaConfigureItem merge(KafkaConfigureItem other) {
@@ -178,6 +186,83 @@ public class KafkaConfigureItem implements ConfigureItem<KafkaConfigureItem>, Ka
 
     public void setLingerMs(Integer lingerMs) {
         this.lingerMs = lingerMs;
+    }
+
+    /**
+     * Kafka 配置属性 构建器
+     */
+    public static class Builder extends AbstractTestElement.ConfigureBuilder<Builder, KafkaConfigureItem> {
+
+        private KafkaConfigureItem configure = new KafkaConfigureItem();
+
+        public Builder() {
+        }
+
+        public Builder ref(String ref) {
+            configure.ref = ref;
+            return self;
+        }
+
+        public Builder address(String bootstrapServers) {
+            configure.bootstrapServers = bootstrapServers;
+            return self;
+        }
+
+        public Builder bootstrapServers(String bootstrapServers) {
+            configure.bootstrapServers = bootstrapServers;
+            return self;
+        }
+
+        public Builder topic(String topic) {
+            configure.topic = topic;
+            return self;
+        }
+
+        public Builder key(String key) {
+            configure.key = key;
+            return self;
+        }
+
+        public Builder message(Object message) {
+            configure.message = message;
+            return self;
+        }
+
+        public Builder keySerializer(String keySerializer) {
+            configure.keySerializer = keySerializer;
+            return self;
+        }
+
+        public Builder valueSerializer(String valueSerializer) {
+            configure.valueSerializer = valueSerializer;
+            return self;
+        }
+
+        public Builder acks(Integer acks) {
+            configure.acks = acks;
+            return self;
+        }
+
+        public Builder retries(Integer retries) {
+            configure.retries = retries;
+            return self;
+        }
+
+        public Builder lingerMs(Integer lingerMs) {
+            configure.lingerMs = lingerMs;
+            return self;
+        }
+
+        public Builder config(KafkaConfigureItem config) {
+            configure = configure.merge(config);
+            return self;
+        }
+
+
+        @Override
+        public KafkaConfigureItem build() {
+            return configure;
+        }
     }
 
 }

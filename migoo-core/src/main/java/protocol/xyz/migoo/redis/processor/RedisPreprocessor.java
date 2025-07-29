@@ -46,11 +46,11 @@ import java.util.Locale;
  * @author xiaomi
  */
 @Alias(value = {"redis_preprocessor", "redis_pre_processor", "redis"})
-public class RedisPreprocessor extends AbstractProcessor<RedisConfigureItem, RedisPreprocessor, DefaultSampleResult> implements Preprocessor, JDBCConstantsInterface {
+public class RedisPreprocessor extends AbstractProcessor<RedisPreprocessor, RedisConfigureItem, DefaultSampleResult> implements Preprocessor, JDBCConstantsInterface {
 
     @JSONField(serialize = false)
     private RedisDatasource datasource;
-
+    @JSONField(serialize = false)
     private byte[] bytes;
 
     @Override

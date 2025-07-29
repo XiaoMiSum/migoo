@@ -45,8 +45,8 @@ import java.util.function.Consumer;
  * @author xiaomi
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public abstract class AbstractTestElement<CONFIG extends ConfigureItem, SELF extends AbstractTestElement<CONFIG, SELF, T>, T extends Result>
-        implements TestElement<T>, TestElementConstantsInterface {
+public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF, CONFIG, R>, CONFIG extends ConfigureItem<CONFIG>, R extends Result>
+        implements TestElement<R>, TestElementConstantsInterface {
 
     @JSONField(name = ID)
     protected String id;
@@ -71,6 +71,14 @@ public abstract class AbstractTestElement<CONFIG extends ConfigureItem, SELF ext
     protected SELF runtime;
     protected boolean initialized = false;
 
+    public AbstractTestElement(Builder<SELF, ?, CONFIG, ?, R> builder) {
+        id = builder.id;
+        title = builder.title;
+        disabled = builder.disabled;
+        config = builder.config;
+        filters = builder.filters;
+        metadata.putAll(builder.metadata);
+    }
 
     public AbstractTestElement() {
     }
@@ -86,7 +94,7 @@ public abstract class AbstractTestElement<CONFIG extends ConfigureItem, SELF ext
 
     }
 
-    protected abstract T getTestResult();
+    protected abstract R getTestResult();
 
 
     protected SELF newInstance() {
@@ -168,10 +176,11 @@ public abstract class AbstractTestElement<CONFIG extends ConfigureItem, SELF ext
      * @param <SELF>              构建类自身
      * @param <CONFIGURE_BUILDER> 配置构建类
      */
-    public static abstract class Builder<ELE extends AbstractTestElement<CONFIG, ELE, ? extends Result>,
-            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER>,
-            CONFIG extends ConfigureItem,
-            CONFIGURE_BUILDER extends ConfigureBuilder>
+    public static abstract class Builder<ELE extends AbstractTestElement<ELE, CONFIG, R>,
+            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, R>,
+            CONFIG extends ConfigureItem<CONFIG>,
+            CONFIGURE_BUILDER extends ConfigureBuilder<?, CONFIG>,
+            R extends Result>
             implements TestElementBuilder<ELE> {
 
         protected String id;
@@ -210,12 +219,12 @@ public abstract class AbstractTestElement<CONFIG extends ConfigureItem, SELF ext
         public SELF config(Consumer<CONFIGURE_BUILDER> consumer) {
             CONFIGURE_BUILDER builder = getConfigureBuilder();
             consumer.accept(builder);
-            this.config = (CONFIG) builder.build();
+            this.config = builder.build();
             return self;
         }
 
         public SELF config(CONFIGURE_BUILDER builder) {
-            this.config = (CONFIG) builder.build();
+            this.config = builder.build();
             return self;
         }
 
@@ -229,12 +238,41 @@ public abstract class AbstractTestElement<CONFIG extends ConfigureItem, SELF ext
             return self;
         }
 
+        public SELF metadata(String name, Object value) {
+            this.metadata.put(name, value);
+            return self;
+        }
+
         public SELF filters(List<TestFilter> filters) {
             this.filters = filters;
             return self;
         }
 
         public abstract CONFIGURE_BUILDER getConfigureBuilder();
+
+        public String getId() {
+            return id;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public boolean isDisabled() {
+            return disabled;
+        }
+
+        public CONFIG getConfig() {
+            return config;
+        }
+
+        public Map<String, Object> getMetadata() {
+            return metadata;
+        }
+
+        public List<TestFilter> getFilters() {
+            return filters;
+        }
 
     }
 
@@ -243,11 +281,12 @@ public abstract class AbstractTestElement<CONFIG extends ConfigureItem, SELF ext
      *
      * @param <SELF> 构建类自身
      */
-    public static abstract class ConfigureBuilder<SELF extends ConfigureBuilder<SELF>>
-            implements IBuilder<SELF> {
+    public static abstract class ConfigureBuilder<SELF extends ConfigureBuilder<SELF, CONFIG>, CONFIG extends ConfigureItem<CONFIG>>
+            implements IBuilder<CONFIG> {
+        protected SELF self;
 
-
+        protected ConfigureBuilder() {
+            self = (SELF) this;
+        }
     }
-
-
 }

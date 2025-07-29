@@ -31,13 +31,12 @@ package protocol.xyz.migoo.dubbo.config;
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.dubbo.DubboConstantsInterface;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * @author xiaomi
@@ -46,31 +45,28 @@ import java.util.Objects;
 @SuppressWarnings("unchecked")
 public class DubboConfigureItem implements ConfigureItem<DubboConfigureItem>, DubboConstantsInterface {
 
+    @JSONField(name = REGISTRY)
+    protected Registry registry;
+    @JSONField(name = REFERENCE, ordinal = 1)
+    protected Reference reference;
+    @JSONField(name = INTERFACE, ordinal = 2)
+    protected String interfaceName;
+    @JSONField(name = METHOD, ordinal = 3)
+    protected String method;
+    @JSONField(name = ARGS_PARAMETER_TYPES, ordinal = 4)
+    protected List<String> parameterTypes;
+    @JSONField(name = ARGS_PARAMETERS, ordinal = 5)
+    protected List<Object> parameters;
+    @JSONField(name = ATTACHMENT_ARGS, ordinal = 6)
+    protected Map<String, String> attachmentArgs;
     @JSONField(name = REF)
     private String ref;
 
-    @JSONField(name = REGISTRY)
-    private Registry registry;
-
-    @JSONField(name = REFERENCE, ordinal = 1)
-    private Reference reference;
-
-    @JSONField(name = INTERFACE, ordinal = 2)
-    private String interfaceName;
-
-    @JSONField(name = METHOD, ordinal = 3)
-    private String method;
-
-    @JSONField(name = ARGS_PARAMETER_TYPES, ordinal = 4)
-    private List<String> parameterTypes;
-
-    @JSONField(name = ARGS_PARAMETERS, ordinal = 5)
-    private List<Object> parameters;
-
-    @JSONField(name = ATTACHMENT_ARGS, ordinal = 6)
-    private Map<String, String> attachmentArgs;
-
     public DubboConfigureItem() {
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     @Override
@@ -189,22 +185,29 @@ public class DubboConfigureItem implements ConfigureItem<DubboConfigureItem>, Du
     public static class Registry implements ConfigureItem<Registry> {
 
         @JSONField(name = PROTOCOL)
-        private String protocol;
+        protected String protocol;
 
         @JSONField(name = ADDRESS, ordinal = 1)
-        private String address;
+        protected String address;
 
         @JSONField(name = USERNAME, ordinal = 2)
-        private String username;
+        protected String username;
 
         @JSONField(name = PASSWORD, ordinal = 3)
-        private String password;
+        protected String password;
 
         @JSONField(name = GROUP, ordinal = 4)
-        private String group;
+        protected String group;
 
         @JSONField(name = VERSION, ordinal = 5)
-        private String version;
+        protected String version;
+
+        public Registry() {
+        }
+
+        public static Builder builder() {
+            return new Builder();
+        }
 
         @Override
         public Registry merge(Registry other) {
@@ -280,22 +283,77 @@ public class DubboConfigureItem implements ConfigureItem<DubboConfigureItem>, Du
         public void setVersion(String version) {
             this.version = version;
         }
+
+        /**
+         * Dubbo 注册中心 配置属性 构建器
+         */
+        public static class Builder extends AbstractTestElement.ConfigureBuilder<Builder, Registry> {
+
+            private Registry registry = new Registry();
+
+            public Builder protocol(String protocol) {
+                registry.protocol = protocol;
+                return self;
+            }
+
+            public Builder address(String address) {
+                registry.address = address;
+                return self;
+            }
+
+            public Builder username(String username) {
+                registry.username = username;
+                return self;
+            }
+
+            public Builder password(String password) {
+                registry.password = password;
+                return self;
+            }
+
+            public Builder group(String group) {
+                registry.group = group;
+                return self;
+            }
+
+            public Builder version(String version) {
+                registry.version = version;
+                return self;
+            }
+
+            public Builder config(Registry registry) {
+                this.registry = this.registry.merge(registry);
+                return self;
+            }
+
+            @Override
+            public Registry build() {
+                return registry;
+            }
+        }
     }
 
     public static class Reference implements ConfigureItem<Reference> {
 
         @JSONField(name = VERSION)
-        private String version;
+        protected String version;
         @JSONField(name = GROUP, ordinal = 1)
-        private String group;
+        protected String group;
         @JSONField(name = RETRIES, ordinal = 2)
-        private Integer retries;
+        protected Integer retries;
         @JSONField(name = TIMEOUT, ordinal = 3)
-        private Integer timeout;
+        protected Integer timeout;
         @JSONField(name = ASYNC, ordinal = 4)
-        private Boolean async;
+        protected Boolean async;
         @JSONField(name = LOAD_BALANCE, ordinal = 5)
-        private String loadBalance;
+        protected String loadBalance;
+
+        public Reference() {
+        }
+
+        public static Builder builder() {
+            return new Builder();
+        }
 
         @Override
         public Reference merge(Reference other) {
@@ -363,6 +421,175 @@ public class DubboConfigureItem implements ConfigureItem<DubboConfigureItem>, Du
 
         public void setLoadBalance(String loadBalance) {
             this.loadBalance = loadBalance;
+        }
+
+        /**
+         * Dubbo 注册中心 配置属性 构建器
+         */
+        public static class Builder extends AbstractTestElement.ConfigureBuilder<Builder, Reference> {
+
+            private Reference reference = new Reference();
+
+            public Builder version(String version) {
+                reference.version = version;
+                return self;
+            }
+
+            public Builder group(String group) {
+                reference.group = group;
+                return self;
+            }
+
+            public Builder retries(int retries) {
+                reference.retries = retries;
+                return self;
+            }
+
+            public Builder timeout(int timeout) {
+                reference.timeout = timeout;
+                return self;
+            }
+
+            public Builder async(boolean async) {
+                reference.async = async;
+                return self;
+            }
+
+            public Builder loadBalance(String loadBalance) {
+                reference.loadBalance = loadBalance;
+                return self;
+            }
+
+            public Builder config(Reference reference) {
+                this.reference = this.reference.merge(reference);
+                return self;
+            }
+
+            @Override
+            public Reference build() {
+                return reference;
+            }
+        }
+    }
+
+    /**
+     * Dubbo 配置属性 构建器
+     */
+    public static class Builder extends AbstractTestElement.ConfigureBuilder<Builder, DubboConfigureItem> {
+
+        private DubboConfigureItem configure = new DubboConfigureItem();
+
+        public Builder() {
+        }
+
+        public Builder registry(Consumer<Registry.Builder> consumer) {
+            var builder = Registry.builder();
+            consumer.accept(builder);
+            configure.registry = builder.build();
+            return self;
+        }
+
+        public Builder registry(Registry.Builder registry) {
+            configure.registry = registry.build();
+            return self;
+        }
+
+        public Builder registry(Registry registry) {
+            configure.registry = registry;
+            return self;
+        }
+
+        public Builder reference(Consumer<Reference.Builder> consumer) {
+            var builder = Reference.builder();
+            consumer.accept(builder);
+            configure.reference = builder.build();
+            return self;
+        }
+
+        public Builder reference(Reference.Builder reference) {
+            configure.reference = reference.build();
+            return self;
+        }
+
+        public Builder reference(Reference reference) {
+            configure.reference = reference;
+            return self;
+        }
+
+        public Builder interfaceName(String interfaceName) {
+            configure.interfaceName = interfaceName;
+            return self;
+        }
+
+        public Builder method(String method) {
+            configure.method = method;
+            return self;
+        }
+
+        public Builder parameterTypes(List<String> parameterTypes) {
+            configure.parameterTypes = parameterTypes;
+            return self;
+        }
+
+        public Builder addParameterType(String parameterType) {
+            synchronized (this) {
+                if (Objects.isNull(configure.parameterTypes)) {
+                    synchronized (this) {
+                        configure.parameterTypes = new ArrayList<>();
+                    }
+                }
+            }
+            configure.parameterTypes.add(parameterType);
+            return self;
+        }
+
+        public Builder parameters(List<Object> parameters) {
+            configure.parameters = parameters;
+            return self;
+        }
+
+        public Builder addParameter(Object parameter) {
+            synchronized (this) {
+                if (Objects.isNull(configure.parameters)) {
+                    synchronized (this) {
+                        configure.parameters = new ArrayList<>();
+                    }
+                }
+            }
+            configure.parameters.add(parameter);
+            return self;
+        }
+
+        public Builder attachmentArgs(Map<String, String> attachmentArgs) {
+            configure.attachmentArgs = attachmentArgs;
+            return self;
+        }
+
+        public Builder attachmentArgs(String name, String value) {
+            synchronized (this) {
+                if (Objects.isNull(configure.attachmentArgs)) {
+                    synchronized (this) {
+                        configure.attachmentArgs = new HashMap<>();
+                    }
+                }
+            }
+            configure.attachmentArgs.put(name, value);
+            return self;
+        }
+
+        public Builder ref(String ref) {
+            configure.ref = ref;
+            return self;
+        }
+
+        public Builder config(DubboConfigureItem config) {
+            configure = configure.merge(config);
+            return self;
+        }
+
+        @Override
+        public DubboConfigureItem build() {
+            return configure;
         }
     }
 }

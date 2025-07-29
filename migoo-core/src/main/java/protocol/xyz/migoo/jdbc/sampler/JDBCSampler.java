@@ -43,7 +43,7 @@ import static protocol.xyz.migoo.jdbc.JDBC.toJSONBytes;
  * @author xiaomi
  */
 @Alias(value = {"jdbc", "jdbc_sampler"})
-public class JDBCSampler extends AbstractSampler<JDBCConfigureItem, JDBCSampler, DefaultSampleResult> implements Sampler<DefaultSampleResult>, JDBCConstantsInterface {
+public class JDBCSampler extends AbstractSampler<JDBCSampler, JDBCConfigureItem, DefaultSampleResult> implements Sampler<DefaultSampleResult>, JDBCConstantsInterface {
 
     @JSONField(serialize = false)
     private DruidDataSource datasource;

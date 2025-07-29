@@ -29,12 +29,18 @@
 package core.xyz.migoo.config;
 
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.testelement.AbstractTestElement;
 
 /**
  * @author xiaomi
  * Created at 2025/7/20 12:29
  */
 public class EmptyConfigureItem implements ConfigureItem<EmptyConfigureItem> {
+
+    public static Builder builder() {
+        return new Builder();
+    }
+    
     @Override
     public EmptyConfigureItem merge(EmptyConfigureItem other) {
         return this;
@@ -43,5 +49,12 @@ public class EmptyConfigureItem implements ConfigureItem<EmptyConfigureItem> {
     @Override
     public EmptyConfigureItem calc(ContextWrapper context) {
         return this;
+    }
+
+
+    public static class Builder extends AbstractTestElement.ConfigureBuilder<Builder, EmptyConfigureItem> {
+        public EmptyConfigureItem build() {
+            return new EmptyConfigureItem();
+        }
     }
 }

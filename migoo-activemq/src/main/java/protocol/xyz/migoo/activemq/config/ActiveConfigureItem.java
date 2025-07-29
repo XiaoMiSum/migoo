@@ -28,10 +28,13 @@ package protocol.xyz.migoo.activemq.config;
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.activemq.ActiveMqConstantsInterface;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -39,27 +42,27 @@ import java.util.Objects;
  */
 public class ActiveConfigureItem implements ConfigureItem<ActiveConfigureItem>, ActiveMqConstantsInterface {
 
-    @JSONField(name = REF)
-    private String ref;
-
     @JSONField(name = BROKER_URL)
-    private String brokerUrl;
-
+    protected String brokerUrl;
     @JSONField(name = ACTIVEMQ_TOPIC, ordinal = 1)
-    private String topic;
-
+    protected String topic;
     @JSONField(name = ACTIVEMQ_QUEUE, ordinal = 2)
-    private String queue;
-
+    protected String queue;
     @JSONField(name = ACTIVEMQ_MESSAGE, ordinal = 3)
-    private Object message;
-
+    protected Object message;
     @JSONField(name = ACTIVEMQ_USERNAME, ordinal = 5)
-    private String username;
-
+    protected String username;
     @JSONField(name = ACTIVEMQ_PASSWORD, ordinal = 6)
-    private String password;
+    protected String password;
+    @JSONField(name = REF)
+    protected String ref;
 
+    public ActiveConfigureItem() {
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
     public ActiveConfigureItem merge(ActiveConfigureItem other) {
@@ -145,5 +148,77 @@ public class ActiveConfigureItem implements ConfigureItem<ActiveConfigureItem>, 
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+
+    /**
+     * Active 配置属性 构建器
+     */
+    public static class Builder extends AbstractTestElement.ConfigureBuilder<Builder, ActiveConfigureItem> {
+
+        private ActiveConfigureItem configure = new ActiveConfigureItem();
+
+        public Builder() {
+        }
+
+        public Builder ref(String ref) {
+            configure.setRef(ref);
+            return self;
+        }
+
+        public Builder brokerUrl(String brokerUrl) {
+            configure.setBrokerUrl(brokerUrl);
+            return self;
+        }
+
+        public Builder topic(String topic) {
+            configure.setTopic(topic);
+            return self;
+        }
+
+        public Builder queue(String queue) {
+            configure.setQueue(queue);
+            return self;
+        }
+
+        public Builder message(Object message) {
+            configure.setMessage(message);
+            return self;
+        }
+
+        public Builder username(String username) {
+            configure.setUsername(username);
+            return self;
+        }
+
+        public Builder password(String password) {
+            configure.setPassword(password);
+            return self;
+        }
+
+        public Builder message(String message) {
+            configure.setMessage(message);
+            return self;
+        }
+
+        public Builder message(List<?> message) {
+            configure.setMessage(message);
+            return self;
+        }
+
+        public Builder message(Map<?, ?> message) {
+            configure.setMessage(message);
+            return self;
+        }
+
+        public Builder config(ActiveConfigureItem config) {
+            configure = configure.merge(config);
+            return self;
+        }
+
+        @Override
+        public ActiveConfigureItem build() {
+            return configure;
+        }
     }
 }

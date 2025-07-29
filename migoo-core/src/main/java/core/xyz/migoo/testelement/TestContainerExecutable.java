@@ -28,12 +28,14 @@
 
 package core.xyz.migoo.testelement;
 
+import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.filter.ExecuteChildrenFilterChain;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.report.Result;
+import core.xyz.migoo.testelement.configure.AbstractConfigureElement;
 import support.xyz.migoo.ValidateResult;
 
 import java.util.*;
@@ -43,16 +45,22 @@ import java.util.*;
  *
  * @author xiaomi
  */
-@SuppressWarnings({"rawtypes"})
-public abstract class TestContainerExecutable
-        <CONFIG extends ConfigureItem<CONFIG>, SELF extends TestContainerExecutable<CONFIG, SELF, T>, T extends Result>
-        extends AbstractTestElementExecutable<CONFIG, SELF, T> implements ExecuteChildrenFilterChain {
+@SuppressWarnings({"rawtypes", "unchecked"})
+public abstract class TestContainerExecutable<SELF extends TestContainerExecutable<SELF, CONFIG, R>,
+        CONFIG extends ConfigureItem<CONFIG>, R extends Result>
+        extends AbstractTestElementExecutable<SELF, CONFIG, R> implements ExecuteChildrenFilterChain {
 
-    protected List<TestElement<T>> children;
+    @JSONField(name = CHILDREN, ordinal = 10)
+    protected List<TestElement<R>> children;
 
     protected Iterator<TestFilter> executeChildrenFilters;
 
     public TestContainerExecutable() {
+    }
+
+    public TestContainerExecutable(Builder builder) {
+        super(builder);
+        this.children = builder.children;
     }
 
     @Override
@@ -65,11 +73,11 @@ public abstract class TestContainerExecutable
             next.doExecuteChildren(context, this);
             return;
         }
-        for (TestElement<T> child : children) {
+        for (TestElement<R> child : children) {
             if (child == null) {
                 continue;
             }
-            T result = context.getSessionRunner().runTest(child);
+            R result = context.getSessionRunner().runTest(child);
             if (TestStatus.failed == result.getStatus()) {
                 context.getTestResult().setStatus(TestStatus.failed);
             }
@@ -105,19 +113,42 @@ public abstract class TestContainerExecutable
             return self;
         }
         self.children = new ArrayList<>();
-        for (TestElement<T> step : children) {
+        for (TestElement<R> step : children) {
             self.children.add(step.copy());
         }
         return self;
     }
 
 
-    public List<TestElement<T>> getChildren() {
+    public List<TestElement<R>> getChildren() {
         return children;
     }
 
-    public void setChildren(List<TestElement<T>> children) {
+    public void setChildren(List<TestElement<R>> children) {
         this.children = children;
     }
 
+    /**
+     * 容器基础构建器
+     *
+     * @param <ELE>                       容器类型
+     * @param <SELF>                      自己的类型
+     * @param <CONFIG>                    容器配置类型
+     * @param <CONFIGURE_BUILDER>         容器配置类型构建器
+     * @param <CONFIGURE_ELEMENT_BUILDER> 协议默认配置元件构建器
+     * @param <R>                         处理结果类型
+     */
+    public static abstract class Builder<ELE extends TestContainerExecutable<ELE, CONFIG, R>,
+            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, CONFIGURE_ELEMENT_BUILDER, R>,
+            CONFIG extends ConfigureItem<CONFIG>,
+            CONFIGURE_BUILDER extends ConfigureBuilder<?, CONFIG>,
+            CONFIGURE_ELEMENT_BUILDER extends AbstractConfigureElement.Builder<?, ?, CONFIG, ?, ?>,
+            R extends Result>
+            extends AbstractTestElementExecutable.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, CONFIGURE_ELEMENT_BUILDER, R> {
+
+        protected List<TestElement<R>> children;
+
+        // todo 这里设置子容器
+
+    }
 }

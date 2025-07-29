@@ -28,6 +28,7 @@ package protocol.xyz.migoo.jdbc.config;
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.jdbc.JDBCConstantsInterface;
 
@@ -37,29 +38,35 @@ import protocol.xyz.migoo.jdbc.JDBCConstantsInterface;
 public class JDBCConfigureItem implements ConfigureItem<JDBCConfigureItem>, JDBCConstantsInterface {
 
     @JSONField(name = DATASOURCE)
-    private String datasource;
+    protected String datasource;
 
     @JSONField(name = DRIVER, ordinal = 1)
-    private String driver;
+    protected String driver;
 
     @JSONField(name = URL, ordinal = 2)
-    private String url;
+    protected String url;
 
     @JSONField(name = USERNAME, ordinal = 3)
-    private String username;
+    protected String username;
 
     @JSONField(name = PASSWORD, ordinal = 4)
-    private String password;
+    protected String password;
 
     @JSONField(name = MAX_ACTIVE, ordinal = 5)
-    private int maxActive;
+    protected int maxActive;
 
     @JSONField(name = MAX_WAIT, ordinal = 6)
-    private int maxWait;
+    protected int maxWait;
 
     @JSONField(name = SQL, ordinal = 7)
-    private String sql;
+    protected String sql;
 
+    public JDBCConfigureItem() {
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
     public JDBCConfigureItem merge(JDBCConfigureItem other) {
@@ -152,5 +159,63 @@ public class JDBCConfigureItem implements ConfigureItem<JDBCConfigureItem>, JDBC
 
     public void setSql(String sql) {
         this.sql = sql;
+    }
+
+    /**
+     * JDBC 协议配置项构建类
+     */
+    public static class Builder extends AbstractTestElement.ConfigureBuilder<Builder, JDBCConfigureItem> {
+
+        private JDBCConfigureItem configure = new JDBCConfigureItem();
+
+        public Builder datasource(String datasource) {
+            configure.datasource = datasource;
+            return self;
+        }
+
+        public Builder driver(String driver) {
+            configure.driver = driver;
+            return self;
+        }
+
+        public Builder url(String url) {
+            configure.url = url;
+            return self;
+        }
+
+        public Builder username(String username) {
+            configure.username = username;
+            return self;
+        }
+
+        public Builder password(String password) {
+            configure.password = password;
+            return self;
+        }
+
+        public Builder maxActive(int maxActive) {
+            configure.maxActive = maxActive;
+            return self;
+        }
+
+        public Builder maxWait(int maxWait) {
+            configure.maxWait = maxWait;
+            return self;
+        }
+
+        public Builder sql(String sql) {
+            configure.sql = sql;
+            return self;
+        }
+
+        public Builder config(JDBCConfigureItem config) {
+            configure = configure.merge(config);
+            return self;
+        }
+
+        @Override
+        public JDBCConfigureItem build() {
+            return configure;
+        }
     }
 }

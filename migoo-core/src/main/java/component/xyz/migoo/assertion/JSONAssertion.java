@@ -39,6 +39,11 @@ import support.xyz.migoo.ValidateResult;
 @Alias({"JSONAssertion", "json_assertion", "json"})
 public class JSONAssertion extends AbstractAssertion {
 
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     @Override
     protected AssertionResult initialized(SampleResult result) {
         var res = new AssertionResult("JSON断言: ");
@@ -60,5 +65,11 @@ public class JSONAssertion extends AbstractAssertion {
         return result;
     }
 
+    public static class Builder extends AbstractAssertion.Builder<Builder, JSONAssertion> {
+
+        protected Builder() {
+            super(new JSONAssertion());
+        }
+    }
 
 }

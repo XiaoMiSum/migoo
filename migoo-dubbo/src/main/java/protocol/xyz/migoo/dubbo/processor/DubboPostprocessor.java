@@ -50,7 +50,7 @@ import java.util.Objects;
  * @date 2021/4/13 20:08
  */
 @Alias({"dubbo_postprocessor", "dubbo_post_processor", "dubbo"})
-public class DubboPostprocessor extends AbstractProcessor<DubboConfigureItem, DubboPostprocessor, DefaultSampleResult> implements Postprocessor, DubboConstantsInterface {
+public class DubboPostprocessor extends AbstractProcessor<DubboPostprocessor, DubboConfigureItem, DefaultSampleResult> implements Postprocessor, DubboConstantsInterface {
 
 
     @JSONField(serialize = false)

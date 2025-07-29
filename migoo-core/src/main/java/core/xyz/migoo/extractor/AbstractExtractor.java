@@ -28,6 +28,7 @@ package core.xyz.migoo.extractor;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.TestStatus;
+import core.xyz.migoo.builder.IBuilder;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.sampler.SampleResult;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +37,7 @@ import support.xyz.migoo.ValidateResult;
 /**
  * @author xiaomi
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class AbstractExtractor implements Extractor, ExtractorConstantsInterface {
 
     @JSONField(name = FIELD)
@@ -130,5 +132,48 @@ public abstract class AbstractExtractor implements Extractor, ExtractorConstants
 
     public void setMatchNum(int matchNum) {
         this.matchNum = matchNum;
+    }
+
+
+    /**
+     * 验证器基础构建器
+     *
+     * @param <SELF> 构建类自身
+     */
+    public static abstract class Builder<SELF extends Builder<SELF, EXTRACTOR>, EXTRACTOR extends AbstractExtractor>
+            implements IBuilder<EXTRACTOR> {
+        private final EXTRACTOR extractor;
+        protected SELF self;
+
+
+        protected Builder(EXTRACTOR extractor) {
+            self = (SELF) this;
+            this.extractor = extractor;
+        }
+
+        public SELF refName(String refName) {
+            extractor.refName = refName;
+            return self;
+        }
+
+        public SELF field(String field) {
+            extractor.field = field;
+            return self;
+        }
+
+        public SELF defaultValue(Object defaultValue) {
+            extractor.defaultValue = defaultValue;
+            return self;
+        }
+
+        public SELF matchNum(int matchNum) {
+            extractor.matchNum = matchNum;
+            return self;
+        }
+        
+        @Override
+        public EXTRACTOR build() {
+            return extractor;
+        }
     }
 }

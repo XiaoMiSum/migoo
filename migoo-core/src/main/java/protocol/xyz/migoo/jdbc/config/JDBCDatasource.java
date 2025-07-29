@@ -40,11 +40,21 @@ import support.xyz.migoo.ValidateResult;
  * @author xiaomi
  */
 @Alias({"jdbc", "jdbc_datasource", "jdbc_data_source"})
-public class JDBCDatasource extends AbstractConfigureElement<JDBCConfigureItem, JDBCDatasource, TestSuiteResult>
+public class JDBCDatasource extends AbstractConfigureElement<JDBCDatasource, JDBCConfigureItem, TestSuiteResult>
         implements Closeable, JDBCConstantsInterface {
-
     @JSONField(serialize = false)
     private final DruidDataSource dataSource = new DruidDataSource();
+
+    public JDBCDatasource() {
+    }
+
+    public JDBCDatasource(Builder builder) {
+        super(builder);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
     public ValidateResult validate() {
@@ -52,13 +62,13 @@ public class JDBCDatasource extends AbstractConfigureElement<JDBCConfigureItem, 
         if (StringUtils.isBlank(refName)) {
             result.append("\n数据源引用名称 %s 字段值缺失或为空，当前值：%s", REF_NAME, toString());
         }
-        if (StringUtils.isBlank(config.getUrl())) {
+        if (StringUtils.isBlank(config.url)) {
             result.append("\n数据源连接 %s 字段值缺失或为空，当前值：%s", URL, toString());
         }
-        if (StringUtils.isBlank(config.getUsername())) {
+        if (StringUtils.isBlank(config.username)) {
             result.append("\n数据源用户名 %s 字段值缺失或为空，当前值：%s", USERNAME, toString());
         }
-        if (StringUtils.isBlank(config.getPassword())) {
+        if (StringUtils.isBlank(config.password)) {
             result.append("\n数据源密码 %s 字段值缺失或为空，当前值：%s", PASSWORD, toString());
         }
         return result;
@@ -68,16 +78,16 @@ public class JDBCDatasource extends AbstractConfigureElement<JDBCConfigureItem, 
     protected void doProcess(ContextWrapper context) {
         try {
             // 兼容 没有使用 SPI 的 JDBC驱动
-            if (StringUtils.isNotBlank(runtime.getConfig().getDriver())) {
-                Class.forName(runtime.getConfig().getDriver());
+            if (StringUtils.isNotBlank(runtime.getConfig().driver)) {
+                Class.forName(runtime.getConfig().driver);
             }
         } catch (Exception ignored) {
         }
-        dataSource.setUrl(runtime.getConfig().getUrl());
-        dataSource.setUsername(runtime.getConfig().getUsername());
-        dataSource.setPassword(runtime.getConfig().getPassword());
-        dataSource.setMaxActive(runtime.getConfig().getMaxActive());
-        dataSource.setMaxWait(runtime.getConfig().getMaxWait());
+        dataSource.setUrl(runtime.getConfig().url);
+        dataSource.setUsername(runtime.getConfig().username);
+        dataSource.setPassword(runtime.getConfig().password);
+        dataSource.setMaxActive(runtime.getConfig().maxActive);
+        dataSource.setMaxWait(runtime.getConfig().maxWait);
         context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().put(refName, dataSource);
     }
 
@@ -89,5 +99,21 @@ public class JDBCDatasource extends AbstractConfigureElement<JDBCConfigureItem, 
     @Override
     public void close() {
         dataSource.close();
+    }
+
+    /**
+     * JDBC数据源 测试元件 构建类
+     */
+    public static class Builder extends AbstractConfigureElement.Builder<JDBCDatasource, Builder, JDBCConfigureItem, JDBCConfigureItem.Builder, TestSuiteResult> {
+
+        @Override
+        public JDBCConfigureItem.Builder getConfigureBuilder() {
+            return JDBCConfigureItem.builder();
+        }
+
+        @Override
+        public JDBCDatasource build() {
+            return new JDBCDatasource(this);
+        }
     }
 }

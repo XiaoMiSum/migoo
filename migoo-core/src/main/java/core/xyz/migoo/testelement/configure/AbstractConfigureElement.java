@@ -38,18 +38,24 @@ import core.xyz.migoo.testelement.AbstractTestElement;
  * @author xiaomi
  * Created at 2025/7/19 15:47
  */
-public abstract class AbstractConfigureElement<CONFIG extends ConfigureItem<CONFIG>, SELF extends AbstractConfigureElement<CONFIG, SELF, T>, T extends Result>
-        extends AbstractTestElement<CONFIG, AbstractConfigureElement<CONFIG, SELF, T>, T>
-        implements ConfigureElement<T>, ConfigureElementConstantsInterface {
+@SuppressWarnings({"rawtypes"})
+public abstract class AbstractConfigureElement<SELF extends AbstractConfigureElement<SELF, CONFIG, R>, CONFIG extends ConfigureItem<CONFIG>, R extends Result>
+        extends AbstractTestElement<AbstractConfigureElement<SELF, CONFIG, R>, CONFIG, R>
+        implements ConfigureElement<R>, ConfigureElementConstantsInterface {
 
     @JSONField(name = REF_NAME, ordinal = 1)
     protected String refName;
+
+    public AbstractConfigureElement(Builder<SELF, ?, CONFIG, ?, R> builder) {
+        super(builder);
+        this.refName = builder.refName;
+    }
 
     public AbstractConfigureElement() {
     }
 
 
-    public T process(ContextWrapper context) {
+    public R process(ContextWrapper context) {
         if (!initialized) {
             initialized(context.getSessionRunner());
         }
@@ -67,5 +73,20 @@ public abstract class AbstractConfigureElement<CONFIG extends ConfigureItem<CONF
 
     public void setRefName(String refName) {
         this.refName = refName;
+    }
+
+    public static abstract class Builder<ELE extends AbstractConfigureElement<ELE, CONFIG, R>,
+            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, R>,
+            CONFIG extends ConfigureItem<CONFIG>,
+            CONFIGURE_BUILDER extends ConfigureBuilder<?, CONFIG>,
+            R extends Result>
+            extends AbstractTestElement.Builder<AbstractConfigureElement<ELE, CONFIG, R>, SELF, CONFIG, CONFIGURE_BUILDER, R> {
+
+        protected String refName;
+
+        public SELF refName(String refName) {
+            this.refName = refName;
+            return self;
+        }
     }
 }

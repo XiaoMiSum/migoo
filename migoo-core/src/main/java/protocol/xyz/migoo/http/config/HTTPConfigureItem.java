@@ -31,6 +31,7 @@ package protocol.xyz.migoo.http.config;
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.http.HTTPConstantsInterface;
 
@@ -50,46 +51,38 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
     @JSONField(name = REF)
     protected String ref;
     @JSONField(name = PROTOCOL, ordinal = 1)
-    private String protocol;
-
+    protected String protocol;
     @JSONField(name = HOST, ordinal = 2)
-    private String host;
-
+    protected String host;
     @JSONField(name = PORT, ordinal = 2)
-    private String port;
-
+    protected String port;
     @JSONField(name = PATH, ordinal = 3)
-    private String path;
-
+    protected String path;
     @JSONField(name = REQUEST_METHOD, ordinal = 4)
-    private String method;
-
+    protected String method;
     @JSONField(name = HTTP2, ordinal = 5)
-    private Boolean http2;
-
+    protected Boolean http2;
     @JSONField(name = HEADERS, ordinal = 6)
-    private Map<String, String> headers;
-
+    protected Map<String, String> headers;
     @JSONField(name = COOKIE, ordinal = 7)
-    private Map<String, String> cookie;
-
+    protected Map<String, String> cookie;
     @JSONField(name = QUERY, ordinal = 5)
-    private Map<String, String> query;
-
+    protected Map<String, String> query;
     @JSONField(name = DATA, ordinal = 5)
-    private Map<String, String> data;
-
+    protected Map<String, String> data;
     @JSONField(name = BODY, ordinal = 5)
-    private Object body;
-
+    protected Object body;
     @JSONField(name = BYTES, ordinal = 5)
-    private byte[] bytes;
+    protected byte[] bytes;
     @JSONField(name = BINARY, ordinal = 5)
-    private Object binary;
-
+    protected Object binary;
 
     public HTTPConfigureItem() {
 
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -260,4 +253,89 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
         this.binary = binary;
     }
 
+    /**
+     * HTTP协议配置项构建类
+     */
+    public static class Builder extends AbstractTestElement.ConfigureBuilder<HTTPConfigureItem.Builder, HTTPConfigureItem> {
+
+        private HTTPConfigureItem configure = new HTTPConfigureItem();
+
+        public Builder() {
+        }
+
+        public Builder ref(String ref) {
+            configure.ref = ref;
+            return self;
+        }
+
+        public Builder protocol(String protocol) {
+            configure.protocol = protocol;
+            return self;
+        }
+
+        public Builder port(String port) {
+            configure.port = port;
+            return self;
+        }
+
+        public Builder path(String path) {
+            configure.path = path;
+            return self;
+        }
+
+        public Builder method(String method) {
+            configure.method = method;
+            return self;
+        }
+
+        public Builder http2() {
+            configure.http2 = true;
+            return self;
+        }
+
+        public Builder headers(Map<String, String> headers) {
+            configure.headers = headers;
+            return self;
+        }
+
+        public Builder cookie(Map<String, String> cookie) {
+            configure.cookie = cookie;
+            return self;
+        }
+
+        public Builder query(Map<String, String> query) {
+            configure.query = query;
+            return self;
+        }
+
+        public Builder data(Map<String, String> data) {
+            configure.data = data;
+            return self;
+        }
+
+        public Builder body(Object body) {
+            configure.body = body;
+            return self;
+        }
+
+        public Builder bytes(byte[] bytes) {
+            configure.bytes = bytes;
+            return self;
+        }
+
+        public Builder binary(Object binary) {
+            configure.binary = binary;
+            return self;
+        }
+
+        public Builder config(HTTPConfigureItem config) {
+            configure = configure.merge(config);
+            return self;
+        }
+
+        @Override
+        public HTTPConfigureItem build() {
+            return configure;
+        }
+    }
 }

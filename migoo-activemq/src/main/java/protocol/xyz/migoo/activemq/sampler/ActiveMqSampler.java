@@ -53,7 +53,7 @@ import java.util.Objects;
  */
 @Alias({"activemq", "activemq_sampler", "active_mq_sampler"})
 @SuppressWarnings({"unchecked", "rawtypes"})
-public class ActiveMqSampler extends AbstractSampler<ActiveConfigureItem, ActiveMqSampler, DefaultSampleResult> implements Sampler<DefaultSampleResult>, ActiveMqConstantsInterface {
+public class ActiveMqSampler extends AbstractSampler<ActiveMqSampler, ActiveConfigureItem, DefaultSampleResult> implements Sampler<DefaultSampleResult>, ActiveMqConstantsInterface {
 
     @JSONField(serialize = false)
     private RealActiveRequest request;

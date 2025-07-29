@@ -52,7 +52,7 @@ import java.util.Objects;
  * @date 2021/4/13 20:08
  */
 @Alias({"activemq_postprocessor", "active_mq_postprocessor", "active_mq_post_processor", "active_mq", "activemq", "active"})
-public class ActiveMqPostprocessor extends AbstractProcessor<ActiveConfigureItem, ActiveMqPostprocessor, DefaultSampleResult> implements Postprocessor, ActiveMqConstantsInterface {
+public class ActiveMqPostprocessor extends AbstractProcessor<ActiveMqPostprocessor, ActiveConfigureItem, DefaultSampleResult> implements Postprocessor, ActiveMqConstantsInterface {
 
     @JSONField(serialize = false)
     private RealActiveRequest request;

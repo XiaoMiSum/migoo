@@ -39,7 +39,19 @@ import java.util.Objects;
  * @date 2024/11/04 20:38
  */
 @Alias({"rabbitmq", "rabbit", "rabbit_mq", "rabbitmq_defaults", "rabbitmq_default", "rabbitmq_def", "rabbitmqDef", "rabbitmqDefault", "rabbit_defaults", "rabbit_default"})
-public class RabbitMQDefaults extends AbstractConfigureElement<RabbitMQConfigureItem, RabbitMQDefaults, TestSuiteResult> implements RabbitMQConstantsInterface {
+public class RabbitMQDefaults extends AbstractConfigureElement<RabbitMQDefaults, RabbitMQConfigureItem, TestSuiteResult> implements RabbitMQConstantsInterface {
+
+    public RabbitMQDefaults(Builder builder) {
+        super(builder);
+    }
+
+    public RabbitMQDefaults() {
+        super();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
     protected void doProcess(ContextWrapper context) {
@@ -57,5 +69,25 @@ public class RabbitMQDefaults extends AbstractConfigureElement<RabbitMQConfigure
     @Override
     protected TestSuiteResult getTestResult() {
         return new TestSuiteResult("Rabbit MQ 默认配置");
+    }
+
+    /**
+     * Rabbit MQ 默认配置构建器
+     */
+    public static class Builder extends AbstractConfigureElement.Builder<RabbitMQDefaults, RabbitMQDefaults.Builder, RabbitMQConfigureItem, RabbitMQConfigureItem.Builder, TestSuiteResult> {
+
+        public static Builder builder() {
+            return new Builder();
+        }
+
+        @Override
+        public RabbitMQConfigureItem.Builder getConfigureBuilder() {
+            return RabbitMQConfigureItem.builder();
+        }
+
+        @Override
+        public RabbitMQDefaults build() {
+            return new RabbitMQDefaults(this);
+        }
     }
 }

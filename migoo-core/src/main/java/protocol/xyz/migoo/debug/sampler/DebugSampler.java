@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 import protocol.xyz.migoo.debug.config.DebugConfigureItem;
 
 @Alias(value = {"debug", "debug_sampler"})
-public class DebugSampler extends AbstractSampler<DebugConfigureItem, DebugSampler, DefaultSampleResult>
+public class DebugSampler extends AbstractSampler<DebugSampler, DebugConfigureItem, DefaultSampleResult>
         implements Sampler<DefaultSampleResult> {
 
     static Logger logger = LoggerFactory.getLogger(DebugSampler.class);

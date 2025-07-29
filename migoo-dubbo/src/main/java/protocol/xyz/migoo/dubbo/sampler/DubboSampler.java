@@ -50,7 +50,7 @@ import java.util.Objects;
  * @date 2021/4/10 21:10
  */
 @Alias({"dubbo", "dubbo_sampler"})
-public class DubboSampler extends AbstractSampler<DubboConfigureItem, DubboSampler, DefaultSampleResult> implements Sampler<DefaultSampleResult>, DubboConstantsInterface {
+public class DubboSampler extends AbstractSampler<DubboSampler, DubboConfigureItem, DefaultSampleResult> implements Sampler<DefaultSampleResult>, DubboConstantsInterface {
 
     @JSONField(serialize = false)
     private ReferenceConfig<GenericService> request;

@@ -39,7 +39,15 @@ import java.util.Objects;
  * @date 2021/4/10 20:38
  */
 @Alias(value = {"Dubbo_Default", "DubboDefault", "Dubbo_Defaults", "dubbo"})
-public class DubboDefaults extends AbstractConfigureElement<DubboConfigureItem, DubboDefaults, TestSuiteResult> implements DubboConstantsInterface {
+public class DubboDefaults extends AbstractConfigureElement<DubboDefaults, DubboConfigureItem, TestSuiteResult> implements DubboConstantsInterface {
+
+    public DubboDefaults(Builder builder) {
+        super(builder);
+    }
+
+    public DubboDefaults() {
+        super();
+    }
 
     @Override
     protected void doProcess(ContextWrapper context) {
@@ -52,10 +60,25 @@ public class DubboDefaults extends AbstractConfigureElement<DubboConfigureItem, 
         }
         context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().put(refName, localConfig);
     }
-
-
+    
     @Override
     protected TestSuiteResult getTestResult() {
         return new TestSuiteResult("Dubbo 默认配置");
+    }
+
+    /**
+     * Dubbo默认配置 测试元件 构建类
+     */
+    public static class Builder extends AbstractConfigureElement.Builder<DubboDefaults, Builder, DubboConfigureItem, DubboConfigureItem.Builder, TestSuiteResult> {
+
+        @Override
+        public DubboConfigureItem.Builder getConfigureBuilder() {
+            return DubboConfigureItem.builder();
+        }
+
+        @Override
+        public DubboDefaults build() {
+            return new DubboDefaults(this);
+        }
     }
 }

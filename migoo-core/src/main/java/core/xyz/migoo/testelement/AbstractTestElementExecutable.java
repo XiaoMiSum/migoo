@@ -28,24 +28,26 @@ package core.xyz.migoo.testelement;
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.TestStatus;
-import core.xyz.migoo.assertion.Assertion;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.config.MiGooVariables;
 import core.xyz.migoo.context.Context;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.context.TestSuiteContext;
-import core.xyz.migoo.extractor.Extractor;
 import core.xyz.migoo.filter.ExecuteFilterChain;
 import core.xyz.migoo.filter.RunFilterChain;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.report.Result;
+import core.xyz.migoo.testelement.configure.AbstractConfigureElement;
 import core.xyz.migoo.testelement.configure.ConfigureElement;
+import core.xyz.migoo.testelement.processor.AbstractProcessor;
 import core.xyz.migoo.testelement.processor.Postprocessor;
 import core.xyz.migoo.testelement.processor.Preprocessor;
 import support.xyz.migoo.Closeable;
 import support.xyz.migoo.KryoUtil;
 
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * 测试组件抽象类，提供公共属性和方法
@@ -53,9 +55,9 @@ import java.util.*;
  * @author xiaomi
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem<CONFIG>, SELF extends AbstractTestElementExecutable<CONFIG, SELF, T>, T extends Result>
-        extends AbstractTestElement<CONFIG, SELF, T>
-        implements TestElementExecutable<T>, RunFilterChain, ExecuteFilterChain, TestElementConstantsInterface {
+public abstract class AbstractTestElementExecutable<SELF extends AbstractTestElementExecutable<SELF, CONFIG, R>,
+        CONFIG extends ConfigureItem<CONFIG>, R extends Result>
+        extends AbstractTestElement<SELF, CONFIG, R> implements TestElementExecutable<R>, RunFilterChain, ExecuteFilterChain, TestElementConstantsInterface {
 
     @JSONField(name = VARIABLES, ordinal = 4)
     protected MiGooVariables variables;
@@ -68,12 +70,6 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
     @JSONField(name = POSTPROCESSORS, ordinal = 7)
     protected List<Postprocessor> postprocessors = new ArrayList<>();
 
-    @JSONField(name = VALIDATORS, ordinal = 9)
-    protected List<Assertion> assertions;
-
-    @JSONField(name = EXTRACTORS, ordinal = 10)
-    protected List<Extractor> extractors;
-
 
     protected TestElementConfigureGroup configGroup = new TestElementConfigureGroup();
     private Iterator<TestFilter> runtimeFilters;
@@ -81,6 +77,15 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
 
     public AbstractTestElementExecutable() {
         super();
+    }
+
+    public AbstractTestElementExecutable(Builder builder) {
+        super(builder);
+        this.variables = builder.variables;
+        this.configureElements = builder.configureElements;
+        this.preprocessors = builder.preprocessors;
+        this.postprocessors = builder.postprocessors;
+        this.filters = builder.filters;
     }
 
     protected void initialized(SessionRunner session) {
@@ -120,7 +125,7 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
 
 
     @Override
-    public final T run(SessionRunner session) {
+    public final R run(SessionRunner session) {
         Snapshot snapshot = new Snapshot();
         if (disabled) {
             snapshot.testResult.testEnd();
@@ -155,12 +160,12 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
             next.doExecute(ctx, this);
             return;
         }
-        execute(ctx, (T) ctx.getTestResult());
+        execute(ctx, (R) ctx.getTestResult());
     }
 
 
     private void testStarted(Snapshot snapshot) {
-        T result = getTestResult();
+        R result = getTestResult();
         if (Objects.isNull(result)) {
             throw new NullPointerException(
                     String.format("%s#getTestResult() 返回值为 null，请在该方法返回测试组件执行结果对象", this.getClass().getName()));
@@ -234,16 +239,6 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
         }
         // 执行请求
         doExecute(context);
-        if (Objects.nonNull(assertions) && context.getTestResult().getStatus() == TestStatus.passed) {
-            for (Assertion assertion : assertions) {
-                assertion.assertThat(context);
-            }
-        }
-        if (Objects.nonNull(extractors) && context.getTestResult().getStatus() == TestStatus.passed) {
-            for (Extractor extractor : extractors) {
-                extractor.process(context);
-            }
-        }
         for (Postprocessor postprocessor : postprocessors) {
             if (postprocessor.isDisabled() || context.getTestResult().getStatus() != TestStatus.passed) {
                 continue;
@@ -258,8 +253,6 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
         self.variables = KryoUtil.copy(variables);
         self.preprocessors = KryoUtil.copy(preprocessors);
         self.postprocessors = KryoUtil.copy(postprocessors);
-        self.assertions = KryoUtil.copy(assertions);
-        self.extractors = KryoUtil.copy(extractors);
         return self;
     }
 
@@ -267,7 +260,7 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
     /**
      * 测试元件的功能实现，比如发起 HTTP 请求
      */
-    protected abstract void execute(ContextWrapper ctx, T testResult);
+    protected abstract void execute(ContextWrapper ctx, R testResult);
 
     // getter/setter
 
@@ -311,53 +304,124 @@ public abstract class AbstractTestElementExecutable<CONFIG extends ConfigureItem
         this.postprocessors = postprocessors;
     }
 
-    public List<Extractor> getExtractors() {
-        return extractors;
-    }
-
-    public void setExtractors(List<Extractor> extractors) {
-        this.extractors = extractors;
-    }
-
-    public List<Assertion> getAssertions() {
-        return assertions;
-    }
-
-    public void setAssertions(List<Assertion> assertions) {
-        this.assertions = assertions;
-    }
-
-    public static abstract class Builder<ELE extends AbstractTestElementExecutable<CONFIG, ELE, ? extends Result>,
-            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, VARIABLES_BUILDER, CONFIGURE_ELEMENT_BUILDER, PREPROCESSOR_BUILDER, POSTPROCESSOR_BUILDER, EXTRACTOR_BUILDER, ASSERTION_BUILDER>,
+    public static abstract class Builder<ELE extends AbstractTestElementExecutable<ELE, CONFIG, R>,
+            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, CONFIGURE_ELEMENT_BUILDER, R>,
             CONFIG extends ConfigureItem<CONFIG>,
-            CONFIGURE_BUILDER extends ConfigureBuilder,
-            VARIABLES_BUILDER,
-            CONFIGURE_ELEMENT_BUILDER,
-            PREPROCESSOR_BUILDER,
-            POSTPROCESSOR_BUILDER,
-            EXTRACTOR_BUILDER,
-            ASSERTION_BUILDER>
-            extends AbstractTestElement.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER> {
-
+            CONFIGURE_BUILDER extends ConfigureBuilder<?, CONFIG>,
+            CONFIGURE_ELEMENT_BUILDER extends AbstractConfigureElement.Builder<?, ?, CONFIG, ?, ?>,
+            R extends Result>
+            extends AbstractTestElement.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, R> {
 
         protected MiGooVariables variables;
+
         protected List<ConfigureElement> configureElements;
 
         protected List<Preprocessor> preprocessors;
 
         protected List<Postprocessor> postprocessors;
 
-        protected List<Assertion> assertions;
+        public SELF variables(Consumer<MiGooVariables.Builder> consumer) {
+            MiGooVariables.Builder builder = MiGooVariables.builder();
+            consumer.accept(builder);
+            this.variables = builder.build();
+            return self;
+        }
 
-        protected List<Extractor> extractors;
+        public SELF variables(Map<? extends String, ?> variables) {
+            this.variables = new MiGooVariables(variables);
+            return self;
+        }
+
+        public SELF variables(MiGooVariables variables) {
+            this.variables = variables;
+            return self;
+        }
+
+        public SELF variables(String name, Object value) {
+            synchronized (this) {
+                if (Objects.isNull(variables)) {
+                    synchronized (this) {
+                        this.variables = new MiGooVariables();
+                    }
+                }
+            }
+            this.variables.put(name, value);
+            return self;
+        }
+
+        public SELF configureElements(List<ConfigureElement> configureElements) {
+            this.configureElements = configureElements;
+            return self;
+        }
+
+        public SELF configureElement(ConfigureElement configureElement) {
+            synchronized (this) {
+                if (Objects.isNull(configureElements)) {
+                    synchronized (this) {
+                        this.configureElements = new ArrayList<>();
+                    }
+                }
+            }
+            this.configureElements.add(configureElement);
+            return self;
+        }
+
+        public SELF configureElement(Supplier<CONFIGURE_ELEMENT_BUILDER> supplier) {
+            return configureElement(supplier.get().build());
+        }
 
 
+        public SELF preprocessors(List<Preprocessor> preprocessors) {
+            this.preprocessors = preprocessors;
+            return self;
+        }
+
+        public SELF preprocessor(Preprocessor preprocessor) {
+            synchronized (this) {
+                if (Objects.isNull(preprocessors)) {
+                    synchronized (this) {
+                        this.preprocessors = new ArrayList<>();
+                    }
+                }
+            }
+            this.preprocessors.add(preprocessor);
+            return self;
+        }
+
+        public SELF preprocessor(Supplier<AbstractProcessor.PreprocessorBuilder> supplier) {
+            return preprocessor((Preprocessor) supplier.get().build());
+        }
+
+
+        public SELF postprocessors(List<Postprocessor> postprocessors) {
+            this.postprocessors = postprocessors;
+            return self;
+        }
+
+        public SELF postprocessor(Postprocessor postprocessor) {
+            synchronized (this) {
+                if (Objects.isNull(postprocessors)) {
+                    synchronized (this) {
+                        this.postprocessors = new ArrayList<>();
+                    }
+                }
+            }
+            this.postprocessors.add(postprocessor);
+            return self;
+        }
+
+        public SELF postprocessor(Supplier<AbstractProcessor.PostprocessorBuilder> supplier) {
+            return preprocessor((Preprocessor) supplier.get().build());
+        }
     }
 
+    /**
+     * 运行快照数据
+     */
     private final class Snapshot {
 
         private List<Context> parentContextChain;
         private ContextWrapper previousContextWrapper;
-        private T testResult;
+        private R testResult;
     }
 }
