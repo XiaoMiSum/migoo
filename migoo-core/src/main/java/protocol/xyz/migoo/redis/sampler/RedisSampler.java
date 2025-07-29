@@ -52,6 +52,18 @@ public class RedisSampler extends AbstractSampler<RedisSampler, RedisConfigureIt
 
     private byte[] bytes;
 
+    public RedisSampler(Builder builder) {
+        super(builder);
+    }
+
+    public RedisSampler() {
+        super();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     @Override
     protected DefaultSampleResult getTestResult() {
         return new DefaultSampleResult(id, title);
@@ -82,5 +94,15 @@ public class RedisSampler extends AbstractSampler<RedisSampler, RedisConfigureIt
         super.handleResponse(context, result);
         result.setRequest(new RealRedisRequest(datasource.getUrl(), runtime.config.getCommand(), runtime.config.getSend()));
         result.setResponse(SampleResult.DefaultReal.build(bytes));
+    }
+
+    /**
+     * Redis 取样器构建器
+     */
+    public static class Builder extends AbstractSampler.Builder<RedisSampler, Builder, RedisConfigureItem, RedisConfigureItem.Builder, DefaultSampleResult> {
+        @Override
+        public RedisSampler build() {
+            return new RedisSampler(this);
+        }
     }
 }

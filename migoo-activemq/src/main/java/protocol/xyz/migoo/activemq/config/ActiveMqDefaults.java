@@ -48,7 +48,7 @@ public class ActiveMqDefaults extends AbstractConfigureElement<ActiveMqDefaults,
     public ActiveMqDefaults() {
         super();
     }
-    
+
     public static Builder builder() {
         return new Builder();
     }
@@ -75,11 +75,6 @@ public class ActiveMqDefaults extends AbstractConfigureElement<ActiveMqDefaults,
      * ActiveMQ默认配置 测试元件 构建类
      */
     public static class Builder extends AbstractConfigureElement.Builder<ActiveMqDefaults, Builder, ActiveConfigureItem, ActiveConfigureItem.Builder, TestSuiteResult> {
-
-        @Override
-        public ActiveConfigureItem.Builder getConfigureBuilder() {
-            return ActiveConfigureItem.builder();
-        }
 
         @Override
         public ActiveMqDefaults build() {

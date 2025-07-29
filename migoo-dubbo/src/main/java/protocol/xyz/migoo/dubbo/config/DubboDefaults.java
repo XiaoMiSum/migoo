@@ -49,6 +49,10 @@ public class DubboDefaults extends AbstractConfigureElement<DubboDefaults, Dubbo
         super();
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     @Override
     protected void doProcess(ContextWrapper context) {
         refName = StringUtils.isBlank(refName) ? DEF_REF_NAME_KEY : refName;
@@ -60,7 +64,7 @@ public class DubboDefaults extends AbstractConfigureElement<DubboDefaults, Dubbo
         }
         context.getSessionRunner().getContextWrapper().getLocalVariablesWrapper().put(refName, localConfig);
     }
-    
+
     @Override
     protected TestSuiteResult getTestResult() {
         return new TestSuiteResult("Dubbo 默认配置");
@@ -70,11 +74,6 @@ public class DubboDefaults extends AbstractConfigureElement<DubboDefaults, Dubbo
      * Dubbo默认配置 测试元件 构建类
      */
     public static class Builder extends AbstractConfigureElement.Builder<DubboDefaults, Builder, DubboConfigureItem, DubboConfigureItem.Builder, TestSuiteResult> {
-
-        @Override
-        public DubboConfigureItem.Builder getConfigureBuilder() {
-            return DubboConfigureItem.builder();
-        }
 
         @Override
         public DubboDefaults build() {

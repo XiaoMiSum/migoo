@@ -27,7 +27,6 @@ package core.xyz.migoo.testelement;
 
 import core.xyz.migoo.config.EmptyConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.testelement.configure.AbstractConfigureElement;
 
 /**
  * 测试集合执行类
@@ -39,6 +38,14 @@ public class TestSuite extends TestContainerExecutable<TestSuite, EmptyConfigure
 
     public TestSuite(Builder builder) {
         super(builder);
+    }
+
+    public TestSuite() {
+        super();
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     @Override
@@ -54,13 +61,7 @@ public class TestSuite extends TestContainerExecutable<TestSuite, EmptyConfigure
     /**
      * 容器基础构建器
      */
-    public static class Builder extends TestContainerExecutable.Builder<TestSuite, Builder, EmptyConfigureItem, EmptyConfigureItem.Builder,
-            AbstractConfigureElement.Builder<?, ?, EmptyConfigureItem, EmptyConfigureItem.Builder, TestSuiteResult>, TestSuiteResult> {
-
-        @Override
-        public EmptyConfigureItem.Builder getConfigureBuilder() {
-            return EmptyConfigureItem.builder();
-        }
+    public static class Builder extends TestContainerExecutable.Builder<TestSuite, Builder, EmptyConfigureItem, EmptyConfigureItem.Builder, TestSuiteResult> {
 
         @Override
         public TestSuite build() {

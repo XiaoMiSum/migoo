@@ -23,56 +23,58 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package protocol.xyz.migoo.http.assertion;
+package protocol.xyz.migoo.http.extractor;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONPath;
-import core.xyz.migoo.assertion.AbstractAssertion;
-import core.xyz.migoo.assertion.AssertionResult;
+import core.xyz.migoo.TestStatus;
+import core.xyz.migoo.extractor.AbstractExtractor;
+import core.xyz.migoo.extractor.ExtractResult;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.sampler.SampleResult;
-import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.http.RealHTTPResponse;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Pattern;
-
 /**
+ * HTTP 响应提取器，仅支持提取请求头中的数据，请求头存在多个时，默认返回第一个匹配的
+ * <p>
+ * 如需提取响应体中的JSON数据，请使用 {@link component.xyz.migoo.extractor.JSONExtractor}
+ * 如需提取响应体中的HTML数据，请使用 {@link component.xyz.migoo.extractor.RegexExtractor}
+ *
  * @author xiaomi
  */
-@Alias({"HTTPAssertion", "HTTP_Assertion", "http"})
-public class HTTPResponseAssertion extends AbstractAssertion {
-
-    private static final List<String> STATUS = Arrays.asList("line", "status", "code", "statuscode", "statusline", "status_code", "status_line");
-    private static final String BODY = "body";
-    private static final Pattern PATTERN = Pattern.compile("^header(\\[\\d+])?(\\.\\w+.?)?");
+@Alias({"HTTPExtractor", "HTTP_Exactor", "http"})
+public class HTTPResponseExtractor extends AbstractExtractor {
 
     public static Builder builder() {
         return new Builder();
     }
 
     @Override
-    protected AssertionResult initialized(SampleResult result) {
-        var res = new AssertionResult("HTTP响应断言: ");
+    protected ExtractResult extract(SampleResult result) {
+        var res = new ExtractResult("HTTP响应 提取: " + field);
         var response = (RealHTTPResponse) result.getResponse();
-        field = StringUtils.isBlank(field) ? BODY : field;
-        var matcher = PATTERN.matcher(field);
-        if (matcher.find()) {
-            var path = "$" + (matcher.group(1) == null ? "[0]" : matcher.group(1)) + matcher.group(2);
-            actualValue = JSONPath.extract(JSON.toJSONString(response.headers()), path);
-        } else {
-            actualValue = STATUS.contains(field) ? response.statusCode() : response.bytesAsString();
-        }
+        Object value = null;
 
+        try {
+            var headers = response.headers().stream().filter(header -> header.getName().equalsIgnoreCase(field)).toList();
+            if (!headers.isEmpty()) {
+                matchNum = (headers.size() < matchNum + 1) ? headers.size() - 1 : matchNum;
+                value = headers.get(matchNum).getValue();
+                res.setValue(value);
+            }
+        } catch (Exception e) {
+            res.setException(e);
+        }
+        if (value == null) {
+            res.setStatus(TestStatus.failed);
+            res.setMessage("响应头中不存在：" + field);
+        }
         return res;
     }
 
 
-    public static class Builder extends AbstractAssertion.Builder<Builder, HTTPResponseAssertion> {
+    public static class Builder extends AbstractExtractor.Builder<Builder, HTTPResponseExtractor> {
 
         protected Builder() {
-            super(new HTTPResponseAssertion());
+            super(new HTTPResponseExtractor());
         }
     }
 }

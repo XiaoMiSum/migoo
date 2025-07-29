@@ -30,6 +30,8 @@ package protocol.xyz.migoo.http.processor;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.extractor.AbstractExtractor;
+import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.processor.AbstractProcessor;
 import core.xyz.migoo.testelement.processor.Preprocessor;
@@ -49,12 +51,26 @@ import java.util.Objects;
  * @author xiaomi
  */
 @Alias(value = {"http_preprocessor", "http_pre_processor", "http"})
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class HTTPPreprocessor extends AbstractProcessor<HTTPPreprocessor, HTTPConfigureItem, DefaultSampleResult> implements Preprocessor, HTTPConstantsInterface {
 
     @JSONField(serialize = false)
     private Request request;
     @JSONField(serialize = false)
     private Response response;
+
+
+    public HTTPPreprocessor(Builder builder) {
+        super(builder);
+    }
+
+    public HTTPPreprocessor() {
+        super();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
     protected DefaultSampleResult getTestResult() {
@@ -91,5 +107,16 @@ public class HTTPPreprocessor extends AbstractProcessor<HTTPPreprocessor, HTTPCo
         super.handleResponse(context, result);
         result.setRequest(new RealHTTPRequest(request));
         result.setResponse(new RealHTTPResponse(response));
+    }
+
+    /**
+     * HTTP 前置处理器构建器
+     */
+    public static class Builder extends AbstractProcessor.PreprocessorBuilder<HTTPPreprocessor, Builder,
+            HTTPConfigureItem, AbstractTestElement.ConfigureBuilder<?, HTTPConfigureItem>, AbstractExtractor.Builder, DefaultSampleResult> {
+        @Override
+        public HTTPPreprocessor build() {
+            return new HTTPPreprocessor(this);
+        }
     }
 }

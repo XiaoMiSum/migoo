@@ -28,6 +28,8 @@ package protocol.xyz.migoo.jdbc.processor;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.extractor.AbstractExtractor;
+import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.processor.AbstractProcessor;
 import core.xyz.migoo.testelement.processor.Preprocessor;
@@ -44,6 +46,7 @@ import static protocol.xyz.migoo.jdbc.JDBC.toJSONBytes;
  * @author xiaomi
  */
 @Alias(value = {"jdbc_preprocessor", "jdbc_pre_processor", "jdbc"})
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class JDBCPreprocessor extends AbstractProcessor<JDBCPreprocessor, JDBCConfigureItem, DefaultSampleResult> implements Preprocessor, JDBCConstantsInterface {
 
     @JSONField(serialize = false)
@@ -51,6 +54,18 @@ public class JDBCPreprocessor extends AbstractProcessor<JDBCPreprocessor, JDBCCo
 
     @JSONField(serialize = false)
     private byte[] bytes;
+
+    public JDBCPreprocessor(Builder builder) {
+        super(builder);
+    }
+
+    public JDBCPreprocessor() {
+        super();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
     protected DefaultSampleResult getTestResult() {
@@ -81,5 +96,16 @@ public class JDBCPreprocessor extends AbstractProcessor<JDBCPreprocessor, JDBCCo
         super.handleResponse(context, result);
         result.setRequest(new RealJDBCRequest(datasource.getUrl(), datasource.getUsername(), datasource.getPassword(), runtime.getConfig().getSql()));
         result.setResponse(SampleResult.DefaultReal.build(bytes));
+    }
+
+    /**
+     * JDBC 前置处理器构建器
+     */
+    public static class Builder extends AbstractProcessor.PreprocessorBuilder<JDBCPreprocessor, Builder,
+            JDBCConfigureItem, AbstractTestElement.ConfigureBuilder<?, JDBCConfigureItem>, AbstractExtractor.Builder, DefaultSampleResult> {
+        @Override
+        public JDBCPreprocessor build() {
+            return new JDBCPreprocessor(this);
+        }
     }
 }

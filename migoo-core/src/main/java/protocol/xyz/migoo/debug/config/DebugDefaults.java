@@ -63,12 +63,7 @@ public class DebugDefaults extends AbstractConfigureElement<DebugDefaults, Debug
     }
 
     public static class Builder extends AbstractConfigureElement.Builder<DebugDefaults, Builder, DebugConfigureItem, DebugConfigureItem.Builder, TestSuiteResult> {
-
-        @Override
-        public DebugConfigureItem.Builder getConfigureBuilder() {
-            return DebugConfigureItem.builder();
-        }
-
+        
         @Override
         public DebugDefaults build() {
             return new DebugDefaults(this);

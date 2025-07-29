@@ -37,12 +37,9 @@ import core.xyz.migoo.filter.ExecuteFilterChain;
 import core.xyz.migoo.filter.RunFilterChain;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.report.Result;
-import core.xyz.migoo.testelement.configure.AbstractConfigureElement;
-import core.xyz.migoo.testelement.configure.ConfigureElement;
 import core.xyz.migoo.testelement.processor.AbstractProcessor;
 import core.xyz.migoo.testelement.processor.Postprocessor;
 import core.xyz.migoo.testelement.processor.Preprocessor;
-import support.xyz.migoo.Closeable;
 import support.xyz.migoo.KryoUtil;
 
 import java.util.*;
@@ -61,8 +58,7 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
 
     @JSONField(name = VARIABLES, ordinal = 4)
     protected MiGooVariables variables;
-    @JSONField(name = CONFIG_ELEMENTS, ordinal = 5)
-    protected List<ConfigureElement> configureElements;
+
 
     @JSONField(name = PREPROCESSORS, ordinal = 6)
     protected List<Preprocessor> preprocessors = new ArrayList<>();
@@ -82,7 +78,6 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
     public AbstractTestElementExecutable(Builder builder) {
         super(builder);
         this.variables = builder.variables;
-        this.configureElements = builder.configureElements;
         this.preprocessors = builder.preprocessors;
         this.postprocessors = builder.postprocessors;
         this.filters = builder.filters;
@@ -139,7 +134,8 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
 
         doRun(context);
         restoreCurrentContextInfo(session, snapshot);
-        testEnded(snapshot);
+        testEnd(context);
+        snapshot.testResult.testEnd();
         return snapshot.testResult;
     }
 
@@ -172,19 +168,6 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
         }
         result.testStart();
         snapshot.testResult = result;
-    }
-
-    private void testEnded(Snapshot snapshot) {
-        if (Objects.isNull(configureElements)) {
-            snapshot.testResult.testEnd();
-            return;
-        }
-        for (ConfigureElement configureElement : configureElements) {
-            if (configureElement instanceof Closeable closeable) {
-                closeable.close();
-            }
-        }
-        snapshot.testResult.testEnd();
     }
 
     protected void handleFilters(ContextWrapper contextWrapper) {
@@ -221,15 +204,9 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
     }
 
 
-    private void internalRun(ContextWrapper context) {
+    protected void internalRun(ContextWrapper context) {
         // 模板计算：当前元件的变量配置项（不会计算父级元件）
         evalConfig(context);
-        // 处理配置元件
-        if (Objects.nonNull(configureElements)) {
-            for (ConfigureElement configureElement : configureElements) {
-                configureElement.process(context);
-            }
-        }
         // 执行前置动作
         for (Preprocessor preprocessor : preprocessors) {
             if (preprocessor.isDisabled() || context.getTestResult().getStatus() != TestStatus.passed) {
@@ -262,6 +239,8 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
      */
     protected abstract void execute(ContextWrapper ctx, R testResult);
 
+    protected void testEnd(ContextWrapper context) {
+    }
     // getter/setter
 
     public MiGooVariables getVariables() {
@@ -278,14 +257,6 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
 
     public void setConfigGroup(TestElementConfigureGroup configGroup) {
         this.configGroup = configGroup;
-    }
-
-    public List<ConfigureElement> getConfigureElements() {
-        return configureElements;
-    }
-
-    public void setConfigureElements(List<ConfigureElement> configureElements) {
-        this.configureElements = configureElements;
     }
 
     public List<Preprocessor> getPreprocessors() {
@@ -305,16 +276,13 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
     }
 
     public static abstract class Builder<ELE extends AbstractTestElementExecutable<ELE, CONFIG, R>,
-            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, CONFIGURE_ELEMENT_BUILDER, R>,
+            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, R>,
             CONFIG extends ConfigureItem<CONFIG>,
             CONFIGURE_BUILDER extends ConfigureBuilder<?, CONFIG>,
-            CONFIGURE_ELEMENT_BUILDER extends AbstractConfigureElement.Builder<?, ?, CONFIG, ?, ?>,
             R extends Result>
             extends AbstractTestElement.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, R> {
 
         protected MiGooVariables variables;
-
-        protected List<ConfigureElement> configureElements;
 
         protected List<Preprocessor> preprocessors;
 
@@ -348,28 +316,6 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
             this.variables.put(name, value);
             return self;
         }
-
-        public SELF configureElements(List<ConfigureElement> configureElements) {
-            this.configureElements = configureElements;
-            return self;
-        }
-
-        public SELF configureElement(ConfigureElement configureElement) {
-            synchronized (this) {
-                if (Objects.isNull(configureElements)) {
-                    synchronized (this) {
-                        this.configureElements = new ArrayList<>();
-                    }
-                }
-            }
-            this.configureElements.add(configureElement);
-            return self;
-        }
-
-        public SELF configureElement(Supplier<CONFIGURE_ELEMENT_BUILDER> supplier) {
-            return configureElement(supplier.get().build());
-        }
-
 
         public SELF preprocessors(List<Preprocessor> preprocessors) {
             this.preprocessors = preprocessors;

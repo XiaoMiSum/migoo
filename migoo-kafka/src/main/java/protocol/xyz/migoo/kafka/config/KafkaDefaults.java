@@ -77,11 +77,6 @@ public class KafkaDefaults extends AbstractConfigureElement<KafkaDefaults, Kafka
     public static class Builder extends AbstractConfigureElement.Builder<KafkaDefaults, Builder, KafkaConfigureItem, KafkaConfigureItem.Builder, TestSuiteResult> {
 
         @Override
-        public KafkaConfigureItem.Builder getConfigureBuilder() {
-            return KafkaConfigureItem.builder();
-        }
-
-        @Override
         public KafkaDefaults build() {
             return new KafkaDefaults(this);
         }

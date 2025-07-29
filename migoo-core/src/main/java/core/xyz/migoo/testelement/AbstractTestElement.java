@@ -37,7 +37,7 @@ import support.xyz.migoo.KryoUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * 测试组件抽象类，提供公共属性和方法
@@ -216,10 +216,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
-        public SELF config(Consumer<CONFIGURE_BUILDER> consumer) {
-            CONFIGURE_BUILDER builder = getConfigureBuilder();
-            consumer.accept(builder);
-            this.config = builder.build();
+        public SELF config(Supplier<CONFIGURE_BUILDER> supplier) {
+            this.config = supplier.get().build();
             return self;
         }
 
@@ -247,8 +245,6 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             this.filters = filters;
             return self;
         }
-
-        public abstract CONFIGURE_BUILDER getConfigureBuilder();
 
         public String getId() {
             return id;

@@ -107,11 +107,6 @@ public class JDBCDatasource extends AbstractConfigureElement<JDBCDatasource, JDB
     public static class Builder extends AbstractConfigureElement.Builder<JDBCDatasource, Builder, JDBCConfigureItem, JDBCConfigureItem.Builder, TestSuiteResult> {
 
         @Override
-        public JDBCConfigureItem.Builder getConfigureBuilder() {
-            return JDBCConfigureItem.builder();
-        }
-
-        @Override
         public JDBCDatasource build() {
             return new JDBCDatasource(this);
         }

@@ -29,6 +29,14 @@ public class HTTPSampler extends AbstractSampler<HTTPSampler, HTTPConfigureItem,
         super();
     }
 
+    public HTTPSampler(Builder builder) {
+        super(builder);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     @Override
     protected DefaultSampleResult getTestResult() {
         return new DefaultSampleResult(id, title);
@@ -64,5 +72,15 @@ public class HTTPSampler extends AbstractSampler<HTTPSampler, HTTPConfigureItem,
         super.handleResponse(context, result);
         result.setRequest(new RealHTTPRequest(request));
         result.setResponse(new RealHTTPResponse(response));
+    }
+
+    /**
+     * HTTP 取样器构建器
+     */
+    public static class Builder extends AbstractSampler.Builder<HTTPSampler, Builder, HTTPConfigureItem, HTTPConfigureItem.Builder, DefaultSampleResult> {
+        @Override
+        public HTTPSampler build() {
+            return new HTTPSampler(this);
+        }
     }
 }

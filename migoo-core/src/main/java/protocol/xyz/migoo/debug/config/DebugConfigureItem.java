@@ -40,7 +40,6 @@ import core.xyz.migoo.testelement.AbstractTestElement;
 public class DebugConfigureItem extends JSONObject implements ConfigureItem<DebugConfigureItem> {
 
     public DebugConfigureItem() {
-
     }
 
     public DebugConfigureItem(DebugConfigureItem debugConfigureItem) {

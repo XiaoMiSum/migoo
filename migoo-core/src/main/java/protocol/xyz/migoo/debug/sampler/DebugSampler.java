@@ -42,8 +42,16 @@ public class DebugSampler extends AbstractSampler<DebugSampler, DebugConfigureIt
 
     static Logger logger = LoggerFactory.getLogger(DebugSampler.class);
 
+    public DebugSampler(Builder builder) {
+        super(builder);
+    }
+
     public DebugSampler() {
         super();
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     @Override
@@ -62,6 +70,13 @@ public class DebugSampler extends AbstractSampler<DebugSampler, DebugConfigureIt
             result.sampleEnd();
         } catch (Exception e) {
             result.setTrack(e);
+        }
+    }
+
+    public static class Builder extends AbstractSampler.Builder<DebugSampler, Builder, DebugConfigureItem, DebugConfigureItem.Builder, DefaultSampleResult> {
+        @Override
+        public DebugSampler build() {
+            return new DebugSampler(this);
         }
     }
 }

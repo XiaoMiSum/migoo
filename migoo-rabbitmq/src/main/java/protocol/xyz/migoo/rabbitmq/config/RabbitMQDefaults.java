@@ -52,7 +52,7 @@ public class RabbitMQDefaults extends AbstractConfigureElement<RabbitMQDefaults,
     public static Builder builder() {
         return new Builder();
     }
-
+    
     @Override
     protected void doProcess(ContextWrapper context) {
         refName = StringUtils.isBlank(refName) ? DEF_REF_NAME_KEY : refName;
@@ -75,15 +75,6 @@ public class RabbitMQDefaults extends AbstractConfigureElement<RabbitMQDefaults,
      * Rabbit MQ 默认配置构建器
      */
     public static class Builder extends AbstractConfigureElement.Builder<RabbitMQDefaults, RabbitMQDefaults.Builder, RabbitMQConfigureItem, RabbitMQConfigureItem.Builder, TestSuiteResult> {
-
-        public static Builder builder() {
-            return new Builder();
-        }
-
-        @Override
-        public RabbitMQConfigureItem.Builder getConfigureBuilder() {
-            return RabbitMQConfigureItem.builder();
-        }
 
         @Override
         public RabbitMQDefaults build() {

@@ -27,6 +27,7 @@ package protocol.xyz.migoo.redis.processor;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.extractor.AbstractExtractor;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.processor.AbstractProcessor;
 import core.xyz.migoo.testelement.processor.Postprocessor;
@@ -46,12 +47,25 @@ import java.util.Locale;
  * @author xiaomi
  */
 @Alias(value = {"redis_postprocessor", "redis_post_processor", "redis"})
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class RedisPostprocessor extends AbstractProcessor<RedisPostprocessor, RedisConfigureItem, DefaultSampleResult> implements Postprocessor, JDBCConstantsInterface {
 
     @JSONField(serialize = false)
     private RedisDatasource datasource;
 
     private byte[] bytes;
+
+    public RedisPostprocessor(Builder builder) {
+        super(builder);
+    }
+
+    public RedisPostprocessor() {
+        super();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
     protected DefaultSampleResult getTestResult() {
@@ -83,5 +97,15 @@ public class RedisPostprocessor extends AbstractProcessor<RedisPostprocessor, Re
         super.handleResponse(context, result);
         result.setRequest(new RealRedisRequest(datasource.getUrl(), runtime.getConfig().getCommand(), runtime.getConfig().getSend()));
         result.setResponse(SampleResult.DefaultReal.build(bytes));
+    }
+
+    /**
+     * Redis 后置处理器构建器
+     */
+    public static class Builder extends AbstractProcessor.PreprocessorBuilder<RedisPostprocessor, Builder, RedisConfigureItem, RedisConfigureItem.Builder, AbstractExtractor.Builder, DefaultSampleResult> {
+        @Override
+        public RedisPostprocessor build() {
+            return new RedisPostprocessor(this);
+        }
     }
 }

@@ -50,6 +50,18 @@ public class JDBCSampler extends AbstractSampler<JDBCSampler, JDBCConfigureItem,
 
     private byte[] bytes;
 
+    public JDBCSampler(Builder builder) {
+        super(builder);
+    }
+
+    public JDBCSampler() {
+        super();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     @Override
     protected DefaultSampleResult getTestResult() {
         return new DefaultSampleResult(id, title);
@@ -79,5 +91,15 @@ public class JDBCSampler extends AbstractSampler<JDBCSampler, JDBCConfigureItem,
         super.handleResponse(context, result);
         result.setRequest(new RealJDBCRequest(datasource.getUrl(), datasource.getUsername(), datasource.getPassword(), runtime.config.getSql()));
         result.setResponse(SampleResult.DefaultReal.build(bytes));
+    }
+
+    /**
+     * JDBC 取样器构建器
+     */
+    public static class Builder extends AbstractSampler.Builder<JDBCSampler, Builder, JDBCConfigureItem, JDBCConfigureItem.Builder, DefaultSampleResult> {
+        @Override
+        public JDBCSampler build() {
+            return new JDBCSampler(this);
+        }
     }
 }

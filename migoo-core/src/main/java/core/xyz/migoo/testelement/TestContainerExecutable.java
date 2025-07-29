@@ -36,9 +36,12 @@ import core.xyz.migoo.filter.ExecuteChildrenFilterChain;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.configure.AbstractConfigureElement;
+import core.xyz.migoo.testelement.configure.ConfigureElement;
+import support.xyz.migoo.Closeable;
 import support.xyz.migoo.ValidateResult;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * 测试容器抽象类，负责调度子元件执行
@@ -50,6 +53,9 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
         CONFIG extends ConfigureItem<CONFIG>, R extends Result>
         extends AbstractTestElementExecutable<SELF, CONFIG, R> implements ExecuteChildrenFilterChain {
 
+    @JSONField(name = CONFIG_ELEMENTS, ordinal = 5)
+    protected List<ConfigureElement> configureElements;
+
     @JSONField(name = CHILDREN, ordinal = 10)
     protected List<TestElement<R>> children;
 
@@ -60,7 +66,33 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
 
     public TestContainerExecutable(Builder builder) {
         super(builder);
+        this.configureElements = builder.configureElements;
         this.children = builder.children;
+    }
+
+    @Override
+    public void testEnd(ContextWrapper context) {
+        if (Objects.isNull(configureElements)) {
+            return;
+        }
+        for (ConfigureElement configureElement : configureElements) {
+            if (configureElement instanceof Closeable closeable) {
+                closeable.close();
+            }
+        }
+    }
+
+    @Override
+    protected void internalRun(ContextWrapper context) {
+        // 模板计算：当前元件的变量配置项（不会计算父级元件）
+        evalConfig(context);
+        // 处理配置元件
+        if (Objects.nonNull(configureElements)) {
+            for (ConfigureElement configureElement : configureElements) {
+                configureElement.process(context);
+            }
+        }
+        super.internalRun(context);
     }
 
     @Override
@@ -119,6 +151,13 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
         return self;
     }
 
+    public List<ConfigureElement> getConfigureElements() {
+        return configureElements;
+    }
+
+    public void setConfigureElements(List<ConfigureElement> configureElements) {
+        this.configureElements = configureElements;
+    }
 
     public List<TestElement<R>> getChildren() {
         return children;
@@ -131,24 +170,63 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
     /**
      * 容器基础构建器
      *
-     * @param <ELE>                       容器类型
-     * @param <SELF>                      自己的类型
-     * @param <CONFIG>                    容器配置类型
-     * @param <CONFIGURE_BUILDER>         容器配置类型构建器
-     * @param <CONFIGURE_ELEMENT_BUILDER> 协议默认配置元件构建器
-     * @param <R>                         处理结果类型
+     * @param <ELE>               容器类型
+     * @param <SELF>              自己的类型
+     * @param <CONFIG>            容器配置类型
+     * @param <CONFIGURE_BUILDER> 容器配置类型构建器
+     * @param <R>                 处理结果类型
      */
     public static abstract class Builder<ELE extends TestContainerExecutable<ELE, CONFIG, R>,
-            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, CONFIGURE_ELEMENT_BUILDER, R>,
+            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, R>,
             CONFIG extends ConfigureItem<CONFIG>,
             CONFIGURE_BUILDER extends ConfigureBuilder<?, CONFIG>,
-            CONFIGURE_ELEMENT_BUILDER extends AbstractConfigureElement.Builder<?, ?, CONFIG, ?, ?>,
             R extends Result>
-            extends AbstractTestElementExecutable.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, CONFIGURE_ELEMENT_BUILDER, R> {
+            extends AbstractTestElementExecutable.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, R> {
+
+        protected List<ConfigureElement> configureElements;
 
         protected List<TestElement<R>> children;
 
-        // todo 这里设置子容器
+        public Builder configureElements(List<ConfigureElement> configureElements) {
+            this.configureElements = configureElements;
+            return self;
+        }
 
+        public Builder configureElement(Supplier<AbstractConfigureElement.Builder> supplier) {
+            return configureElement((ConfigureElement) supplier.get().build());
+        }
+
+        public Builder configureElement(ConfigureElement configureElement) {
+            synchronized (this) {
+                if (Objects.isNull(configureElements)) {
+                    synchronized (this) {
+                        this.configureElements = new ArrayList<>();
+                    }
+                }
+            }
+            this.configureElements.add(configureElement);
+            return self;
+        }
+
+        public Builder children(List<TestElement<R>> children) {
+            this.children = children;
+            return self;
+        }
+
+        public Builder children(Supplier<AbstractTestElementExecutable.Builder> supplier) {
+            return children((TestElement<R>) supplier.get().build());
+        }
+
+        public Builder children(TestElement<R> child) {
+            synchronized (this) {
+                if (Objects.isNull(children)) {
+                    synchronized (this) {
+                        this.children = new ArrayList<>();
+                    }
+                }
+            }
+            this.children.add(child);
+            return self;
+        }
     }
 }

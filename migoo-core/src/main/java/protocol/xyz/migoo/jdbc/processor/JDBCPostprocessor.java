@@ -28,6 +28,8 @@ package protocol.xyz.migoo.jdbc.processor;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.extractor.AbstractExtractor;
+import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.processor.AbstractProcessor;
 import core.xyz.migoo.testelement.processor.Postprocessor;
@@ -44,6 +46,7 @@ import static protocol.xyz.migoo.jdbc.JDBC.toJSONBytes;
  * @author xiaomi
  */
 @Alias(value = {"jdbc_postprocessor", "jdbc_post_processor", "jdbc"})
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class JDBCPostprocessor extends AbstractProcessor<JDBCPostprocessor, JDBCConfigureItem, DefaultSampleResult> implements Postprocessor, JDBCConstantsInterface {
 
     @JSONField(serialize = false)
@@ -51,6 +54,18 @@ public class JDBCPostprocessor extends AbstractProcessor<JDBCPostprocessor, JDBC
 
     @JSONField(serialize = false)
     private byte[] bytes;
+
+    public JDBCPostprocessor(Builder builder) {
+        super(builder);
+    }
+
+    public JDBCPostprocessor() {
+        super();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
     protected DefaultSampleResult getTestResult() {
@@ -81,5 +96,16 @@ public class JDBCPostprocessor extends AbstractProcessor<JDBCPostprocessor, JDBC
         super.handleResponse(context, result);
         result.setRequest(new RealJDBCRequest(datasource.getUrl(), datasource.getUsername(), datasource.getPassword(), runtime.getConfig().getSql()));
         result.setResponse(SampleResult.DefaultReal.build(bytes));
+    }
+
+    /**
+     * JDBC 后置处理器构建器
+     */
+    public static class Builder extends AbstractProcessor.PostprocessorBuilder<JDBCPostprocessor, Builder,
+            JDBCConfigureItem, AbstractTestElement.ConfigureBuilder<?, JDBCConfigureItem>, AbstractExtractor.Builder, DefaultSampleResult> {
+        @Override
+        public JDBCPostprocessor build() {
+            return new JDBCPostprocessor(this);
+        }
     }
 }

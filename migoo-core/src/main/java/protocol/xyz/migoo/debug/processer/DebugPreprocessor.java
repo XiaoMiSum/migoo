@@ -30,6 +30,8 @@ package protocol.xyz.migoo.debug.processer;
 
 import com.alibaba.fastjson2.JSON;
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.extractor.AbstractExtractor;
+import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.processor.AbstractProcessor;
 import core.xyz.migoo.testelement.processor.Preprocessor;
@@ -44,10 +46,22 @@ import protocol.xyz.migoo.debug.config.DebugConfigureItem;
  * @author xiaomi
  */
 @Alias(value = {"debug_preprocessor", "debug_pre_processor", "debug"})
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class DebugPreprocessor extends AbstractProcessor<DebugPreprocessor, DebugConfigureItem, DefaultSampleResult> implements Preprocessor {
 
     static Logger logger = LoggerFactory.getLogger(DebugPreprocessor.class);
 
+    public DebugPreprocessor(Builder builder) {
+        super(builder);
+    }
+
+    public DebugPreprocessor() {
+        super();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
     protected DefaultSampleResult getTestResult() {
@@ -63,5 +77,13 @@ public class DebugPreprocessor extends AbstractProcessor<DebugPreprocessor, Debu
         result.setResponse(SampleResult.DefaultReal.build(bytes));
         logger.info("Debug Preprocessor");
         result.sampleEnd();
+    }
+
+    public static class Builder extends AbstractProcessor.PreprocessorBuilder<DebugPreprocessor, Builder,
+            DebugConfigureItem, AbstractTestElement.ConfigureBuilder<?, DebugConfigureItem>, AbstractExtractor.Builder, DefaultSampleResult> {
+        @Override
+        public DebugPreprocessor build() {
+            return new DebugPreprocessor(this);
+        }
     }
 }

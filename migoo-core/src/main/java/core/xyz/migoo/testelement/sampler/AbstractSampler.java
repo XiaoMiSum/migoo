@@ -30,6 +30,7 @@ package core.xyz.migoo.testelement.sampler;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.TestStatus;
+import core.xyz.migoo.assertion.AbstractAssertion;
 import core.xyz.migoo.assertion.Assertion;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.config.MiGooVariables;
@@ -40,10 +41,10 @@ import core.xyz.migoo.extractor.Extractor;
 import core.xyz.migoo.filter.SampleFilterChain;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.testelement.AbstractTestElementExecutable;
-import core.xyz.migoo.testelement.configure.AbstractConfigureElement;
 import support.xyz.migoo.KryoUtil;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * Sampler 抽象实现类。
@@ -65,7 +66,12 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
     @JSONField(serialize = false)
     private Iterator<TestFilter> sampleFilters;
 
+    public AbstractSampler(Builder builder) {
+        super(builder);
+    }
+
     public AbstractSampler() {
+        super();
     }
 
     /**
@@ -185,28 +191,64 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
     /**
      * 取样器基础构建器
      *
-     * @param <ELE>                       取样器类型
-     * @param <SELF>                      自己的类型
-     * @param <CONFIG>                    取样器配置类型
-     * @param <CONFIGURE_BUILDER>         取样器配置类型构建器
-     * @param <CONFIGURE_ELEMENT_BUILDER> 协议默认配置元件构建器
-     * @param <R>                         处理结果类型
+     * @param <ELE>               取样器类型
+     * @param <SELF>              自己的类型
+     * @param <CONFIG>            取样器配置类型
+     * @param <CONFIGURE_BUILDER> 取样器配置类型构建器
+     * @param <R>                 处理结果类型
      */
     public static abstract class Builder<ELE extends AbstractSampler<ELE, CONFIG, R>,
-            SELF extends AbstractSampler.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, CONFIGURE_ELEMENT_BUILDER, R>,
+            SELF extends AbstractSampler.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, R>,
             CONFIG extends ConfigureItem<CONFIG>,
             CONFIGURE_BUILDER extends ConfigureBuilder<?, CONFIG>,
-            CONFIGURE_ELEMENT_BUILDER extends AbstractConfigureElement.Builder<?, ?, CONFIG, ?, ?>,
             R extends SampleResult>
-            extends AbstractTestElementExecutable.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, CONFIGURE_ELEMENT_BUILDER, R> {
+            extends AbstractTestElementExecutable.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, R> {
 
         protected List<Assertion> assertions;
 
         protected List<Extractor> extractors;
 
-        // todo 这里设置 验证器 和 提取器 的构建器
+        public Builder assertions(List<Assertion> configureElements) {
+            this.assertions = configureElements;
+            return self;
+        }
 
+        public Builder assertions(Supplier<AbstractAssertion.Builder> supplier) {
+            return assertions(supplier.get().build());
+        }
 
+        public Builder assertions(Assertion assertion) {
+            synchronized (this) {
+                if (Objects.isNull(assertions)) {
+                    synchronized (this) {
+                        this.assertions = new ArrayList<>();
+                    }
+                }
+            }
+            this.assertions.add(assertion);
+            return self;
+        }
+
+        public Builder extractors(List<Extractor> extractors) {
+            this.extractors = extractors;
+            return self;
+        }
+
+        public Builder extractors(Supplier<AbstractAssertion.Builder> supplier) {
+            return assertions(supplier.get().build());
+        }
+
+        public Builder extractors(Extractor extractor) {
+            synchronized (this) {
+                if (Objects.isNull(extractors)) {
+                    synchronized (this) {
+                        this.extractors = new ArrayList<>();
+                    }
+                }
+            }
+            this.extractors.add(extractor);
+            return self;
+        }
     }
 
 }
