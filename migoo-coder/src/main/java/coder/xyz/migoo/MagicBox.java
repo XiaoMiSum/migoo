@@ -1,5 +1,6 @@
-package core.xyz.migoo;
+package coder.xyz.migoo;
 
+import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.builder.DefaultChildrenBuilder;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.AbstractTestElement;
@@ -13,22 +14,19 @@ import support.xyz.migoo.groovy.Groovy;
 
 import java.util.function.Supplier;
 
-import static core.xyz.migoo.SessionRunner.getSession;
-import static groovy.lang.Closure.DELEGATE_ONLY;
-
 public class MagicBox {
 
-    public static TestSuiteResult runSuite(@DelegatesTo(strategy = DELEGATE_ONLY, value = TestSuite.Builder.class) Closure<?> closure) {
+    public static TestSuiteResult runSuite(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = TestSuite.Builder.class) Closure<?> closure) {
         return runSuite("", closure);
     }
 
     public static TestSuiteResult runSuite(String title,
-                                           @DelegatesTo(strategy = DELEGATE_ONLY, value = TestSuite.Builder.class) Closure<?> closure) {
+                                           @DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = TestSuite.Builder.class) Closure<?> closure) {
         return runSuite(title, closure, null);
     }
 
     public static TestSuiteResult runSuite(String title,
-                                           @DelegatesTo(strategy = DELEGATE_ONLY, value = TestSuite.Builder.class) Closure<?> closure,
+                                           @DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = TestSuite.Builder.class) Closure<?> closure,
                                            Supplier<DefaultChildrenBuilder> children) {
         var builder = TestSuite.builder();
         Groovy.call(closure, builder);
@@ -72,6 +70,8 @@ public class MagicBox {
         if (testElement instanceof AbstractTestElement<?, ?, R> && StringUtils.isNotBlank(title)) {
             ((AbstractTestElement<?, ?, R>) testElement).setTitle(title);
         }
-        return getSession().runTest(testElement);
+        return SessionRunner.getSession().runTest(testElement);
     }
+
+    // todo 添加运行 其他协议的方法
 }

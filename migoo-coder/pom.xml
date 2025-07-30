@@ -39,6 +39,14 @@
     <name>${project.artifactId}</name>
     <description>coder for migoo</description>
 
+    
+    <dependencies>
+        <dependency>
+            <groupId>xyz.migoo</groupId>
+            <artifactId>migoo-core</artifactId>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
