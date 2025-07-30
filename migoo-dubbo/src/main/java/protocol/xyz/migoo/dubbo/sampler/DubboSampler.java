@@ -27,6 +27,8 @@ package protocol.xyz.migoo.dubbo.sampler;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
+import core.xyz.migoo.builder.DefaultAssertionsBuilder;
+import core.xyz.migoo.builder.DefaultExtractorsBuilder;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.sampler.AbstractSampler;
@@ -41,6 +43,8 @@ import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.service.GenericService;
 import protocol.xyz.migoo.dubbo.DubboConstantsInterface;
 import protocol.xyz.migoo.dubbo.RealDubboRequest;
+import protocol.xyz.migoo.dubbo.builder.DubboPostprocessorsBuilder;
+import protocol.xyz.migoo.dubbo.builder.DubboPreprocessorsBuilder;
 import protocol.xyz.migoo.dubbo.config.DubboConfigureItem;
 
 import java.util.Objects;
@@ -58,9 +62,16 @@ public class DubboSampler extends AbstractSampler<DubboSampler, DubboConfigureIt
     @JSONField(serialize = false)
     private Object response;
 
-
     public DubboSampler() {
         super();
+    }
+
+    public DubboSampler(Builder builder) {
+        super();
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     @Override
@@ -123,5 +134,34 @@ public class DubboSampler extends AbstractSampler<DubboSampler, DubboConfigureIt
         super.handleResponse(context, result);
         result.setRequest(RealDubboRequest.build(runtime.config, request.getRegistry().getAddress()));
         result.setResponse(SampleResult.DefaultReal.build(JSON.toJSONBytes(response)));
+    }
+
+    public static class Builder extends AbstractSampler.Builder<DubboSampler, Builder, DubboConfigureItem,
+            DubboConfigureItem.Builder, DubboPreprocessorsBuilder, DubboPostprocessorsBuilder,
+            DefaultAssertionsBuilder, DefaultExtractorsBuilder, DefaultSampleResult> {
+        @Override
+        public DubboSampler build() {
+            return new DubboSampler(this);
+        }
+
+        @Override
+        protected DefaultAssertionsBuilder getAssertionsBuilder() {
+            return DefaultAssertionsBuilder.builder();
+        }
+
+        @Override
+        protected DefaultExtractorsBuilder getExtractorsBuilder() {
+            return DefaultExtractorsBuilder.builder();
+        }
+
+        @Override
+        protected DubboPreprocessorsBuilder getPreprocessorsBuilder() {
+            return DubboPreprocessorsBuilder.builder();
+        }
+
+        @Override
+        protected DubboPostprocessorsBuilder getPostprocessorsBuilder() {
+            return DubboPostprocessorsBuilder.builder();
+        }
     }
 }

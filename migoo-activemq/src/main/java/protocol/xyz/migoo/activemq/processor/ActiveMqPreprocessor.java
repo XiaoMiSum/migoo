@@ -27,7 +27,9 @@ package protocol.xyz.migoo.activemq.processor;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
+import core.xyz.migoo.builder.DefaultExtractorsBuilder;
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.processor.AbstractProcessor;
 import core.xyz.migoo.testelement.processor.Preprocessor;
@@ -52,6 +54,7 @@ import java.util.Objects;
  * @date 2021/4/13 20:08
  */
 @Alias({"activemq_preprocessor", "active_mq_preprocessor", "active_mq_pre_processor", "active_mq", "activemq", "active"})
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class ActiveMqPreprocessor extends AbstractProcessor<ActiveMqPreprocessor, ActiveConfigureItem, DefaultSampleResult> implements Preprocessor, ActiveMqConstantsInterface {
 
     @JSONField(serialize = false)
@@ -64,6 +67,18 @@ public class ActiveMqPreprocessor extends AbstractProcessor<ActiveMqPreprocessor
     private Session session;
     @JSONField(serialize = false)
     private MessageProducer producer;
+
+    public ActiveMqPreprocessor() {
+        super();
+    }
+
+    public ActiveMqPreprocessor(Builder builder) {
+        super(builder);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
     protected DefaultSampleResult getTestResult() {
@@ -131,6 +146,19 @@ public class ActiveMqPreprocessor extends AbstractProcessor<ActiveMqPreprocessor
                 connection.close();
             } catch (Exception ignored) {
             }
+        }
+    }
+
+    public static class Builder extends AbstractProcessor.PreprocessorBuilder<ActiveMqPreprocessor, Builder, ActiveConfigureItem,
+            AbstractTestElement.ConfigureBuilder<?, ActiveConfigureItem>, DefaultExtractorsBuilder, DefaultSampleResult> {
+        @Override
+        public ActiveMqPreprocessor build() {
+            return new ActiveMqPreprocessor(this);
+        }
+
+        @Override
+        protected DefaultExtractorsBuilder getExtractorsBuilder() {
+            return DefaultExtractorsBuilder.builder();
         }
     }
 }

@@ -28,7 +28,9 @@ package protocol.xyz.migoo.rabbitmq.processor;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.rabbitmq.client.*;
+import core.xyz.migoo.builder.DefaultExtractorsBuilder;
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.processor.AbstractProcessor;
 import core.xyz.migoo.testelement.processor.Preprocessor;
@@ -62,8 +64,18 @@ public class RabbitMqPostprocessor extends AbstractProcessor<RabbitMqPostprocess
     private Connection connection;
     @JSONField(serialize = false)
     private Channel channel;
-    @JSONField(serialize = false)
-    private byte[] response;
+
+    public RabbitMqPostprocessor() {
+        super();
+    }
+
+    public RabbitMqPostprocessor(Builder builder) {
+        super(builder);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
     protected DefaultSampleResult getTestResult() {
@@ -100,7 +112,6 @@ public class RabbitMqPostprocessor extends AbstractProcessor<RabbitMqPostprocess
                 channel.queueBind(exchange.getName(), exchange.getType(), routingKey);
             }
             channel.basicPublish(exchangeName, queue.getName(), properties, message.getBytes(StandardCharsets.UTF_8));
-
         } catch (Exception e) {
             result.setTrack(e);
         } finally {
@@ -156,7 +167,7 @@ public class RabbitMqPostprocessor extends AbstractProcessor<RabbitMqPostprocess
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
         result.setRequest(request);
-        result.setResponse(SampleResult.DefaultReal.build(response));
+        result.setResponse(SampleResult.DefaultReal.build(new byte[0]));
         if (channel != null) {
             try {
                 channel.close();
@@ -170,5 +181,18 @@ public class RabbitMqPostprocessor extends AbstractProcessor<RabbitMqPostprocess
             }
         }
         factory = null;
+    }
+
+    public static class Builder extends AbstractProcessor.PostprocessorBuilder<RabbitMqPostprocessor, Builder, RabbitMQConfigureItem,
+            AbstractTestElement.ConfigureBuilder<?, RabbitMQConfigureItem>, DefaultExtractorsBuilder, DefaultSampleResult> {
+        @Override
+        public RabbitMqPostprocessor build() {
+            return new RabbitMqPostprocessor(this);
+        }
+
+        @Override
+        protected DefaultExtractorsBuilder getExtractorsBuilder() {
+            return DefaultExtractorsBuilder.builder();
+        }
     }
 }

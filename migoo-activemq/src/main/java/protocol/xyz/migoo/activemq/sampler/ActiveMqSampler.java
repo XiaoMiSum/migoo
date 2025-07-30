@@ -27,6 +27,8 @@ package protocol.xyz.migoo.activemq.sampler;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
+import core.xyz.migoo.builder.DefaultAssertionsBuilder;
+import core.xyz.migoo.builder.DefaultExtractorsBuilder;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.sampler.AbstractSampler;
@@ -41,6 +43,8 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.activemq.ActiveMqConstantsInterface;
 import protocol.xyz.migoo.activemq.RealActiveRequest;
+import protocol.xyz.migoo.activemq.builder.ActivePostprocessorsBuilder;
+import protocol.xyz.migoo.activemq.builder.ActivePreprocessorsBuilder;
 import protocol.xyz.migoo.activemq.config.ActiveConfigureItem;
 
 import java.util.List;
@@ -65,6 +69,18 @@ public class ActiveMqSampler extends AbstractSampler<ActiveMqSampler, ActiveConf
     private Session session;
     @JSONField(serialize = false)
     private MessageProducer producer;
+
+    public ActiveMqSampler() {
+        super();
+    }
+
+    public ActiveMqSampler(Builder builder) {
+        super(builder);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
     protected DefaultSampleResult getTestResult() {
@@ -132,6 +148,35 @@ public class ActiveMqSampler extends AbstractSampler<ActiveMqSampler, ActiveConf
                 connection.close();
             } catch (Exception ignored) {
             }
+        }
+    }
+
+    public static class Builder extends AbstractSampler.Builder<ActiveMqSampler, Builder, ActiveConfigureItem,
+            ActiveConfigureItem.Builder, ActivePreprocessorsBuilder, ActivePostprocessorsBuilder,
+            DefaultAssertionsBuilder, DefaultExtractorsBuilder, DefaultSampleResult> {
+        @Override
+        public ActiveMqSampler build() {
+            return new ActiveMqSampler(this);
+        }
+
+        @Override
+        protected DefaultAssertionsBuilder getAssertionsBuilder() {
+            return DefaultAssertionsBuilder.builder();
+        }
+
+        @Override
+        protected DefaultExtractorsBuilder getExtractorsBuilder() {
+            return DefaultExtractorsBuilder.builder();
+        }
+
+        @Override
+        protected ActivePreprocessorsBuilder getPreprocessorsBuilder() {
+            return ActivePreprocessorsBuilder.builder();
+        }
+
+        @Override
+        protected ActivePostprocessorsBuilder getPostprocessorsBuilder() {
+            return ActivePostprocessorsBuilder.builder();
         }
     }
 }

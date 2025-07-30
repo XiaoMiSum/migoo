@@ -27,7 +27,9 @@ package protocol.xyz.migoo.kafka.processor;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
+import core.xyz.migoo.builder.DefaultExtractorsBuilder;
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.processor.AbstractProcessor;
 import core.xyz.migoo.testelement.processor.Preprocessor;
@@ -63,6 +65,18 @@ public class KafkaPreprocessor extends AbstractProcessor<KafkaPreprocessor, Kafk
     private KafkaProducer<String, String> producer;
     @JSONField(serialize = false)
     private byte[] response;
+
+    public KafkaPreprocessor() {
+        super(new Builder());
+    }
+
+    public KafkaPreprocessor(Builder builder) {
+        super(builder);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
     protected DefaultSampleResult getTestResult() {
@@ -115,5 +129,18 @@ public class KafkaPreprocessor extends AbstractProcessor<KafkaPreprocessor, Kafk
         super.handleResponse(context, result);
         result.setRequest(request);
         result.setResponse(SampleResult.DefaultReal.build(response));
+    }
+
+    public static class Builder extends AbstractProcessor.PreprocessorBuilder<KafkaPreprocessor, Builder, KafkaConfigureItem,
+            AbstractTestElement.ConfigureBuilder<?, KafkaConfigureItem>, DefaultExtractorsBuilder, DefaultSampleResult> {
+        @Override
+        public KafkaPreprocessor build() {
+            return new KafkaPreprocessor(this);
+        }
+
+        @Override
+        protected DefaultExtractorsBuilder getExtractorsBuilder() {
+            return DefaultExtractorsBuilder.builder();
+        }
     }
 }

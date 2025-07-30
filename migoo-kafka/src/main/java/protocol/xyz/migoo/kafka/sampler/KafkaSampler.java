@@ -27,6 +27,8 @@ package protocol.xyz.migoo.kafka.sampler;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
+import core.xyz.migoo.builder.DefaultAssertionsBuilder;
+import core.xyz.migoo.builder.DefaultExtractorsBuilder;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.sampler.AbstractSampler;
@@ -39,6 +41,8 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import protocol.xyz.migoo.kafka.KafkaConstantsInterface;
 import protocol.xyz.migoo.kafka.RealKafkaRequest;
+import protocol.xyz.migoo.kafka.builder.KafkaPostprocessorsBuilder;
+import protocol.xyz.migoo.kafka.builder.KafkaPreprocessorsBuilder;
 import protocol.xyz.migoo.kafka.config.KafkaConfigureItem;
 
 import java.nio.charset.StandardCharsets;
@@ -63,6 +67,18 @@ public class KafkaSampler extends AbstractSampler<KafkaSampler, KafkaConfigureIt
     private KafkaProducer<String, String> producer;
     @JSONField(serialize = false)
     private byte[] response;
+
+    public KafkaSampler(Builder builder) {
+        super(builder);
+    }
+
+    public KafkaSampler() {
+        super();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
     protected DefaultSampleResult getTestResult() {
@@ -115,5 +131,34 @@ public class KafkaSampler extends AbstractSampler<KafkaSampler, KafkaConfigureIt
         super.handleResponse(context, result);
         result.setRequest(request);
         result.setResponse(SampleResult.DefaultReal.build(response));
+    }
+
+    public static class Builder extends AbstractSampler.Builder<KafkaSampler, Builder, KafkaConfigureItem,
+            KafkaConfigureItem.Builder, KafkaPreprocessorsBuilder, KafkaPostprocessorsBuilder,
+            DefaultAssertionsBuilder, DefaultExtractorsBuilder, DefaultSampleResult> {
+        @Override
+        public KafkaSampler build() {
+            return new KafkaSampler(this);
+        }
+
+        @Override
+        protected DefaultAssertionsBuilder getAssertionsBuilder() {
+            return DefaultAssertionsBuilder.builder();
+        }
+
+        @Override
+        protected DefaultExtractorsBuilder getExtractorsBuilder() {
+            return DefaultExtractorsBuilder.builder();
+        }
+
+        @Override
+        protected KafkaPreprocessorsBuilder getPreprocessorsBuilder() {
+            return KafkaPreprocessorsBuilder.builder();
+        }
+
+        @Override
+        protected KafkaPostprocessorsBuilder getPostprocessorsBuilder() {
+            return KafkaPostprocessorsBuilder.builder();
+        }
     }
 }

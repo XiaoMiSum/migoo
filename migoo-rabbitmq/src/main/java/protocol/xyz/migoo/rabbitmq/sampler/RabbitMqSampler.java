@@ -28,6 +28,8 @@ package protocol.xyz.migoo.rabbitmq.sampler;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.rabbitmq.client.*;
+import core.xyz.migoo.builder.DefaultAssertionsBuilder;
+import core.xyz.migoo.builder.DefaultExtractorsBuilder;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.sampler.AbstractSampler;
@@ -37,6 +39,8 @@ import core.xyz.migoo.testelement.sampler.Sampler;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.rabbitmq.RabbitMQConstantsInterface;
 import protocol.xyz.migoo.rabbitmq.RealRabbitRequest;
+import protocol.xyz.migoo.rabbitmq.builder.RabbitPostprocessorsBuilder;
+import protocol.xyz.migoo.rabbitmq.builder.RabbitPreprocessorsBuilder;
 import protocol.xyz.migoo.rabbitmq.config.RabbitMQConfigureItem;
 
 import java.nio.charset.StandardCharsets;
@@ -64,6 +68,18 @@ public class RabbitMqSampler extends AbstractSampler<RabbitMqSampler, RabbitMQCo
     private Channel channel;
     @JSONField(serialize = false)
     private byte[] response;
+
+    public RabbitMqSampler(Builder builder) {
+        super(builder);
+    }
+
+    public RabbitMqSampler() {
+        super();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
     protected DefaultSampleResult getTestResult() {
@@ -170,5 +186,34 @@ public class RabbitMqSampler extends AbstractSampler<RabbitMqSampler, RabbitMQCo
             }
         }
         factory = null;
+    }
+
+    public static class Builder extends AbstractSampler.Builder<RabbitMqSampler, Builder, RabbitMQConfigureItem,
+            RabbitMQConfigureItem.Builder, RabbitPreprocessorsBuilder, RabbitPostprocessorsBuilder,
+            DefaultAssertionsBuilder, DefaultExtractorsBuilder, DefaultSampleResult> {
+        @Override
+        public RabbitMqSampler build() {
+            return new RabbitMqSampler(this);
+        }
+
+        @Override
+        protected DefaultAssertionsBuilder getAssertionsBuilder() {
+            return DefaultAssertionsBuilder.builder();
+        }
+
+        @Override
+        protected DefaultExtractorsBuilder getExtractorsBuilder() {
+            return DefaultExtractorsBuilder.builder();
+        }
+
+        @Override
+        protected RabbitPreprocessorsBuilder getPreprocessorsBuilder() {
+            return RabbitPreprocessorsBuilder.builder();
+        }
+
+        @Override
+        protected RabbitPostprocessorsBuilder getPostprocessorsBuilder() {
+            return RabbitPostprocessorsBuilder.builder();
+        }
     }
 }
