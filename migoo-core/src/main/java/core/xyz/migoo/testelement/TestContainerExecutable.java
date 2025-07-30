@@ -44,6 +44,7 @@ import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import support.xyz.migoo.Closeable;
 import support.xyz.migoo.Collections;
+import support.xyz.migoo.Customizer;
 import support.xyz.migoo.ValidateResult;
 import support.xyz.migoo.groovy.Groovy;
 
@@ -51,14 +52,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * 测试容器抽象类，负责调度子元件执行
  *
  * @author xiaomi
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings("all")
 public abstract class TestContainerExecutable<SELF extends TestContainerExecutable<SELF, CONFIG, R>,
         CONFIG extends ConfigureItem<CONFIG>, R extends Result>
         extends AbstractTestElementExecutable<SELF, CONFIG, R> implements ExecuteChildrenFilterChain {
@@ -199,7 +199,7 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
 
         protected List<ConfigureElement> configureElements;
 
-        protected List<TestElement<? extends Result>> children;
+        protected List<TestElement<?>> children;
 
         /**
          * 配置元件
@@ -208,12 +208,13 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
          * @return 当前对象
          */
         public SELF configureElements(List<ConfigureElement> configureElements) {
-            this.configureElements = configureElements;
+            this.configureElements = Collections.addAllIfNonNull(this.configureElements, configureElements);
             return self;
         }
 
-        public SELF configureElements(Supplier<CONFIGURES_BUILDER> supplier) {
-            this.configureElements = Collections.addAllIfNonNull(this.configureElements, supplier.get().build());
+        public SELF configureElements(Customizer<CONFIGURES_BUILDER> customizer) {
+            CONFIGURES_BUILDER builder = getConfiguresBuilder();
+            this.configureElements = Collections.addAllIfNonNull(this.configureElements, customizer.apply(builder).build());
             return self;
         }
 
@@ -230,13 +231,14 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
          * @param children 子节点
          * @return 当前对象
          */
-        public SELF children(List<TestElement<? extends Result>> children) {
-            this.children = children;
+        public SELF children(List<TestElement<?>> children) {
+            this.children = Collections.addAllIfNonNull(this.children, children);
             return self;
         }
 
-        public SELF children(Supplier<CHILDREN_BUILDER> supplier) {
-            this.configureElements = Collections.addAllIfNonNull(this.configureElements, supplier.get().build());
+        public SELF children(Customizer<CHILDREN_BUILDER> customizer) {
+            CHILDREN_BUILDER builder = getChildrenBuilder();
+            this.configureElements = Collections.addAllIfNonNull(this.configureElements, customizer.apply(builder).build());
             return self;
         }
 

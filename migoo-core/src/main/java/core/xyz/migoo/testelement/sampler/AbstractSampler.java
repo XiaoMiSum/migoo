@@ -47,6 +47,7 @@ import core.xyz.migoo.testelement.AbstractTestElementExecutable;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import support.xyz.migoo.Collections;
+import support.xyz.migoo.Customizer;
 import support.xyz.migoo.KryoUtil;
 import support.xyz.migoo.groovy.Groovy;
 
@@ -54,7 +55,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * Sampler 抽象实现类。
@@ -222,8 +222,14 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
 
         protected List<Extractor> extractors;
 
-        public SELF assertions(Supplier<ASSERTIONS_BUILDER> supplier) {
-            this.assertions = Collections.addAllIfNonNull(this.assertions, supplier.get().build());
+        public SELF assertions(List<Assertion> assertions) {
+            this.assertions = Collections.addAllIfNonNull(this.assertions, assertions);
+            return self;
+        }
+
+        public SELF assertions(Customizer<ASSERTIONS_BUILDER> customizer) {
+            ASSERTIONS_BUILDER builder = getAssertionsBuilder();
+            this.assertions = Collections.addAllIfNonNull(this.assertions, customizer.apply(builder).build());
             return self;
         }
 
@@ -234,8 +240,14 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
             return self;
         }
 
-        public SELF extractors(Supplier<EXTRACTORS_BUILDER> supplier) {
-            this.extractors = Collections.addAllIfNonNull(this.extractors, supplier.get().build());
+        public SELF extractors(List<Extractor> extractors) {
+            this.extractors = Collections.addAllIfNonNull(this.extractors, extractors);
+            return self;
+        }
+
+        public SELF extractors(Customizer<EXTRACTORS_BUILDER> customizer) {
+            EXTRACTORS_BUILDER builder = getExtractorsBuilder();
+            this.extractors = Collections.addAllIfNonNull(this.extractors, customizer.apply(builder).build());
             return self;
         }
 

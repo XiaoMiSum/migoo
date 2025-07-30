@@ -55,6 +55,7 @@ import protocol.xyz.migoo.debug.config.DebugDefaults;
 import protocol.xyz.migoo.debug.processer.DebugPostprocessor;
 import protocol.xyz.migoo.debug.processer.DebugPreprocessor;
 import protocol.xyz.migoo.debug.sampler.DebugSampler;
+import protocol.xyz.migoo.http.assertion.HTTPResponseAssertion;
 import protocol.xyz.migoo.http.config.HTTPDefaults;
 import protocol.xyz.migoo.http.extractor.HTTPHeaderExtractor;
 import protocol.xyz.migoo.http.processor.HTTPPostprocessor;
@@ -68,13 +69,13 @@ import protocol.xyz.migoo.redis.config.RedisDatasource;
 import protocol.xyz.migoo.redis.processor.RedisPostprocessor;
 import protocol.xyz.migoo.redis.processor.RedisPreprocessor;
 import protocol.xyz.migoo.redis.sampler.RedisSampler;
+import support.xyz.migoo.Customizer;
 import support.xyz.migoo.KryoUtil;
 import support.xyz.migoo.groovy.Groovy;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static support.xyz.migoo.groovy.Groovy.call;
 
@@ -262,8 +263,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
-        public SELF config(Supplier<CONFIGURE_BUILDER> supplier) {
-            this.config = supplier.get().build();
+        public SELF config(Customizer<CONFIGURE_BUILDER> customizer) {
+            CONFIGURE_BUILDER builder = getConfigureItemBuilder();
+            this.config = customizer.apply(builder).build();
             return self;
         }
 
@@ -359,8 +361,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
-        public SELF debug(Supplier<DebugDefaults.Builder> supplier) {
-            configureElements.add(supplier.get().build());
+        public SELF debug(Customizer<DebugDefaults.Builder> customizer) {
+            configureElements.add(customizer.apply(DebugDefaults.builder()).build());
             return self;
         }
 
@@ -383,8 +385,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
-        public SELF http(Supplier<HTTPDefaults.Builder> supplier) {
-            configureElements.add(supplier.get().build());
+        public SELF http(Customizer<HTTPDefaults.Builder> customizer) {
+            configureElements.add(customizer.apply(HTTPDefaults.builder()).build());
             return self;
         }
 
@@ -407,8 +409,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
-        public SELF jdbc(Supplier<JDBCDatasource.Builder> supplier) {
-            configureElements.add(supplier.get().build());
+        public SELF jdbc(Customizer<JDBCDatasource.Builder> customizer) {
+            configureElements.add(customizer.apply(JDBCDatasource.builder()).build());
             return self;
         }
 
@@ -431,8 +433,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
-        public SELF redis(Supplier<RedisDatasource.Builder> supplier) {
-            configureElements.add(supplier.get().build());
+        public SELF redis(Customizer<RedisDatasource.Builder> customizer) {
+            configureElements.add(customizer.apply(RedisDatasource.builder()).build());
             return self;
         }
 
@@ -505,8 +507,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
-        public SELF debug(Supplier<DebugPreprocessor.Builder> supplier) {
-            preprocessors.add(supplier.get().build());
+        public SELF debug(Customizer<DebugPreprocessor.Builder> customizer) {
+            preprocessors.add(customizer.apply(DebugPreprocessor.builder()).build());
             return self;
         }
 
@@ -529,8 +531,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
-        public SELF http(Supplier<HTTPPreprocessor.Builder> supplier) {
-            preprocessors.add(supplier.get().build());
+        public SELF http(Customizer<HTTPPreprocessor.Builder> customizer) {
+            preprocessors.add(customizer.apply(HTTPPreprocessor.builder()).build());
             return self;
         }
 
@@ -553,8 +555,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
-        public SELF jdbc(Supplier<JDBCPreprocessor.Builder> supplier) {
-            preprocessors.add(supplier.get().build());
+        public SELF jdbc(Customizer<JDBCPreprocessor.Builder> customizer) {
+            preprocessors.add(customizer.apply(JDBCPreprocessor.builder()).build());
             return self;
         }
 
@@ -577,8 +579,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
-        public SELF redis(Supplier<RedisPreprocessor.Builder> supplier) {
-            preprocessors.add(supplier.get().build());
+        public SELF redis(Customizer<RedisPreprocessor.Builder> customizer) {
+            preprocessors.add(customizer.apply(RedisPreprocessor.builder()).build());
             return self;
         }
 
@@ -652,8 +654,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
-        public SELF timer(Supplier<SyncTimer.Builder> supplier) {
-            postprocessors.add(supplier.get().build());
+        public SELF timer(Customizer<SyncTimer.Builder> customizer) {
+            postprocessors.add(customizer.apply(SyncTimer.builder()).build());
             return self;
         }
 
@@ -676,8 +678,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
-        public SELF debug(Supplier<DebugPostprocessor.Builder> supplier) {
-            postprocessors.add(supplier.get().build());
+        public SELF debug(Customizer<DebugPostprocessor.Builder> customizer) {
+            postprocessors.add(customizer.apply(DebugPostprocessor.builder()).build());
             return self;
         }
 
@@ -700,8 +702,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
-        public SELF http(Supplier<HTTPPostprocessor.Builder> supplier) {
-            postprocessors.add(supplier.get().build());
+        public SELF http(Customizer<HTTPPostprocessor.Builder> customizer) {
+            postprocessors.add(customizer.apply(HTTPPostprocessor.builder()).build());
             return self;
         }
 
@@ -724,8 +726,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
-        public SELF jdbc(Supplier<JDBCPostprocessor.Builder> supplier) {
-            postprocessors.add(supplier.get().build());
+        public SELF jdbc(Customizer<JDBCPostprocessor.Builder> customizer) {
+            postprocessors.add(customizer.apply(JDBCPostprocessor.builder()).build());
             return self;
         }
 
@@ -748,8 +750,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
-        public SELF redis(Supplier<RedisPostprocessor.Builder> supplier) {
-            postprocessors.add(supplier.get().build());
+        public SELF redis(Customizer<RedisPostprocessor.Builder> customizer) {
+            postprocessors.add(customizer.apply(RedisPostprocessor.builder()).build());
             return self;
         }
 
@@ -813,8 +815,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
 
         // -----------------------JSONAssertion----------------------------
 
-        public SELF json(Supplier<JSONAssertion.Builder> supplier) {
-            assertions.add(supplier.get().build());
+        public SELF json(Customizer<JSONAssertion.Builder> customizer) {
+            assertions.add(customizer.apply(JSONAssertion.builder()).build());
             return self;
         }
 
@@ -842,8 +844,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
 
         // -----------------------ResultAssertion----------------------------
 
-        public SELF result(Supplier<ResultAssertion.Builder> supplier) {
-            assertions.add(supplier.get().build());
+        public SELF result(Customizer<ResultAssertion.Builder> customizer) {
+            assertions.add(customizer.apply(ResultAssertion.builder()).build());
             return self;
         }
 
@@ -864,6 +866,34 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
+        // -----------------------HTTPResponseAssertion----------------------------
+
+        public SELF http(Customizer<HTTPResponseAssertion.Builder> customizer) {
+            assertions.add(customizer.apply(HTTPResponseAssertion.builder()).build());
+            return self;
+        }
+
+        public SELF http(HTTPResponseAssertion.Builder builder) {
+            assertions.add(builder.build());
+            return self;
+        }
+
+        public SELF http(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = HTTPResponseAssertion.Builder.class) Closure<?> closure) {
+            var builder = HTTPResponseAssertion.builder();
+            call(closure, builder);
+            assertions.add(builder.build());
+            return self;
+        }
+
+        public SELF http(String rule, Object expected) {
+            assertions.add(HTTPResponseAssertion.builder().rule(rule).field("status").expected(expected).build());
+            return self;
+        }
+
+        public SELF http(String rule, String field, Object expected) {
+            assertions.add(HTTPResponseAssertion.builder().rule(rule).field(field).expected(expected).build());
+            return self;
+        }
 
         public List<Assertion> build() {
             return assertions;
@@ -915,8 +945,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
 
         // -----------------------JSONExtractor----------------------------
 
-        public SELF json(Supplier<JSONExtractor.Builder> supplier) {
-            extractors.add(supplier.get().build());
+        public SELF json(Customizer<JSONExtractor.Builder> customizer) {
+            extractors.add(customizer.apply(JSONExtractor.builder()).build());
             return self;
         }
 
@@ -944,8 +974,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
 
         // -----------------------RegexExtractor----------------------------
 
-        public SELF regex(Supplier<RegexExtractor.Builder> supplier) {
-            extractors.add(supplier.get().build());
+        public SELF regex(Customizer<RegexExtractor.Builder> customizer) {
+            extractors.add(customizer.apply(RegexExtractor.builder()).build());
             return self;
         }
 
@@ -983,8 +1013,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
 
         // -----------------------ResultExtractor----------------------------
 
-        public SELF result(Supplier<ResultExtractor.Builder> supplier) {
-            extractors.add(supplier.get().build());
+        public SELF result(Customizer<ResultExtractor.Builder> customizer) {
+            extractors.add(customizer.apply(ResultExtractor.builder()).build());
             return self;
         }
 
@@ -1007,8 +1037,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
 
         // -----------------------HTTPHeaderExtractor----------------------------
 
-        public SELF httpHeader(Supplier<HTTPHeaderExtractor.Builder> supplier) {
-            extractors.add(supplier.get().build());
+        public SELF httpHeader(Customizer<HTTPHeaderExtractor.Builder> customizer) {
+            extractors.add(customizer.apply(HTTPHeaderExtractor.builder()).build());
             return self;
         }
 
@@ -1025,22 +1055,22 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         public SELF httpHeader(String refName, String field) {
-            extractors.add(ResultExtractor.builder().refName(refName).field(field).build());
+            extractors.add(HTTPHeaderExtractor.builder().refName(refName).field(field).build());
             return self;
         }
 
         public SELF httpHeader(String refName, String field, Object defaultValue) {
-            extractors.add(ResultExtractor.builder().refName(refName).field(field).defaultValue(defaultValue).build());
+            extractors.add(HTTPHeaderExtractor.builder().refName(refName).field(field).defaultValue(defaultValue).build());
             return self;
         }
 
         public SELF httpHeader(String refName, String field, int matchNum) {
-            extractors.add(ResultExtractor.builder().refName(refName).field(field).matchNum(matchNum).build());
+            extractors.add(HTTPHeaderExtractor.builder().refName(refName).field(field).matchNum(matchNum).build());
             return self;
         }
 
         public SELF httpHeader(String refName, String field, int matchNum, Object defaultValue) {
-            extractors.add(ResultExtractor.builder().refName(refName).field(field).matchNum(matchNum).defaultValue(defaultValue).build());
+            extractors.add(HTTPHeaderExtractor.builder().refName(refName).field(field).matchNum(matchNum).defaultValue(defaultValue).build());
             return self;
         }
 
@@ -1109,6 +1139,11 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
+        public SELF suite(Customizer<TestSuite.Builder> customizer) {
+            this.children.add(customizer.apply(TestSuite.builder()).build());
+            return self;
+        }
+
         public SELF suite(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = TestSuite.Builder.class) Closure<?> closure) {
             var builder = TestSuite.builder();
             call(closure, builder);
@@ -1124,6 +1159,11 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
 
         public SELF debug(DebugSampler.Builder child) {
             this.children.add(child.build());
+            return self;
+        }
+
+        public SELF debug(Customizer<DebugSampler.Builder> customizer) {
+            this.children.add(customizer.apply(DebugSampler.builder()).build());
             return self;
         }
 
@@ -1145,6 +1185,11 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
+        public SELF http(Customizer<HTTPSampler.Builder> customizer) {
+            this.children.add(customizer.apply(HTTPSampler.builder()).build());
+            return self;
+        }
+
         public SELF http(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = HTTPSampler.Builder.class) Closure<?> closure) {
             var builder = HTTPSampler.builder();
             call(closure, builder);
@@ -1163,6 +1208,11 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
+        public SELF jdbc(Customizer<JDBCSampler.Builder> customizer) {
+            this.children.add(customizer.apply(JDBCSampler.builder()).build());
+            return self;
+        }
+
         public SELF jdbc(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = JDBCSampler.Builder.class) Closure<?> closure) {
             var builder = JDBCSampler.builder();
             call(closure, builder);
@@ -1178,6 +1228,11 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
 
         public SELF redis(RedisSampler.Builder child) {
             this.children.add(child.build());
+            return self;
+        }
+
+        public SELF redis(Customizer<RedisSampler.Builder> customizer) {
+            this.children.add(customizer.apply(RedisSampler.builder()).build());
             return self;
         }
 

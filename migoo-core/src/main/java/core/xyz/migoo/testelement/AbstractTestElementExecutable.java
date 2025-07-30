@@ -41,12 +41,13 @@ import core.xyz.migoo.testelement.processor.Postprocessor;
 import core.xyz.migoo.testelement.processor.Preprocessor;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
+import support.xyz.migoo.Collections;
+import support.xyz.migoo.Customizer;
 import support.xyz.migoo.KryoUtil;
 import support.xyz.migoo.groovy.Groovy;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * 测试组件抽象类，提供公共属性和方法
@@ -321,27 +322,29 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
             return self;
         }
 
-        public SELF preprocessors(Supplier<PREPROCESSORS_BUILDER> supplier) {
-            this.preprocessors = support.xyz.migoo.Collections.addAllIfNonNull(this.preprocessors, supplier.get().build());
+        public SELF preprocessors(Customizer<PREPROCESSORS_BUILDER> customizer) {
+            PREPROCESSORS_BUILDER builder = getPreprocessorsBuilder();
+            this.preprocessors = Collections.addAllIfNonNull(this.preprocessors, customizer.apply(builder).build());
             return self;
         }
 
         public SELF preprocessors(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "PREPROCESSORS_BUILDER") Closure<?> closure) {
             PREPROCESSORS_BUILDER builder = getPreprocessorsBuilder();
             Groovy.call(closure, builder);
-            this.preprocessors = support.xyz.migoo.Collections.addAllIfNonNull(this.preprocessors, builder.build());
+            this.preprocessors = Collections.addAllIfNonNull(this.preprocessors, builder.build());
             return self;
         }
 
-        public SELF postprocessors(Supplier<POSTPROCESSORS_BUILDER> supplier) {
-            this.postprocessors = support.xyz.migoo.Collections.addAllIfNonNull(this.postprocessors, supplier.get().build());
+        public SELF postprocessors(Customizer<POSTPROCESSORS_BUILDER> customizer) {
+            POSTPROCESSORS_BUILDER builder = getPostprocessorsBuilder();
+            this.postprocessors = Collections.addAllIfNonNull(this.postprocessors, customizer.apply(builder).build());
             return self;
         }
 
         public SELF postprocessors(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "POSTPROCESSORS_BUILDER") Closure<?> closure) {
             POSTPROCESSORS_BUILDER builder = getPostprocessorsBuilder();
             Groovy.call(closure, builder);
-            this.postprocessors = support.xyz.migoo.Collections.addAllIfNonNull(this.postprocessors, builder.build());
+            this.postprocessors = Collections.addAllIfNonNull(this.postprocessors, builder.build());
             return self;
         }
 

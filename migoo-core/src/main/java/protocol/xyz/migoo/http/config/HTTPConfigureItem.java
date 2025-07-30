@@ -34,6 +34,7 @@ import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.http.HTTPConstantsInterface;
+import support.xyz.migoo.Customizer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -273,6 +274,11 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
             return self;
         }
 
+        public Builder host(String host) {
+            configure.host = host;
+            return self;
+        }
+
         public Builder port(String port) {
             configure.port = port;
             return self;
@@ -295,6 +301,11 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
 
         public Builder headers(Map<String, String> headers) {
             configure.headers = headers;
+            return self;
+        }
+
+        public Builder headers(Customizer<Map<String, String>> customizer) {
+            configure.headers = customizer.apply(new HashMap<>());
             return self;
         }
 

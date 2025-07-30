@@ -38,8 +38,8 @@ import support.xyz.migoo.ValidateResult;
 @Alias({"ResultExtractor", "result_extractor", "result"})
 public class ResultExtractor extends AbstractExtractor {
 
-    public static RegexExtractor.Builder builder() {
-        return new RegexExtractor.Builder();
+    public static Builder builder() {
+        return new Builder();
     }
 
     @Override

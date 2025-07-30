@@ -43,12 +43,12 @@ import core.xyz.migoo.testelement.sampler.SampleResult;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import support.xyz.migoo.Collections;
+import support.xyz.migoo.Customizer;
 import support.xyz.migoo.groovy.Groovy;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * @param <R>
@@ -171,11 +171,12 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
             EXTRACTORS_BUILDER extends ExtensibleExtractorsBuilder<EXTRACTORS_BUILDER>,
             R extends SampleResult>
             extends AbstractTestElement.Builder<AbstractProcessor<ELE, CONFIG, R>, SELF, CONFIG, CONFIGURE_BUILDER, R> {
-        
+
         protected List<Extractor> extractors;
 
-        public SELF extractors(Supplier<EXTRACTORS_BUILDER> supplier) {
-            this.extractors = Collections.addAllIfNonNull(this.extractors, supplier.get().build());
+        public SELF extractors(Customizer<EXTRACTORS_BUILDER> customizer) {
+            EXTRACTORS_BUILDER builder = getExtractorsBuilder();
+            this.extractors = Collections.addAllIfNonNull(this.extractors, customizer.apply(builder).build());
             return self;
         }
 
