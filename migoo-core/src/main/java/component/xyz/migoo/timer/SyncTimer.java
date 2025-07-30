@@ -25,8 +25,10 @@
 
 package component.xyz.migoo.timer;
 
+import core.xyz.migoo.builder.DefaultExtractorsBuilder;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.processor.AbstractProcessor;
 import core.xyz.migoo.testelement.processor.Postprocessor;
@@ -40,6 +42,18 @@ import org.apache.commons.lang3.StringUtils;
 @Alias({"SyncTimer", "Timer", "sync_timer", "def_timer", "defTimer"})
 public class SyncTimer extends AbstractProcessor<SyncTimer, SyncTimer.TimerConfigureItem, DefaultSampleResult> implements Postprocessor {
 
+    public SyncTimer(Builder builder) {
+        super(builder);
+    }
+
+    public SyncTimer() {
+        super();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     @Override
     protected DefaultSampleResult getTestResult() {
         return new DefaultSampleResult(runtime.getId(),
@@ -51,7 +65,7 @@ public class SyncTimer extends AbstractProcessor<SyncTimer, SyncTimer.TimerConfi
         if (config.timeout > 0) {
             synchronized (this) {
                 try {
-                    this.wait(config.getTimeout() * 1000L);
+                    this.wait(config.timeout * 1000L);
                 } catch (InterruptedException e) {
                     this.notify();
                 }
@@ -80,9 +94,22 @@ public class SyncTimer extends AbstractProcessor<SyncTimer, SyncTimer.TimerConfi
         public TimerConfigureItem calc(ContextWrapper context) {
             return this;
         }
+        
+    }
 
-        public int getTimeout() {
-            return timeout;
+    /**
+     * 定时器 构建器
+     */
+    public static class Builder extends AbstractProcessor.PostprocessorBuilder<SyncTimer, Builder, TimerConfigureItem,
+            AbstractTestElement.ConfigureBuilder<?, TimerConfigureItem>, DefaultExtractorsBuilder, DefaultSampleResult> {
+        @Override
+        public SyncTimer build() {
+            return new SyncTimer(this);
+        }
+
+        @Override
+        protected DefaultExtractorsBuilder getExtractorsBuilder() {
+            return DefaultExtractorsBuilder.builder();
         }
     }
 }

@@ -31,6 +31,7 @@ import component.xyz.migoo.assertion.ResultAssertion;
 import component.xyz.migoo.extractor.JSONExtractor;
 import component.xyz.migoo.extractor.RegexExtractor;
 import component.xyz.migoo.extractor.ResultExtractor;
+import component.xyz.migoo.timer.SyncTimer;
 import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.assertion.AbstractAssertion;
 import core.xyz.migoo.assertion.Assertion;
@@ -632,6 +633,30 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         public <T extends AbstractProcessor.PostprocessorBuilder> SELF apply(Class<T> type, @DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "T") Closure<T> closure) {
             var builder = Groovy.builder(type, closure);
             postprocessors.add((Postprocessor) builder.build());
+            return self;
+        }
+
+        // -----------------------SyncTimer----------------------------
+
+        public SELF timer(SyncTimer timer) {
+            postprocessors.add(timer);
+            return self;
+        }
+
+        public SELF timer(Supplier<SyncTimer.Builder> supplier) {
+            postprocessors.add(supplier.get().build());
+            return self;
+        }
+
+        public SELF timer(SyncTimer.Builder builder) {
+            postprocessors.add(builder.build());
+            return self;
+        }
+
+        public SELF timer(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = SyncTimer.Builder.class) Closure<?> closure) {
+            var builder = SyncTimer.builder();
+            call(closure, builder);
+            postprocessors.add(builder.build());
             return self;
         }
 
