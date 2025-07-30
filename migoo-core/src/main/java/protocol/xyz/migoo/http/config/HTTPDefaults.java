@@ -84,5 +84,10 @@ public class HTTPDefaults extends AbstractConfigureElement<HTTPDefaults, HTTPCon
         public HTTPDefaults build() {
             return new HTTPDefaults(this);
         }
+
+        @Override
+        protected HTTPConfigureItem.Builder getConfigureItemBuilder() {
+            return HTTPConfigureItem.builder();
+        }
     }
 }

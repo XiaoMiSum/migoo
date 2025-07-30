@@ -29,7 +29,6 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.builder.DefaultExtractorsBuilder;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.processor.AbstractProcessor;
 import core.xyz.migoo.testelement.processor.Postprocessor;
@@ -135,7 +134,7 @@ public class DubboPostprocessor extends AbstractProcessor<DubboPostprocessor, Du
     }
 
     public static class Builder extends AbstractProcessor.PostprocessorBuilder<DubboPostprocessor, Builder, DubboConfigureItem,
-            AbstractTestElement.ConfigureBuilder<?, DubboConfigureItem>, DefaultExtractorsBuilder, DefaultSampleResult> {
+            DubboConfigureItem.Builder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public DubboPostprocessor build() {
             return new DubboPostprocessor(this);
@@ -144,6 +143,11 @@ public class DubboPostprocessor extends AbstractProcessor<DubboPostprocessor, Du
         @Override
         protected DefaultExtractorsBuilder getExtractorsBuilder() {
             return DefaultExtractorsBuilder.builder();
+        }
+
+        @Override
+        protected DubboConfigureItem.Builder getConfigureItemBuilder() {
+            return DubboConfigureItem.builder();
         }
     }
 }

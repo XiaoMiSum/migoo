@@ -29,7 +29,6 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.builder.DefaultExtractorsBuilder;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.processor.AbstractProcessor;
 import core.xyz.migoo.testelement.processor.Postprocessor;
@@ -150,7 +149,7 @@ public class ActiveMqPostprocessor extends AbstractProcessor<ActiveMqPostprocess
     }
 
     public static class Builder extends AbstractProcessor.PostprocessorBuilder<ActiveMqPostprocessor, Builder, ActiveConfigureItem,
-            AbstractTestElement.ConfigureBuilder<?, ActiveConfigureItem>, DefaultExtractorsBuilder, DefaultSampleResult> {
+            ActiveConfigureItem.Builder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public ActiveMqPostprocessor build() {
             return new ActiveMqPostprocessor(this);
@@ -159,6 +158,11 @@ public class ActiveMqPostprocessor extends AbstractProcessor<ActiveMqPostprocess
         @Override
         protected DefaultExtractorsBuilder getExtractorsBuilder() {
             return DefaultExtractorsBuilder.builder();
+        }
+
+        @Override
+        protected ActiveConfigureItem.Builder getConfigureItemBuilder() {
+            return ActiveConfigureItem.builder();
         }
     }
 }

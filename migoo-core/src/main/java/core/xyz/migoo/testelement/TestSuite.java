@@ -92,5 +92,10 @@ public class TestSuite extends TestContainerExecutable<TestSuite, EmptyConfigure
         public TestSuite build() {
             return new TestSuite(this);
         }
+
+        @Override
+        protected EmptyConfigureItem.Builder getConfigureItemBuilder() {
+            return EmptyConfigureItem.builder();
+        }
     }
 }

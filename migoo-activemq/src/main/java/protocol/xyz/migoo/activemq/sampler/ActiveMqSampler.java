@@ -178,5 +178,10 @@ public class ActiveMqSampler extends AbstractSampler<ActiveMqSampler, ActiveConf
         protected ActivePostprocessorsBuilder getPostprocessorsBuilder() {
             return ActivePostprocessorsBuilder.builder();
         }
+
+        @Override
+        protected ActiveConfigureItem.Builder getConfigureItemBuilder() {
+            return ActiveConfigureItem.builder();
+        }
     }
 }

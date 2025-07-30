@@ -79,5 +79,10 @@ public class DubboDefaults extends AbstractConfigureElement<DubboDefaults, Dubbo
         public DubboDefaults build() {
             return new DubboDefaults(this);
         }
+
+        @Override
+        protected DubboConfigureItem.Builder getConfigureItemBuilder() {
+            return DubboConfigureItem.builder();
+        }
     }
 }

@@ -68,5 +68,10 @@ public class DebugDefaults extends AbstractConfigureElement<DebugDefaults, Debug
         public DebugDefaults build() {
             return new DebugDefaults(this);
         }
+
+        @Override
+        protected DebugConfigureItem.Builder getConfigureItemBuilder() {
+            return DebugConfigureItem.builder();
+        }
     }
 }

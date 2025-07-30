@@ -113,5 +113,10 @@ public class RedisPostprocessor extends AbstractProcessor<RedisPostprocessor, Re
         protected DefaultExtractorsBuilder getExtractorsBuilder() {
             return DefaultExtractorsBuilder.builder();
         }
+
+        @Override
+        protected RedisConfigureItem.Builder getConfigureItemBuilder() {
+            return RedisConfigureItem.builder();
+        }
     }
 }

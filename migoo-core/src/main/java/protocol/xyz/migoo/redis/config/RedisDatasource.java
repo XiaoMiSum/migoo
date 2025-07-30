@@ -106,5 +106,10 @@ public class RedisDatasource extends AbstractConfigureElement<RedisDatasource, R
         public RedisDatasource build() {
             return new RedisDatasource(this);
         }
+
+        @Override
+        protected RedisConfigureItem.Builder getConfigureItemBuilder() {
+            return RedisConfigureItem.builder();
+        }
     }
 }

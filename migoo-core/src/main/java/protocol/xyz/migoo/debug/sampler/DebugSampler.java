@@ -104,5 +104,10 @@ public class DebugSampler extends AbstractSampler<DebugSampler, DebugConfigureIt
         protected DefaultPostprocessorsBuilder getPostprocessorsBuilder() {
             return DefaultPostprocessorsBuilder.builder();
         }
+
+        @Override
+        protected DebugConfigureItem.Builder getConfigureItemBuilder() {
+            return DebugConfigureItem.builder();
+        }
     }
 }

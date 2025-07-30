@@ -80,5 +80,10 @@ public class ActiveMqDefaults extends AbstractConfigureElement<ActiveMqDefaults,
         public ActiveMqDefaults build() {
             return new ActiveMqDefaults(this);
         }
+
+        @Override
+        protected ActiveConfigureItem.Builder getConfigureItemBuilder() {
+            return ActiveConfigureItem.builder();
+        }
     }
 }

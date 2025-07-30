@@ -215,5 +215,10 @@ public class RabbitMqSampler extends AbstractSampler<RabbitMqSampler, RabbitMQCo
         protected RabbitPostprocessorsBuilder getPostprocessorsBuilder() {
             return RabbitPostprocessorsBuilder.builder();
         }
+
+        @Override
+        protected RabbitMQConfigureItem.Builder getConfigureItemBuilder() {
+            return RabbitMQConfigureItem.builder();
+        }
     }
 }

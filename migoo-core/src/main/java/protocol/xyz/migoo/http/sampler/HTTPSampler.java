@@ -108,5 +108,10 @@ public class HTTPSampler extends AbstractSampler<HTTPSampler, HTTPConfigureItem,
         protected DefaultPostprocessorsBuilder getPostprocessorsBuilder() {
             return DefaultPostprocessorsBuilder.builder();
         }
+
+        @Override
+        protected HTTPConfigureItem.Builder getConfigureItemBuilder() {
+            return HTTPConfigureItem.builder();
+        }
     }
 }

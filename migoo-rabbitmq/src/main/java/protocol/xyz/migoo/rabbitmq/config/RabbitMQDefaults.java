@@ -80,5 +80,10 @@ public class RabbitMQDefaults extends AbstractConfigureElement<RabbitMQDefaults,
         public RabbitMQDefaults build() {
             return new RabbitMQDefaults(this);
         }
+
+        @Override
+        protected RabbitMQConfigureItem.Builder getConfigureItemBuilder() {
+            return RabbitMQConfigureItem.builder();
+        }
     }
 }

@@ -77,6 +77,13 @@ public class SyncTimer extends AbstractProcessor<SyncTimer, SyncTimer.TimerConfi
 
         private int timeout;
 
+        public TimerConfigureItem() {
+        }
+
+        public TimerConfigureItem(Builder builder) {
+            this.timeout = builder.timeout;
+        }
+
         @Override
         public TimerConfigureItem merge(TimerConfigureItem other) {
             // 无需合并，返回当前对象的拷贝
@@ -94,14 +101,29 @@ public class SyncTimer extends AbstractProcessor<SyncTimer, SyncTimer.TimerConfi
         public TimerConfigureItem calc(ContextWrapper context) {
             return this;
         }
-        
+
+        public static class Builder extends AbstractTestElement.ConfigureBuilder<Builder, TimerConfigureItem> {
+
+            protected int timeout;
+
+            public Builder timeout(int timeout) {
+                this.timeout = timeout;
+                return self;
+            }
+
+            @Override
+            public TimerConfigureItem build() {
+                return new TimerConfigureItem(this);
+            }
+        }
+
     }
 
     /**
      * 定时器 构建器
      */
     public static class Builder extends AbstractProcessor.PostprocessorBuilder<SyncTimer, Builder, TimerConfigureItem,
-            AbstractTestElement.ConfigureBuilder<?, TimerConfigureItem>, DefaultExtractorsBuilder, DefaultSampleResult> {
+            TimerConfigureItem.Builder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public SyncTimer build() {
             return new SyncTimer(this);
@@ -110,6 +132,11 @@ public class SyncTimer extends AbstractProcessor<SyncTimer, SyncTimer.TimerConfi
         @Override
         protected DefaultExtractorsBuilder getExtractorsBuilder() {
             return DefaultExtractorsBuilder.builder();
+        }
+
+        @Override
+        protected TimerConfigureItem.Builder getConfigureItemBuilder() {
+            return new TimerConfigureItem.Builder();
         }
     }
 }

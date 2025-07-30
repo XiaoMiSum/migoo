@@ -255,6 +255,13 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
+        public SELF config(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "CONFIGURE_BUILDER") Closure<?> closure) {
+            CONFIGURE_BUILDER builder = getConfigureItemBuilder();
+            Groovy.call(closure, builder);
+            this.config = builder.build();
+            return self;
+        }
+
         public SELF config(Supplier<CONFIGURE_BUILDER> supplier) {
             this.config = supplier.get().build();
             return self;
@@ -284,6 +291,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             this.filters = filters;
             return self;
         }
+
+        protected abstract CONFIGURE_BUILDER getConfigureItemBuilder();
 
     }
 

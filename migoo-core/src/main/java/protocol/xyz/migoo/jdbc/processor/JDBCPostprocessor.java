@@ -29,7 +29,6 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.builder.DefaultExtractorsBuilder;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.processor.AbstractProcessor;
 import core.xyz.migoo.testelement.processor.Postprocessor;
@@ -102,7 +101,7 @@ public class JDBCPostprocessor extends AbstractProcessor<JDBCPostprocessor, JDBC
      * JDBC 后置处理器构建器
      */
     public static class Builder extends AbstractProcessor.PostprocessorBuilder<JDBCPostprocessor, Builder, JDBCConfigureItem,
-            AbstractTestElement.ConfigureBuilder<?, JDBCConfigureItem>, DefaultExtractorsBuilder, DefaultSampleResult> {
+            JDBCConfigureItem.Builder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public JDBCPostprocessor build() {
             return new JDBCPostprocessor(this);
@@ -111,6 +110,11 @@ public class JDBCPostprocessor extends AbstractProcessor<JDBCPostprocessor, JDBC
         @Override
         protected DefaultExtractorsBuilder getExtractorsBuilder() {
             return DefaultExtractorsBuilder.builder();
+        }
+
+        @Override
+        protected JDBCConfigureItem.Builder getConfigureItemBuilder() {
+            return JDBCConfigureItem.builder();
         }
     }
 }

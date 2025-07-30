@@ -80,5 +80,10 @@ public class KafkaDefaults extends AbstractConfigureElement<KafkaDefaults, Kafka
         public KafkaDefaults build() {
             return new KafkaDefaults(this);
         }
+
+        @Override
+        protected KafkaConfigureItem.Builder getConfigureItemBuilder() {
+            return KafkaConfigureItem.builder();
+        }
     }
 }

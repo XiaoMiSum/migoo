@@ -113,5 +113,10 @@ public class RedisPreprocessor extends AbstractProcessor<RedisPreprocessor, Redi
         protected DefaultExtractorsBuilder getExtractorsBuilder() {
             return DefaultExtractorsBuilder.builder();
         }
+
+        @Override
+        protected RedisConfigureItem.Builder getConfigureItemBuilder() {
+            return RedisConfigureItem.builder();
+        }
     }
 }

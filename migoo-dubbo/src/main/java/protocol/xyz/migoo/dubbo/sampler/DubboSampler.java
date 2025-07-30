@@ -163,5 +163,10 @@ public class DubboSampler extends AbstractSampler<DubboSampler, DubboConfigureIt
         protected DubboPostprocessorsBuilder getPostprocessorsBuilder() {
             return DubboPostprocessorsBuilder.builder();
         }
+
+        @Override
+        protected DubboConfigureItem.Builder getConfigureItemBuilder() {
+            return DubboConfigureItem.builder();
+        }
     }
 }

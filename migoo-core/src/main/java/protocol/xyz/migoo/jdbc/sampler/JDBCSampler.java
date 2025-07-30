@@ -127,5 +127,10 @@ public class JDBCSampler extends AbstractSampler<JDBCSampler, JDBCConfigureItem,
         protected DefaultPostprocessorsBuilder getPostprocessorsBuilder() {
             return DefaultPostprocessorsBuilder.builder();
         }
+
+        @Override
+        protected JDBCConfigureItem.Builder getConfigureItemBuilder() {
+            return JDBCConfigureItem.builder();
+        }
     }
 }

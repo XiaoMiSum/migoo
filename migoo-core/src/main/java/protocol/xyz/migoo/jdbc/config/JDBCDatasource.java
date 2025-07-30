@@ -110,5 +110,10 @@ public class JDBCDatasource extends AbstractConfigureElement<JDBCDatasource, JDB
         public JDBCDatasource build() {
             return new JDBCDatasource(this);
         }
+
+        @Override
+        protected JDBCConfigureItem.Builder getConfigureItemBuilder() {
+            return JDBCConfigureItem.builder();
+        }
     }
 }

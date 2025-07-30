@@ -160,5 +160,10 @@ public class KafkaSampler extends AbstractSampler<KafkaSampler, KafkaConfigureIt
         protected KafkaPostprocessorsBuilder getPostprocessorsBuilder() {
             return KafkaPostprocessorsBuilder.builder();
         }
+
+        @Override
+        protected KafkaConfigureItem.Builder getConfigureItemBuilder() {
+            return KafkaConfigureItem.builder();
+        }
     }
 }

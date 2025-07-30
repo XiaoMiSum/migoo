@@ -199,7 +199,7 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
 
         protected List<ConfigureElement> configureElements;
 
-        protected List<TestElement<R>> children;
+        protected List<TestElement<? extends Result>> children;
 
         /**
          * 配置元件
@@ -230,7 +230,7 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
          * @param children 子节点
          * @return 当前对象
          */
-        public SELF children(List<TestElement<R>> children) {
+        public SELF children(List<TestElement<? extends Result>> children) {
             this.children = children;
             return self;
         }

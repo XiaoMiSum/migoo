@@ -130,5 +130,10 @@ public class RedisSampler extends AbstractSampler<RedisSampler, RedisConfigureIt
         protected DefaultPostprocessorsBuilder getPostprocessorsBuilder() {
             return DefaultPostprocessorsBuilder.builder();
         }
+
+        @Override
+        protected RedisConfigureItem.Builder getConfigureItemBuilder() {
+            return RedisConfigureItem.builder();
+        }
     }
 }
