@@ -125,17 +125,17 @@ public abstract class AbstractAssertion implements Assertion, AssertionConstants
             this.assertion = assertion;
         }
 
-        public Builder field(String field) {
+        public SELF field(String field) {
             this.assertion.rule = field;
             return self;
         }
 
-        public Builder rule(String rule) {
+        public SELF rule(String rule) {
             this.assertion.rule = rule;
             return self;
         }
 
-        public Builder expected(Object expected) {
+        public SELF expected(Object expected) {
             this.assertion.expected = expected;
             return self;
         }

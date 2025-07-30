@@ -25,6 +25,7 @@
 
 package protocol.xyz.migoo.http.extractor;
 
+import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.extractor.AbstractExtractor;
 import core.xyz.migoo.extractor.ExtractResult;
@@ -40,8 +41,11 @@ import protocol.xyz.migoo.http.RealHTTPResponse;
  *
  * @author xiaomi
  */
-@Alias({"HTTPExtractor", "HTTP_Exactor", "http"})
-public class HTTPResponseExtractor extends AbstractExtractor {
+@Alias({"http_header_extractor", "http_header", "HTTPHeader"})
+public class HTTPHeaderExtractor extends AbstractExtractor {
+
+    @JSONField(name = MATCH_NUM)
+    protected int matchNum;
 
     public static Builder builder() {
         return new Builder();
@@ -71,10 +75,15 @@ public class HTTPResponseExtractor extends AbstractExtractor {
     }
 
 
-    public static class Builder extends AbstractExtractor.Builder<Builder, HTTPResponseExtractor> {
+    public static class Builder extends AbstractExtractor.Builder<Builder, HTTPHeaderExtractor> {
 
-        protected Builder() {
-            super(new HTTPResponseExtractor());
+        public Builder() {
+            super(new HTTPHeaderExtractor());
+        }
+
+        public Builder matchNum(int matchNum) {
+            extractor.matchNum = matchNum;
+            return self;
         }
     }
 }

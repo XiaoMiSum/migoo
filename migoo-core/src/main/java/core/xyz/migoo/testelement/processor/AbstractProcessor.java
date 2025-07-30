@@ -31,17 +31,24 @@ package core.xyz.migoo.testelement.processor;
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.TestStatus;
+import core.xyz.migoo.builder.ExtensibleExtractorsBuilder;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.extractor.AbstractExtractor;
 import core.xyz.migoo.extractor.Extractor;
 import core.xyz.migoo.filter.SampleFilterChain;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.TestElementConstantsInterface;
 import core.xyz.migoo.testelement.sampler.SampleResult;
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+import support.xyz.migoo.Collections;
+import support.xyz.migoo.groovy.Groovy;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * @param <R>
@@ -158,48 +165,46 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
      * @param <R>                 执行结果类型
      */
     public static abstract class Builder<ELE extends AbstractProcessor<ELE, CONFIG, R>,
-            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, EXTRACTOR_BUILDER, R>,
+            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, EXTRACTORS_BUILDER, R>,
             CONFIG extends ConfigureItem<CONFIG>,
             CONFIGURE_BUILDER extends ConfigureBuilder<?, CONFIG>,
-            EXTRACTOR_BUILDER extends AbstractExtractor.Builder,
+            EXTRACTORS_BUILDER extends ExtensibleExtractorsBuilder<EXTRACTORS_BUILDER>,
             R extends SampleResult>
             extends AbstractTestElement.Builder<AbstractProcessor<ELE, CONFIG, R>, SELF, CONFIG, CONFIGURE_BUILDER, R> {
-        private List<Extractor> extractors;
+        
+        protected List<Extractor> extractors;
 
-        protected SELF extractors(List<Extractor> extractors) {
-            this.extractors = extractors;
+        public SELF extractors(Supplier<EXTRACTORS_BUILDER> supplier) {
+            this.extractors = Collections.addAllIfNonNull(this.extractors, supplier.get().build());
             return self;
         }
 
-        protected SELF addExtractor(Extractor extractor) {
-            synchronized (this) {
-                if (this.extractors == null) {
-                    synchronized (this) {
-                        this.extractors = new ArrayList<>();
-                    }
-                }
-            }
-            this.extractors.add(extractor);
+        public SELF extractors(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "EXTRACTORS_BUILDER") Closure<?> closure) {
+            EXTRACTORS_BUILDER builder = getExtractorsBuilder();
+            Groovy.call(closure, builder);
+            this.extractors = Collections.addAllIfNonNull(this.extractors, builder.build());
             return self;
         }
+
+        protected abstract EXTRACTORS_BUILDER getExtractorsBuilder();
     }
 
     public static abstract class PreprocessorBuilder<ELE extends AbstractProcessor<ELE, CONFIG, R>,
-            SELF extends PreprocessorBuilder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, EXTRACTOR_BUILDER, R>,
+            SELF extends PreprocessorBuilder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, EXTRACTORS_BUILDER, R>,
             CONFIG extends ConfigureItem<CONFIG>,
             CONFIGURE_BUILDER extends ConfigureBuilder<?, CONFIG>,
-            EXTRACTOR_BUILDER extends AbstractExtractor.Builder,
+            EXTRACTORS_BUILDER extends ExtensibleExtractorsBuilder<EXTRACTORS_BUILDER>,
             R extends SampleResult>
-            extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, EXTRACTOR_BUILDER, R> {
+            extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, EXTRACTORS_BUILDER, R> {
     }
 
     public static abstract class PostprocessorBuilder<ELE extends AbstractProcessor<ELE, CONFIG, R>,
-            SELF extends PostprocessorBuilder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, EXTRACTOR_BUILDER, R>,
+            SELF extends PostprocessorBuilder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, EXTRACTORS_BUILDER, R>,
             CONFIG extends ConfigureItem<CONFIG>,
             CONFIGURE_BUILDER extends ConfigureBuilder<?, CONFIG>,
-            EXTRACTOR_BUILDER extends AbstractExtractor.Builder,
+            EXTRACTORS_BUILDER extends ExtensibleExtractorsBuilder<EXTRACTORS_BUILDER>,
             R extends SampleResult>
-            extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, EXTRACTOR_BUILDER, R> {
+            extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, EXTRACTORS_BUILDER, R> {
     }
 
 

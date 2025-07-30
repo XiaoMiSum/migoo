@@ -27,8 +27,8 @@ package protocol.xyz.migoo.jdbc.processor;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.fastjson2.annotation.JSONField;
+import core.xyz.migoo.builder.DefaultExtractorsBuilder;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.extractor.AbstractExtractor;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.processor.AbstractProcessor;
@@ -102,10 +102,15 @@ public class JDBCPreprocessor extends AbstractProcessor<JDBCPreprocessor, JDBCCo
      * JDBC 前置处理器构建器
      */
     public static class Builder extends AbstractProcessor.PreprocessorBuilder<JDBCPreprocessor, Builder,
-            JDBCConfigureItem, AbstractTestElement.ConfigureBuilder<?, JDBCConfigureItem>, AbstractExtractor.Builder, DefaultSampleResult> {
+            JDBCConfigureItem, AbstractTestElement.ConfigureBuilder<?, JDBCConfigureItem>, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public JDBCPreprocessor build() {
             return new JDBCPreprocessor(this);
+        }
+
+        @Override
+        protected DefaultExtractorsBuilder getExtractorsBuilder() {
+            return DefaultExtractorsBuilder.builder();
         }
     }
 }

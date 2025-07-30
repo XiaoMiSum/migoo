@@ -101,7 +101,7 @@ public class RedisDatasource extends AbstractConfigureElement<RedisDatasource, R
      * Redis数据源 测试元件 构建类
      */
     public static class Builder extends AbstractConfigureElement.Builder<RedisDatasource, Builder, RedisConfigureItem, RedisConfigureItem.Builder, TestSuiteResult> {
-        
+
         @Override
         public RedisDatasource build() {
             return new RedisDatasource(this);

@@ -49,7 +49,7 @@ public class ResultAssertion extends AbstractAssertion {
 
     public static class Builder extends AbstractAssertion.Builder<Builder, ResultAssertion> {
 
-        protected Builder() {
+        public Builder() {
             super(new ResultAssertion());
         }
     }

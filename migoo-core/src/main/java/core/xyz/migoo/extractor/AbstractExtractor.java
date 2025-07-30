@@ -49,8 +49,6 @@ public abstract class AbstractExtractor implements Extractor, ExtractorConstants
     @JSONField(name = REF_NAME)
     protected String refName;
 
-    @JSONField(name = MATCH_NUM)
-    protected int matchNum;
 
     public AbstractExtractor() {
     }
@@ -126,14 +124,6 @@ public abstract class AbstractExtractor implements Extractor, ExtractorConstants
         this.refName = refName;
     }
 
-    public int getMatchNum() {
-        return matchNum;
-    }
-
-    public void setMatchNum(int matchNum) {
-        this.matchNum = matchNum;
-    }
-
 
     /**
      * 验证器基础构建器
@@ -142,7 +132,7 @@ public abstract class AbstractExtractor implements Extractor, ExtractorConstants
      */
     public static abstract class Builder<SELF extends Builder<SELF, EXTRACTOR>, EXTRACTOR extends AbstractExtractor>
             implements IBuilder<EXTRACTOR> {
-        private final EXTRACTOR extractor;
+        protected final EXTRACTOR extractor;
         protected SELF self;
 
 
@@ -166,11 +156,6 @@ public abstract class AbstractExtractor implements Extractor, ExtractorConstants
             return self;
         }
 
-        public SELF matchNum(int matchNum) {
-            extractor.matchNum = matchNum;
-            return self;
-        }
-        
         @Override
         public EXTRACTOR build() {
             return extractor;

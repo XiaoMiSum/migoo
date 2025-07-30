@@ -29,8 +29,8 @@
 package protocol.xyz.migoo.debug.processer;
 
 import com.alibaba.fastjson2.JSON;
+import core.xyz.migoo.builder.DefaultExtractorsBuilder;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.extractor.AbstractExtractor;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.processor.AbstractProcessor;
@@ -79,11 +79,16 @@ public class DebugPostprocessor extends AbstractProcessor<DebugPostprocessor, De
         result.sampleEnd();
     }
 
-    public static class Builder extends AbstractProcessor.PostprocessorBuilder<DebugPostprocessor, Builder,
-            DebugConfigureItem, AbstractTestElement.ConfigureBuilder<?, DebugConfigureItem>, AbstractExtractor.Builder, DefaultSampleResult> {
+    public static class Builder extends AbstractProcessor.PostprocessorBuilder<DebugPostprocessor, Builder, DebugConfigureItem,
+            AbstractTestElement.ConfigureBuilder<?, DebugConfigureItem>, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public DebugPostprocessor build() {
             return new DebugPostprocessor(this);
+        }
+
+        @Override
+        protected DefaultExtractorsBuilder getExtractorsBuilder() {
+            return DefaultExtractorsBuilder.builder();
         }
     }
 }

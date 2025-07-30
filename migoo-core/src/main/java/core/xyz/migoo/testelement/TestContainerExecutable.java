@@ -30,17 +30,27 @@ package core.xyz.migoo.testelement;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.TestStatus;
+import core.xyz.migoo.builder.ExtensibleChildrenBuilder;
+import core.xyz.migoo.builder.ExtensibleConfigureElementsBuilder;
+import core.xyz.migoo.builder.ExtensiblePostprocessorsBuilder;
+import core.xyz.migoo.builder.ExtensiblePreprocessorsBuilder;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.filter.ExecuteChildrenFilterChain;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.report.Result;
-import core.xyz.migoo.testelement.configure.AbstractConfigureElement;
 import core.xyz.migoo.testelement.configure.ConfigureElement;
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import support.xyz.migoo.Closeable;
+import support.xyz.migoo.Collections;
 import support.xyz.migoo.ValidateResult;
+import support.xyz.migoo.groovy.Groovy;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -177,56 +187,69 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
      * @param <R>                 处理结果类型
      */
     public static abstract class Builder<ELE extends TestContainerExecutable<ELE, CONFIG, R>,
-            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, R>,
+            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, CONFIGURES_BUILDER, PREPROCESSORS_BUILDER, POSTPROCESSORS_BUILDER, CHILDREN_BUILDER, R>,
             CONFIG extends ConfigureItem<CONFIG>,
             CONFIGURE_BUILDER extends ConfigureBuilder<?, CONFIG>,
+            CONFIGURES_BUILDER extends ExtensibleConfigureElementsBuilder,
+            PREPROCESSORS_BUILDER extends ExtensiblePreprocessorsBuilder,
+            POSTPROCESSORS_BUILDER extends ExtensiblePostprocessorsBuilder,
+            CHILDREN_BUILDER extends ExtensibleChildrenBuilder,
             R extends Result>
-            extends AbstractTestElementExecutable.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, R> {
+            extends AbstractTestElementExecutable.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, PREPROCESSORS_BUILDER, POSTPROCESSORS_BUILDER, R> {
 
         protected List<ConfigureElement> configureElements;
 
         protected List<TestElement<R>> children;
 
-        public Builder configureElements(List<ConfigureElement> configureElements) {
+        /**
+         * 配置元件
+         *
+         * @param configureElements 配置元件列表
+         * @return 当前对象
+         */
+        public SELF configureElements(List<ConfigureElement> configureElements) {
             this.configureElements = configureElements;
             return self;
         }
 
-        public Builder configureElement(Supplier<AbstractConfigureElement.Builder> supplier) {
-            return configureElement((ConfigureElement) supplier.get().build());
-        }
-
-        public Builder configureElement(ConfigureElement configureElement) {
-            synchronized (this) {
-                if (Objects.isNull(configureElements)) {
-                    synchronized (this) {
-                        this.configureElements = new ArrayList<>();
-                    }
-                }
-            }
-            this.configureElements.add(configureElement);
+        public SELF configureElements(Supplier<CONFIGURES_BUILDER> supplier) {
+            this.configureElements = Collections.addAllIfNonNull(this.configureElements, supplier.get().build());
             return self;
         }
 
-        public Builder children(List<TestElement<R>> children) {
+        public SELF configureElements(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "CONFIGURES_BUILDER") Closure<?> closure) {
+            CONFIGURES_BUILDER builder = getConfiguresBuilder();
+            Groovy.call(closure, builder);
+            this.configureElements = Collections.addAllIfNonNull(this.configureElements, builder.build());
+            return self;
+        }
+
+        /**
+         * 子节点
+         *
+         * @param children 子节点
+         * @return 当前对象
+         */
+        public SELF children(List<TestElement<R>> children) {
             this.children = children;
             return self;
         }
 
-        public Builder children(Supplier<AbstractTestElementExecutable.Builder> supplier) {
-            return children((TestElement<R>) supplier.get().build());
-        }
-
-        public Builder children(TestElement<R> child) {
-            synchronized (this) {
-                if (Objects.isNull(children)) {
-                    synchronized (this) {
-                        this.children = new ArrayList<>();
-                    }
-                }
-            }
-            this.children.add(child);
+        public SELF children(Supplier<CHILDREN_BUILDER> supplier) {
+            this.configureElements = Collections.addAllIfNonNull(this.configureElements, supplier.get().build());
             return self;
         }
+
+        public SELF children(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "CHILDREN_BUILDER") Closure<?> closure) {
+            CHILDREN_BUILDER builder = getChildrenBuilder();
+            Groovy.call(closure, builder);
+            this.children = Collections.addAllIfNonNull(this.configureElements, builder.build());
+            return self;
+        }
+
+        protected abstract CONFIGURES_BUILDER getConfiguresBuilder();
+
+        protected abstract CHILDREN_BUILDER getChildrenBuilder();
+
     }
 }

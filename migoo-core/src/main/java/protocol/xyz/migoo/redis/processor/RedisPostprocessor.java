@@ -26,8 +26,8 @@
 package protocol.xyz.migoo.redis.processor;
 
 import com.alibaba.fastjson2.annotation.JSONField;
+import core.xyz.migoo.builder.DefaultExtractorsBuilder;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.extractor.AbstractExtractor;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.processor.AbstractProcessor;
 import core.xyz.migoo.testelement.processor.Postprocessor;
@@ -102,10 +102,16 @@ public class RedisPostprocessor extends AbstractProcessor<RedisPostprocessor, Re
     /**
      * Redis 后置处理器构建器
      */
-    public static class Builder extends AbstractProcessor.PreprocessorBuilder<RedisPostprocessor, Builder, RedisConfigureItem, RedisConfigureItem.Builder, AbstractExtractor.Builder, DefaultSampleResult> {
+    public static class Builder extends AbstractProcessor.PreprocessorBuilder<RedisPostprocessor, Builder, RedisConfigureItem,
+            RedisConfigureItem.Builder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public RedisPostprocessor build() {
             return new RedisPostprocessor(this);
+        }
+
+        @Override
+        protected DefaultExtractorsBuilder getExtractorsBuilder() {
+            return DefaultExtractorsBuilder.builder();
         }
     }
 }

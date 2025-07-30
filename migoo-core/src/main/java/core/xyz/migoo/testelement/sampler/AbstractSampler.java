@@ -30,8 +30,11 @@ package core.xyz.migoo.testelement.sampler;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.TestStatus;
-import core.xyz.migoo.assertion.AbstractAssertion;
 import core.xyz.migoo.assertion.Assertion;
+import core.xyz.migoo.builder.ExtensibleAssertionsBuilder;
+import core.xyz.migoo.builder.ExtensibleExtractorsBuilder;
+import core.xyz.migoo.builder.ExtensiblePostprocessorsBuilder;
+import core.xyz.migoo.builder.ExtensiblePreprocessorsBuilder;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.config.MiGooVariables;
 import core.xyz.migoo.context.Context;
@@ -41,9 +44,16 @@ import core.xyz.migoo.extractor.Extractor;
 import core.xyz.migoo.filter.SampleFilterChain;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.testelement.AbstractTestElementExecutable;
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+import support.xyz.migoo.Collections;
 import support.xyz.migoo.KryoUtil;
+import support.xyz.migoo.groovy.Groovy;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -198,57 +208,48 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
      * @param <R>                 处理结果类型
      */
     public static abstract class Builder<ELE extends AbstractSampler<ELE, CONFIG, R>,
-            SELF extends AbstractSampler.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, R>,
+            SELF extends AbstractSampler.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, PREPROCESSORS_BUILDER, POSTPROCESSORS_BUILDER, ASSERTIONS_BUILDER, EXTRACTORS_BUILDER, R>,
             CONFIG extends ConfigureItem<CONFIG>,
             CONFIGURE_BUILDER extends ConfigureBuilder<?, CONFIG>,
+            PREPROCESSORS_BUILDER extends ExtensiblePreprocessorsBuilder,
+            POSTPROCESSORS_BUILDER extends ExtensiblePostprocessorsBuilder,
+            ASSERTIONS_BUILDER extends ExtensibleAssertionsBuilder<ASSERTIONS_BUILDER>,
+            EXTRACTORS_BUILDER extends ExtensibleExtractorsBuilder<EXTRACTORS_BUILDER>,
             R extends SampleResult>
-            extends AbstractTestElementExecutable.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, R> {
+            extends AbstractTestElementExecutable.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, PREPROCESSORS_BUILDER, POSTPROCESSORS_BUILDER, R> {
 
         protected List<Assertion> assertions;
 
         protected List<Extractor> extractors;
 
-        public Builder assertions(List<Assertion> configureElements) {
-            this.assertions = configureElements;
+        public SELF assertions(Supplier<ASSERTIONS_BUILDER> supplier) {
+            this.assertions = Collections.addAllIfNonNull(this.assertions, supplier.get().build());
             return self;
         }
 
-        public Builder assertions(Supplier<AbstractAssertion.Builder> supplier) {
-            return assertions(supplier.get().build());
-        }
-
-        public Builder assertions(Assertion assertion) {
-            synchronized (this) {
-                if (Objects.isNull(assertions)) {
-                    synchronized (this) {
-                        this.assertions = new ArrayList<>();
-                    }
-                }
-            }
-            this.assertions.add(assertion);
+        public SELF assertions(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "ASSERTIONS_BUILDER") Closure<?> closure) {
+            ASSERTIONS_BUILDER builder = getAssertionsBuilder();
+            Groovy.call(closure, builder);
+            this.assertions = Collections.addAllIfNonNull(this.assertions, builder.build());
             return self;
         }
 
-        public Builder extractors(List<Extractor> extractors) {
-            this.extractors = extractors;
+        public SELF extractors(Supplier<EXTRACTORS_BUILDER> supplier) {
+            this.extractors = Collections.addAllIfNonNull(this.extractors, supplier.get().build());
             return self;
         }
 
-        public Builder extractors(Supplier<AbstractAssertion.Builder> supplier) {
-            return assertions(supplier.get().build());
-        }
-
-        public Builder extractors(Extractor extractor) {
-            synchronized (this) {
-                if (Objects.isNull(extractors)) {
-                    synchronized (this) {
-                        this.extractors = new ArrayList<>();
-                    }
-                }
-            }
-            this.extractors.add(extractor);
+        public SELF extractors(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "EXTRACTORS_BUILDER") Closure<?> closure) {
+            EXTRACTORS_BUILDER builder = getExtractorsBuilder();
+            Groovy.call(closure, builder);
+            this.extractors = Collections.addAllIfNonNull(this.extractors, builder.build());
             return self;
         }
+
+
+        protected abstract ASSERTIONS_BUILDER getAssertionsBuilder();
+
+        protected abstract EXTRACTORS_BUILDER getExtractorsBuilder();
     }
 
 }

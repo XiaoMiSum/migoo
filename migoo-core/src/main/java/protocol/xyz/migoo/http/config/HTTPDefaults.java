@@ -79,7 +79,7 @@ public class HTTPDefaults extends AbstractConfigureElement<HTTPDefaults, HTTPCon
      * HTTP默认配置 测试元件 构建类
      */
     public static class Builder extends AbstractConfigureElement.Builder<HTTPDefaults, HTTPDefaults.Builder, HTTPConfigureItem, HTTPConfigureItem.Builder, TestSuiteResult> {
-        
+
         @Override
         public HTTPDefaults build() {
             return new HTTPDefaults(this);

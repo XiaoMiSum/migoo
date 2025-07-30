@@ -25,6 +25,7 @@
 
 package component.xyz.migoo.extractor;
 
+import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.extractor.AbstractExtractor;
 import core.xyz.migoo.extractor.ExtractResult;
@@ -39,6 +40,9 @@ import java.util.regex.Pattern;
  */
 @Alias({"RegexExtractor", "regex_extractor", "regex"})
 public class RegexExtractor extends AbstractExtractor {
+
+    @JSONField(name = MATCH_NUM)
+    protected int matchNum;
 
     public static Builder builder() {
         return new Builder();
@@ -69,10 +73,23 @@ public class RegexExtractor extends AbstractExtractor {
         return res;
     }
 
+    public int getMatchNum() {
+        return matchNum;
+    }
+
+    public void setMatchNum(int matchNum) {
+        this.matchNum = matchNum;
+    }
+
     public static class Builder extends AbstractExtractor.Builder<Builder, RegexExtractor> {
 
-        protected Builder() {
+        public Builder() {
             super(new RegexExtractor());
+        }
+        
+        public Builder matchNum(int matchNum) {
+            extractor.matchNum = matchNum;
+            return self;
         }
     }
 }

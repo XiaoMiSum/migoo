@@ -52,7 +52,7 @@ public class RabbitMQDefaults extends AbstractConfigureElement<RabbitMQDefaults,
     public static Builder builder() {
         return new Builder();
     }
-    
+
     @Override
     protected void doProcess(ContextWrapper context) {
         refName = StringUtils.isBlank(refName) ? DEF_REF_NAME_KEY : refName;

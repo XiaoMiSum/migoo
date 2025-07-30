@@ -67,7 +67,7 @@ public class JSONAssertion extends AbstractAssertion {
 
     public static class Builder extends AbstractAssertion.Builder<Builder, JSONAssertion> {
 
-        protected Builder() {
+        public Builder() {
             super(new JSONAssertion());
         }
     }

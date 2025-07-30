@@ -133,6 +133,12 @@
             <groupId>com.esotericsoftware</groupId>
             <artifactId>kryo</artifactId>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.groovy/groovy -->
+        <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

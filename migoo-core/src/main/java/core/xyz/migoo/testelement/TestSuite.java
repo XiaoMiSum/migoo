@@ -25,6 +25,10 @@
 
 package core.xyz.migoo.testelement;
 
+import core.xyz.migoo.builder.DefaultChildrenBuilder;
+import core.xyz.migoo.builder.DefaultConfigureElementsBuilder;
+import core.xyz.migoo.builder.DefaultPostprocessorsBuilder;
+import core.xyz.migoo.builder.DefaultPreprocessorsBuilder;
 import core.xyz.migoo.config.EmptyConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
 
@@ -61,12 +65,32 @@ public class TestSuite extends TestContainerExecutable<TestSuite, EmptyConfigure
     /**
      * 容器基础构建器
      */
-    public static class Builder extends TestContainerExecutable.Builder<TestSuite, Builder, EmptyConfigureItem, EmptyConfigureItem.Builder, TestSuiteResult> {
+    public static class Builder extends TestContainerExecutable.Builder<TestSuite, Builder, EmptyConfigureItem, EmptyConfigureItem.Builder,
+            DefaultConfigureElementsBuilder, DefaultPreprocessorsBuilder, DefaultPostprocessorsBuilder, DefaultChildrenBuilder, TestSuiteResult> {
+
+        @Override
+        protected DefaultConfigureElementsBuilder getConfiguresBuilder() {
+            return DefaultConfigureElementsBuilder.builder();
+        }
+
+        @Override
+        protected DefaultChildrenBuilder getChildrenBuilder() {
+            return DefaultChildrenBuilder.builder();
+        }
+
+        @Override
+        protected DefaultPreprocessorsBuilder getPreprocessorsBuilder() {
+            return DefaultPreprocessorsBuilder.builder();
+        }
+
+        @Override
+        protected DefaultPostprocessorsBuilder getPostprocessorsBuilder() {
+            return DefaultPostprocessorsBuilder.builder();
+        }
 
         @Override
         public TestSuite build() {
             return new TestSuite(this);
         }
     }
-
 }

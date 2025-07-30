@@ -62,7 +62,7 @@ public class JSONExtractor extends AbstractExtractor {
 
     public static class Builder extends AbstractExtractor.Builder<Builder, JSONExtractor> {
 
-        protected Builder() {
+        public Builder() {
             super(new JSONExtractor());
         }
     }

@@ -60,7 +60,7 @@ public class ResultExtractor extends AbstractExtractor {
 
     public static class Builder extends AbstractExtractor.Builder<ResultExtractor.Builder, ResultExtractor> {
 
-        protected Builder() {
+        public Builder() {
             super(new ResultExtractor());
         }
     }

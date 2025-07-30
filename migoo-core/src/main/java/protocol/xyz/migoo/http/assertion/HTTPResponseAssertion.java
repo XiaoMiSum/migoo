@@ -71,7 +71,7 @@ public class HTTPResponseAssertion extends AbstractAssertion {
 
     public static class Builder extends AbstractAssertion.Builder<Builder, HTTPResponseAssertion> {
 
-        protected Builder() {
+        public Builder() {
             super(new HTTPResponseAssertion());
         }
     }

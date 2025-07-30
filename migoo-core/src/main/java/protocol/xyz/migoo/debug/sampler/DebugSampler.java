@@ -26,6 +26,10 @@
 package protocol.xyz.migoo.debug.sampler;
 
 import com.alibaba.fastjson2.JSON;
+import core.xyz.migoo.builder.DefaultAssertionsBuilder;
+import core.xyz.migoo.builder.DefaultExtractorsBuilder;
+import core.xyz.migoo.builder.DefaultPostprocessorsBuilder;
+import core.xyz.migoo.builder.DefaultPreprocessorsBuilder;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.sampler.AbstractSampler;
@@ -73,10 +77,32 @@ public class DebugSampler extends AbstractSampler<DebugSampler, DebugConfigureIt
         }
     }
 
-    public static class Builder extends AbstractSampler.Builder<DebugSampler, Builder, DebugConfigureItem, DebugConfigureItem.Builder, DefaultSampleResult> {
+    public static class Builder extends AbstractSampler.Builder<DebugSampler, Builder, DebugConfigureItem,
+            DebugConfigureItem.Builder, DefaultPreprocessorsBuilder, DefaultPostprocessorsBuilder,
+            DefaultAssertionsBuilder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public DebugSampler build() {
             return new DebugSampler(this);
+        }
+
+        @Override
+        protected DefaultAssertionsBuilder getAssertionsBuilder() {
+            return DefaultAssertionsBuilder.builder();
+        }
+
+        @Override
+        protected DefaultExtractorsBuilder getExtractorsBuilder() {
+            return DefaultExtractorsBuilder.builder();
+        }
+
+        @Override
+        protected DefaultPreprocessorsBuilder getPreprocessorsBuilder() {
+            return DefaultPreprocessorsBuilder.builder();
+        }
+
+        @Override
+        protected DefaultPostprocessorsBuilder getPostprocessorsBuilder() {
+            return DefaultPostprocessorsBuilder.builder();
         }
     }
 }

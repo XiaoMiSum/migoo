@@ -37,10 +37,12 @@ import core.xyz.migoo.filter.ExecuteFilterChain;
 import core.xyz.migoo.filter.RunFilterChain;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.report.Result;
-import core.xyz.migoo.testelement.processor.AbstractProcessor;
 import core.xyz.migoo.testelement.processor.Postprocessor;
 import core.xyz.migoo.testelement.processor.Preprocessor;
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import support.xyz.migoo.KryoUtil;
+import support.xyz.migoo.groovy.Groovy;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -276,9 +278,11 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
     }
 
     public static abstract class Builder<ELE extends AbstractTestElementExecutable<ELE, CONFIG, R>,
-            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, R>,
+            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, PREPROCESSORS_BUILDER, POSTPROCESSORS_BUILDER, R>,
             CONFIG extends ConfigureItem<CONFIG>,
             CONFIGURE_BUILDER extends ConfigureBuilder<?, CONFIG>,
+            PREPROCESSORS_BUILDER extends AbstractTestElement.PreprocessorsBuilder,
+            POSTPROCESSORS_BUILDER extends AbstractTestElement.PostprocessorsBuilder,
             R extends Result>
             extends AbstractTestElement.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, R> {
 
@@ -317,48 +321,33 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
             return self;
         }
 
-        public SELF preprocessors(List<Preprocessor> preprocessors) {
-            this.preprocessors = preprocessors;
+        public SELF preprocessors(Supplier<PREPROCESSORS_BUILDER> supplier) {
+            this.preprocessors = support.xyz.migoo.Collections.addAllIfNonNull(this.preprocessors, supplier.get().build());
             return self;
         }
 
-        public SELF preprocessor(Preprocessor preprocessor) {
-            synchronized (this) {
-                if (Objects.isNull(preprocessors)) {
-                    synchronized (this) {
-                        this.preprocessors = new ArrayList<>();
-                    }
-                }
-            }
-            this.preprocessors.add(preprocessor);
+        public SELF preprocessors(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "PREPROCESSORS_BUILDER") Closure<?> closure) {
+            PREPROCESSORS_BUILDER builder = getPreprocessorsBuilder();
+            Groovy.call(closure, builder);
+            this.preprocessors = support.xyz.migoo.Collections.addAllIfNonNull(this.preprocessors, builder.build());
             return self;
         }
 
-        public SELF preprocessor(Supplier<AbstractProcessor.PreprocessorBuilder> supplier) {
-            return preprocessor((Preprocessor) supplier.get().build());
-        }
-
-
-        public SELF postprocessors(List<Postprocessor> postprocessors) {
-            this.postprocessors = postprocessors;
+        public SELF postprocessors(Supplier<POSTPROCESSORS_BUILDER> supplier) {
+            this.postprocessors = support.xyz.migoo.Collections.addAllIfNonNull(this.postprocessors, supplier.get().build());
             return self;
         }
 
-        public SELF postprocessor(Postprocessor postprocessor) {
-            synchronized (this) {
-                if (Objects.isNull(postprocessors)) {
-                    synchronized (this) {
-                        this.postprocessors = new ArrayList<>();
-                    }
-                }
-            }
-            this.postprocessors.add(postprocessor);
+        public SELF postprocessors(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "POSTPROCESSORS_BUILDER") Closure<?> closure) {
+            POSTPROCESSORS_BUILDER builder = getPostprocessorsBuilder();
+            Groovy.call(closure, builder);
+            this.postprocessors = support.xyz.migoo.Collections.addAllIfNonNull(this.postprocessors, builder.build());
             return self;
         }
 
-        public SELF postprocessor(Supplier<AbstractProcessor.PostprocessorBuilder> supplier) {
-            return preprocessor((Preprocessor) supplier.get().build());
-        }
+        protected abstract PREPROCESSORS_BUILDER getPreprocessorsBuilder();
+
+        protected abstract POSTPROCESSORS_BUILDER getPostprocessorsBuilder();
     }
 
     /**

@@ -27,6 +27,10 @@ package protocol.xyz.migoo.jdbc.sampler;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.fastjson2.annotation.JSONField;
+import core.xyz.migoo.builder.DefaultAssertionsBuilder;
+import core.xyz.migoo.builder.DefaultExtractorsBuilder;
+import core.xyz.migoo.builder.DefaultPostprocessorsBuilder;
+import core.xyz.migoo.builder.DefaultPreprocessorsBuilder;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.sampler.AbstractSampler;
@@ -96,10 +100,32 @@ public class JDBCSampler extends AbstractSampler<JDBCSampler, JDBCConfigureItem,
     /**
      * JDBC 取样器构建器
      */
-    public static class Builder extends AbstractSampler.Builder<JDBCSampler, Builder, JDBCConfigureItem, JDBCConfigureItem.Builder, DefaultSampleResult> {
+    public static class Builder extends AbstractSampler.Builder<JDBCSampler, Builder, JDBCConfigureItem,
+            JDBCConfigureItem.Builder, DefaultPreprocessorsBuilder, DefaultPostprocessorsBuilder,
+            DefaultAssertionsBuilder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public JDBCSampler build() {
             return new JDBCSampler(this);
+        }
+
+        @Override
+        protected DefaultAssertionsBuilder getAssertionsBuilder() {
+            return DefaultAssertionsBuilder.builder();
+        }
+
+        @Override
+        protected DefaultExtractorsBuilder getExtractorsBuilder() {
+            return DefaultExtractorsBuilder.builder();
+        }
+
+        @Override
+        protected DefaultPreprocessorsBuilder getPreprocessorsBuilder() {
+            return DefaultPreprocessorsBuilder.builder();
+        }
+
+        @Override
+        protected DefaultPostprocessorsBuilder getPostprocessorsBuilder() {
+            return DefaultPostprocessorsBuilder.builder();
         }
     }
 }

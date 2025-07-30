@@ -76,6 +76,7 @@
         <simplehttp.version>2.2.3</simplehttp.version>
 
         <!-- 工具包 -->
+        <groovy.version>4.0.28</groovy.version>
         <yaml.version>2.3</yaml.version>
         <faker.version>1.0.2</faker.version>
         <picocli.version>4.7.6</picocli.version>
@@ -118,6 +119,12 @@
                 <groupId>xyz.migoo</groupId>
                 <artifactId>migoo-core</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.groovy</groupId>
+                <artifactId>groovy</artifactId>
+                <version>${groovy.version}</version>
             </dependency>
 
             <dependency>
