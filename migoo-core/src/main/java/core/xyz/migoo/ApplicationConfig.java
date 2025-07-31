@@ -73,6 +73,7 @@ public class ApplicationConfig {
     private static final ReadWriteLock TEST_FILTER_KEY_MAP_LOCK = new ReentrantReadWriteLock(false);
     private static final ReadWriteLock globalContextLock = new ReentrantReadWriteLock(false);
     private static final ReadWriteLock TEMPLATE_ENGINE_LIST_LOCK = new ReentrantReadWriteLock(false);
+    private static final ReadWriteLock RUN_IN_TEST_FRAMEWORK_SUPPORT_LOCK = new ReentrantReadWriteLock(false);
 
     private static Map<String, Class<? extends TestElement>> TEST_ELEMENT_KEY_MAP;
     private static Map<String, Class<? extends ConfigureElement>> CONFIG_ELEMENT_KEY_MAP;
@@ -87,6 +88,7 @@ public class ApplicationConfig {
     private static Map<Class<?>, JSONInterceptor> JSON_INTERCEPTOR_KEY_MAP;
     private static GlobalContext globalContext;
     private static List<Class<? extends TemplateEngine>> TEMPLATE_ENGINE_LIST;
+    private static Boolean RUN_IN_TEST_FRAMEWORK_SUPPORT;
 
 
     public static Map<String, Class<? extends TestElement>> getTestElementKeyMap() {
@@ -221,6 +223,20 @@ public class ApplicationConfig {
                     ApplicationConfig.TEMPLATE_ENGINE_LIST = MiGooServiceLoader.loadAsListBySPI(TemplateEngine.class);
                     return ApplicationConfig.TEMPLATE_ENGINE_LIST;
                 }
+        );
+    }
+
+    public static boolean isRunInTestFrameworkSupport() {
+        return getDataMap(RUN_IN_TEST_FRAMEWORK_SUPPORT_LOCK,
+                () -> ApplicationConfig.RUN_IN_TEST_FRAMEWORK_SUPPORT,
+                () -> Objects.nonNull(ApplicationConfig.RUN_IN_TEST_FRAMEWORK_SUPPORT) && ApplicationConfig.RUN_IN_TEST_FRAMEWORK_SUPPORT
+        );
+    }
+
+    public static void setRunInTestFrameworkSupport() {
+        getDataMap(RUN_IN_TEST_FRAMEWORK_SUPPORT_LOCK,
+                () -> ApplicationConfig.RUN_IN_TEST_FRAMEWORK_SUPPORT,
+                () -> ApplicationConfig.RUN_IN_TEST_FRAMEWORK_SUPPORT = true
         );
     }
 

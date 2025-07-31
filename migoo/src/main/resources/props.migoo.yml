@@ -1,7 +1,9 @@
 version: ${project.version}
-report.enable: true
-report.theme: DARK
-report.timeline.enabled: false
-report.offline: true
-report.output: './out-put'
-report.class: xyz.report.StandardReporter
+report:
+  enable: true
+  theme: DARK
+  timeline:
+    enabled: false
+  offline: true
+  output: './out-put'
+  class: xyz.report.StandardReporter

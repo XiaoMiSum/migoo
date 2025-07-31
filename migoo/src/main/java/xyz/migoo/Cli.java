@@ -8,6 +8,8 @@ import xyz.migoo.convert.ConvertFactory;
 
 import java.io.File;
 
+import static xyz.migoo.MiGoo.CONFIGURE;
+
 @CommandLine.Command(name = "migoo(.sh/.bat)", version = "5.2.1", mixinStandardHelpOptions = true)
 class Cli implements Runnable {
 
@@ -27,8 +29,7 @@ class Cli implements Runnable {
     public void run() {
         try {
             if (StringUtils.isNotBlank(file)) {
-                System.setProperty(Constants.REPORT_ENABLE, StringUtils.isNotBlank(report) ? "true" : "false");
-                System.setProperty(Constants.REPORT_OUTPUT, StringUtils.isNotBlank(report) ? report : "");
+                CONFIGURE.getReport().setOutput(report);
                 var yaml = TestDataLoader.toJavaObject(file, JSONObject.class);
                 System.out.println("用例解析完成....");
                 MiGoo.start(yaml);

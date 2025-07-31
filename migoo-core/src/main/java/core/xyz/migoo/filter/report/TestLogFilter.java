@@ -45,6 +45,11 @@ public class TestLogFilter implements ReportFilter {
     static final Logger log = LoggerFactory.getLogger("");
 
     @Override
+    public int getOrder() {
+        return Integer.MAX_VALUE - 1;
+    }
+
+    @Override
     public void doRun(ContextWrapper context, RunFilterChain chain) {
         if (TestSuite.class.isAssignableFrom(chain.getClass())) {
             log.info("开始测试：{}", context.getTestResult().getTitle());

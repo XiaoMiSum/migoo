@@ -32,6 +32,8 @@ import core.xyz.migoo.context.ContextWrapper;
  */
 public interface TestFilter {
 
+    int getOrder();
+
     /**
      * 计算当前测试元件对象是否需要应用该过滤器
      *

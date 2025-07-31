@@ -41,6 +41,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import protocol.xyz.migoo.kafka.KafkaConstantsInterface;
 import protocol.xyz.migoo.kafka.RealKafkaRequest;
+import protocol.xyz.migoo.kafka.builder.KafkaConfigureElementBuilder;
 import protocol.xyz.migoo.kafka.builder.KafkaPostprocessorsBuilder;
 import protocol.xyz.migoo.kafka.builder.KafkaPreprocessorsBuilder;
 import protocol.xyz.migoo.kafka.config.KafkaConfigureItem;
@@ -134,7 +135,7 @@ public class KafkaSampler extends AbstractSampler<KafkaSampler, KafkaConfigureIt
     }
 
     public static class Builder extends AbstractSampler.Builder<KafkaSampler, Builder, KafkaConfigureItem,
-            KafkaConfigureItem.Builder, KafkaPreprocessorsBuilder, KafkaPostprocessorsBuilder,
+            KafkaConfigureItem.Builder, KafkaConfigureElementBuilder, KafkaPreprocessorsBuilder, KafkaPostprocessorsBuilder,
             DefaultAssertionsBuilder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public KafkaSampler build() {
@@ -149,6 +150,11 @@ public class KafkaSampler extends AbstractSampler<KafkaSampler, KafkaConfigureIt
         @Override
         protected DefaultExtractorsBuilder getExtractorsBuilder() {
             return DefaultExtractorsBuilder.builder();
+        }
+
+        @Override
+        protected KafkaConfigureElementBuilder getConfiguresBuilder() {
+            return KafkaConfigureElementBuilder.builder();
         }
 
         @Override

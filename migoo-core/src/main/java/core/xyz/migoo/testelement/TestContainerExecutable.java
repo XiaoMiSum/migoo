@@ -39,10 +39,8 @@ import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.filter.ExecuteChildrenFilterChain;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.report.Result;
-import core.xyz.migoo.testelement.configure.ConfigureElement;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
-import support.xyz.migoo.Closeable;
 import support.xyz.migoo.Collections;
 import support.xyz.migoo.Customizer;
 import support.xyz.migoo.ValidateResult;
@@ -63,9 +61,6 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
         CONFIG extends ConfigureItem<CONFIG>, R extends Result>
         extends AbstractTestElementExecutable<SELF, CONFIG, R> implements ExecuteChildrenFilterChain {
 
-    @JSONField(name = CONFIG_ELEMENTS, ordinal = 5)
-    protected List<ConfigureElement> configureElements;
-
     @JSONField(name = CHILDREN, ordinal = 10)
     protected List<TestElement<R>> children;
 
@@ -76,33 +71,7 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
 
     public TestContainerExecutable(Builder builder) {
         super(builder);
-        this.configureElements = builder.configureElements;
         this.children = builder.children;
-    }
-
-    @Override
-    public void testEnd(ContextWrapper context) {
-        if (Objects.isNull(configureElements)) {
-            return;
-        }
-        for (ConfigureElement configureElement : configureElements) {
-            if (configureElement instanceof Closeable closeable) {
-                closeable.close();
-            }
-        }
-    }
-
-    @Override
-    protected void internalRun(ContextWrapper context) {
-        // 模板计算：当前元件的变量配置项（不会计算父级元件）
-        evalConfig(context);
-        // 处理配置元件
-        if (Objects.nonNull(configureElements)) {
-            for (ConfigureElement configureElement : configureElements) {
-                configureElement.process(context);
-            }
-        }
-        super.internalRun(context);
     }
 
     @Override
@@ -161,14 +130,6 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
         return self;
     }
 
-    public List<ConfigureElement> getConfigureElements() {
-        return configureElements;
-    }
-
-    public void setConfigureElements(List<ConfigureElement> configureElements) {
-        this.configureElements = configureElements;
-    }
-
     public List<TestElement<R>> getChildren() {
         return children;
     }
@@ -195,36 +156,9 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
             POSTPROCESSORS_BUILDER extends ExtensiblePostprocessorsBuilder,
             CHILDREN_BUILDER extends ExtensibleChildrenBuilder,
             R extends Result>
-            extends AbstractTestElementExecutable.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, PREPROCESSORS_BUILDER, POSTPROCESSORS_BUILDER, R> {
-
-        protected List<ConfigureElement> configureElements;
+            extends AbstractTestElementExecutable.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, CONFIGURES_BUILDER, PREPROCESSORS_BUILDER, POSTPROCESSORS_BUILDER, R> {
 
         protected List<TestElement<?>> children;
-
-        /**
-         * 配置元件
-         *
-         * @param configureElements 配置元件列表
-         * @return 当前对象
-         */
-        public SELF configureElements(List<ConfigureElement> configureElements) {
-            this.configureElements = Collections.addAllIfNonNull(this.configureElements, configureElements);
-            return self;
-        }
-
-        public SELF configureElements(Customizer<CONFIGURES_BUILDER> customizer) {
-            CONFIGURES_BUILDER builder = getConfiguresBuilder();
-            customizer.customize(builder);
-            this.configureElements = Collections.addAllIfNonNull(this.configureElements, builder.build());
-            return self;
-        }
-
-        public SELF configureElements(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "CONFIGURES_BUILDER") Closure<?> closure) {
-            CONFIGURES_BUILDER builder = getConfiguresBuilder();
-            Groovy.call(closure, builder);
-            this.configureElements = Collections.addAllIfNonNull(this.configureElements, builder.build());
-            return self;
-        }
 
         /**
          * 子节点

@@ -104,9 +104,8 @@ public class SessionRunner {
         sessionContext.setConfigGroup(oldConfig.merge(config));
     }
 
-
     /**
-     * 运行任意的测试元件，如 TestSuiteExecutable 或 Sampler
+     * 运行任意的测试元件，如 TestSuite 或 Sampler
      * <p>
      * 默认校验：执行前校验测试元件数据是否合法
      *
@@ -117,7 +116,7 @@ public class SessionRunner {
     }
 
     /**
-     * 运行任意的测试元件，如 TestSuiteExecutable 或 Sampler
+     * 运行任意的测试元件，如 TestSuite 或 Sampler
      *
      * @param element  测试元件
      * @param <T>      测试元件对应的执行结果类

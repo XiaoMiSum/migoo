@@ -39,6 +39,7 @@ import core.xyz.migoo.testelement.sampler.Sampler;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.rabbitmq.RabbitConstantsInterface;
 import protocol.xyz.migoo.rabbitmq.RealRabbitRequest;
+import protocol.xyz.migoo.rabbitmq.builder.RabbitConfigureElementBuilder;
 import protocol.xyz.migoo.rabbitmq.builder.RabbitPostprocessorsBuilder;
 import protocol.xyz.migoo.rabbitmq.builder.RabbitPreprocessorsBuilder;
 import protocol.xyz.migoo.rabbitmq.config.RabbitConfigureItem;
@@ -189,7 +190,7 @@ public class RabbitSampler extends AbstractSampler<RabbitSampler, RabbitConfigur
     }
 
     public static class Builder extends AbstractSampler.Builder<RabbitSampler, Builder, RabbitConfigureItem,
-            RabbitConfigureItem.Builder, RabbitPreprocessorsBuilder, RabbitPostprocessorsBuilder,
+            RabbitConfigureItem.Builder, RabbitConfigureElementBuilder, RabbitPreprocessorsBuilder, RabbitPostprocessorsBuilder,
             DefaultAssertionsBuilder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public RabbitSampler build() {
@@ -204,6 +205,11 @@ public class RabbitSampler extends AbstractSampler<RabbitSampler, RabbitConfigur
         @Override
         protected DefaultExtractorsBuilder getExtractorsBuilder() {
             return DefaultExtractorsBuilder.builder();
+        }
+
+        @Override
+        protected RabbitConfigureElementBuilder getConfiguresBuilder() {
+            return RabbitConfigureElementBuilder.builder();
         }
 
         @Override

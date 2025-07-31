@@ -37,10 +37,12 @@ import core.xyz.migoo.filter.ExecuteFilterChain;
 import core.xyz.migoo.filter.RunFilterChain;
 import core.xyz.migoo.filter.TestFilter;
 import core.xyz.migoo.report.Result;
+import core.xyz.migoo.testelement.configure.ConfigureElement;
 import core.xyz.migoo.testelement.processor.Postprocessor;
 import core.xyz.migoo.testelement.processor.Preprocessor;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
+import support.xyz.migoo.Closeable;
 import support.xyz.migoo.Collections;
 import support.xyz.migoo.Customizer;
 import support.xyz.migoo.KryoUtil;
@@ -62,6 +64,8 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
     @JSONField(name = VARIABLES, ordinal = 4)
     protected MiGooVariables variables;
 
+    @JSONField(name = CONFIG_ELEMENTS, ordinal = 5)
+    protected List<ConfigureElement> configureElements;
 
     @JSONField(name = PREPROCESSORS, ordinal = 6)
     protected List<Preprocessor> preprocessors = new ArrayList<>();
@@ -81,11 +85,13 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
     public AbstractTestElementExecutable(Builder builder) {
         super(builder);
         this.variables = builder.variables;
+        this.configureElements = builder.configureElements;
         this.preprocessors = builder.preprocessors;
         this.postprocessors = builder.postprocessors;
         this.filters = builder.filters;
     }
 
+    // todo 这里需要对过滤器进行排序
     protected void initialized(SessionRunner session) {
         super.initialized(session);
     }
@@ -210,6 +216,12 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
     protected void internalRun(ContextWrapper context) {
         // 模板计算：当前元件的变量配置项（不会计算父级元件）
         evalConfig(context);
+        // 处理配置元件
+        if (Objects.nonNull(configureElements)) {
+            for (ConfigureElement configureElement : configureElements) {
+                configureElement.process(context);
+            }
+        }
         // 执行前置动作
         for (Preprocessor preprocessor : preprocessors) {
             if (preprocessor.isDisabled() || context.getTestResult().getStatus() != TestStatus.passed) {
@@ -243,6 +255,14 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
     protected abstract void execute(ContextWrapper ctx, R testResult);
 
     protected void testEnd(ContextWrapper context) {
+        if (Objects.isNull(configureElements)) {
+            return;
+        }
+        for (ConfigureElement configureElement : configureElements) {
+            if (configureElement instanceof Closeable closeable) {
+                closeable.close();
+            }
+        }
     }
     // getter/setter
 
@@ -262,6 +282,14 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
         this.configGroup = configGroup;
     }
 
+    public List<ConfigureElement> getConfigureElements() {
+        return configureElements;
+    }
+
+    public void setConfigureElements(List<ConfigureElement> configureElements) {
+        this.configureElements = configureElements;
+    }
+
     public List<Preprocessor> getPreprocessors() {
         return preprocessors;
     }
@@ -279,15 +307,18 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
     }
 
     public static abstract class Builder<ELE extends AbstractTestElementExecutable<ELE, CONFIG, R>,
-            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, PREPROCESSORS_BUILDER, POSTPROCESSORS_BUILDER, R>,
+            SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, CONFIGURES_BUILDER, PREPROCESSORS_BUILDER, POSTPROCESSORS_BUILDER, R>,
             CONFIG extends ConfigureItem<CONFIG>,
             CONFIGURE_BUILDER extends ConfigureBuilder<?, CONFIG>,
+            CONFIGURES_BUILDER extends AbstractTestElement.ConfigureElementsBuilder,
             PREPROCESSORS_BUILDER extends AbstractTestElement.PreprocessorsBuilder,
             POSTPROCESSORS_BUILDER extends AbstractTestElement.PostprocessorsBuilder,
             R extends Result>
             extends AbstractTestElement.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, R> {
 
         protected MiGooVariables variables;
+
+        protected List<ConfigureElement> configureElements;
 
         protected List<Preprocessor> preprocessors;
 
@@ -322,6 +353,31 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
             return self;
         }
 
+        /**
+         * 配置元件
+         *
+         * @param configureElements 配置元件列表
+         * @return 当前对象
+         */
+        public SELF configureElements(List<ConfigureElement> configureElements) {
+            this.configureElements = Collections.addAllIfNonNull(this.configureElements, configureElements);
+            return self;
+        }
+
+        public SELF configureElements(Customizer<CONFIGURES_BUILDER> customizer) {
+            CONFIGURES_BUILDER builder = getConfiguresBuilder();
+            customizer.customize(builder);
+            this.configureElements = Collections.addAllIfNonNull(this.configureElements, builder.build());
+            return self;
+        }
+
+        public SELF configureElements(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "CONFIGURES_BUILDER") Closure<?> closure) {
+            CONFIGURES_BUILDER builder = getConfiguresBuilder();
+            Groovy.call(closure, builder);
+            this.configureElements = Collections.addAllIfNonNull(this.configureElements, builder.build());
+            return self;
+        }
+
         public SELF preprocessors(Customizer<PREPROCESSORS_BUILDER> customizer) {
             PREPROCESSORS_BUILDER builder = getPreprocessorsBuilder();
             customizer.customize(builder);
@@ -349,6 +405,8 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
             this.postprocessors = Collections.addAllIfNonNull(this.postprocessors, builder.build());
             return self;
         }
+
+        protected abstract CONFIGURES_BUILDER getConfiguresBuilder();
 
         protected abstract PREPROCESSORS_BUILDER getPreprocessorsBuilder();
 

@@ -25,24 +25,27 @@
 
 package protocol.xyz.migoo.http;
 
-import com.alibaba.fastjson2.JSON;
 import org.apache.commons.lang3.StringUtils;
 import xyz.migoo.simplehttp.Response;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * @author xiaomi
  */
 public class RealHTTPRealResponse extends HTTPReal {
 
-    private final int statusCode;
+    private int statusCode;
 
-    private final String message;
+    private String message;
 
 
     public RealHTTPRealResponse(Response response) {
-        super(response.bytes());
+        super(Objects.isNull(response) ? new byte[0] : response.bytes());
+        if (Objects.isNull(response)) {
+            return;
+        }
         statusCode = response.statusCode();
         version = response.version();
         message = response.message();
@@ -87,7 +90,7 @@ public class RealHTTPRealResponse extends HTTPReal {
         buf.append(version).append(" ").append(statusCode).append(" ").append(message);
         header(buf);
         if (StringUtils.isNotBlank(bytesAsString())) {
-            buf.append("\n").append("Response body: ").append(JSON.toJSONString(bytesAsString()));
+            buf.append("\n").append("Response body: ").append(bytesAsString());
         }
         return buf.toString();
     }

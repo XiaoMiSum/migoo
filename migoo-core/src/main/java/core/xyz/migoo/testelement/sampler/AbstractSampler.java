@@ -31,10 +31,7 @@ package core.xyz.migoo.testelement.sampler;
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.assertion.Assertion;
-import core.xyz.migoo.builder.ExtensibleAssertionsBuilder;
-import core.xyz.migoo.builder.ExtensibleExtractorsBuilder;
-import core.xyz.migoo.builder.ExtensiblePostprocessorsBuilder;
-import core.xyz.migoo.builder.ExtensiblePreprocessorsBuilder;
+import core.xyz.migoo.builder.*;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.config.MiGooVariables;
 import core.xyz.migoo.context.Context;
@@ -208,15 +205,16 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
      * @param <R>                 处理结果类型
      */
     public static abstract class Builder<ELE extends AbstractSampler<ELE, CONFIG, R>,
-            SELF extends AbstractSampler.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, PREPROCESSORS_BUILDER, POSTPROCESSORS_BUILDER, ASSERTIONS_BUILDER, EXTRACTORS_BUILDER, R>,
+            SELF extends AbstractSampler.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, CONFIGURES_BUILDER, PREPROCESSORS_BUILDER, POSTPROCESSORS_BUILDER, ASSERTIONS_BUILDER, EXTRACTORS_BUILDER, R>,
             CONFIG extends ConfigureItem<CONFIG>,
             CONFIGURE_BUILDER extends ConfigureBuilder<?, CONFIG>,
+            CONFIGURES_BUILDER extends ExtensibleConfigureElementsBuilder,
             PREPROCESSORS_BUILDER extends ExtensiblePreprocessorsBuilder,
             POSTPROCESSORS_BUILDER extends ExtensiblePostprocessorsBuilder,
             ASSERTIONS_BUILDER extends ExtensibleAssertionsBuilder<ASSERTIONS_BUILDER>,
             EXTRACTORS_BUILDER extends ExtensibleExtractorsBuilder<EXTRACTORS_BUILDER>,
             R extends SampleResult>
-            extends AbstractTestElementExecutable.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, PREPROCESSORS_BUILDER, POSTPROCESSORS_BUILDER, R> {
+            extends AbstractTestElementExecutable.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, CONFIGURES_BUILDER, PREPROCESSORS_BUILDER, POSTPROCESSORS_BUILDER, R> {
 
         protected List<Assertion> assertions;
 

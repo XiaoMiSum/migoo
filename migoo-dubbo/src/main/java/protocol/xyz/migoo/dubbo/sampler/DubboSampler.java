@@ -43,6 +43,7 @@ import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.service.GenericService;
 import protocol.xyz.migoo.dubbo.DubboConstantsInterface;
 import protocol.xyz.migoo.dubbo.RealDubboRequest;
+import protocol.xyz.migoo.dubbo.builder.DubboConfigureElementBuilder;
 import protocol.xyz.migoo.dubbo.builder.DubboPostprocessorsBuilder;
 import protocol.xyz.migoo.dubbo.builder.DubboPreprocessorsBuilder;
 import protocol.xyz.migoo.dubbo.config.DubboConfigureItem;
@@ -137,7 +138,7 @@ public class DubboSampler extends AbstractSampler<DubboSampler, DubboConfigureIt
     }
 
     public static class Builder extends AbstractSampler.Builder<DubboSampler, Builder, DubboConfigureItem,
-            DubboConfigureItem.Builder, DubboPreprocessorsBuilder, DubboPostprocessorsBuilder,
+            DubboConfigureItem.Builder, DubboConfigureElementBuilder, DubboPreprocessorsBuilder, DubboPostprocessorsBuilder,
             DefaultAssertionsBuilder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public DubboSampler build() {
@@ -152,6 +153,11 @@ public class DubboSampler extends AbstractSampler<DubboSampler, DubboConfigureIt
         @Override
         protected DefaultExtractorsBuilder getExtractorsBuilder() {
             return DefaultExtractorsBuilder.builder();
+        }
+
+        @Override
+        protected DubboConfigureElementBuilder getConfiguresBuilder() {
+            return DubboConfigureElementBuilder.builder();
         }
 
         @Override

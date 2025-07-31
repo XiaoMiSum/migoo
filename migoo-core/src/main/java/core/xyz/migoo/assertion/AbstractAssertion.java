@@ -67,8 +67,12 @@ public abstract class AbstractAssertion implements Assertion, AssertionConstants
                 res.setMessage(String.format("%s %s %s %s %s", field, rule, expected == null ? "" : expected, res.getStatus(),
                         res.getStatus() == TestStatus.passed ? "" : "实际值: " + actualValue));
             }
-            // 任意一个失败则设置执行失败
             if (TestStatus.failed == res.getStatus()) {
+                // 如果运行在测试框架中，则抛出断言异常
+                if (ApplicationConfig.isRunInTestFrameworkSupport()) {
+                    throw new AssertionError(res.getMessage());
+                }
+                // 任意一个失败则设置执行失败
                 result.setStatus(TestStatus.failed);
             }
             result.addAssertion(res);

@@ -43,6 +43,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.activemq.ActiveConstantsInterface;
 import protocol.xyz.migoo.activemq.RealActiveRequest;
+import protocol.xyz.migoo.activemq.builder.ActiveConfigureElementBuilder;
 import protocol.xyz.migoo.activemq.builder.ActivePostprocessorsBuilder;
 import protocol.xyz.migoo.activemq.builder.ActivePreprocessorsBuilder;
 import protocol.xyz.migoo.activemq.config.ActiveConfigureItem;
@@ -152,7 +153,7 @@ public class ActiveSampler extends AbstractSampler<ActiveSampler, ActiveConfigur
     }
 
     public static class Builder extends AbstractSampler.Builder<ActiveSampler, Builder, ActiveConfigureItem,
-            ActiveConfigureItem.Builder, ActivePreprocessorsBuilder, ActivePostprocessorsBuilder,
+            ActiveConfigureItem.Builder, ActiveConfigureElementBuilder, ActivePreprocessorsBuilder, ActivePostprocessorsBuilder,
             DefaultAssertionsBuilder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public ActiveSampler build() {
@@ -167,6 +168,11 @@ public class ActiveSampler extends AbstractSampler<ActiveSampler, ActiveConfigur
         @Override
         protected DefaultExtractorsBuilder getExtractorsBuilder() {
             return DefaultExtractorsBuilder.builder();
+        }
+
+        @Override
+        protected ActiveConfigureElementBuilder getConfiguresBuilder() {
+            return ActiveConfigureElementBuilder.builder();
         }
 
         @Override

@@ -127,6 +127,7 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         initialized = true;
         runtime = copy();
         // 获取所有符合条件的 TestFilter
+        // todo  要重新设置 context 不能从 session中获取
         handleFilters(session.getContextWrapper());
     }
 

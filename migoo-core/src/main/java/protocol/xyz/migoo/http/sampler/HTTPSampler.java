@@ -1,10 +1,7 @@
 package protocol.xyz.migoo.http.sampler;
 
 import com.alibaba.fastjson2.annotation.JSONField;
-import core.xyz.migoo.builder.DefaultAssertionsBuilder;
-import core.xyz.migoo.builder.DefaultExtractorsBuilder;
-import core.xyz.migoo.builder.DefaultPostprocessorsBuilder;
-import core.xyz.migoo.builder.DefaultPreprocessorsBuilder;
+import core.xyz.migoo.builder.*;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.sampler.AbstractSampler;
@@ -82,11 +79,16 @@ public class HTTPSampler extends AbstractSampler<HTTPSampler, HTTPConfigureItem,
      * HTTP 取样器构建器
      */
     public static class Builder extends AbstractSampler.Builder<HTTPSampler, Builder, HTTPConfigureItem,
-            HTTPConfigureItem.Builder, DefaultPreprocessorsBuilder, DefaultPostprocessorsBuilder,
+            HTTPConfigureItem.Builder, DefaultConfigureElementsBuilder, DefaultPreprocessorsBuilder, DefaultPostprocessorsBuilder,
             DefaultAssertionsBuilder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public HTTPSampler build() {
             return new HTTPSampler(this);
+        }
+
+        @Override
+        protected DefaultConfigureElementsBuilder getConfiguresBuilder() {
+            return DefaultConfigureElementsBuilder.builder();
         }
 
         @Override

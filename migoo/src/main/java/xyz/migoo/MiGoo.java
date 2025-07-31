@@ -37,11 +37,8 @@ import xyz.migoo.report.StandardReporter;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Objects;
 
 import static core.xyz.migoo.testelement.TestElementConstantsInterface.TEST_CLASS;
-import static xyz.migoo.Constants.REPORT_CLASS;
-import static xyz.migoo.Constants.REPORT_ENABLE;
 
 /**
  * @author xiaomi
@@ -49,12 +46,16 @@ import static xyz.migoo.Constants.REPORT_ENABLE;
 @SuppressWarnings({"unchecked"})
 public class MiGoo {
 
-    static {
-        // todo 这里要重新设置配置
-        //   var config = TestDataLoader.toJavaObject("props.migoo.yml", JSONObject.class);
-        //   config.forEach((key, value) -> System.setProperty(key, String.valueOf(value)));
-        //  printLogo();
+    public static Configure CONFIGURE = null;
 
+    static {
+
+        try {
+            CONFIGURE = TestDataLoader.toJavaObject("props.migoo.yml", Configure.class);
+            printLogo();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private final JsonTree testcase;
@@ -73,7 +74,7 @@ public class MiGoo {
         System.out.println("    | '_ ` _ \\ | | / _` | / _ \\  / _ \\     ");
         System.out.println("    | | | | | || || (_| || (_) || (_) |    ");
         System.out.println("    |_| |_| |_||_| \\__, | \\___/  \\___/     ");
-        System.out.println("                   |___/     " + System.getProperty("migoo.version"));
+        System.out.println("                   |___/     " + CONFIGURE.getVersion());
         System.out.println("    GitHub: https://github.com/XiaoMiSum/migoo");
     }
 
@@ -92,26 +93,26 @@ public class MiGoo {
     }
 
     public static Result start(JsonTree testcase) {
-        SessionRunner.newSession();
+        if (!ApplicationConfig.isRunInTestFrameworkSupport()) {
+            // 如果不是在 junit 或者 testng 框架中运行，则创建一个 Session
+            SessionRunner.newSession();
+        }
         return new MiGoo(testcase).runTest();
     }
 
     private Result runTest() {
         var clazz = ApplicationConfig.getTestElementKeyMap().get(testcase.getString(TEST_CLASS));
         var result = SessionRunner.getSession().runTest(JSON.parseObject(testcase.toJSONString(), clazz));
-        Reporter reporter = null;
+        if (!CONFIGURE.getReport().isEnable()) {
+            return result;
+        }
+        Reporter reporter;
         try {
-            var enableReport = Boolean.parseBoolean(System.getProperty(REPORT_ENABLE, "true"));
-            if (enableReport) {
-                var reporterStrName = System.getProperty(REPORT_CLASS, "xyz.migoo.report.StandardReporter");
-                reporter = (Reporter) Class.forName(reporterStrName).getConstructor().newInstance();
-            }
+            reporter = (Reporter) Class.forName(CONFIGURE.getReport().getReporter()).getConstructor().newInstance();
         } catch (Exception e) {
             reporter = new StandardReporter();
         }
-        if (Objects.nonNull(reporter)) {
-            reporter.generateReport(result);
-        }
+        reporter.generateReport(result);
         return result;
     }
 }
