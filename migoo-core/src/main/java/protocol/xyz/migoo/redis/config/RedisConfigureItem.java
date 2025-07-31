@@ -33,6 +33,8 @@ import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.redis.RedisConstantsInterface;
 
+import java.util.Locale;
+
 /**
  * @author xiaomi
  */
@@ -108,7 +110,7 @@ public class RedisConfigureItem implements ConfigureItem<RedisConfigureItem>, Re
     }
 
     public String getCommand() {
-        return command;
+        return command.toUpperCase(Locale.ROOT);
     }
 
     public void setCommand(String command) {

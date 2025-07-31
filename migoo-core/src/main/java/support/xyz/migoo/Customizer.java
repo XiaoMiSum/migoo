@@ -34,6 +34,6 @@ package support.xyz.migoo;
  */
 @FunctionalInterface
 public interface Customizer<T> {
-    
-    T apply(T t);
+
+    void customize(T t);
 }

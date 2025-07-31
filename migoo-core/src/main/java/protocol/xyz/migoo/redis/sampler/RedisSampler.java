@@ -38,12 +38,10 @@ import core.xyz.migoo.testelement.sampler.SampleResult;
 import core.xyz.migoo.testelement.sampler.Sampler;
 import protocol.xyz.migoo.jdbc.JDBCConstantsInterface;
 import protocol.xyz.migoo.redis.RealRedisRequest;
-import protocol.xyz.migoo.redis.Redis;
+import protocol.xyz.migoo.redis.Utils;
 import protocol.xyz.migoo.redis.config.RedisConfigureItem;
 import protocol.xyz.migoo.redis.config.RedisDatasource;
 import redis.clients.jedis.Protocol;
-
-import java.util.Locale;
 
 /**
  * @author xiaomi
@@ -78,8 +76,8 @@ public class RedisSampler extends AbstractSampler<RedisSampler, RedisConfigureIt
         result.sampleStart();
         try (var jedis = datasource.getConnection()) {
             var command = runtime.config.getCommand();
-            var result2 = jedis.sendCommand(Protocol.Command.valueOf(command.toUpperCase(Locale.ROOT)), runtime.config.getSend().split(","));
-            bytes = Redis.toBytes(result2);
+            var response = jedis.sendCommand(Protocol.Command.valueOf(command), runtime.config.getSend().split(","));
+            bytes = Utils.toBytes(response);
         } catch (Exception e) {
             result.setTrack(e);
         } finally {

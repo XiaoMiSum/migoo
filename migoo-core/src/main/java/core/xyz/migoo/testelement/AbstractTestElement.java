@@ -265,7 +265,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
 
         public SELF config(Customizer<CONFIGURE_BUILDER> customizer) {
             CONFIGURE_BUILDER builder = getConfigureItemBuilder();
-            this.config = customizer.apply(builder).build();
+            customizer.customize(builder);
+            this.config = builder.build();
             return self;
         }
 
@@ -362,7 +363,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         public SELF debug(Customizer<DebugDefaults.Builder> customizer) {
-            configureElements.add(customizer.apply(DebugDefaults.builder()).build());
+            var builder = DebugDefaults.builder();
+            customizer.customize(builder);
+            configureElements.add(builder.build());
             return self;
         }
 
@@ -386,7 +389,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         public SELF http(Customizer<HTTPDefaults.Builder> customizer) {
-            configureElements.add(customizer.apply(HTTPDefaults.builder()).build());
+            var builder = HTTPDefaults.builder();
+            customizer.customize(builder);
+            configureElements.add(builder.build());
             return self;
         }
 
@@ -410,7 +415,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         public SELF jdbc(Customizer<JDBCDatasource.Builder> customizer) {
-            configureElements.add(customizer.apply(JDBCDatasource.builder()).build());
+            var builder = JDBCDatasource.builder();
+            customizer.customize(builder);
+            configureElements.add(builder.build());
             return self;
         }
 
@@ -434,7 +441,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         public SELF redis(Customizer<RedisDatasource.Builder> customizer) {
-            configureElements.add(customizer.apply(RedisDatasource.builder()).build());
+            var builder = RedisDatasource.builder();
+            customizer.customize(builder);
+            configureElements.add(builder.build());
             return self;
         }
 
@@ -508,7 +517,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         public SELF debug(Customizer<DebugPreprocessor.Builder> customizer) {
-            preprocessors.add(customizer.apply(DebugPreprocessor.builder()).build());
+            var builder = DebugPreprocessor.builder();
+            customizer.customize(builder);
+            preprocessors.add(builder.build());
             return self;
         }
 
@@ -532,7 +543,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         public SELF http(Customizer<HTTPPreprocessor.Builder> customizer) {
-            preprocessors.add(customizer.apply(HTTPPreprocessor.builder()).build());
+            var builder = HTTPPreprocessor.builder();
+            customizer.customize(builder);
+            preprocessors.add(builder.build());
             return self;
         }
 
@@ -556,7 +569,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         public SELF jdbc(Customizer<JDBCPreprocessor.Builder> customizer) {
-            preprocessors.add(customizer.apply(JDBCPreprocessor.builder()).build());
+            var builder = JDBCPreprocessor.builder();
+            customizer.customize(builder);
+            preprocessors.add(builder.build());
             return self;
         }
 
@@ -580,7 +595,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         public SELF redis(Customizer<RedisPreprocessor.Builder> customizer) {
-            preprocessors.add(customizer.apply(RedisPreprocessor.builder()).build());
+            var builder = RedisPreprocessor.builder();
+            customizer.customize(builder);
+            preprocessors.add(builder.build());
             return self;
         }
 
@@ -655,7 +672,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         public SELF timer(Customizer<SyncTimer.Builder> customizer) {
-            postprocessors.add(customizer.apply(SyncTimer.builder()).build());
+            var builder = SyncTimer.builder();
+            customizer.customize(builder);
+            postprocessors.add(builder.build());
             return self;
         }
 
@@ -679,7 +698,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         public SELF debug(Customizer<DebugPostprocessor.Builder> customizer) {
-            postprocessors.add(customizer.apply(DebugPostprocessor.builder()).build());
+            var builder = DebugPostprocessor.builder();
+            customizer.customize(builder);
+            postprocessors.add(builder.build());
             return self;
         }
 
@@ -703,7 +724,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         public SELF http(Customizer<HTTPPostprocessor.Builder> customizer) {
-            postprocessors.add(customizer.apply(HTTPPostprocessor.builder()).build());
+            var builder = HTTPPostprocessor.builder();
+            customizer.customize(builder);
+            postprocessors.add(builder.build());
             return self;
         }
 
@@ -727,7 +750,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         public SELF jdbc(Customizer<JDBCPostprocessor.Builder> customizer) {
-            postprocessors.add(customizer.apply(JDBCPostprocessor.builder()).build());
+            var builder = JDBCPostprocessor.builder();
+            customizer.customize(builder);
+            postprocessors.add(builder.build());
             return self;
         }
 
@@ -751,7 +776,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         public SELF redis(Customizer<RedisPostprocessor.Builder> customizer) {
-            postprocessors.add(customizer.apply(RedisPostprocessor.builder()).build());
+            var builder = RedisPostprocessor.builder();
+            customizer.customize(builder);
+            postprocessors.add(builder.build());
             return self;
         }
 
@@ -816,7 +843,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         // -----------------------JSONAssertion----------------------------
 
         public SELF json(Customizer<JSONAssertion.Builder> customizer) {
-            assertions.add(customizer.apply(JSONAssertion.builder()).build());
+            var builder = JSONAssertion.builder();
+            customizer.customize(builder);
+            assertions.add(builder.build());
             return self;
         }
 
@@ -845,7 +874,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         // -----------------------ResultAssertion----------------------------
 
         public SELF result(Customizer<ResultAssertion.Builder> customizer) {
-            assertions.add(customizer.apply(ResultAssertion.builder()).build());
+            var builder = ResultAssertion.builder();
+            customizer.customize(builder);
+            assertions.add(builder.build());
             return self;
         }
 
@@ -869,7 +900,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         // -----------------------HTTPResponseAssertion----------------------------
 
         public SELF http(Customizer<HTTPResponseAssertion.Builder> customizer) {
-            assertions.add(customizer.apply(HTTPResponseAssertion.builder()).build());
+            var builder = HTTPResponseAssertion.builder();
+            customizer.customize(builder);
+            assertions.add(builder.build());
             return self;
         }
 
@@ -946,7 +979,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         // -----------------------JSONExtractor----------------------------
 
         public SELF json(Customizer<JSONExtractor.Builder> customizer) {
-            extractors.add(customizer.apply(JSONExtractor.builder()).build());
+            var builder = JSONExtractor.builder();
+            customizer.customize(builder);
+            extractors.add(builder.build());
             return self;
         }
 
@@ -975,7 +1010,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         // -----------------------RegexExtractor----------------------------
 
         public SELF regex(Customizer<RegexExtractor.Builder> customizer) {
-            extractors.add(customizer.apply(RegexExtractor.builder()).build());
+            var builder = RegexExtractor.builder();
+            customizer.customize(builder);
+            extractors.add(builder.build());
             return self;
         }
 
@@ -1014,7 +1051,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         // -----------------------ResultExtractor----------------------------
 
         public SELF result(Customizer<ResultExtractor.Builder> customizer) {
-            extractors.add(customizer.apply(ResultExtractor.builder()).build());
+            var builder = ResultExtractor.builder();
+            customizer.customize(builder);
+            extractors.add(builder.build());
             return self;
         }
 
@@ -1038,7 +1077,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         // -----------------------HTTPHeaderExtractor----------------------------
 
         public SELF httpHeader(Customizer<HTTPHeaderExtractor.Builder> customizer) {
-            extractors.add(customizer.apply(HTTPHeaderExtractor.builder()).build());
+            var builder = HTTPHeaderExtractor.builder();
+            customizer.customize(builder);
+            extractors.add(builder.build());
             return self;
         }
 
@@ -1140,7 +1181,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         public SELF suite(Customizer<TestSuite.Builder> customizer) {
-            this.children.add(customizer.apply(TestSuite.builder()).build());
+            var builder = TestSuite.builder();
+            customizer.customize(builder);
+            children.add(builder.build());
             return self;
         }
 
@@ -1163,7 +1206,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         public SELF debug(Customizer<DebugSampler.Builder> customizer) {
-            this.children.add(customizer.apply(DebugSampler.builder()).build());
+            var builder = DebugSampler.builder();
+            customizer.customize(builder);
+            children.add(builder.build());
             return self;
         }
 
@@ -1186,7 +1231,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         public SELF http(Customizer<HTTPSampler.Builder> customizer) {
-            this.children.add(customizer.apply(HTTPSampler.builder()).build());
+            var builder = HTTPSampler.builder();
+            customizer.customize(builder);
+            children.add(builder.build());
             return self;
         }
 
@@ -1209,7 +1256,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         public SELF jdbc(Customizer<JDBCSampler.Builder> customizer) {
-            this.children.add(customizer.apply(JDBCSampler.builder()).build());
+            var builder = JDBCSampler.builder();
+            customizer.customize(builder);
+            children.add(builder.build());
             return self;
         }
 
@@ -1232,7 +1281,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         public SELF redis(Customizer<RedisSampler.Builder> customizer) {
-            this.children.add(customizer.apply(RedisSampler.builder()).build());
+            var builder = RedisSampler.builder();
+            customizer.customize(builder);
+            children.add(builder.build());
             return self;
         }
 

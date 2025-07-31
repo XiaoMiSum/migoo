@@ -64,7 +64,7 @@ public class SessionRunner {
     public static SessionRunner getSession() {
         SessionRunner sessionRunner = HOLDER.get();
         if (sessionRunner == null) {
-            throw new IllegalStateException("SessionRunner 未设置，请先调用 setSession 方法，或使用 TestNG 组件的 @GrootSupport 等特性");
+            throw new IllegalStateException("SessionRunner 未设置，请先调用 setSession 方法设置");
         }
         return sessionRunner;
     }

@@ -1,5 +1,5 @@
 title: 标准kafka取样器
-testclass: kafkaSampler # 取样器类型
+testclass: kafka # 取样器类型
 config: # 取样器配置
   topic: migoo.topic # ProducerRecord 中的 topic
   key: test # ProducerRecord 中的 key

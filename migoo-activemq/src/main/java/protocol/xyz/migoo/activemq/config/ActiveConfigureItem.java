@@ -31,7 +31,7 @@ import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.commons.lang3.StringUtils;
-import protocol.xyz.migoo.activemq.ActiveMqConstantsInterface;
+import protocol.xyz.migoo.activemq.ActiveConstantsInterface;
 
 import java.util.List;
 import java.util.Map;
@@ -40,7 +40,7 @@ import java.util.Objects;
 /**
  * @author xiaomi
  */
-public class ActiveConfigureItem implements ConfigureItem<ActiveConfigureItem>, ActiveMqConstantsInterface {
+public class ActiveConfigureItem implements ConfigureItem<ActiveConfigureItem>, ActiveConstantsInterface {
 
     @JSONField(name = BROKER_URL)
     protected String brokerUrl;

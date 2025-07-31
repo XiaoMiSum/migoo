@@ -4,6 +4,18 @@ import java.util.*;
 
 public class Collections {
 
+    public static <K, V> Map<K, V> putAllIfNonNull(Map<K, V> target, Map<K, V> data) {
+        if (Objects.isNull(target)) {
+            return data;
+        }
+        if (Objects.isNull(data)) {
+            return target;
+        }
+        target = new HashMap<>(target);     // 防止 target 为不可变 List
+        target.putAll(data);
+        return data;
+    }
+
     public static <T> List<T> addAllIfNonNull(List<T> target, List<T> data) {
         if (Objects.isNull(target)) {
             return data;

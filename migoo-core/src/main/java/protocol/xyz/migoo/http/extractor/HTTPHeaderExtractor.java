@@ -31,7 +31,7 @@ import core.xyz.migoo.extractor.AbstractExtractor;
 import core.xyz.migoo.extractor.ExtractResult;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.sampler.SampleResult;
-import protocol.xyz.migoo.http.RealHTTPResponse;
+import protocol.xyz.migoo.http.RealHTTPRealResponse;
 
 /**
  * HTTP 响应提取器，仅支持提取请求头中的数据，请求头存在多个时，默认返回第一个匹配的
@@ -41,7 +41,7 @@ import protocol.xyz.migoo.http.RealHTTPResponse;
  *
  * @author xiaomi
  */
-@Alias({"http_header_extractor", "http_header", "HTTPHeader"})
+@Alias({"http_header_extractor", "http_header", "HTTPHeader", "http", "https"})
 public class HTTPHeaderExtractor extends AbstractExtractor {
 
     @JSONField(name = MATCH_NUM)
@@ -54,7 +54,7 @@ public class HTTPHeaderExtractor extends AbstractExtractor {
     @Override
     protected ExtractResult extract(SampleResult result) {
         var res = new ExtractResult("HTTP响应 提取: " + field);
-        var response = (RealHTTPResponse) result.getResponse();
+        var response = (RealHTTPRealResponse) result.getResponse();
         Object value = null;
 
         try {

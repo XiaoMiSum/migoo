@@ -53,7 +53,7 @@ import java.util.concurrent.Future;
  * @author mi.xiao
  * @date 2021/4/13 20:08
  */
-@Alias({"kafka_preprocessor", "kafka_pre_processor", "kafka"})
+@Alias({"kafka_postprocessor", "kafka_post_processor", "kafka"})
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class KafkaPostprocessor extends AbstractProcessor<KafkaPostprocessor, KafkaConfigureItem, DefaultSampleResult> implements Postprocessor, KafkaConstantsInterface {
 

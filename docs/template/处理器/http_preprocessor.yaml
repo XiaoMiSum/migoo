@@ -1,4 +1,4 @@
-testclass: http_preprocessor  # http前置处理器 类型
+testclass: http  # http前置处理器 类型
 config: # 处理器配置
   method: post   # 请求方法
   protocol: http   # 请求协议，默认 http

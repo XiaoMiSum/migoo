@@ -176,7 +176,8 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
 
         public SELF extractors(Customizer<EXTRACTORS_BUILDER> customizer) {
             EXTRACTORS_BUILDER builder = getExtractorsBuilder();
-            this.extractors = Collections.addAllIfNonNull(this.extractors, customizer.apply(builder).build());
+            customizer.customize(builder);
+            this.extractors = Collections.addAllIfNonNull(this.extractors, builder.build());
             return self;
         }
 

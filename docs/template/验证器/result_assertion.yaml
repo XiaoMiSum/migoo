@@ -1,4 +1,3 @@
-testclass: result_assertion # result 验证器，用于验证整个取样结果是否符合预取
-expected: 200  # 期望值，支持多个 200,201,202
-rule: ==   # 验证规则 ==（一致）、!=（不一致）、ct（包含）、nc（不包含）、equalsIgnoreCase（忽略大小写一致）、>（大于）、>=（大于等于）
-# isEmpty（为空）、isNotEmpty（非空）、<（小于）、<=（小于等于）、numeq（数字相等 1.0 == 1）、regex（正则表达式）
+testclass: result # result 验证器，用于验证整个取样结果是否符合预取
+expected: 200  # 期望值
+rule: ==   # 验证规则

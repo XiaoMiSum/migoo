@@ -84,4 +84,4 @@ migoo 中 内置了 HTTP验证器、JSON验证器、Result验证器
 
 ## ActiveMq
 
-[详情](./help/ActiveMq.md)
+[详情](help/Active.md)

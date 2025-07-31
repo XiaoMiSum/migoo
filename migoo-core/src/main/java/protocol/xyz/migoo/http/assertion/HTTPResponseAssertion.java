@@ -32,7 +32,7 @@ import core.xyz.migoo.assertion.AssertionResult;
 import core.xyz.migoo.testelement.Alias;
 import core.xyz.migoo.testelement.sampler.SampleResult;
 import org.apache.commons.lang3.StringUtils;
-import protocol.xyz.migoo.http.RealHTTPResponse;
+import protocol.xyz.migoo.http.RealHTTPRealResponse;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 /**
  * @author xiaomi
  */
-@Alias({"HTTPAssertion", "HTTP_Assertion", "http"})
+@Alias({"HTTPAssertion", "HTTP_Assertion", "http", "https"})
 public class HTTPResponseAssertion extends AbstractAssertion {
 
     private static final List<String> STATUS = Arrays.asList("line", "status", "code", "statuscode", "statusline", "status_code", "status_line");
@@ -55,7 +55,7 @@ public class HTTPResponseAssertion extends AbstractAssertion {
     @Override
     protected AssertionResult initialized(SampleResult result) {
         var res = new AssertionResult("HTTP响应断言: ");
-        var response = (RealHTTPResponse) result.getResponse();
+        var response = (RealHTTPRealResponse) result.getResponse();
         field = StringUtils.isBlank(field) ? BODY : field;
         var matcher = PATTERN.matcher(field);
         if (matcher.find()) {
@@ -64,7 +64,6 @@ public class HTTPResponseAssertion extends AbstractAssertion {
         } else {
             actualValue = STATUS.contains(field) ? response.statusCode() : response.bytesAsString();
         }
-
         return res;
     }
 

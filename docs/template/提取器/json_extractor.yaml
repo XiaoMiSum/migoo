@@ -1,3 +1,3 @@
-testclass: json_extractor  # json 提取器类型
+testclass: json  # json 提取器类型
 field: '$.status'  # 提取的 json path
-variable_name: status # 变量名称
+ref_name: status # 变量名称

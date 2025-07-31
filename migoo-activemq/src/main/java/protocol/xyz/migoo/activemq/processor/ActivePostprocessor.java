@@ -1,0 +1,168 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2021.  Lorem XiaoMiSum (mi_xiao@qq.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * 'Software'), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+package protocol.xyz.migoo.activemq.processor;
+
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.annotation.JSONField;
+import core.xyz.migoo.builder.DefaultExtractorsBuilder;
+import core.xyz.migoo.context.ContextWrapper;
+import core.xyz.migoo.testelement.Alias;
+import core.xyz.migoo.testelement.processor.AbstractProcessor;
+import core.xyz.migoo.testelement.processor.Postprocessor;
+import core.xyz.migoo.testelement.sampler.DefaultSampleResult;
+import core.xyz.migoo.testelement.sampler.SampleResult;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.commons.lang3.StringUtils;
+import protocol.xyz.migoo.activemq.ActiveConstantsInterface;
+import protocol.xyz.migoo.activemq.RealActiveRequest;
+import protocol.xyz.migoo.activemq.config.ActiveConfigureItem;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+/**
+ * @author mi.xiao
+ * @date 2021/4/13 20:08
+ */
+@Alias({"active_mq", "activemq", "active", "active_postprocessor"})
+@SuppressWarnings({"unchecked", "rawtypes"})
+public class ActivePostprocessor extends AbstractProcessor<ActivePostprocessor, ActiveConfigureItem, DefaultSampleResult> implements Postprocessor, ActiveConstantsInterface {
+
+    @JSONField(serialize = false)
+    private RealActiveRequest request;
+    @JSONField(serialize = false)
+    private ConnectionFactory factory;
+    @JSONField(serialize = false)
+    private Connection connection;
+    @JSONField(serialize = false)
+    private Session session;
+    @JSONField(serialize = false)
+    private MessageProducer producer;
+
+    public ActivePostprocessor() {
+        super();
+    }
+
+    public ActivePostprocessor(Builder builder) {
+        super(builder);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    @Override
+    protected DefaultSampleResult getTestResult() {
+        return new DefaultSampleResult(id, title);
+    }
+
+    @Override
+    protected void sample(ContextWrapper context, DefaultSampleResult result) {
+        var message = switch (runtime.getConfig().getMessage()) {
+            case Map map -> JSON.toJSONString(map);
+            case List list -> JSON.toJSONString(list);
+            case null -> "";
+            default -> runtime.getConfig().getMessage().toString();
+        };
+        try {
+            result.sampleStart();
+            connection = factory.createConnection();
+            connection.start();
+            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            var destination = StringUtils.isNotBlank(runtime.getConfig().getQueue()) ? session.createQueue(runtime.getConfig().getQueue())
+                    : session.createTopic(runtime.getConfig().getTopic());
+            producer = session.createProducer(destination);
+            var textMessage = session.createTextMessage(message);
+            producer.send(textMessage);
+        } catch (Exception e) {
+            result.setTrack(e);
+        } finally {
+            result.sampleEnd();
+            this.request = RealActiveRequest.build(runtime.getConfig(), message);
+        }
+    }
+
+
+    @Override
+    protected void handleRequest(ContextWrapper context, DefaultSampleResult result) {
+        super.handleRequest(context, result);
+        // 1. 合并配置项
+        var localConfig = Objects.isNull(runtime.getConfig()) ? new ActiveConfigureItem() : runtime.getConfig();
+        var ref = StringUtils.isBlank(localConfig.getRef()) ? DEF_REF_NAME_KEY : localConfig.getRef();
+        var otherConfig = (ActiveConfigureItem) context.getLocalVariablesWrapper().get(ref);
+        runtime.setConfig(localConfig.merge(otherConfig));
+        // 2. 创建ActiveMQ 连接池;
+        factory = new ActiveMQConnectionFactory(runtime.getConfig().getUsername(), runtime.getConfig().getPassword(), runtime.getConfig().getBrokerUrl());
+    }
+
+    @Override
+    protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
+        super.handleResponse(context, result);
+        result.setRequest(request);
+        result.setResponse(SampleResult.DefaultReal.build(new byte[0]));
+        if (producer != null) {
+            try {
+                producer.close();
+            } catch (Exception ignored) {
+            }
+        }
+        if (session != null) {
+            try {
+                session.close();
+            } catch (Exception ignored) {
+            }
+        }
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    public static class Builder extends AbstractProcessor.PostprocessorBuilder<ActivePostprocessor, Builder, ActiveConfigureItem,
+            ActiveConfigureItem.Builder, DefaultExtractorsBuilder, DefaultSampleResult> {
+        @Override
+        public ActivePostprocessor build() {
+            return new ActivePostprocessor(this);
+        }
+
+        @Override
+        protected DefaultExtractorsBuilder getExtractorsBuilder() {
+            return DefaultExtractorsBuilder.builder();
+        }
+
+        @Override
+        protected ActiveConfigureItem.Builder getConfigureItemBuilder() {
+            return ActiveConfigureItem.builder();
+        }
+    }
+}

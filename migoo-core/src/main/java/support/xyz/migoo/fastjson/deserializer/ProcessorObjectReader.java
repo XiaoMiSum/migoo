@@ -30,6 +30,7 @@ package support.xyz.migoo.fastjson.deserializer;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONException;
+import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.reader.ObjectReader;
 import core.xyz.migoo.ApplicationConfig;
@@ -40,7 +41,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
 
-import static core.xyz.migoo.testelement.TestElementConstantsInterface.TEST_CLASS;
+import static core.xyz.migoo.testelement.TestElementConstantsInterface.*;
 
 /**
  * @author xiaomi
@@ -51,6 +52,7 @@ public abstract class ProcessorObjectReader implements ObjectReader<Processor> {
     public Processor readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
         var testElementMap = jsonReader.readObject();
         var pair = checkTestElement(testElementMap, fieldName);
+        standardizeConfig(testElementMap, pair.getRight());
         return JSON.parseObject(JSON.toJSONString(testElementMap), pair.getLeft());
     }
 
@@ -63,5 +65,25 @@ public abstract class ProcessorObjectReader implements ObjectReader<Processor> {
             return Pair.of(clazz, key);
         }
         throw new JSONException("没有匹配的 %s 处理器, JSON String: %s".formatted(fieldName, JSON.toJSONString(testElementMap)));
+    }
+
+    private void standardizeConfig(Map<String, Object> elementMap, String key) {
+        if (elementMap.containsKey(CONFIG)) {
+            return;
+        }
+        // 刪除標準配置項
+        elementMap.remove(TEST_CLASS); // 删除测试类
+        elementMap.remove(VARIABLES);
+        var id = elementMap.remove(ID);
+        var title = elementMap.remove(TITLE);
+        var disabled = elementMap.remove(DISABLED);
+        var filters = elementMap.remove(FILTERS);
+        var metadata = elementMap.remove(METADATA);
+        var extractors = elementMap.remove(EXTRACTORS);
+        var config = new JSONObject(elementMap);
+        // 清空當前MAP
+        elementMap.clear();
+        // 重新設置標準化處理器配置
+        elementMap.putAll(JSONObject.of(TEST_CLASS, key, ID, id, TITLE, title, DISABLED, disabled, FILTERS, filters, CONFIG, config, METADATA, metadata, EXTRACTORS, extractors));
     }
 }

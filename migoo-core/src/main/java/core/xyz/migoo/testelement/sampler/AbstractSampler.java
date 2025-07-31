@@ -229,7 +229,8 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
 
         public SELF assertions(Customizer<ASSERTIONS_BUILDER> customizer) {
             ASSERTIONS_BUILDER builder = getAssertionsBuilder();
-            this.assertions = Collections.addAllIfNonNull(this.assertions, customizer.apply(builder).build());
+            customizer.customize(builder);
+            this.assertions = Collections.addAllIfNonNull(this.assertions, builder.build());
             return self;
         }
 
@@ -247,7 +248,8 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
 
         public SELF extractors(Customizer<EXTRACTORS_BUILDER> customizer) {
             EXTRACTORS_BUILDER builder = getExtractorsBuilder();
-            this.extractors = Collections.addAllIfNonNull(this.extractors, customizer.apply(builder).build());
+            customizer.customize(builder);
+            this.extractors = Collections.addAllIfNonNull(this.extractors, builder.build());
             return self;
         }
 

@@ -34,6 +34,7 @@ import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.http.HTTPConstantsInterface;
+import support.xyz.migoo.Collections;
 import support.xyz.migoo.Customizer;
 
 import java.util.HashMap;
@@ -68,9 +69,9 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
     @JSONField(name = COOKIE, ordinal = 7)
     protected Map<String, String> cookie;
     @JSONField(name = QUERY, ordinal = 5)
-    protected Map<String, String> query;
+    protected Map<String, Object> query;
     @JSONField(name = DATA, ordinal = 5)
-    protected Map<String, String> data;
+    protected Map<String, Object> data;
     @JSONField(name = BODY, ordinal = 5)
     protected Object body;
     @JSONField(name = BYTES, ordinal = 5)
@@ -124,8 +125,8 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
         method = (String) context.eval(method);
         headers = (Map<String, String>) context.eval(headers);
         cookie = (Map<String, String>) context.eval(cookie);
-        query = (Map<String, String>) context.eval(query);
-        data = (Map<String, String>) context.eval(data);
+        query = (Map<String, Object>) context.eval(query);
+        data = (Map<String, Object>) context.eval(data);
         body = context.eval(body);
         binary = context.eval(binary);
         return this;
@@ -214,19 +215,19 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
         this.cookie = cookie;
     }
 
-    public Map<String, String> getQuery() {
+    public Map<String, Object> getQuery() {
         return query;
     }
 
-    public void setQuery(Map<String, String> query) {
+    public void setQuery(Map<String, Object> query) {
         this.query = query;
     }
 
-    public Map<String, String> getData() {
+    public Map<String, Object> getData() {
         return data;
     }
 
-    public void setData(Map<String, String> data) {
+    public void setData(Map<String, Object> data) {
         this.data = data;
     }
 
@@ -300,27 +301,57 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
         }
 
         public Builder headers(Map<String, String> headers) {
-            configure.headers = headers;
+            configure.headers = Collections.putAllIfNonNull(configure.headers, headers);
             return self;
         }
 
         public Builder headers(Customizer<Map<String, String>> customizer) {
-            configure.headers = customizer.apply(new HashMap<>());
+            Map<String, String> headers = new HashMap<>();
+            customizer.customize(headers);
+            configure.headers = Collections.putAllIfNonNull(configure.headers, headers);
             return self;
         }
 
         public Builder cookie(Map<String, String> cookie) {
-            configure.cookie = cookie;
+            configure.cookie = Collections.putAllIfNonNull(configure.cookie, cookie);
             return self;
         }
 
-        public Builder query(Map<String, String> query) {
-            configure.query = query;
+        public Builder cookie(Customizer<Map<String, String>> customizer) {
+            Map<String, String> cookie = new HashMap<>();
+            customizer.customize(cookie);
+            configure.cookie = Collections.putAllIfNonNull(configure.cookie, cookie);
             return self;
         }
 
-        public Builder data(Map<String, String> data) {
-            configure.data = data;
+        public Builder query(Map<String, Object> query) {
+            configure.query = Collections.putAllIfNonNull(configure.query, query);
+            return self;
+        }
+
+        public Builder query(Customizer<Map<String, Object>> customizer) {
+            Map<String, Object> query = new HashMap<>();
+            customizer.customize(query);
+            configure.query = Collections.putAllIfNonNull(configure.query, query);
+            return self;
+        }
+
+        public Builder data(Map<String, Object> data) {
+            configure.data = Collections.putAllIfNonNull(configure.data, data);
+            return self;
+        }
+
+        public Builder data(Customizer<Map<String, Object>> customizer) {
+            var data = new HashMap<String, Object>();
+            customizer.customize(data);
+            configure.data = Collections.putAllIfNonNull(configure.data, data);
+            return self;
+        }
+
+        public Builder body(Customizer<Map<String, Object>> customizer) {
+            var body = new HashMap<String, Object>();
+            customizer.customize(body);
+            configure.body = body;
             return self;
         }
 

@@ -324,7 +324,8 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
 
         public SELF preprocessors(Customizer<PREPROCESSORS_BUILDER> customizer) {
             PREPROCESSORS_BUILDER builder = getPreprocessorsBuilder();
-            this.preprocessors = Collections.addAllIfNonNull(this.preprocessors, customizer.apply(builder).build());
+            customizer.customize(builder);
+            this.preprocessors = Collections.addAllIfNonNull(this.preprocessors, builder.build());
             return self;
         }
 
@@ -337,7 +338,8 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
 
         public SELF postprocessors(Customizer<POSTPROCESSORS_BUILDER> customizer) {
             POSTPROCESSORS_BUILDER builder = getPostprocessorsBuilder();
-            this.postprocessors = Collections.addAllIfNonNull(this.postprocessors, customizer.apply(builder).build());
+            customizer.customize(builder);
+            this.postprocessors = Collections.addAllIfNonNull(this.postprocessors, builder.build());
             return self;
         }
 

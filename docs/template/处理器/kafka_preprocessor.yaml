@@ -1,4 +1,4 @@
-testclass: kafka_preprocessor # kafka 前置处理器类型
+testclass: kafka # kafka 前置处理器类型
 config: # 处理器配置
   topic: migoo.topic # ProducerRecord 中的 topic
   key: test # ProducerRecord 中的 key

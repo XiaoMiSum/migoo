@@ -214,7 +214,8 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
 
         public SELF configureElements(Customizer<CONFIGURES_BUILDER> customizer) {
             CONFIGURES_BUILDER builder = getConfiguresBuilder();
-            this.configureElements = Collections.addAllIfNonNull(this.configureElements, customizer.apply(builder).build());
+            customizer.customize(builder);
+            this.configureElements = Collections.addAllIfNonNull(this.configureElements, builder.build());
             return self;
         }
 
@@ -238,7 +239,8 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
 
         public SELF children(Customizer<CHILDREN_BUILDER> customizer) {
             CHILDREN_BUILDER builder = getChildrenBuilder();
-            this.configureElements = Collections.addAllIfNonNull(this.configureElements, customizer.apply(builder).build());
+            customizer.customize(builder);
+            this.configureElements = Collections.addAllIfNonNull(this.configureElements, builder.build());
             return self;
         }
 

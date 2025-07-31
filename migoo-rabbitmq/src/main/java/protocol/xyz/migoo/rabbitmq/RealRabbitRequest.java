@@ -31,7 +31,7 @@ package protocol.xyz.migoo.rabbitmq;
 import com.alibaba.fastjson2.JSON;
 import core.xyz.migoo.testelement.sampler.SampleResult;
 import org.apache.commons.lang3.StringUtils;
-import protocol.xyz.migoo.rabbitmq.config.RabbitMQConfigureItem;
+import protocol.xyz.migoo.rabbitmq.config.RabbitConfigureItem;
 
 import java.util.Objects;
 
@@ -46,15 +46,15 @@ public class RealRabbitRequest extends SampleResult.Real {
     private String username;
     private String password;
 
-    private RabbitMQConfigureItem.Queue queue;
+    private RabbitConfigureItem.Queue queue;
 
-    private RabbitMQConfigureItem.Exchange exchange;
+    private RabbitConfigureItem.Exchange exchange;
 
     public RealRabbitRequest(byte[] bytes) {
         super(bytes);
     }
 
-    public static RealRabbitRequest build(RabbitMQConfigureItem config, String message) {
+    public static RealRabbitRequest build(RabbitConfigureItem config, String message) {
         var result = new RealRabbitRequest(message.getBytes());
         result.address = config.getHost() + ":" + config.getPort();
         result.username = config.getUsername();

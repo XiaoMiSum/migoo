@@ -1,5 +1,5 @@
 title: 标准redis取样器
-testclass: redissampler # 取样器类型
+testclass: redis # 取样器类型
 config: # 取样器配置
   datasource: RedisDataSource_var # 数据源名称，必须先配置redis数据源
   command: hset    # redis 命令

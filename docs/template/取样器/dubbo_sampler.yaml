@@ -1,5 +1,5 @@
 title: 标准dubbo取样器
-testclass: DubboSampler # 取样器类型
+testclass: dubbo # 取样器类型
 config: # 取样器配置
   registry: # 注册中心配置
     protocol: zookeeper

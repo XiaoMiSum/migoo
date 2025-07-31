@@ -104,7 +104,6 @@
 
     <modules>
         <module>migoo</module>
-        <module>migoo-coder</module>
         <module>migoo-core</module>
         <module>migoo-activemq</module>
         <module>migoo-dubbo</module>

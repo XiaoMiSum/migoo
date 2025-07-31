@@ -38,8 +38,8 @@ import core.xyz.migoo.testelement.sampler.DefaultSampleResult;
 import org.apache.commons.lang3.StringUtils;
 import protocol.xyz.migoo.http.HTTPClient;
 import protocol.xyz.migoo.http.HTTPConstantsInterface;
-import protocol.xyz.migoo.http.RealHTTPRequest;
-import protocol.xyz.migoo.http.RealHTTPResponse;
+import protocol.xyz.migoo.http.RealHTTPRealRequest;
+import protocol.xyz.migoo.http.RealHTTPRealResponse;
 import protocol.xyz.migoo.http.config.HTTPConfigureItem;
 import xyz.migoo.simplehttp.Request;
 import xyz.migoo.simplehttp.Response;
@@ -49,7 +49,7 @@ import java.util.Objects;
 /**
  * @author xiaomi
  */
-@Alias(value = {"http_postprocessor", "http_post_processor", "http"})
+@Alias(value = {"http_postprocessor", "http_post_processor", "http", "https"})
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class HTTPPostprocessor extends AbstractProcessor<HTTPPostprocessor, HTTPConfigureItem, DefaultSampleResult> implements Postprocessor, HTTPConstantsInterface {
 
@@ -103,8 +103,8 @@ public class HTTPPostprocessor extends AbstractProcessor<HTTPPostprocessor, HTTP
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
-        result.setRequest(new RealHTTPRequest(request));
-        result.setResponse(new RealHTTPResponse(response));
+        result.setRequest(new RealHTTPRealRequest(request));
+        result.setResponse(new RealHTTPRealResponse(response));
     }
 
     /**

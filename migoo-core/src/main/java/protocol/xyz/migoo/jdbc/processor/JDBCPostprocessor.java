@@ -39,7 +39,7 @@ import protocol.xyz.migoo.jdbc.JDBCConstantsInterface;
 import protocol.xyz.migoo.jdbc.RealJDBCRequest;
 import protocol.xyz.migoo.jdbc.config.JDBCConfigureItem;
 
-import static protocol.xyz.migoo.jdbc.JDBC.toJSONBytes;
+import static protocol.xyz.migoo.jdbc.Utils.toJSONBytes;
 
 /**
  * @author xiaomi

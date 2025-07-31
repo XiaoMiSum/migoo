@@ -1,4 +1,4 @@
-testclass: DubboPreprocessor # http前置处理器 类型
+testclass: dubbo # dubbo 前置处理器 类型
 config: # 取样器配置
   registry: # 注册中心配置
     protocol: zookeeper

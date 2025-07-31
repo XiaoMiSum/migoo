@@ -1,5 +1,5 @@
 title: 标准HTTP取样器
-testclass: httpsampler # 取样器类型
+testclass: http # 取样器类型
 config: # 取样器配置
   method: post   # 请求方法
   protocol: http   # 请求协议，默认 http

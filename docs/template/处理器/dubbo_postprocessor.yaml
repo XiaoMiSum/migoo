@@ -1,4 +1,4 @@
-testclass: DubboPostprocessor # http后置处理器 类型
+testclass: dobbo # dubbo后置处理器 类型
 config: # 取样器配置
   registry: # 注册中心配置
     protocol: zookeeper
