@@ -82,6 +82,7 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
         var localContext = new ContextWrapper(session);
         localContext.setTestResult(getTestResult());
         runtime.config = (CONFIG) localContext.eval(runtime.config);
+        handleFilters(localContext);
         return localContext;
     }
 
@@ -115,8 +116,8 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
         }
     }
 
-    protected void handleFilters(ContextWrapper contextWrapper) {
-        filters = contextWrapper.getConfigGroup().get(FILTERS);
+    protected void handleFilters(ContextWrapper context) {
+        super.handleFilters(context);
         processFilters = Objects.isNull(filters) ? Collections.emptyIterator() : filters.iterator();
     }
 

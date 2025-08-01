@@ -69,10 +69,12 @@ import protocol.xyz.migoo.redis.config.RedisDatasource;
 import protocol.xyz.migoo.redis.processor.RedisPostprocessor;
 import protocol.xyz.migoo.redis.processor.RedisPreprocessor;
 import protocol.xyz.migoo.redis.sampler.RedisSampler;
+import support.xyz.migoo.Collections;
 import support.xyz.migoo.Customizer;
 import support.xyz.migoo.KryoUtil;
 import support.xyz.migoo.groovy.Groovy;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -126,13 +128,11 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
     protected void initialized(SessionRunner session) {
         initialized = true;
         runtime = copy();
-        // 获取所有符合条件的 TestFilter
-        // todo  要重新设置 context 不能从 session中获取
-        handleFilters(session.getContextWrapper());
     }
 
     protected void handleFilters(ContextWrapper contextWrapper) {
-
+        filters = Collections.addAllIfNonNull(filters, contextWrapper.getConfigGroup().get(FILTERS));
+        filters.sort(Comparator.comparingInt(TestFilter::getOrder));
     }
 
     protected abstract R getTestResult();

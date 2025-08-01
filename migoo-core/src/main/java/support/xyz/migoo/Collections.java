@@ -32,12 +32,16 @@ public class Collections {
         return java.util.Collections.emptyIterator();
     }
 
-    public static <K, V> Map<K, V> unmodifiableMap(Map<? extends K, ? extends V> m) {
+    public static <K, V> Map<K, V> unmodifiableMap(Map<K, V> m) {
         return java.util.Collections.unmodifiableMap(m);
     }
 
-    public static <T> List<T> unmodifiableList(List<? extends T> list) {
+    public static <T> List<T> unmodifiableList(List<T> list) {
         return java.util.Collections.unmodifiableList(list);
+    }
+
+    public static <T extends Comparable<? super T>> void sort(List<T> list) {
+        java.util.Collections.sort(list);
     }
 
 }

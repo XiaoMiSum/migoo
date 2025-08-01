@@ -91,11 +91,6 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
         this.filters = builder.filters;
     }
 
-    // todo 这里需要对过滤器进行排序
-    protected void initialized(SessionRunner session) {
-        super.initialized(session);
-    }
-
     /**
      * 当前测试元件的上下文链, 当子类有额外的需求时重写该方法
      *
@@ -140,7 +135,7 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
         }
         testStarted(snapshot);
         ContextWrapper context = updateCurrentContextInfo(session, snapshot);
-
+        handleFilters(context);
         doRun(context);
         restoreCurrentContextInfo(session, snapshot);
         testEnd(context);
@@ -179,8 +174,8 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
         snapshot.testResult = result;
     }
 
-    protected void handleFilters(ContextWrapper contextWrapper) {
-        filters = contextWrapper.getConfigGroup().get(FILTERS);
+    protected void handleFilters(ContextWrapper context) {
+        super.handleFilters(context);
         runtimeFilters = Objects.isNull(filters) ? Collections.emptyIterator() : filters.iterator();
         executeFilters = Objects.isNull(filters) ? Collections.emptyIterator() : filters.iterator();
     }
@@ -199,19 +194,18 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
         // 构建上下文包装器，封装本次执行的相关信息
         // 在后续多个方法间传递该对象，使用了方法传参，而不是成员变量，防止该对象在不正确的位置被使用，
         // 另一方面，该对象不是对象状态表示，只是一个临时对象，没有必要使用成员变量
-        ContextWrapper contextWrapper = new ContextWrapper(session);
-        contextWrapper.setTestElement(this);
-        contextWrapper.setTestResult(snapshot.testResult);
+        ContextWrapper context = new ContextWrapper(session);
+        context.setTestElement(this);
+        context.setTestResult(snapshot.testResult);
 
-        session.setContextWrapper(contextWrapper);
-        return contextWrapper;
+        session.setContextWrapper(context);
+        return context;
     }
 
     private void restoreCurrentContextInfo(SessionRunner session, Snapshot snapshotData) {
         session.setContextChain(snapshotData.parentContextChain);
         session.setContextWrapper(snapshotData.previousContextWrapper);
     }
-
 
     protected void internalRun(ContextWrapper context) {
         // 模板计算：当前元件的变量配置项（不会计算父级元件）
