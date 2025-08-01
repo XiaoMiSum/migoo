@@ -69,7 +69,7 @@ public abstract class AbstractAssertion implements Assertion, AssertionConstants
             }
             if (TestStatus.failed == res.getStatus()) {
                 // 如果运行在测试框架中，则抛出断言异常
-                if (ApplicationConfig.isRunInTestFrameworkSupport()) {
+                if (context.getSessionRunner().isRunInTestFrameworkSupport()) {
                     throw new AssertionError(res.getMessage());
                 }
                 // 任意一个失败则设置执行失败

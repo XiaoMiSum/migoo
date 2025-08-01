@@ -35,10 +35,7 @@ import core.xyz.migoo.testelement.TestElementConfigureGroup;
 import core.xyz.migoo.testelement.TestElementConstantsInterface;
 import support.xyz.migoo.ValidateResult;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 测试用例实际执行入口，非线程安全类，每个用例应使用各自的 SessionRunner 对象。
@@ -55,11 +52,23 @@ public class SessionRunner {
      * Session 当前执行上下文链
      */
     private List<Context> contextChain = new ArrayList<>();
-    private ContextWrapper contextWrapper;
+    private ContextWrapper context;
+    private boolean runInTestFrameworkSupport = false;
 
     SessionRunner() {
         initContextChain();
     }
+
+    public static SessionRunner getSessionIfNoneCreateNew() {
+        var sessionRunner = HOLDER.get();
+        if (Objects.nonNull(sessionRunner)) {
+            return sessionRunner;
+        }
+        sessionRunner = new SessionRunner();
+        setSession(sessionRunner);
+        return sessionRunner;
+    }
+
 
     public static SessionRunner getSession() {
         SessionRunner sessionRunner = HOLDER.get();
@@ -69,12 +78,19 @@ public class SessionRunner {
         return sessionRunner;
     }
 
+
     public static void setSession(SessionRunner sessionRunner) {
         HOLDER.set(sessionRunner);
     }
 
     public static void newSession() {
         HOLDER.set(new SessionRunner());
+    }
+
+    public static void newTestFrameworkSession() {
+        var session = new SessionRunner();
+        session.runInTestFrameworkSupport = true;
+        HOLDER.set(session);
     }
 
     public static void removeSession() {
@@ -93,7 +109,7 @@ public class SessionRunner {
         testElementConfig.put(TestElementConstantsInterface.VARIABLES, new MiGooVariables());
         sessionContext.setConfigGroup(testElementConfig);
 
-        contextWrapper = new ContextWrapper(this);
+        context = new ContextWrapper(this);
     }
 
     /**
@@ -141,16 +157,19 @@ public class SessionRunner {
         this.contextChain = contextChain;
     }
 
-    public ContextWrapper getContextWrapper() {
-        return contextWrapper;
+    public ContextWrapper getContext() {
+        return context;
     }
 
-    public void setContextWrapper(ContextWrapper contextWrapper) {
-        this.contextWrapper = contextWrapper;
+    public void setContext(ContextWrapper context) {
+        this.context = context;
     }
 
     public Map<String, Object> getStorage() {
         return storage;
     }
 
+    public boolean isRunInTestFrameworkSupport() {
+        return runInTestFrameworkSupport;
+    }
 }

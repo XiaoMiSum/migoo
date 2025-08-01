@@ -139,6 +139,12 @@
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.leangen.geantyref/geantyref -->
+        <dependency>
+            <groupId>io.leangen.geantyref</groupId>
+            <artifactId>geantyref</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

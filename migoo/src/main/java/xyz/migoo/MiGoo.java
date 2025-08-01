@@ -35,7 +35,6 @@ import picocli.CommandLine;
 import support.xyz.migoo.TestDataLoader;
 import xyz.migoo.report.StandardReporter;
 
-import java.io.IOException;
 import java.util.Map;
 
 import static core.xyz.migoo.testelement.TestElementConstantsInterface.TEST_CLASS;
@@ -49,13 +48,8 @@ public class MiGoo {
     public static Configure CONFIGURE = null;
 
     static {
-
-        try {
-            CONFIGURE = TestDataLoader.toJavaObject("props.migoo.yml", Configure.class);
-            printLogo();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        CONFIGURE = TestDataLoader.toJavaObject("props.migoo.yml", Configure.class);
+        printLogo();
     }
 
     private final JsonTree testcase;
@@ -79,12 +73,8 @@ public class MiGoo {
     }
 
     public static Result start(String filePath) {
-        try {
-            var testcase = TestDataLoader.toJavaObject(filePath, JSONObject.class);
-            return start(testcase);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        var testcase = TestDataLoader.toJavaObject(filePath, JSONObject.class);
+        return start(testcase);
     }
 
 
@@ -93,16 +83,18 @@ public class MiGoo {
     }
 
     public static Result start(JsonTree testcase) {
-        if (!ApplicationConfig.isRunInTestFrameworkSupport()) {
-            // 如果不是在 junit 或者 testng 框架中运行，则创建一个 Session
+        try {
             SessionRunner.newSession();
+            return new MiGoo(testcase).runTest();
+        } finally {
+            SessionRunner.removeSession();
         }
-        return new MiGoo(testcase).runTest();
     }
 
     private Result runTest() {
         var clazz = ApplicationConfig.getTestElementKeyMap().get(testcase.getString(TEST_CLASS));
         var result = SessionRunner.getSession().runTest(JSON.parseObject(testcase.toJSONString(), clazz));
+
         if (!CONFIGURE.getReport().isEnable()) {
             return result;
         }

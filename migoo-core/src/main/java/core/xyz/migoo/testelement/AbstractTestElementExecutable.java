@@ -184,7 +184,7 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
     private ContextWrapper updateCurrentContextInfo(SessionRunner session, Snapshot snapshot) {
         // 记录更新前的上下文信息
         List<Context> parentContextChain = session.getContextChain();
-        ContextWrapper previousContextWrapper = session.getContextWrapper();
+        ContextWrapper previousContextWrapper = session.getContext();
         snapshot.parentContextChain = parentContextChain;
         snapshot.previousContextWrapper = previousContextWrapper;
 
@@ -198,13 +198,13 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
         context.setTestElement(this);
         context.setTestResult(snapshot.testResult);
 
-        session.setContextWrapper(context);
+        session.setContext(context);
         return context;
     }
 
     private void restoreCurrentContextInfo(SessionRunner session, Snapshot snapshotData) {
         session.setContextChain(snapshotData.parentContextChain);
-        session.setContextWrapper(snapshotData.previousContextWrapper);
+        session.setContext(snapshotData.previousContextWrapper);
     }
 
     protected void internalRun(ContextWrapper context) {

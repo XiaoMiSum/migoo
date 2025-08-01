@@ -23,7 +23,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 package support.xyz.migoo;
 
 import com.alibaba.fastjson2.JSON;
@@ -48,24 +47,17 @@ public class TestDataLoader {
      * @param <T>   java 类型
      * @return java对象
      */
-    public static <T> T toJavaObject(String path, Class<T> clazz) throws IOException {
+    public static <T> T toJavaObject(String path, Class<T> clazz) {
         var result = readFile(path);
+        if (result instanceof String string) {
+            return JSON.parseObject(string, clazz);
+        }
         return JSON.parseObject(JSON.toJSONString(result), clazz);
     }
 
-    public static Object readFile(String path) throws IOException {
-        InputStream stream = null;
-        try {
-            var file = new File(path);
-            if (file.exists()) {
-                if (file.isDirectory()) {
-                    throw new RuntimeException("传入文件路径不能是目录: " + path);
-                }
-                stream = Files.newInputStream(file.toPath());
-            } else {
-                path = path.startsWith("/") ? path.substring(1) : path;
-                stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
-            }
+    public static Object readFile(String path) {
+        var file = new File(path);
+        try (var stream = getFileInputStream(file)) {
             if (stream != null) {
                 if (path.endsWith(".yml") || path.endsWith(".yaml")) {
                     return new Yaml(new IncludeConstructor(file.exists() ? file : null)).load(stream);
@@ -74,12 +66,22 @@ public class TestDataLoader {
                 stream.read(bytes);
                 return new String(bytes, StandardCharsets.UTF_8);
             }
-            throw new RuntimeException("读取文件失败: " + path);
-        } finally {
-            if (stream != null) {
-                stream.close();
-            }
+
+        } catch (Exception ignored) {
         }
+        throw new RuntimeException("读取文件失败: " + path);
+    }
+
+    private static InputStream getFileInputStream(File file) throws IOException {
+        if (file.exists() && file.isFile()) {
+            return Files.newInputStream(file.toPath());
+        }
+        if (file.isDirectory()) {
+            return null;
+        }
+        var path = file.getPath();
+        path = path.startsWith("/") ? path.substring(1) : path;
+        return Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
     }
 
 

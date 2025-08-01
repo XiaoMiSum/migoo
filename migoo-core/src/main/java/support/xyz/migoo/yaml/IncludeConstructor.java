@@ -42,6 +42,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
+ * 支持 yaml文件引入
+ * <p>
+ * 格式为：!include filepath 或 !include [filepath1, filepath2] 或 !import filepath 或 !import [filepath1, filepath2]
+ *
  * @author xiaomi
  */
 public class IncludeConstructor extends Constructor {
@@ -68,7 +72,7 @@ public class IncludeConstructor extends Constructor {
                 try {
                     return TestDataLoader.readFile(path);
                 } catch (Exception e) {
-                    throw new RuntimeException("加载 !include YAML文件错误: " + path, e);
+                    throw new RuntimeException("加载 !include\\!import YAML文件错误: " + path, e);
                 }
             }
             if (node instanceof SequenceNode sequenceNode) {
@@ -76,7 +80,7 @@ public class IncludeConstructor extends Constructor {
                 sequenceNode.getValue().forEach(item -> resp.add(construct(item)));
                 return resp;
             }
-            throw new RuntimeException("节点内容格式错误，请使用: !include file 或 !include [ file1, file2 ]");
+            throw new RuntimeException("节点内容格式错误，请使用关键字: !include 或 !import 引入文件(file.yaml)\\文件组([file1.yaml, file2.yaml])");
         }
     }
 }
