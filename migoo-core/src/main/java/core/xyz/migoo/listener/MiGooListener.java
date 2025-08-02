@@ -23,14 +23,18 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package core.xyz.migoo.filter;
+package core.xyz.migoo.listener;
 
 import core.xyz.migoo.context.ContextWrapper;
 
 /**
  * @author xiaomi
  */
-public interface TestFilter {
+public interface MiGooListener {
+
+    // todo 重新设计 Listener
+    //   TestSuite日志打印、Sampler日志打印、Processor日志打印
+    //   测试报告改用 Allure，在运行时生成（通过监听的方式）
 
     int getOrder();
 

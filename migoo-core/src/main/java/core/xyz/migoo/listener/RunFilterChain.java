@@ -23,15 +23,15 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package core.xyz.migoo.filter;
+package core.xyz.migoo.listener;
 
 import core.xyz.migoo.context.ContextWrapper;
 
 /**
  * @author xiaomi
  */
-public interface SampleFilterChain {
+public interface RunFilterChain {
 
-    void doSample(ContextWrapper ctx);
+    void doRun(ContextWrapper ctx);
 
 }

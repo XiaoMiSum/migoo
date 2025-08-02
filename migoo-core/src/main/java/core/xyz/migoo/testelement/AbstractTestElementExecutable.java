@@ -33,9 +33,9 @@ import core.xyz.migoo.config.MiGooVariables;
 import core.xyz.migoo.context.Context;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.context.TestSuiteContext;
-import core.xyz.migoo.filter.ExecuteFilterChain;
-import core.xyz.migoo.filter.RunFilterChain;
-import core.xyz.migoo.filter.TestFilter;
+import core.xyz.migoo.listener.ExecuteFilterChain;
+import core.xyz.migoo.listener.MiGooListener;
+import core.xyz.migoo.listener.RunFilterChain;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.configure.ConfigureElement;
 import core.xyz.migoo.testelement.processor.Postprocessor;
@@ -48,7 +48,10 @@ import support.xyz.migoo.Customizer;
 import support.xyz.migoo.KryoUtil;
 import support.xyz.migoo.groovy.Groovy;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -75,8 +78,6 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
 
 
     protected TestElementConfigureGroup configGroup = new TestElementConfigureGroup();
-    private Iterator<TestFilter> runtimeFilters;
-    private Iterator<TestFilter> executeFilters;
 
     public AbstractTestElementExecutable() {
         super();
@@ -88,7 +89,6 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
         this.configureElements = builder.configureElements;
         this.preprocessors = builder.preprocessors;
         this.postprocessors = builder.postprocessors;
-        this.filters = builder.filters;
     }
 
     /**
@@ -145,8 +145,8 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
 
     @Override
     public final void doRun(ContextWrapper ctx) {
-        if (runtimeFilters.hasNext()) {
-            TestFilter next = runtimeFilters.next();
+        if (runtimeListeners.hasNext()) {
+            MiGooListener next = runtimeListeners.next();
             next.doRun(ctx, this);
             return;
         }
@@ -155,8 +155,8 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
 
     @Override
     public final void doExecute(ContextWrapper ctx) {
-        if (executeFilters.hasNext()) {
-            TestFilter next = executeFilters.next();
+        if (runtimeListeners.hasNext()) {
+            MiGooListener next = runtimeListeners.next();
             next.doExecute(ctx, this);
             return;
         }
@@ -173,13 +173,6 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
         result.testStart();
         snapshot.testResult = result;
     }
-
-    protected void handleFilters(ContextWrapper context) {
-        super.handleFilters(context);
-        runtimeFilters = Objects.isNull(filters) ? Collections.emptyIterator() : filters.iterator();
-        executeFilters = Objects.isNull(filters) ? Collections.emptyIterator() : filters.iterator();
-    }
-
 
     private ContextWrapper updateCurrentContextInfo(SessionRunner session, Snapshot snapshot) {
         // 记录更新前的上下文信息

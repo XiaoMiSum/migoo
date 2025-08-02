@@ -25,4 +25,4 @@
 #  */
 #
 
-core.xyz.migoo.filter.report.TestLogFilter
+core.xyz.migoo.listener.RunTestLogListener

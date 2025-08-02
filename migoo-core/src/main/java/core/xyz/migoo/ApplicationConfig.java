@@ -31,9 +31,9 @@ import core.xyz.migoo.config.FilterConfigureItem;
 import core.xyz.migoo.config.GlobalConfigure;
 import core.xyz.migoo.context.GlobalContext;
 import core.xyz.migoo.extractor.Extractor;
-import core.xyz.migoo.filter.TestFilter;
-import core.xyz.migoo.filter.report.ReportFilter;
 import core.xyz.migoo.function.Function;
+import core.xyz.migoo.listener.MiGooListener;
+import core.xyz.migoo.listener.ReporterListener;
 import core.xyz.migoo.template.TemplateEngine;
 import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.configure.ConfigureElement;
@@ -83,8 +83,8 @@ public class ApplicationConfig {
     private static Map<String, Class<? extends Extractor>> EXTRACTOR_KEY_MAP;
     private static Map<String, Function> FUNCTION_KEY_MAP;
     private static Map<String, Rule> RULE_KEY_MAP;
-    private static List<? extends ReportFilter> REPORT_FILTERS;
-    private static Map<String, Class<? extends TestFilter>> TEST_FILTER_KEY_MAP;
+    private static List<? extends ReporterListener> REPORT_FILTERS;
+    private static Map<String, Class<? extends MiGooListener>> TEST_FILTER_KEY_MAP;
     private static Map<Class<?>, JSONInterceptor> JSON_INTERCEPTOR_KEY_MAP;
     private static GlobalContext globalContext;
     private static List<Class<? extends TemplateEngine>> TEMPLATE_ENGINE_LIST;
@@ -183,21 +183,21 @@ public class ApplicationConfig {
         );
     }
 
-    public static Map<String, Class<? extends TestFilter>> getTestFilterKeyMap() {
+    public static Map<String, Class<? extends MiGooListener>> getTestFilterKeyMap() {
         return getDataMap(TEST_FILTER_KEY_MAP_LOCK,
                 () -> ApplicationConfig.TEST_FILTER_KEY_MAP,
                 () -> {
-                    ApplicationConfig.TEST_FILTER_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(TestFilter.class);
+                    ApplicationConfig.TEST_FILTER_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(MiGooListener.class);
                     return ApplicationConfig.TEST_FILTER_KEY_MAP;
                 }
         );
     }
 
-    public static List<? extends ReportFilter> getReportFilters() {
+    public static List<? extends ReporterListener> getReportFilters() {
         return getDataMap(REPORT_FILTERS_LOCK,
                 () -> ApplicationConfig.REPORT_FILTERS,
                 () -> {
-                    ApplicationConfig.REPORT_FILTERS = MiGooServiceLoader.loadAsInstanceListBySPI(ReportFilter.class);
+                    ApplicationConfig.REPORT_FILTERS = MiGooServiceLoader.loadAsInstanceListBySPI(ReporterListener.class);
                     return ApplicationConfig.REPORT_FILTERS;
                 }
         );
@@ -208,7 +208,7 @@ public class ApplicationConfig {
                 () -> ApplicationConfig.globalContext,
                 () -> {
                     ApplicationConfig.globalContext = new GlobalContext(new GlobalConfigure());
-                    FilterConfigureItem<ReportFilter> items = new FilterConfigureItem<>();
+                    FilterConfigureItem<ReporterListener> items = new FilterConfigureItem<>();
                     items.addAll(getReportFilters());
                     ApplicationConfig.globalContext.getConfigGroup().put(FILTERS, items);
                     return ApplicationConfig.globalContext;

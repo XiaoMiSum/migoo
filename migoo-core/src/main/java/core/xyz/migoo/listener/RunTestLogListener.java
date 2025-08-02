@@ -26,11 +26,9 @@
  *
  */
 
-package core.xyz.migoo.filter.report;
+package core.xyz.migoo.listener;
 
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.filter.RunFilterChain;
-import core.xyz.migoo.filter.SampleFilterChain;
 import core.xyz.migoo.testelement.TestSuite;
 import core.xyz.migoo.testelement.sampler.SampleResult;
 import org.slf4j.Logger;
@@ -40,13 +38,13 @@ import org.slf4j.LoggerFactory;
  * @author xiaomi
  * Created at 2025/7/20 13:46
  */
-public class TestLogFilter implements ReportFilter {
+public class RunTestLogListener implements ReporterListener {
 
     static final Logger log = LoggerFactory.getLogger("");
 
     @Override
     public int getOrder() {
-        return Integer.MAX_VALUE - 1;
+        return Integer.MAX_VALUE;
     }
 
     @Override

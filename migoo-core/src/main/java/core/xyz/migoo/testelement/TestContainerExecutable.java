@@ -36,8 +36,8 @@ import core.xyz.migoo.builder.ExtensiblePostprocessorsBuilder;
 import core.xyz.migoo.builder.ExtensiblePreprocessorsBuilder;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.filter.ExecuteChildrenFilterChain;
-import core.xyz.migoo.filter.TestFilter;
+import core.xyz.migoo.listener.ExecuteChildrenFilterChain;
+import core.xyz.migoo.listener.MiGooListener;
 import core.xyz.migoo.report.Result;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
@@ -64,7 +64,7 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
     @JSONField(name = CHILDREN, ordinal = 10)
     protected List<TestElement<R>> children;
 
-    protected Iterator<TestFilter> executeChildrenFilters;
+    protected Iterator<MiGooListener> executeChildrenFilters;
 
     public TestContainerExecutable() {
     }
@@ -80,7 +80,7 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
             return;
         }
         if (executeChildrenFilters.hasNext()) {
-            TestFilter next = executeChildrenFilters.next();
+            MiGooListener next = executeChildrenFilters.next();
             next.doExecuteChildren(context, this);
             return;
         }
@@ -100,7 +100,7 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
     }
 
     protected void executeChildren(ContextWrapper contextWrapper) {
-        executeChildrenFilters = Objects.isNull(filters) ? Collections.emptyIterator() : filters.iterator();
+        executeChildrenFilters = Objects.isNull(listeners) ? Collections.emptyIterator() : listeners.iterator();
         doExecuteChildren(contextWrapper);
     }
 

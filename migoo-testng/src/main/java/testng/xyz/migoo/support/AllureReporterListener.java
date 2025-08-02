@@ -26,37 +26,13 @@
  *
  */
 
-package core.xyz.migoo.config;
+package testng.xyz.migoo.support;
 
-import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.listener.MiGooListener;
-
-import java.util.ArrayList;
+import org.testng.IReporter;
 
 /**
  * @author xiaomi
- * Created at 2025/7/20 14:51
+ * Created at 2025/8/2 15:15
  */
-public class FilterConfigureItem<T extends MiGooListener> extends ArrayList<T> implements ConfigureItem<FilterConfigureItem<T>> {
-
-    @Override
-    public FilterConfigureItem<T> merge(FilterConfigureItem<T> other) {
-        FilterConfigureItem<T> filterConfigItem = new FilterConfigureItem<>();
-        filterConfigItem.addAll(this);
-        if (other != null)
-            filterConfigItem.addAll(other);
-        return filterConfigItem;
-    }
-
-    @Override
-    public FilterConfigureItem<T> copy() {
-        FilterConfigureItem<T> filterConfigItem = new FilterConfigureItem<>();
-        filterConfigItem.addAll(this);
-        return filterConfigItem;
-    }
-
-    @Override
-    public FilterConfigureItem<T> calc(ContextWrapper context) {
-        return this;
-    }
+public class AllureReporterListener implements IReporter {
 }

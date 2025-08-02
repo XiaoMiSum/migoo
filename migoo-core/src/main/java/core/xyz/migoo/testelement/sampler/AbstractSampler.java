@@ -38,8 +38,8 @@ import core.xyz.migoo.context.Context;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.context.TestRunContext;
 import core.xyz.migoo.extractor.Extractor;
-import core.xyz.migoo.filter.SampleFilterChain;
-import core.xyz.migoo.filter.TestFilter;
+import core.xyz.migoo.listener.MiGooListener;
+import core.xyz.migoo.listener.SampleFilterChain;
 import core.xyz.migoo.testelement.AbstractTestElementExecutable;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
@@ -49,7 +49,6 @@ import support.xyz.migoo.KryoUtil;
 import support.xyz.migoo.groovy.Groovy;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -70,8 +69,6 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
     @JSONField(name = EXTRACTORS, ordinal = 10)
     protected List<Extractor> extractors;
 
-    @JSONField(serialize = false)
-    private Iterator<TestFilter> sampleFilters;
 
     public AbstractSampler(Builder builder) {
         super(builder);
@@ -100,11 +97,6 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
         return contextChain;
     }
 
-    protected void handleFilters(ContextWrapper contextWrapper) {
-        super.handleFilters(contextWrapper);
-        sampleFilters = Objects.isNull(filters) ? Collections.emptyIterator() : filters.iterator();
-    }
-
     // ---------------------------------------------------------------------
     // 重写 AbstractTestElementExecutable 中的方法
     // ---------------------------------------------------------------------
@@ -121,8 +113,8 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
     @Override
     public final void doSample(ContextWrapper context) {
         runtime.config = (CONFIG) context.eval(runtime.config);
-        if (sampleFilters.hasNext()) {
-            TestFilter next = sampleFilters.next();
+        if (runtimeListeners.hasNext()) {
+            MiGooListener next = runtimeListeners.next();
             next.doSample(context, this);
             return;
         }
@@ -157,7 +149,7 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
     /**
      * 请求执行前处理。比如请求数据的表达式计算。
      *
-     * <p>该方法在 {@link TestFilter#doSample} 之前调用。
+     * <p>该方法在 {@link MiGooListener#doSample} 之前调用。
      */
     protected void handleRequest(ContextWrapper context, R result) {
         // do nothing.
@@ -172,7 +164,7 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
     /**
      * 请求执行后处理。
      *
-     * <p>该方法在 {@link TestFilter#doSample} 之后调用。
+     * <p>该方法在 {@link MiGooListener#doSample} 之后调用。
      */
     protected void handleResponse(ContextWrapper context, R result) {
         // do nothing.

@@ -26,14 +26,12 @@
  *
  */
 
-package core.xyz.migoo.filter.report;
-
-import core.xyz.migoo.filter.TestFilter;
+package core.xyz.migoo.listener;
 
 /**
  * @author xiaomi
  * Created at 2025/7/20 14:15
  */
-public interface ReportFilter extends TestFilter {
+public interface ReporterListener extends MiGooListener {
 
 }

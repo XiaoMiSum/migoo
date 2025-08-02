@@ -35,8 +35,8 @@ import core.xyz.migoo.builder.ExtensibleExtractorsBuilder;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.extractor.Extractor;
-import core.xyz.migoo.filter.SampleFilterChain;
-import core.xyz.migoo.filter.TestFilter;
+import core.xyz.migoo.listener.MiGooListener;
+import core.xyz.migoo.listener.SampleFilterChain;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.TestElementConstantsInterface;
 import core.xyz.migoo.testelement.sampler.SampleResult;
@@ -46,7 +46,6 @@ import support.xyz.migoo.Collections;
 import support.xyz.migoo.Customizer;
 import support.xyz.migoo.groovy.Groovy;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,8 +60,6 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
 
     @JSONField(name = EXTRACTORS, ordinal = 10)
     protected List<Extractor> extractors;
-
-    private Iterator<TestFilter> processFilters;
 
     public AbstractProcessor() {
         super();
@@ -94,8 +91,8 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
     @Override
     public void process(ContextWrapper context) {
         var localContext = initialized ? context : _initialized(context.getSessionRunner());
-        if (processFilters.hasNext()) {
-            TestFilter next = processFilters.next();
+        if (runtimeListeners.hasNext()) {
+            MiGooListener next = runtimeListeners.next();
             next.doSample(localContext, this);
             return;
         }
@@ -116,11 +113,6 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
         }
     }
 
-    protected void handleFilters(ContextWrapper context) {
-        super.handleFilters(context);
-        processFilters = Objects.isNull(filters) ? Collections.emptyIterator() : filters.iterator();
-    }
-
     private void extract(ContextWrapper context, ContextWrapper localContext) {
         if (Objects.isNull(extractors)) {
             return;
@@ -135,7 +127,7 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
     /**
      * 请求执行前处理。比如请求数据的表达式计算。
      *
-     * <p>该方法在 {@link TestFilter#doSample} 之前调用。
+     * <p>该方法在 {@link MiGooListener#doSample} 之前调用。
      */
     protected void handleRequest(ContextWrapper context, R result) {
         // do nothing.
@@ -150,7 +142,7 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
     /**
      * 请求执行后处理。
      *
-     * <p>该方法在 {@link TestFilter#doSample} 之后调用。
+     * <p>该方法在 {@link MiGooListener#doSample} 之后调用。
      */
     protected void handleResponse(ContextWrapper context, R result) {
         // do nothing.

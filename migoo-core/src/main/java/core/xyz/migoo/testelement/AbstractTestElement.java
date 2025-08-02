@@ -42,7 +42,7 @@ import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.extractor.AbstractExtractor;
 import core.xyz.migoo.extractor.Extractor;
-import core.xyz.migoo.filter.TestFilter;
+import core.xyz.migoo.listener.MiGooListener;
 import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.configure.AbstractConfigureElement;
 import core.xyz.migoo.testelement.configure.ConfigureElement;
@@ -74,10 +74,7 @@ import support.xyz.migoo.Customizer;
 import support.xyz.migoo.KryoUtil;
 import support.xyz.migoo.groovy.Groovy;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static support.xyz.migoo.groovy.Groovy.call;
 
@@ -103,12 +100,13 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
     protected CONFIG config;
 
     @JSONField(name = FILTERS, ordinal = 8)
-    protected List<TestFilter> filters;
+    protected List<MiGooListener> listeners;
 
     // 元数据，可以挂载一些辅助数据
     @JSONField(name = METADATA, ordinal = 2)
     protected Map<String, Object> metadata = new HashMap<>();
 
+    protected Iterator<MiGooListener> runtimeListeners;
     protected Map<String, Object> rawData;
     protected SELF runtime;
     protected boolean initialized = false;
@@ -118,7 +116,7 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         title = builder.title;
         disabled = builder.disabled;
         config = builder.config;
-        filters = builder.filters;
+        listeners = builder.listeners;
         metadata.putAll(builder.metadata);
     }
 
@@ -131,8 +129,9 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
     }
 
     protected void handleFilters(ContextWrapper contextWrapper) {
-        filters = Collections.addAllIfNonNull(filters, contextWrapper.getConfigGroup().get(FILTERS));
-        filters.sort(Comparator.comparingInt(TestFilter::getOrder));
+        listeners = Collections.addAllIfNonNull(listeners, contextWrapper.getConfigGroup().get(FILTERS));
+        listeners.sort(Comparator.comparingInt(MiGooListener::getOrder));
+        runtimeListeners = Objects.isNull(listeners) ? Collections.emptyIterator() : listeners.iterator();
     }
 
     protected abstract R getTestResult();
@@ -155,7 +154,7 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         self.disabled = KryoUtil.copy(disabled);
         self.metadata = KryoUtil.copy(metadata);
         self.config = KryoUtil.copy(config);
-        self.filters = KryoUtil.copy(filters);
+        self.listeners = KryoUtil.copy(listeners);
         return self;
     }
 
@@ -232,7 +231,7 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
 
         protected CONFIG config;
 
-        protected List<TestFilter> filters;
+        protected List<MiGooListener> listeners;
 
         protected Map<String, Object> metadata = new HashMap<>();
 
@@ -291,8 +290,8 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
-        public SELF filters(List<TestFilter> filters) {
-            this.filters = filters;
+        public SELF listeners(List<MiGooListener> listeners) {
+            this.listeners = listeners;
             return self;
         }
 
