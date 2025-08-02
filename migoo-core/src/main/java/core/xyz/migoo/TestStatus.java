@@ -41,4 +41,25 @@ public enum TestStatus {
 
     }
 
+    public boolean isPassed() {
+        return this == passed;
+    }
+
+    public boolean isFailed() {
+        return this == failed;
+    }
+
+    public boolean isBroken() {
+        return this == broken;
+    }
+
+    public boolean isSkipped() {
+        return this == skipped;
+    }
+
+    public boolean isDisabled() {
+        return this == disabled;
+    }
+
+
 }

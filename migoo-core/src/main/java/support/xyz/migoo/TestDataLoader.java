@@ -32,6 +32,7 @@ import support.xyz.migoo.yaml.IncludeConstructor;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
@@ -55,6 +56,22 @@ public class TestDataLoader {
         return JSON.parseObject(JSON.toJSONString(result), clazz);
     }
 
+    /**
+     * 将文件内容反序列化为java对象，支持泛型类型
+     *
+     * @param path 文件路径
+     * @param type 类型
+     * @param <T>  java 类型
+     * @return java对象
+     */
+    public static <T> T toJavaObject(String path, Type type) {
+        var result = readFile(path);
+        if (result instanceof String string) {
+            return JSON.parseObject(string, type);
+        }
+        return JSON.parseObject(JSON.toJSONString(result), type);
+    }
+
     public static Object readFile(String path) {
         var file = new File(path);
         try (var stream = getFileInputStream(file)) {
@@ -66,7 +83,6 @@ public class TestDataLoader {
                 stream.read(bytes);
                 return new String(bytes, StandardCharsets.UTF_8);
             }
-
         } catch (Exception ignored) {
         }
         throw new RuntimeException("读取文件失败: " + path);
@@ -83,6 +99,4 @@ public class TestDataLoader {
         path = path.startsWith("/") ? path.substring(1) : path;
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
     }
-
-
 }
