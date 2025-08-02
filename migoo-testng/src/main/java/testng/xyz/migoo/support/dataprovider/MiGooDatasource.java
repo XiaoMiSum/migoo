@@ -44,7 +44,7 @@ import java.util.Objects;
  *
  * @author xiaomi
  */
-public class DatasourceProvider {
+public class MiGooDatasource {
 
     public static final String DATASOURCE_PROVIDER = "__migoo_testng_data_provider__";
     public static final String DATASOURCE_PROVIDER_PARALLEL = "__migoo_testng_data_provider_parallel__";

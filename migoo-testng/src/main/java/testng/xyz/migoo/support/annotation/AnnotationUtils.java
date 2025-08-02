@@ -28,6 +28,8 @@
 
 package testng.xyz.migoo.support.annotation;
 
+import org.apache.commons.lang3.Strings;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -42,15 +44,15 @@ import java.util.Objects;
 public class AnnotationUtils {
 
     public static Datasource getDatasource(Method method) {
-        Datasource datasource = method.getAnnotation(Datasource.class);
+        var datasource = method.getAnnotation(Datasource.class);
         if (Objects.nonNull(datasource)) {
             return datasource;
         }
-        MiGoo migoo = method.getAnnotation(MiGoo.class);
+        var migoo = method.getAnnotation(MiGoo.class);
         if (Objects.isNull(migoo)) {
             return null;
         }
-        Map<String, Object> values = new HashMap<>();
+        var values = new HashMap<String, Object>();
         values.put("value", migoo.value());
         values.put("parallel", migoo.parallel());
         values.put("type", migoo.type());
@@ -72,8 +74,7 @@ public class AnnotationUtils {
     }
 
     private static boolean isJDKAnnotation(Class<? extends Annotation> annotation) {
-        String packageName = annotation.getPackage().getName();
-        return packageName.equals("java.lang.annotation");
+        return Strings.CI.equals(annotation.getPackage().getName(), "java.lang.annotation");
     }
 
     public static void main(String[] args) throws NoSuchMethodException {
@@ -91,7 +92,7 @@ public class AnnotationUtils {
                 new AnnotationInvocationHandler(values));
     }
 
-    public static boolean isMiGooTest(Method method) {
+    public static boolean isNotMiGooTest(Method method) {
         for (Annotation annotation : method.getDeclaredAnnotations()) {
             if (AnnotationUtils.hasAnnotation(annotation.annotationType(), MiGooTest.class)) {
                 return true;

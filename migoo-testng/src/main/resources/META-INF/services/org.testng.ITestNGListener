@@ -26,6 +26,7 @@
 #
 #
 
-testng.xyz.migoo.support.dataprovider.DataFilterInterceptor
-testng.xyz.migoo.support.dataprovider.MiGooAnnotationTransformer
+testng.xyz.migoo.support.MiGooDatasourceFilterInterceptor
+testng.xyz.migoo.support.MiGooAnnotationTransformer
+testng.xyz.migoo.support.MiGooInvokedMethodListener
 testng.xyz.migoo.support.MiGooTestcaseAutoRunListener

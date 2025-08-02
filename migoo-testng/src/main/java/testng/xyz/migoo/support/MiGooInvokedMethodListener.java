@@ -26,45 +26,40 @@
  *
  */
 
-package testng.xyz.migoo.support.dataprovider;
+package testng.xyz.migoo.support;
 
-import org.testng.IDataProviderInterceptor;
-import org.testng.IDataProviderMethod;
-import org.testng.ITestContext;
-import org.testng.ITestNGMethod;
-import org.testng.util.Strings;
+import core.xyz.migoo.SessionRunner;
+import org.testng.IInvokedMethod;
+import org.testng.IInvokedMethodListener;
+import org.testng.ITestResult;
 import testng.xyz.migoo.support.annotation.AnnotationUtils;
-import testng.xyz.migoo.support.annotation.Datasource;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Objects;
 
 /**
- * 数据过滤拦截器
+ * 方法执行监听，用于监听 @Test注解的测试方法是否是 MiGoo 测试方法
  *
  * @author xiaomi
+ * Created at 2025/8/2 12:58
  */
-public class DataFilterInterceptor implements IDataProviderInterceptor {
+public class MiGooInvokedMethodListener implements IInvokedMethodListener {
 
-    @Override
-    public Iterator<Object[]> intercept(Iterator<Object[]> original, IDataProviderMethod dataProviderMethod,
-                                        ITestNGMethod method, ITestContext iTestContext) {
-        Datasource datasource = AnnotationUtils.getDatasource(method.getConstructorOrMethod().getMethod());
-        if (Objects.isNull(datasource) || Strings.isNullOrEmpty(datasource.slice())) {
-            return original;
+    public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
+        if (!method.isTestMethod()) {
+            return;
         }
-        // 获取所有数据
-        var dataList = new ArrayList<Object[]>();
-        while (original.hasNext()) {
-            Object[] data = original.next();
-            dataList.add(data);
+        if (AnnotationUtils.isNotMiGooTest(testResult.getMethod().getConstructorOrMethod().getMethod())) {
+            return;
         }
-        // 过滤数据
-        var result = new ArrayList<Object[]>();
-        for (Integer index : SeqParser.parseSeq(datasource.slice(), dataList.size())) {
-            result.add(dataList.get(index - 1));
+        // 创建一个 在测试框架中运行时使用的 session
+        SessionRunner.newTestFrameworkSession();
+    }
+
+    public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
+        if (!method.isTestMethod()) {
+            return;
         }
-        return result.iterator();
+        if (AnnotationUtils.isNotMiGooTest(testResult.getMethod().getConstructorOrMethod().getMethod())) {
+            return;
+        }
+        SessionRunner.removeSession();
     }
 }

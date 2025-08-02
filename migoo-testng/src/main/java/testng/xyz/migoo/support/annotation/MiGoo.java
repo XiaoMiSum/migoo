@@ -70,11 +70,4 @@ public @interface MiGoo {
      * @see testng.xyz.migoo.support.annotation.Datasource
      */
     String slice() default "";
-
-    /**
-     * 是否自动运行 migoo TestElement
-     *
-     * @return true: 自动运行
-     */
-    boolean autoRun() default false;
 }

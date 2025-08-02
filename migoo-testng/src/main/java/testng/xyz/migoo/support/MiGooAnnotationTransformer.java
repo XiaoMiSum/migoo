@@ -28,36 +28,35 @@
 
 package testng.xyz.migoo.support;
 
-import core.xyz.migoo.SessionRunner;
-import org.testng.ITestResult;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
+import org.testng.IAnnotationTransformer;
+import org.testng.annotations.ITestAnnotation;
 import testng.xyz.migoo.support.annotation.AnnotationUtils;
+import testng.xyz.migoo.support.annotation.Datasource;
+import testng.xyz.migoo.support.dataprovider.MiGooDatasource;
 
-public abstract class BasicMiGooTestNgTestcase {
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.Objects;
 
-    /**
-     * 在测试方法执行前执行，用于创建 migoo 运行环境
-     *
-     * @param testResult testng
-     */
-    @BeforeMethod(alwaysRun = true)
-    public void createSessionAndDestroySession(ITestResult testResult) {
-        if (!AnnotationUtils.isMiGooTest(testResult.getMethod().getConstructorOrMethod().getMethod())) {
+import static testng.xyz.migoo.support.dataprovider.MiGooDatasource.DATASOURCE_PROVIDER;
+import static testng.xyz.migoo.support.dataprovider.MiGooDatasource.DATASOURCE_PROVIDER_PARALLEL;
+
+/**
+ * 通过监听器监听，将数据源注解注入测试方法
+ *
+ * @author xiaomi
+ */
+public class MiGooAnnotationTransformer implements IAnnotationTransformer {
+
+    @Override
+    public void transform(ITestAnnotation annotation, Class testClass, Constructor testConstructor, Method testMethod) {
+        if (Objects.isNull(testMethod)) {
             return;
         }
-        // 创建一个 在测试框架中运行时使用的 session
-        SessionRunner.newTestFrameworkSession();
+        Datasource datasource = AnnotationUtils.getDatasource(testMethod);
+        if (Objects.nonNull(datasource)) {
+            annotation.setDataProviderClass(MiGooDatasource.class);
+            annotation.setDataProvider(datasource.parallel() ? DATASOURCE_PROVIDER_PARALLEL : DATASOURCE_PROVIDER);
+        }
     }
-
-    /**
-     * 在测试方法执行前执行，用于创建 migoo 运行环境
-     *
-     * @param testResult testng
-     */
-    @AfterMethod(alwaysRun = true)
-    public void stopSessionAndRemove(ITestResult testResult) {
-        SessionRunner.removeSession();
-    }
-
 }

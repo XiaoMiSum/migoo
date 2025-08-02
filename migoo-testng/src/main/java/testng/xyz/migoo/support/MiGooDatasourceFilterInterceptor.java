@@ -26,36 +26,46 @@
  *
  */
 
-package testng.xyz.migoo.support.dataprovider;
+package testng.xyz.migoo.support;
 
-import org.testng.IAnnotationTransformer;
-import org.testng.annotations.ITestAnnotation;
+import org.testng.IDataProviderInterceptor;
+import org.testng.IDataProviderMethod;
+import org.testng.ITestContext;
+import org.testng.ITestNGMethod;
+import org.testng.util.Strings;
 import testng.xyz.migoo.support.annotation.AnnotationUtils;
 import testng.xyz.migoo.support.annotation.Datasource;
+import testng.xyz.migoo.support.dataprovider.SeqParser;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Objects;
 
-import static testng.xyz.migoo.support.dataprovider.DatasourceProvider.DATASOURCE_PROVIDER;
-import static testng.xyz.migoo.support.dataprovider.DatasourceProvider.DATASOURCE_PROVIDER_PARALLEL;
-
 /**
- * 通过监听器监听，将数据源注解注入测试方法
+ * 数据过滤拦截器
  *
  * @author xiaomi
  */
-public class MiGooAnnotationTransformer implements IAnnotationTransformer {
+public class MiGooDatasourceFilterInterceptor implements IDataProviderInterceptor {
 
     @Override
-    public void transform(ITestAnnotation annotation, Class testClass, Constructor testConstructor, Method testMethod) {
-        if (Objects.isNull(testMethod)) {
-            return;
+    public Iterator<Object[]> intercept(Iterator<Object[]> original, IDataProviderMethod dataProviderMethod,
+                                        ITestNGMethod method, ITestContext iTestContext) {
+        Datasource datasource = AnnotationUtils.getDatasource(method.getConstructorOrMethod().getMethod());
+        if (Objects.isNull(datasource) || Strings.isNullOrEmpty(datasource.slice())) {
+            return original;
         }
-        Datasource datasource = AnnotationUtils.getDatasource(testMethod);
-        if (Objects.nonNull(datasource)) {
-            annotation.setDataProviderClass(DatasourceProvider.class);
-            annotation.setDataProvider(datasource.parallel() ? DATASOURCE_PROVIDER_PARALLEL : DATASOURCE_PROVIDER);
+        // 获取所有数据
+        var dataList = new ArrayList<Object[]>();
+        while (original.hasNext()) {
+            Object[] data = original.next();
+            dataList.add(data);
         }
+        // 过滤数据
+        var result = new ArrayList<Object[]>();
+        for (Integer index : SeqParser.parseSeq(datasource.slice(), dataList.size())) {
+            result.add(dataList.get(index - 1));
+        }
+        return result.iterator();
     }
 }

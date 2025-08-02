@@ -42,11 +42,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 public @interface MiGooTest {
-
-    /**
-     * 是否自动运行 migoo TestElement
-     *
-     * @return true: 自动运行
-     */
-    boolean autoRun() default false;
 }

@@ -52,19 +52,19 @@ public class MiGooTestcaseAutoRunListener implements IHookable {
 
     @Override
     public void run(IHookCallBack iHookCallBack, ITestResult iTestResult) {
-        logger.info("IHookable run test: {}", iTestResult.getMethod().getMethodName());
-        if (!AnnotationUtils.isMiGooTest(iTestResult.getMethod().getConstructorOrMethod().getMethod())) {
-            logger.info("Method 不是MiGoo注解测试，执行原始测试");
+        logger.debug("IHookable run test: {}", iTestResult.getMethod().getMethodName());
+        if (AnnotationUtils.isNotMiGooTest(iTestResult.getMethod().getConstructorOrMethod().getMethod())) {
+            logger.debug("Method 不是MiGoo注解测试，执行原始测试");
             iHookCallBack.runTestMethod(iTestResult);
             return;
         }
         var parameters = iHookCallBack.getParameters();
         if (Objects.isNull(parameters) || parameters.length < 1 || !TestElement.class.isAssignableFrom(parameters[0].getClass())) {
-            logger.info("parameters 不符合自动运行条件，执行原始测试");
+            logger.debug("parameters 不符合自动运行条件，执行原始测试");
             iHookCallBack.runTestMethod(iTestResult);
             return;
         }
-        logger.info("自动执行 MiGoo TestElement");
+        logger.debug("自动执行 MiGoo TestElement");
         var result = SessionRunner.getSession().runTest((TestElement<?>) parameters[0]);
         iTestResult.setStatus(result.getStatus().isFailed() ? ITestResult.FAILURE : result.getStatus().isSkipped() ? ITestResult.SKIP :
                 result.getStatus().isPassed() ? ITestResult.SUCCESS : ITestResult.CREATED
