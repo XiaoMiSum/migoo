@@ -26,17 +26,13 @@
 package core.xyz.migoo.testelement;
 
 import com.alibaba.fastjson2.annotation.JSONField;
+import core.xyz.migoo.Result;
 import core.xyz.migoo.SessionRunner;
-import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.config.MiGooVariables;
 import core.xyz.migoo.context.Context;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.context.TestSuiteContext;
-import core.xyz.migoo.listener.ExecuteFilterChain;
-import core.xyz.migoo.listener.MiGooListener;
-import core.xyz.migoo.listener.RunFilterChain;
-import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.configure.ConfigureElement;
 import core.xyz.migoo.testelement.processor.Postprocessor;
 import core.xyz.migoo.testelement.processor.Preprocessor;
@@ -48,10 +44,7 @@ import support.xyz.migoo.Customizer;
 import support.xyz.migoo.KryoUtil;
 import support.xyz.migoo.groovy.Groovy;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -62,7 +55,7 @@ import java.util.function.Consumer;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class AbstractTestElementExecutable<SELF extends AbstractTestElementExecutable<SELF, CONFIG, R>,
         CONFIG extends ConfigureItem<CONFIG>, R extends Result>
-        extends AbstractTestElement<SELF, CONFIG, R> implements TestElementExecutable<R>, RunFilterChain, ExecuteFilterChain, TestElementConstantsInterface {
+        extends AbstractTestElement<SELF, CONFIG, R> implements TestElementExecutable<R>, TestElementConstantsInterface {
 
     @JSONField(name = VARIABLES, ordinal = 4)
     protected MiGooVariables variables;
@@ -135,34 +128,12 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
         }
         testStarted(snapshot);
         ContextWrapper context = updateCurrentContextInfo(session, snapshot);
-        handleFilters(context);
-        doRun(context);
+        handleInterceptors(context);
+        internalRun(context);
         restoreCurrentContextInfo(session, snapshot);
-        testEnd(context);
         snapshot.testResult.testEnd();
         return snapshot.testResult;
     }
-
-    @Override
-    public final void doRun(ContextWrapper ctx) {
-        if (runtimeListeners.hasNext()) {
-            MiGooListener next = runtimeListeners.next();
-            next.doRun(ctx, this);
-            return;
-        }
-        internalRun(ctx);
-    }
-
-    @Override
-    public final void doExecute(ContextWrapper ctx) {
-        if (runtimeListeners.hasNext()) {
-            MiGooListener next = runtimeListeners.next();
-            next.doExecute(ctx, this);
-            return;
-        }
-        execute(ctx, (R) ctx.getTestResult());
-    }
-
 
     private void testStarted(Snapshot snapshot) {
         R result = getTestResult();
@@ -204,26 +175,22 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
         // 模板计算：当前元件的变量配置项（不会计算父级元件）
         evalConfig(context);
         // 处理配置元件
-        if (Objects.nonNull(configureElements)) {
-            for (ConfigureElement configureElement : configureElements) {
-                configureElement.process(context);
-            }
-        }
+        Optional.ofNullable(configureElements).orElse(Collections.emptyList()).forEach(ele -> ele.process(context));
         // 执行前置动作
-        for (Preprocessor preprocessor : preprocessors) {
-            if (preprocessor.isDisabled() || context.getTestResult().getStatus() != TestStatus.passed) {
-                continue;
-            }
-            preprocessor.process(context);
+        preprocessors.stream().filter(preprocessor -> !preprocessor.isDisabled())
+                .forEach(preprocessor -> preprocessor.process(context));
+        if (context.getTestResult().getStatus().isFailed() || context.getTestResult().getStatus().isBroken()) {
+            // 前置步骤执行失败，后续步骤无需执行
+            return;
         }
         // 执行请求
-        doExecute(context);
-        for (Postprocessor postprocessor : postprocessors) {
-            if (postprocessor.isDisabled() || context.getTestResult().getStatus() != TestStatus.passed) {
-                continue;
-            }
-            postprocessor.process(context);
-        }
+        execute(context, (R) context.getTestResult());
+        postprocessors.stream().filter(postprocessor -> !postprocessor.isDisabled())
+                .forEach(postprocessor -> postprocessor.process(context));
+        // 关闭配置元件
+        Optional.ofNullable(configureElements).orElse(Collections.emptyList()).stream()
+                .filter(ele -> ele instanceof Closeable)
+                .forEach(ele -> ((Closeable) ele).close());
     }
 
     @Override
@@ -241,16 +208,6 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
      */
     protected abstract void execute(ContextWrapper ctx, R testResult);
 
-    protected void testEnd(ContextWrapper context) {
-        if (Objects.isNull(configureElements)) {
-            return;
-        }
-        for (ConfigureElement configureElement : configureElements) {
-            if (configureElement instanceof Closeable closeable) {
-                closeable.close();
-            }
-        }
-    }
     // getter/setter
 
     public MiGooVariables getVariables() {

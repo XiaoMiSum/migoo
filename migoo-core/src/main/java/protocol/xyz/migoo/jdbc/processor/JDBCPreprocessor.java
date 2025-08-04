@@ -78,7 +78,7 @@ public class JDBCPreprocessor extends AbstractProcessor<JDBCPreprocessor, JDBCCo
             var bool = statement.execute(runtime.getConfig().getSql());
             bytes = toJSONBytes(bool, statement);
         } catch (Exception e) {
-            result.setTrack(e);
+            throw new RuntimeException(e);
         } finally {
             result.sampleEnd();
         }

@@ -28,8 +28,8 @@
 
 package core.xyz.migoo.testelement;
 
+import core.xyz.migoo.Result;
 import core.xyz.migoo.SessionRunner;
-import core.xyz.migoo.report.Result;
 
 /**
  * @author xiaomi

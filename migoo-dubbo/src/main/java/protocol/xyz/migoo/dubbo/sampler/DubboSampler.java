@@ -90,8 +90,6 @@ public class DubboSampler extends AbstractSampler<DubboSampler, DubboConfigureIt
             var parameters = Objects.isNull(runtime.config.getParameters()) ? new Object[0] : runtime.config.getParameters().toArray();
             result.sampleStart();
             response = request.get().$invoke(runtime.config.getMethod(), parameterTypes, parameters);
-        } catch (Exception e) {
-            result.setTrack(e);
         } finally {
             result.sampleEnd();
         }

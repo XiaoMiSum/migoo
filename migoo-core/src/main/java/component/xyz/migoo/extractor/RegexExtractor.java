@@ -53,19 +53,17 @@ public class RegexExtractor extends AbstractExtractor {
         var res = new ExtractResult("正则表达式 提取: %s ，匹配第 %s 个".formatted(field, matchNum + 1));
         var target = result.getResponse().bytesAsString();
         var value = "";
-        try {
-            var pattern = Pattern.compile(field);
-            var matcher = pattern.matcher(target);
-            matchNum = Math.max(0, matchNum);
-            int state = 0;
-            while (state > -1 && matcher.find()) {
-                state = matcher.groupCount() > 0 ? matchNum : state;
-                value = matcher.group(1);
-                state--;
-            }
-        } catch (Exception e) {
-            res.setException(e);
+
+        var pattern = Pattern.compile(field);
+        var matcher = pattern.matcher(target);
+        matchNum = Math.max(0, matchNum);
+        int state = 0;
+        while (state > -1 && matcher.find()) {
+            state = matcher.groupCount() > 0 ? matchNum : state;
+            value = matcher.group(1);
+            state--;
         }
+
         if (StringUtils.isBlank(value)) {
             res.setStatus(TestStatus.failed);
             res.setMessage(String.format("目标字符串没有匹配的数据 %s，目标字符串：\n%s", field, target));
@@ -86,7 +84,7 @@ public class RegexExtractor extends AbstractExtractor {
         public Builder() {
             super(new RegexExtractor());
         }
-        
+
         public Builder matchNum(int matchNum) {
             extractor.matchNum = matchNum;
             return self;

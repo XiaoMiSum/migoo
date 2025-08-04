@@ -10,8 +10,7 @@
     </parent>
 
     <artifactId>http-example</artifactId>
-
-    <!-- todo 移除 springboot 改为使用 wiremock -->
+    
     <dependencies>
         <dependency>
             <groupId>xyz.migoo.springboot</groupId>

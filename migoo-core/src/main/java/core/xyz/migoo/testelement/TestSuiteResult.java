@@ -25,7 +25,7 @@
 
 package core.xyz.migoo.testelement;
 
-import core.xyz.migoo.report.Result;
+import core.xyz.migoo.Result;
 
 import java.util.ArrayList;
 import java.util.List;

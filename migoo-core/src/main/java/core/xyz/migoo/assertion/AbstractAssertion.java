@@ -54,6 +54,10 @@ public abstract class AbstractAssertion implements Assertion, AssertionConstants
 
     @Override
     public void assertThat(ContextWrapper context) {
+        if (!context.getTestResult().getStatus().isPassed()) {
+            // 非migoo-testng 框架下测试失败不会抛出异常，取样步骤结果失败，无需执行验证器
+            return;
+        }
         if (context.getTestResult() instanceof SampleResult result) {
             expected = context.eval(expected);
             var res = initialized(result);
@@ -67,15 +71,11 @@ public abstract class AbstractAssertion implements Assertion, AssertionConstants
                 res.setMessage(String.format("%s %s %s %s %s", field, rule, expected == null ? "" : expected, res.getStatus(),
                         res.getStatus() == TestStatus.passed ? "" : "实际值: " + actualValue));
             }
-            if (TestStatus.failed == res.getStatus()) {
-                // 如果运行在测试框架中，则抛出断言异常
-                if (context.getSessionRunner().isRunInTestFrameworkSupport()) {
-                    throw new AssertionError(res.getMessage());
-                }
-                // 任意一个失败则设置执行失败
-                result.setStatus(TestStatus.failed);
+            if (res.getStatus().isBroken() || res.getStatus().isFailed()) {
+                // 验证结果为 阻塞、失败，则设置取样器状态为失败
+                result.setStatus(res.getStatus());
+                throw new AssertionError(res.getMessage());
             }
-            result.addAssertion(res);
         }
     }
 

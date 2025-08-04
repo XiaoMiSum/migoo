@@ -70,12 +70,15 @@ public class DebugPostprocessor extends AbstractProcessor<DebugPostprocessor, De
 
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
-        result.sampleStart();
-        byte[] bytes = JSON.toJSONBytes(config);
-        result.setRequest(SampleResult.DefaultReal.build(bytes));
-        result.setResponse(SampleResult.DefaultReal.build(bytes));
-        logger.info("Debug Postprocessor");
-        result.sampleEnd();
+        try {
+            result.sampleStart();
+            byte[] bytes = JSON.toJSONBytes(config);
+            result.setRequest(SampleResult.DefaultReal.build(bytes));
+            result.setResponse(SampleResult.DefaultReal.build(bytes));
+            logger.info("Debug Postprocessor");
+        } finally {
+            result.sampleEnd();
+        }
     }
 
     public static class Builder extends AbstractProcessor.PostprocessorBuilder<DebugPostprocessor, Builder, DebugConfigureItem,

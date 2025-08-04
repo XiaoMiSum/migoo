@@ -96,7 +96,7 @@ public class KafkaPostprocessor extends AbstractProcessor<KafkaPostprocessor, Ka
             Future<RecordMetadata> future = producer.send(record);
             response = ("offset: " + future.get().offset()).getBytes(StandardCharsets.UTF_8);
         } catch (Exception e) {
-            result.setTrack(e);
+            throw new RuntimeException(e);
         } finally {
             result.sampleEnd();
             this.request = RealKafkaRequest.build(runtime.getConfig(), message);

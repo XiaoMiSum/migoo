@@ -78,7 +78,7 @@ public class JDBCPostprocessor extends AbstractProcessor<JDBCPostprocessor, JDBC
             var bool = statement.execute(runtime.getConfig().getSql());
             bytes = toJSONBytes(bool, statement);
         } catch (Exception e) {
-            result.setTrack(e);
+            throw new RuntimeException(e);
         } finally {
             result.sampleEnd();
         }

@@ -83,6 +83,7 @@
         <faker.version>1.0.2</faker.version>
         <picocli.version>4.7.6</picocli.version>
         <reports.version>5.1.2</reports.version>
+        <allure.version>2.29.1</allure.version>
         <guava.version>33.4.0-jre</guava.version>
         <fastjson.version>2.0.53</fastjson.version>
         <commons-codec.version>1.17.1</commons-codec.version>
@@ -121,6 +122,12 @@
             <dependency>
                 <groupId>xyz.migoo</groupId>
                 <artifactId>migoo-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>xyz.migoo</groupId>
+                <artifactId>migoo-testng</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -260,6 +267,18 @@
                 </exclusions>
             </dependency>
 
+            <dependency>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-java-commons</artifactId>
+                <version>${allure.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-testng</artifactId>
+                <version>${allure.version}</version>
+            </dependency>
+
             <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -286,7 +305,6 @@
                 <version>${geantyref.version}</version>
             </dependency>
         </dependencies>
-
 
     </dependencyManagement>
 

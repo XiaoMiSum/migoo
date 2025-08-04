@@ -29,7 +29,7 @@
 package core.xyz.migoo.config;
 
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.listener.MiGooListener;
+import core.xyz.migoo.interceptor.Interceptor;
 
 import java.util.ArrayList;
 
@@ -37,7 +37,7 @@ import java.util.ArrayList;
  * @author xiaomi
  * Created at 2025/7/20 14:51
  */
-public class FilterConfigureItem<T extends MiGooListener> extends ArrayList<T> implements ConfigureItem<FilterConfigureItem<T>> {
+public class FilterConfigureItem<T extends Interceptor> extends ArrayList<T> implements ConfigureItem<FilterConfigureItem<T>> {
 
     @Override
     public FilterConfigureItem<T> merge(FilterConfigureItem<T> other) {

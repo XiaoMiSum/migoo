@@ -28,12 +28,9 @@ package xyz.migoo;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import core.xyz.migoo.ApplicationConfig;
+import core.xyz.migoo.Result;
 import core.xyz.migoo.SessionRunner;
-import core.xyz.migoo.report.Reporter;
-import core.xyz.migoo.report.Result;
-import picocli.CommandLine;
 import support.xyz.migoo.TestDataLoader;
-import xyz.migoo.report.StandardReporter;
 
 import java.util.Map;
 
@@ -45,7 +42,7 @@ import static core.xyz.migoo.testelement.TestElementConstantsInterface.TEST_CLAS
 @SuppressWarnings({"unchecked"})
 public class MiGoo {
 
-    public static Configure CONFIGURE = null;
+    public static Configure CONFIGURE;
 
     static {
         CONFIGURE = TestDataLoader.toJavaObject("props.migoo.yml", Configure.class);
@@ -56,10 +53,6 @@ public class MiGoo {
 
     public MiGoo(JsonTree testcase) {
         this.testcase = testcase;
-    }
-
-    public static void main(String[] args) {
-        System.exit(new CommandLine(new Cli()).execute(args));
     }
 
     private static void printLogo() {
@@ -84,7 +77,6 @@ public class MiGoo {
 
     public static Result start(JsonTree testcase) {
         try {
-            SessionRunner.newSession();
             return new MiGoo(testcase).runTest();
         } finally {
             SessionRunner.removeSession();
@@ -93,18 +85,6 @@ public class MiGoo {
 
     private Result runTest() {
         var clazz = ApplicationConfig.getTestElementKeyMap().get(testcase.getString(TEST_CLASS));
-        var result = SessionRunner.getSession().runTest(JSON.parseObject(testcase.toJSONString(), clazz));
-
-        if (!CONFIGURE.getReport().isEnable()) {
-            return result;
-        }
-        Reporter reporter;
-        try {
-            reporter = (Reporter) Class.forName(CONFIGURE.getReport().getReporter()).getConstructor().newInstance();
-        } catch (Exception e) {
-            reporter = new StandardReporter();
-        }
-        reporter.generateReport(result);
-        return result;
+        return SessionRunner.getSessionIfNoneCreateNew().runTest(JSON.parseObject(testcase.toJSONString(), clazz));
     }
 }

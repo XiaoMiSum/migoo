@@ -107,7 +107,7 @@ public class ActiveSampler extends AbstractSampler<ActiveSampler, ActiveConfigur
             var textMessage = session.createTextMessage(message);
             producer.send(textMessage);
         } catch (Exception e) {
-            result.setTrack(e);
+            throw new RuntimeException(e);
         } finally {
             result.sampleEnd();
             this.request = RealActiveRequest.build(runtime.config, message);

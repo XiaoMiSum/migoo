@@ -32,6 +32,7 @@ import component.xyz.migoo.extractor.JSONExtractor;
 import component.xyz.migoo.extractor.RegexExtractor;
 import component.xyz.migoo.extractor.ResultExtractor;
 import component.xyz.migoo.timer.SyncTimer;
+import core.xyz.migoo.Result;
 import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.assertion.AbstractAssertion;
 import core.xyz.migoo.assertion.Assertion;
@@ -42,8 +43,7 @@ import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.extractor.AbstractExtractor;
 import core.xyz.migoo.extractor.Extractor;
-import core.xyz.migoo.listener.MiGooListener;
-import core.xyz.migoo.report.Result;
+import core.xyz.migoo.interceptor.Interceptor;
 import core.xyz.migoo.testelement.configure.AbstractConfigureElement;
 import core.xyz.migoo.testelement.configure.ConfigureElement;
 import core.xyz.migoo.testelement.processor.AbstractProcessor;
@@ -75,6 +75,7 @@ import support.xyz.migoo.KryoUtil;
 import support.xyz.migoo.groovy.Groovy;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 import static support.xyz.migoo.groovy.Groovy.call;
 
@@ -99,14 +100,15 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
     @JSONField(name = CONFIG, ordinal = 4)
     protected CONFIG config;
 
-    @JSONField(name = FILTERS, ordinal = 8)
-    protected List<MiGooListener> listeners;
+    @JSONField(name = INTERCEPTORS, ordinal = 8)
+    protected List<Interceptor> interceptors;
 
     // 元数据，可以挂载一些辅助数据
     @JSONField(name = METADATA, ordinal = 2)
     protected Map<String, Object> metadata = new HashMap<>();
 
-    protected Iterator<MiGooListener> runtimeListeners;
+    protected Iterator<Interceptor> preInterceptors;
+    protected Iterator<Interceptor> postInterceptors;
     protected Map<String, Object> rawData;
     protected SELF runtime;
     protected boolean initialized = false;
@@ -116,7 +118,7 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         title = builder.title;
         disabled = builder.disabled;
         config = builder.config;
-        listeners = builder.listeners;
+        interceptors = builder.interceptors;
         metadata.putAll(builder.metadata);
     }
 
@@ -128,10 +130,15 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         runtime = copy();
     }
 
-    protected void handleFilters(ContextWrapper contextWrapper) {
-        listeners = Collections.addAllIfNonNull(listeners, contextWrapper.getConfigGroup().get(FILTERS));
-        listeners.sort(Comparator.comparingInt(MiGooListener::getOrder));
-        runtimeListeners = Objects.isNull(listeners) ? Collections.emptyIterator() : listeners.iterator();
+    protected void handleInterceptors(ContextWrapper context) {
+        interceptors = Collections.addAllIfNonNull(interceptors, context.getConfigGroup().get(INTERCEPTORS));
+        if (Objects.isNull(interceptors) || interceptors.isEmpty()) {
+            return;
+        }
+        var temp = interceptors.stream().filter(filter -> filter.match(context)).distinct()
+                .sorted(Comparator.comparingInt(Interceptor::getOrder)).toList();
+        preInterceptors = temp.iterator();
+        postInterceptors = temp.iterator();
     }
 
     protected abstract R getTestResult();
@@ -154,7 +161,7 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         self.disabled = KryoUtil.copy(disabled);
         self.metadata = KryoUtil.copy(metadata);
         self.config = KryoUtil.copy(config);
-        self.listeners = KryoUtil.copy(listeners);
+        self.interceptors = KryoUtil.copy(interceptors);
         return self;
     }
 
@@ -208,6 +215,10 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         this.rawData = rawData;
     }
 
+    public SELF getRuntime() {
+        return runtime;
+    }
+
 
     /**
      * 测试元件基础构建实现类
@@ -231,7 +242,7 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
 
         protected CONFIG config;
 
-        protected List<MiGooListener> listeners;
+        protected List<Interceptor> interceptors;
 
         protected Map<String, Object> metadata = new HashMap<>();
 
@@ -290,8 +301,13 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
-        public SELF listeners(List<MiGooListener> listeners) {
-            this.listeners = listeners;
+        public SELF interceptors(List<Interceptor> interceptors) {
+            this.interceptors = Collections.addAllIfNonNull(this.interceptors, interceptors);
+            return self;
+        }
+
+        public SELF interceptors(Supplier<Interceptor> supplier) {
+            this.interceptors = Collections.addAllIfNonNull(this.interceptors, Collections.newArrayList(supplier.get()));
             return self;
         }
 

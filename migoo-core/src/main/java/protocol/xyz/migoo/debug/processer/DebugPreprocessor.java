@@ -70,12 +70,15 @@ public class DebugPreprocessor extends AbstractProcessor<DebugPreprocessor, Debu
 
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
-        result.sampleStart();
-        byte[] bytes = JSON.toJSONBytes(config);
-        result.setRequest(SampleResult.DefaultReal.build(bytes));
-        result.setResponse(SampleResult.DefaultReal.build(bytes));
-        logger.info("Debug Preprocessor");
-        result.sampleEnd();
+        try {
+            result.sampleStart();
+            byte[] bytes = JSON.toJSONBytes(config);
+            result.setRequest(SampleResult.DefaultReal.build(bytes));
+            result.setResponse(SampleResult.DefaultReal.build(bytes));
+            logger.info("Debug Preprocessor");
+        } finally {
+            result.sampleEnd();
+        }
     }
 
     public static class Builder extends AbstractProcessor.PreprocessorBuilder<DebugPreprocessor, Builder, DebugConfigureItem,

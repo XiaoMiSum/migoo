@@ -87,8 +87,6 @@ public class DubboPreprocessor extends AbstractProcessor<DubboPreprocessor, Dubb
             var parameters = Objects.isNull(runtime.getConfig().getParameters()) ? new Object[0] : runtime.getConfig().getParameters().toArray();
             result.sampleStart();
             response = request.get().$invoke(runtime.getConfig().getMethod(), parameterTypes, parameters);
-        } catch (Exception e) {
-            result.setTrack(e);
         } finally {
             result.sampleEnd();
         }

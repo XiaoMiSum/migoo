@@ -119,7 +119,7 @@ public class RabbitSampler extends AbstractSampler<RabbitSampler, RabbitConfigur
             channel.basicPublish(exchangeName, queue.getName(), properties, message.getBytes(StandardCharsets.UTF_8));
 
         } catch (Exception e) {
-            result.setTrack(e);
+            throw new RuntimeException(e);
         } finally {
             result.sampleEnd();
             this.request = RealRabbitRequest.build(runtime.config, message);

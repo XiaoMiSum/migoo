@@ -30,13 +30,13 @@ package core.xyz.migoo.testelement.processor;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import core.xyz.migoo.SessionRunner;
-import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.builder.ExtensibleExtractorsBuilder;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.extractor.Extractor;
-import core.xyz.migoo.listener.MiGooListener;
-import core.xyz.migoo.listener.SampleFilterChain;
+import core.xyz.migoo.interceptor.Handler;
+import core.xyz.migoo.interceptor.Interceptor;
+import core.xyz.migoo.interceptor.ProcessorHandler;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.TestElementConstantsInterface;
 import core.xyz.migoo.testelement.sampler.SampleResult;
@@ -47,7 +47,7 @@ import support.xyz.migoo.Customizer;
 import support.xyz.migoo.groovy.Groovy;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @param <R>
@@ -56,7 +56,7 @@ import java.util.Objects;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CONFIG, R>, CONFIG extends ConfigureItem<CONFIG>, R extends SampleResult>
         extends AbstractTestElement<AbstractProcessor<SELF, CONFIG, R>, CONFIG, R>
-        implements Processor, SampleFilterChain, TestElementConstantsInterface {
+        implements Processor, ProcessorHandler, TestElementConstantsInterface {
 
     @JSONField(name = EXTRACTORS, ordinal = 10)
     protected List<Extractor> extractors;
@@ -78,56 +78,51 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
         super.initialized(session);
         var localContext = new ContextWrapper(session);
         localContext.setTestResult(getTestResult());
+        localContext.setTestElement(this);
         runtime.config = (CONFIG) localContext.eval(runtime.config);
-        handleFilters(localContext);
+        handleInterceptors(localContext);
         return localContext;
     }
 
     @Override
-    public void doSample(ContextWrapper context) {
-        process(context);
+    public void doHandle(ContextWrapper context) {
+        if (preInterceptors.hasNext()) {
+            preInterceptors.next().preHandle(context, this);
+            return;
+        }
+        R result = (R) context.getTestResult();
+        // 子类可以在 sample 方法或其子方法内，在合适的时机再次调用 sampleStart 和 sampleEnd 方法，
+        // 以获取更准确的 sample 时间
+        result.sampleStart();
+        sample(context, (R) context.getTestResult());
+        result.sampleEnd();
+        if (postInterceptors.hasNext()) {
+            postInterceptors.next().postHandle(context, this);
+        }
     }
 
     @Override
     public void process(ContextWrapper context) {
         var localContext = initialized ? context : _initialized(context.getSessionRunner());
-        if (runtimeListeners.hasNext()) {
-            MiGooListener next = runtimeListeners.next();
-            next.doSample(localContext, this);
-            return;
-        }
         handleRequest(localContext, (R) localContext.getTestResult());
-        sample(localContext, (R) localContext.getTestResult());
+        doHandle(localContext);
         handleResponse(localContext, (R) localContext.getTestResult());
         extract(context, localContext);
-        if (context == localContext) {
-            return;
-        }
-        if (this instanceof Preprocessor) {
-            context.getTestResult().addPreprocessor(localContext.getTestResult());
-        } else if (this instanceof Postprocessor) {
-            context.getTestResult().addPostprocessor(localContext.getTestResult());
-        }
-        if (localContext.getTestResult().getStatus() != TestStatus.passed) {
+        var status = localContext.getTestResult().getStatus();
+        if (context != localContext && (status.isBroken() || status.isFailed())) {
             context.getTestResult().setStatus(localContext.getTestResult().getStatus());
         }
     }
 
     private void extract(ContextWrapper context, ContextWrapper localContext) {
-        if (Objects.isNull(extractors)) {
-            return;
-        }
-        for (Extractor extractor : extractors) {
-            extractor.process(localContext);
-        }
-        context.getLocalVariablesWrapper().getLastVariables()
-                .merge(localContext.getLocalVariablesWrapper().getLastVariables());
+        Optional.ofNullable(extractors).orElse(Collections.emptyList()).forEach(extractor -> extractor.process(localContext));
+        context.getLocalVariablesWrapper().getLastVariables().merge(localContext.getLocalVariablesWrapper().getLastVariables());
     }
 
     /**
      * 请求执行前处理。比如请求数据的表达式计算。
      *
-     * <p>该方法在 {@link MiGooListener#doSample} 之前调用。
+     * <p>该方法在 {@link Interceptor#preHandle(ContextWrapper, Handler)} 之前调用。
      */
     protected void handleRequest(ContextWrapper context, R result) {
         // do nothing.
@@ -142,7 +137,7 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
     /**
      * 请求执行后处理。
      *
-     * <p>该方法在 {@link MiGooListener#doSample} 之后调用。
+     * <p>该方法在 {@link Interceptor#preHandle(ContextWrapper, Handler)} 之后调用。
      */
     protected void handleResponse(ContextWrapper context, R result) {
         // do nothing.

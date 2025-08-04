@@ -38,6 +38,12 @@
 
 
     <dependencies>
+
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>xyz.migoo</groupId>
             <artifactId>migoo-core</artifactId>

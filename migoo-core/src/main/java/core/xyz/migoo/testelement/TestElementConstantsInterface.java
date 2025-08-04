@@ -58,7 +58,7 @@ public interface TestElementConstantsInterface {
 
     String TEST_CLASS = "testclass";
 
-    String FILTERS = "filters";
+    String INTERCEPTORS = "interceptors";
 
     String REF = "ref";
 

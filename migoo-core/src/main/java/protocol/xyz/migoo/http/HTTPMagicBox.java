@@ -26,7 +26,7 @@
 package protocol.xyz.migoo.http;
 
 import core.xyz.migoo.MagicBox;
-import core.xyz.migoo.report.Result;
+import core.xyz.migoo.Result;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import protocol.xyz.migoo.http.sampler.HTTPSampler;

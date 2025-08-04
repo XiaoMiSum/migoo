@@ -68,9 +68,8 @@ public class DebugSampler extends AbstractSampler<DebugSampler, DebugConfigureIt
             result.setRequest(SampleResult.DefaultReal.build(bytes));
             result.setResponse(SampleResult.DefaultReal.build(bytes));
             logger.info("Debug Sampler");
+        } finally {
             result.sampleEnd();
-        } catch (Exception e) {
-            result.setTrack(e);
         }
     }
 

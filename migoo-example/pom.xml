@@ -72,6 +72,7 @@
 
     <properties>
         <migoo.version>5.2.1</migoo.version>
+        <testng.version>7.9.0</testng.version>
         <spring.boot.version>3.3.3</spring.boot.version>
 
         <junit.version>5.11.4</junit.version>
@@ -87,6 +88,12 @@
             <groupId>xyz.migoo</groupId>
             <artifactId>migoo</artifactId>
             <version>${migoo.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
         </dependency>
     </dependencies>
 

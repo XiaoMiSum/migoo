@@ -46,13 +46,8 @@ public class JSONExtractor extends AbstractExtractor {
     protected ExtractResult extract(SampleResult result) {
         var res = new ExtractResult("JSON 提取: " + field);
         var target = result.getResponse().bytesAsString();
-        Object value = null;
-        try {
-            value = JSONPath.extract(target, field);
-            res.setValue(value);
-        } catch (Exception e) {
-            res.setException(e);
-        }
+        Object value = JSONPath.extract(target, field);
+        res.setValue(value);
         if (value == null) {
             res.setStatus(TestStatus.failed);
             res.setMessage(String.format("目标字符串不存在 JsonPath %s，目标字符串：\n%s", field, target));

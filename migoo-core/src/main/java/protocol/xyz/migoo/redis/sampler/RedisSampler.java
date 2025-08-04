@@ -75,8 +75,6 @@ public class RedisSampler extends AbstractSampler<RedisSampler, RedisConfigureIt
             var command = runtime.config.getCommand();
             var response = jedis.sendCommand(Protocol.Command.valueOf(command), runtime.config.getSend().split(","));
             bytes = Utils.toBytes(response);
-        } catch (Exception e) {
-            result.setTrack(e);
         } finally {
             result.sampleEnd();
         }

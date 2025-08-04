@@ -29,7 +29,6 @@
 package core.xyz.migoo.testelement.sampler;
 
 import com.alibaba.fastjson2.annotation.JSONField;
-import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.assertion.Assertion;
 import core.xyz.migoo.builder.*;
 import core.xyz.migoo.config.ConfigureItem;
@@ -38,8 +37,9 @@ import core.xyz.migoo.context.Context;
 import core.xyz.migoo.context.ContextWrapper;
 import core.xyz.migoo.context.TestRunContext;
 import core.xyz.migoo.extractor.Extractor;
-import core.xyz.migoo.listener.MiGooListener;
-import core.xyz.migoo.listener.SampleFilterChain;
+import core.xyz.migoo.interceptor.Handler;
+import core.xyz.migoo.interceptor.Interceptor;
+import core.xyz.migoo.interceptor.SamplerHandler;
 import core.xyz.migoo.testelement.AbstractTestElementExecutable;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
@@ -51,6 +51,7 @@ import support.xyz.migoo.groovy.Groovy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Sampler 抽象实现类。
@@ -61,7 +62,7 @@ import java.util.Objects;
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG, R>, CONFIG extends ConfigureItem<CONFIG>, R extends SampleResult>
-        extends AbstractTestElementExecutable<SELF, CONFIG, R> implements Sampler<R>, SampleFilterChain {
+        extends AbstractTestElementExecutable<SELF, CONFIG, R> implements Sampler<R>, SamplerHandler {
 
     @JSONField(name = VALIDATORS, ordinal = 9)
     protected List<Assertion> assertions;
@@ -102,8 +103,17 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
     // ---------------------------------------------------------------------
 
     @Override
-    protected final void execute(ContextWrapper ctx, R result) {
-        doSample(ctx);
+    protected final void execute(ContextWrapper context, R result) {
+        if (!result.getStatus().isPassed()) {
+            // 前置处理器可能执行失败，无需执行测试步骤
+            return;
+        }
+        runtime.config = (CONFIG) context.eval(runtime.config);
+        handleRequest(context, result);
+        doHandle(context);
+        handleResponse(context, result);
+        Optional.ofNullable(assertions).orElse(Collections.emptyList()).forEach(assertion -> assertion.assertThat(context));
+        Optional.ofNullable(extractors).orElse(Collections.emptyList()).forEach(extractor -> extractor.process(context));
     }
 
     // ---------------------------------------------------------------------
@@ -111,30 +121,19 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
     // ---------------------------------------------------------------------
 
     @Override
-    public final void doSample(ContextWrapper context) {
-        runtime.config = (CONFIG) context.eval(runtime.config);
-        if (runtimeListeners.hasNext()) {
-            MiGooListener next = runtimeListeners.next();
-            next.doSample(context, this);
+    public final void doHandle(ContextWrapper context) {
+        if (preInterceptors.hasNext()) {
+            preInterceptors.next().preHandle(context, this);
             return;
         }
         R result = (R) context.getTestResult();
-        handleRequest(context, result);
         // 子类可以在 sample 方法或其子方法内，在合适的时机再次调用 sampleStart 和 sampleEnd 方法，
         // 以获取更准确的 sample 时间
         result.sampleStart();
         sample(context, (R) context.getTestResult());
         result.sampleEnd();
-        handleResponse(context, result);
-        if (Objects.nonNull(assertions) && context.getTestResult().getStatus() == TestStatus.passed) {
-            for (Assertion assertion : assertions) {
-                assertion.assertThat(context);
-            }
-        }
-        if (Objects.nonNull(extractors) && context.getTestResult().getStatus() == TestStatus.passed) {
-            for (Extractor extractor : extractors) {
-                extractor.process(context);
-            }
+        if (postInterceptors.hasNext()) {
+            postInterceptors.next().postHandle(context, this);
         }
     }
 
@@ -149,7 +148,7 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
     /**
      * 请求执行前处理。比如请求数据的表达式计算。
      *
-     * <p>该方法在 {@link MiGooListener#doSample} 之前调用。
+     * <p>该方法在 {@link Interceptor#preHandle(ContextWrapper, Handler)} 之前调用。
      */
     protected void handleRequest(ContextWrapper context, R result) {
         // do nothing.
@@ -164,7 +163,7 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
     /**
      * 请求执行后处理。
      *
-     * <p>该方法在 {@link MiGooListener#doSample} 之后调用。
+     * <p>该方法在 {@link Interceptor#preHandle(ContextWrapper, Handler)} 之后调用。
      */
     protected void handleResponse(ContextWrapper context, R result) {
         // do nothing.

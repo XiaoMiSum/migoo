@@ -56,16 +56,11 @@ public class HTTPHeaderExtractor extends AbstractExtractor {
         var res = new ExtractResult("HTTP响应 提取: " + field);
         var response = (RealHTTPRealResponse) result.getResponse();
         Object value = null;
-
-        try {
-            var headers = response.headers().stream().filter(header -> header.getName().equalsIgnoreCase(field)).toList();
-            if (!headers.isEmpty()) {
-                matchNum = (headers.size() < matchNum + 1) ? headers.size() - 1 : matchNum;
-                value = headers.get(matchNum).getValue();
-                res.setValue(value);
-            }
-        } catch (Exception e) {
-            res.setException(e);
+        var headers = response.headers().stream().filter(header -> header.getName().equalsIgnoreCase(field)).toList();
+        if (!headers.isEmpty()) {
+            matchNum = (headers.size() < matchNum + 1) ? headers.size() - 1 : matchNum;
+            value = headers.get(matchNum).getValue();
+            res.setValue(value);
         }
         if (value == null) {
             res.setStatus(TestStatus.failed);

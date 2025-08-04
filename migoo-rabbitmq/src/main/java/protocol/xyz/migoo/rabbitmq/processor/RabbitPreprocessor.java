@@ -113,7 +113,7 @@ public class RabbitPreprocessor extends AbstractProcessor<RabbitPreprocessor, Ra
             channel.basicPublish(exchangeName, queue.getName(), properties, message.getBytes(StandardCharsets.UTF_8));
 
         } catch (Exception e) {
-            result.setTrack(e);
+            throw new RuntimeException(e);
         } finally {
             result.sampleEnd();
             this.request = RealRabbitRequest.build(runtime.getConfig(), message);

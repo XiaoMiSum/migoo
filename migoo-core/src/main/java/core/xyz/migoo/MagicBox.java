@@ -26,7 +26,6 @@
 package core.xyz.migoo;
 
 import core.xyz.migoo.builder.DefaultChildrenBuilder;
-import core.xyz.migoo.report.Result;
 import core.xyz.migoo.testelement.AbstractTestElement;
 import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.TestSuite;

@@ -29,6 +29,7 @@
 package core.xyz.migoo.testelement;
 
 import com.alibaba.fastjson2.annotation.JSONField;
+import core.xyz.migoo.Result;
 import core.xyz.migoo.TestStatus;
 import core.xyz.migoo.builder.ExtensibleChildrenBuilder;
 import core.xyz.migoo.builder.ExtensibleConfigureElementsBuilder;
@@ -36,9 +37,8 @@ import core.xyz.migoo.builder.ExtensiblePostprocessorsBuilder;
 import core.xyz.migoo.builder.ExtensiblePreprocessorsBuilder;
 import core.xyz.migoo.config.ConfigureItem;
 import core.xyz.migoo.context.ContextWrapper;
-import core.xyz.migoo.listener.ExecuteChildrenFilterChain;
-import core.xyz.migoo.listener.MiGooListener;
-import core.xyz.migoo.report.Result;
+import core.xyz.migoo.interceptor.ContainerHandler;
+import core.xyz.migoo.testelement.sampler.Sampler;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import support.xyz.migoo.Collections;
@@ -47,7 +47,6 @@ import support.xyz.migoo.ValidateResult;
 import support.xyz.migoo.groovy.Groovy;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -59,12 +58,10 @@ import java.util.Objects;
 @SuppressWarnings("all")
 public abstract class TestContainerExecutable<SELF extends TestContainerExecutable<SELF, CONFIG, R>,
         CONFIG extends ConfigureItem<CONFIG>, R extends Result>
-        extends AbstractTestElementExecutable<SELF, CONFIG, R> implements ExecuteChildrenFilterChain {
+        extends AbstractTestElementExecutable<SELF, CONFIG, R> implements ContainerHandler {
 
     @JSONField(name = CHILDREN, ordinal = 10)
     protected List<TestElement<R>> children;
-
-    protected Iterator<MiGooListener> executeChildrenFilters;
 
     public TestContainerExecutable() {
     }
@@ -75,33 +72,40 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
     }
 
     @Override
-    public void doExecuteChildren(ContextWrapper context) {
+    public void doHandle(ContextWrapper context) {
         if (children == null) {
             return;
         }
-        if (executeChildrenFilters.hasNext()) {
-            MiGooListener next = executeChildrenFilters.next();
-            next.doExecuteChildren(context, this);
+        if (preInterceptors.hasNext()) {
+            preInterceptors.next().preHandle(context, this);
             return;
         }
         for (TestElement<R> child : children) {
-            if (child == null) {
+            if (Objects.isNull(child)) {
                 continue;
             }
             R result = context.getSessionRunner().runTest(child);
-            if (TestStatus.failed == result.getStatus()) {
-                context.getTestResult().setStatus(TestStatus.failed);
-            }
             if (context.getTestResult() instanceof TestSuiteResult suiteResult) {
                 suiteResult.addChild(result);
             }
-
+            if (child instanceof Sampler<R> && !result.getStatus().isPassed()) {
+                // 如果子元件是取样器，并且执行失败，则后续步骤无需执行
+                break;
+            }
+        }
+        var hasFailedChildren = !((TestSuiteResult) context.getTestResult()).getChildren().stream()
+                .filter(result -> result.getStatus().isBroken() || result.getStatus().isFailed())
+                .toList().isEmpty();
+        if (hasFailedChildren) {
+            context.getTestResult().setStatus(TestStatus.failed);
+        }
+        if (postInterceptors.hasNext()) {
+            postInterceptors.next().postHandle(context, this);
         }
     }
 
     protected void executeChildren(ContextWrapper contextWrapper) {
-        executeChildrenFilters = Objects.isNull(listeners) ? Collections.emptyIterator() : listeners.iterator();
-        doExecuteChildren(contextWrapper);
+        doHandle(contextWrapper);
     }
 
     @Override

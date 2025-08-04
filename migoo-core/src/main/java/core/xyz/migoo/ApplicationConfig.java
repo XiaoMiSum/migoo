@@ -32,8 +32,8 @@ import core.xyz.migoo.config.GlobalConfigure;
 import core.xyz.migoo.context.GlobalContext;
 import core.xyz.migoo.extractor.Extractor;
 import core.xyz.migoo.function.Function;
-import core.xyz.migoo.listener.MiGooListener;
-import core.xyz.migoo.listener.ReporterListener;
+import core.xyz.migoo.interceptor.Interceptor;
+import core.xyz.migoo.interceptor.report.ReporterListener;
 import core.xyz.migoo.template.TemplateEngine;
 import core.xyz.migoo.testelement.TestElement;
 import core.xyz.migoo.testelement.configure.ConfigureElement;
@@ -50,7 +50,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Supplier;
 
-import static core.xyz.migoo.testelement.TestElementConstantsInterface.FILTERS;
+import static core.xyz.migoo.testelement.TestElementConstantsInterface.INTERCEPTORS;
 
 /**
  * @author xiaomi
@@ -69,11 +69,10 @@ public class ApplicationConfig {
     private static final ReadWriteLock FUNCTION_KEY_MAP_LOCK = new ReentrantReadWriteLock(false);
     private static final ReadWriteLock RULE_KEY_MAP_LOCK = new ReentrantReadWriteLock(false);
     private static final ReadWriteLock JSON_INTERCEPTOR_KEY_MAP_LOCK = new ReentrantReadWriteLock(false);
-    private static final ReadWriteLock REPORT_FILTERS_LOCK = new ReentrantReadWriteLock(false);
-    private static final ReadWriteLock TEST_FILTER_KEY_MAP_LOCK = new ReentrantReadWriteLock(false);
+    private static final ReadWriteLock REPORT_LISTENER_LOCK = new ReentrantReadWriteLock(false);
+    private static final ReadWriteLock TEST_INTERCEPTOR_KEY_MAP_LOCK = new ReentrantReadWriteLock(false);
     private static final ReadWriteLock globalContextLock = new ReentrantReadWriteLock(false);
     private static final ReadWriteLock TEMPLATE_ENGINE_LIST_LOCK = new ReentrantReadWriteLock(false);
-    private static final ReadWriteLock RUN_IN_TEST_FRAMEWORK_SUPPORT_LOCK = new ReentrantReadWriteLock(false);
 
     private static Map<String, Class<? extends TestElement>> TEST_ELEMENT_KEY_MAP;
     private static Map<String, Class<? extends ConfigureElement>> CONFIG_ELEMENT_KEY_MAP;
@@ -83,13 +82,11 @@ public class ApplicationConfig {
     private static Map<String, Class<? extends Extractor>> EXTRACTOR_KEY_MAP;
     private static Map<String, Function> FUNCTION_KEY_MAP;
     private static Map<String, Rule> RULE_KEY_MAP;
-    private static List<? extends ReporterListener> REPORT_FILTERS;
-    private static Map<String, Class<? extends MiGooListener>> TEST_FILTER_KEY_MAP;
+    private static List<? extends ReporterListener> REPORT_LISTENERS;
+    private static Map<String, Class<? extends Interceptor>> TEST_INTERCEPTOR_KEY_MAP;
     private static Map<Class<?>, JSONInterceptor> JSON_INTERCEPTOR_KEY_MAP;
     private static GlobalContext globalContext;
     private static List<Class<? extends TemplateEngine>> TEMPLATE_ENGINE_LIST;
-    private static Boolean RUN_IN_TEST_FRAMEWORK_SUPPORT;
-
 
     public static Map<String, Class<? extends TestElement>> getTestElementKeyMap() {
         return getDataMap(TEST_ELEMENT_KEY_MAP_LOCK,
@@ -183,22 +180,22 @@ public class ApplicationConfig {
         );
     }
 
-    public static Map<String, Class<? extends MiGooListener>> getTestFilterKeyMap() {
-        return getDataMap(TEST_FILTER_KEY_MAP_LOCK,
-                () -> ApplicationConfig.TEST_FILTER_KEY_MAP,
+    public static Map<String, Class<? extends Interceptor>> getTestInterceptorKeyMap() {
+        return getDataMap(TEST_INTERCEPTOR_KEY_MAP_LOCK,
+                () -> ApplicationConfig.TEST_INTERCEPTOR_KEY_MAP,
                 () -> {
-                    ApplicationConfig.TEST_FILTER_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(MiGooListener.class);
-                    return ApplicationConfig.TEST_FILTER_KEY_MAP;
+                    ApplicationConfig.TEST_INTERCEPTOR_KEY_MAP = MiGooServiceLoader.loadAsMapBySPI(Interceptor.class);
+                    return ApplicationConfig.TEST_INTERCEPTOR_KEY_MAP;
                 }
         );
     }
 
-    public static List<? extends ReporterListener> getReportFilters() {
-        return getDataMap(REPORT_FILTERS_LOCK,
-                () -> ApplicationConfig.REPORT_FILTERS,
+    public static List<? extends ReporterListener> getReporterListeners() {
+        return getDataMap(REPORT_LISTENER_LOCK,
+                () -> ApplicationConfig.REPORT_LISTENERS,
                 () -> {
-                    ApplicationConfig.REPORT_FILTERS = MiGooServiceLoader.loadAsInstanceListBySPI(ReporterListener.class);
-                    return ApplicationConfig.REPORT_FILTERS;
+                    ApplicationConfig.REPORT_LISTENERS = MiGooServiceLoader.loadAsInstanceListBySPI(ReporterListener.class);
+                    return ApplicationConfig.REPORT_LISTENERS;
                 }
         );
     }
@@ -209,8 +206,8 @@ public class ApplicationConfig {
                 () -> {
                     ApplicationConfig.globalContext = new GlobalContext(new GlobalConfigure());
                     FilterConfigureItem<ReporterListener> items = new FilterConfigureItem<>();
-                    items.addAll(getReportFilters());
-                    ApplicationConfig.globalContext.getConfigGroup().put(FILTERS, items);
+                    items.addAll(getReporterListeners());
+                    ApplicationConfig.globalContext.getConfigGroup().put(INTERCEPTORS, items);
                     return ApplicationConfig.globalContext;
                 }
         );
@@ -223,20 +220,6 @@ public class ApplicationConfig {
                     ApplicationConfig.TEMPLATE_ENGINE_LIST = MiGooServiceLoader.loadAsListBySPI(TemplateEngine.class);
                     return ApplicationConfig.TEMPLATE_ENGINE_LIST;
                 }
-        );
-    }
-
-    public static boolean isRunInTestFrameworkSupport() {
-        return getDataMap(RUN_IN_TEST_FRAMEWORK_SUPPORT_LOCK,
-                () -> ApplicationConfig.RUN_IN_TEST_FRAMEWORK_SUPPORT,
-                () -> Objects.nonNull(ApplicationConfig.RUN_IN_TEST_FRAMEWORK_SUPPORT) && ApplicationConfig.RUN_IN_TEST_FRAMEWORK_SUPPORT
-        );
-    }
-
-    public static void setRunInTestFrameworkSupport() {
-        getDataMap(RUN_IN_TEST_FRAMEWORK_SUPPORT_LOCK,
-                () -> ApplicationConfig.RUN_IN_TEST_FRAMEWORK_SUPPORT,
-                () -> ApplicationConfig.RUN_IN_TEST_FRAMEWORK_SUPPORT = true
         );
     }
 

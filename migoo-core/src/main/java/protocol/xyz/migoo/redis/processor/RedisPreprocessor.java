@@ -77,8 +77,6 @@ public class RedisPreprocessor extends AbstractProcessor<RedisPreprocessor, Redi
             var command = runtime.getConfig().getCommand();
             var response = jedis.sendCommand(Protocol.Command.valueOf(command), runtime.getConfig().getSend().split(","));
             bytes = Utils.toBytes(response);
-        } catch (Exception e) {
-            result.setTrack(e);
         } finally {
             result.sampleEnd();
         }

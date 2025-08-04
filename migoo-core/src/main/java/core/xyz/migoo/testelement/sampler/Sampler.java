@@ -27,7 +27,7 @@
  */
 package core.xyz.migoo.testelement.sampler;
 
-import core.xyz.migoo.report.Result;
+import core.xyz.migoo.Result;
 import core.xyz.migoo.testelement.TestElement;
 
 /**

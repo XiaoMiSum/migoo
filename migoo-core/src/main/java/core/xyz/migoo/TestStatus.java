@@ -25,20 +25,28 @@
 
 package core.xyz.migoo;
 
+import io.qameta.allure.model.Status;
+
 /**
  * 测试状态，当前仅在前后置处理器结果中用到
  */
 public enum TestStatus {
 
-    disabled,
-    passed,
-    failed,
-    broken,
-    skipped;
 
+    //      FAILED("failed"),
+    //    BROKEN("broken"),
+    //    PASSED("passed"),
+    //    SKIPPED("skipped");
+    disabled(Status.SKIPPED),
+    passed(Status.PASSED),
+    failed(Status.FAILED),
+    broken(Status.BROKEN),
+    skipped(Status.SKIPPED);
 
-    TestStatus() {
+    private final Status allureStatus;
 
+    TestStatus(Status allureStatus) {
+        this.allureStatus = allureStatus;
     }
 
     public boolean isPassed() {
@@ -62,4 +70,7 @@ public enum TestStatus {
     }
 
 
+    public Status getAllureStatus() {
+        return allureStatus;
+    }
 }

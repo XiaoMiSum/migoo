@@ -67,21 +67,34 @@ public abstract class AbstractExtractor implements Extractor, ExtractorConstants
 
     @Override
     public void process(ContextWrapper context) {
-        if (context.getTestResult() instanceof SampleResult result) {
-            var res = StringUtils.isBlank(result.getResponse().bytesAsString()) ? broken() : extract(result);
-            result.addExtractor(res);
-            if (TestStatus.passed.equals(res.getStatus())) {
-                context.getLocalVariablesWrapper().put(refName, res.getValue());
-                return;
-            }
-            if (TestStatus.failed.equals(res.getStatus()) && defaultValue != null) {
-                res.setStatus(TestStatus.passed);
-                context.getLocalVariablesWrapper().put(refName, defaultValue);
-            }
-            if (!TestStatus.passed.equals(res.getStatus())) {
-                context.getTestResult().setStatus(res.getStatus());
-            }
+        if (!context.getTestResult().getStatus().isPassed()) {
+            // 非migoo-testng 框架下测试失败不会抛出异常，取样步骤结果失败，无需执行验证器
             return;
+        }
+        if (context.getTestResult() instanceof SampleResult result) {
+            try {
+                var res = StringUtils.isBlank(result.getResponse().bytesAsString()) ? broken() : extract(result);
+                if (TestStatus.passed.equals(res.getStatus())) {
+                    context.getLocalVariablesWrapper().put(refName, res.getValue());
+                    return;
+                }
+                if (TestStatus.failed.equals(res.getStatus()) && defaultValue != null) {
+                    res.setStatus(TestStatus.passed);
+                    context.getLocalVariablesWrapper().put(refName, defaultValue);
+                }
+                if (res.getStatus().isBroken() || res.getStatus().isFailed()) {
+                    throw new RuntimeException(res.getMessage(), res.getException());
+                }
+                return;
+            } catch (Exception e) {
+                if (defaultValue != null) {
+                    // 提取发生异常，且设置了默认值，则使用默认值
+                    context.getLocalVariablesWrapper().put(refName, defaultValue);
+                    return;
+                }
+                throw new RuntimeException(e);
+            }
+
         }
         throw new RuntimeException("不支持提取的测试组件: " + context.getTestElement().getClass());
     }

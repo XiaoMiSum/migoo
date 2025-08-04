@@ -77,13 +77,13 @@ public abstract class ProcessorObjectReader implements ObjectReader<Processor> {
         var id = elementMap.remove(ID);
         var title = elementMap.remove(TITLE);
         var disabled = elementMap.remove(DISABLED);
-        var filters = elementMap.remove(FILTERS);
+        var interceptors = elementMap.remove(INTERCEPTORS);
         var metadata = elementMap.remove(METADATA);
         var extractors = elementMap.remove(EXTRACTORS);
         var config = new JSONObject(elementMap);
         // 清空當前MAP
         elementMap.clear();
         // 重新設置標準化處理器配置
-        elementMap.putAll(JSONObject.of(TEST_CLASS, key, ID, id, TITLE, title, DISABLED, disabled, FILTERS, filters, CONFIG, config, METADATA, metadata, EXTRACTORS, extractors));
+        elementMap.putAll(JSONObject.of(TEST_CLASS, key, ID, id, TITLE, title, DISABLED, disabled, INTERCEPTORS, interceptors, CONFIG, config, METADATA, metadata, EXTRACTORS, extractors));
     }
 }

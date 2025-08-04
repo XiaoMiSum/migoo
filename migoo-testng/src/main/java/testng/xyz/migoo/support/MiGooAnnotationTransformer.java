@@ -30,6 +30,7 @@ package testng.xyz.migoo.support;
 
 import org.testng.IAnnotationTransformer;
 import org.testng.annotations.ITestAnnotation;
+import org.testng.util.Strings;
 import testng.xyz.migoo.support.annotation.AnnotationUtils;
 import testng.xyz.migoo.support.annotation.Datasource;
 import testng.xyz.migoo.support.dataprovider.MiGooDatasource;
@@ -54,7 +55,7 @@ public class MiGooAnnotationTransformer implements IAnnotationTransformer {
             return;
         }
         Datasource datasource = AnnotationUtils.getDatasource(testMethod);
-        if (Objects.nonNull(datasource)) {
+        if (Objects.nonNull(datasource) && Strings.isNotNullAndNotEmpty(datasource.value())) {
             annotation.setDataProviderClass(MiGooDatasource.class);
             annotation.setDataProvider(datasource.parallel() ? DATASOURCE_PROVIDER_PARALLEL : DATASOURCE_PROVIDER);
         }

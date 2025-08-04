@@ -27,10 +27,10 @@ package core.xyz.migoo.context;
 
 
 import core.xyz.migoo.ApplicationConfig;
+import core.xyz.migoo.Result;
 import core.xyz.migoo.SessionRunner;
 import core.xyz.migoo.config.ConfigureGroup;
 import core.xyz.migoo.context.variables.*;
-import core.xyz.migoo.report.Result;
 import core.xyz.migoo.template.DefaultTemplateEngine;
 import core.xyz.migoo.template.TemplateEngine;
 import core.xyz.migoo.testelement.TestElement;

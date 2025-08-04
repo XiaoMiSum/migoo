@@ -103,7 +103,7 @@ public class ActivePostprocessor extends AbstractProcessor<ActivePostprocessor, 
             var textMessage = session.createTextMessage(message);
             producer.send(textMessage);
         } catch (Exception e) {
-            result.setTrack(e);
+            throw new RuntimeException(e);
         } finally {
             result.sampleEnd();
             this.request = RealActiveRequest.build(runtime.getConfig(), message);

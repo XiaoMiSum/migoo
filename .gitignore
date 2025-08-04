@@ -3,9 +3,16 @@
 */.idea/
 *.iml
 */*.iml
+*/*/*.iml
 /reports/
+*/reports/
+*/*/reports/
 /out-put/
 */out-put/
+*/*/out-put/
+/allure-results/
+*/allure-results/
+*/*/allure-results/
 /target
 */target
 **/target
@@ -13,3 +20,4 @@
 */doc
 .DS_Store
 */.DS_Store
+*/*/.DS_Store

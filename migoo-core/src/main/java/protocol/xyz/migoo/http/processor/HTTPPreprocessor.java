@@ -82,7 +82,7 @@ public class HTTPPreprocessor extends AbstractProcessor<HTTPPreprocessor, HTTPCo
             result.sampleStart();
             response = request.execute();
         } catch (Exception e) {
-            result.setTrack(e);
+            throw new RuntimeException(e);
         } finally {
             result.sampleEnd();
         }
