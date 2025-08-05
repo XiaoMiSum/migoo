@@ -32,13 +32,18 @@
     <parent>
         <artifactId>migoo-parent</artifactId>
         <groupId>xyz.migoo</groupId>
-        <version>5.2.1</version>
+        <version>6.0.0</version>
     </parent>
 
     <artifactId>migoo-dubbo</artifactId>
     <name>${project.artifactId}</name>
     <description>dubbo sampler for migoo</description>
 
+    <distributionManagement>
+        <relocation>
+            <groupId>io.github.xiaomisum</groupId>
+        </relocation>
+    </distributionManagement>
 
     <dependencies>
 
