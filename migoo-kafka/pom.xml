@@ -34,7 +34,7 @@
     <parent>
         <artifactId>migoo-parent</artifactId>
         <groupId>xyz.migoo</groupId>
-        <version>6.0.0</version>
+        <version>6.0.0-bate1</version>
     </parent>
 
     <name>${project.artifactId}</name>
@@ -43,6 +43,7 @@
     <distributionManagement>
         <relocation>
             <groupId>io.github.xiaomisum</groupId>
+            <artifactId>ryze-kafka</artifactId>
         </relocation>
     </distributionManagement>
 
