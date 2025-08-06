@@ -1,6 +1,6 @@
 <!-- Add banner here -->
 
-# MiGoo(米果)
+# Ryze(瑞兹)
 
 <!-- Add buttons here -->
 
@@ -11,7 +11,7 @@
 
 <!-- Describe your project in brief -->
 
-migoo 是一个Java语言开发的测试框架，适用于HTTP(S)、Dubbo、JDBC、Redis等协议或工具的测试。
+Ryze 是一个Java语言开发的测试框架，适用于HTTP(S)、Dubbo、JDBC、Redis等协议或工具的测试。
 
 **核心特性**
 
@@ -27,7 +27,7 @@ migoo 是一个Java语言开发的测试框架，适用于HTTP(S)、Dubbo、JDBC
 
 # 目录
 
-- [项目简介](#MiGoo(米果))
+- [项目简介](#Ryze(瑞兹))
 - [目录](#目录)
 - [使用](#使用)
 - [开发](#开发)
@@ -38,41 +38,16 @@ migoo 是一个Java语言开发的测试框架，适用于HTTP(S)、Dubbo、JDBC
 
 [(Back to top)](#目录)
 
-方式一：创建Java项目，在pom.xml中引用
+创建Java项目，在pom.xml中引用
 
 ``` xml
 <!-- https://mvnrepository.com/artifact/xyz.migoo/migoo -->
 <dependency>
-    <groupId>xyz.migoo</groupId>
-    <artifactId>migoo</artifactId>
+    <groupId>io.github.xiaomisum</groupId>
+    <artifactId>ryze</artifactId>
     <version>${version}</version>
 </dependency>
 ```
-
-在Main方法中调用 MiGoo
-
-``` java
-public static void main(String[] args) {
-    Result result = MiGoo.start("classpath:example/demo.yaml");
-}
-``` 
-
-方式二：使用命令行方式（ [点击下载](https://github.com/XiaoMiSum/migoo/releases) ）
-
-mac、linux下可运行 migoo.sh
-
-windows下可运行 migoo.bat
-
-``` shell
-options:
-        -f: 测试用例文件路径，如：/user/migoo/testcase.yaml
-        -r: 测试报告保存路径，如：/user/migoo/report
-        -h2m: har文件路径，将指定的har文件转换为标准Http取样器文件
-        -p2m: postman文件路径，将指定的postman文件(v2.1)转换为标准Http取样器文件
-        -h: 帮助信息
-        
-        example: ./migoo.sh -f ./example/example_project.yaml -r ./report
-``` 
 
 # 使用手册
 
@@ -84,11 +59,7 @@ options:
 
 [(Back to top)](#目录)
 
-sampler开发：请参考 protocol.xyz.migoo包
 
-function开发：请参考 function.xyz.migoo包
-
-断言\提取器等组件开发：请参考 components.xyz.migoo包
 
 ### 鸣谢
 
