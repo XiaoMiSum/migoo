@@ -29,8 +29,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>xyz.migoo</groupId>
-    <artifactId>migoo-parent</artifactId>
+    <groupId>io.github.xiaomisum</groupId>
+    <artifactId>ryze-parent</artifactId>
     <packaging>pom</packaging>
 
     <version>5.2.1</version>
@@ -108,12 +108,12 @@
     </properties>
 
     <modules>
-        <module>migoo</module>
-        <module>migoo-active</module>
-        <module>migoo-dubbo</module>
-        <module>migoo-kafka</module>
-        <module>migoo-rabbit</module>
-        <module>migoo-testng</module>
+        <module>ryze</module>
+        <module>ryze-active</module>
+        <module>ryze-dubbo</module>
+        <module>ryze-kafka</module>
+        <module>ryze-rabbit</module>
+        <module>ryze-testng</module>
     </modules>
 
     <dependencyManagement>
@@ -121,13 +121,13 @@
         <dependencies>
             <dependency>
                 <groupId>xyz.migoo</groupId>
-                <artifactId>migoo</artifactId>
+                <artifactId>ryze</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>xyz.migoo</groupId>
-                <artifactId>migoo-testng</artifactId>
+                <artifactId>ryze-testng</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
