@@ -31,6 +31,7 @@ package io.github.xiaomisum.ryze.protocol.http.processor;
 import com.alibaba.fastjson2.annotation.JSONField;
 import io.github.xiaomisum.ryze.core.builder.DefaultExtractorsBuilder;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
+import io.github.xiaomisum.ryze.core.testelement.KW;
 import io.github.xiaomisum.ryze.core.testelement.processor.AbstractProcessor;
 import io.github.xiaomisum.ryze.core.testelement.processor.Postprocessor;
 import io.github.xiaomisum.ryze.core.testelement.sampler.DefaultSampleResult;

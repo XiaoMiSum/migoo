@@ -34,6 +34,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.reader.ObjectReader;
 import io.github.xiaomisum.ryze.core.ApplicationConfig;
+import io.github.xiaomisum.ryze.core.testelement.TestElementConstantsInterface;
 import io.github.xiaomisum.ryze.core.testelement.processor.Processor;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -41,11 +42,12 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
 
+
 /**
  * @author xiaomi
  * Created at 2025/7/19 14:14
  */
-public abstract class ProcessorObjectReader implements ObjectReader<Processor> {
+public abstract class ProcessorObjectReader implements ObjectReader<Processor>, TestElementConstantsInterface {
     @Override
     public Processor readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
         var testElementMap = jsonReader.readObject();

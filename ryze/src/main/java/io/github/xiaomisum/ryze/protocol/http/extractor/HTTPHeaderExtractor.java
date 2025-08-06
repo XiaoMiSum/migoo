@@ -31,6 +31,7 @@ import io.github.xiaomisum.ryze.component.extractor.RegexExtractor;
 import io.github.xiaomisum.ryze.core.TestStatus;
 import io.github.xiaomisum.ryze.core.extractor.AbstractExtractor;
 import io.github.xiaomisum.ryze.core.extractor.ExtractResult;
+import io.github.xiaomisum.ryze.core.testelement.KW;
 import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
 import io.github.xiaomisum.ryze.protocol.http.RealHTTPRealResponse;
 
