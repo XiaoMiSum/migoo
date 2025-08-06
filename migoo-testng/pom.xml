@@ -46,7 +46,7 @@
 
         <dependency>
             <groupId>xyz.migoo</groupId>
-            <artifactId>migoo-core</artifactId>
+            <artifactId>migoo</artifactId>
             <scope>provided</scope>
         </dependency>
 

@@ -26,7 +26,7 @@
 #
 #
 
-testng.xyz.migoo.support.MiGooDatasourceFilterInterceptor
-testng.xyz.migoo.support.MiGooAnnotationTransformer
-testng.xyz.migoo.support.MiGooInvokedMethodListener
-testng.xyz.migoo.support.MiGooTestcaseAutoRunListener
+io.github.xiaomisum.ryze.support.testng.RyzeDatasourceFilterInterceptor
+io.github.xiaomisum.ryze.support.testng.RyzeAnnotationTransformer
+io.github.xiaomisum.ryze.support.testng.RyzeInvokedMethodListener
+io.github.xiaomisum.ryze.support.testng.RyzeTestcaseAutoRunListener

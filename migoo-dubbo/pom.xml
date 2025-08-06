@@ -45,7 +45,7 @@
         <!-- 不传递此组件的migoo依赖，需求方自行引入migoo 或 migoo-core -->
         <dependency>
             <groupId>xyz.migoo</groupId>
-            <artifactId>migoo-core</artifactId>
+            <artifactId>migoo</artifactId>
             <scope>provided</scope>
         </dependency>
 

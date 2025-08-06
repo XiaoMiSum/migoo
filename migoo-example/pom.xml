@@ -131,7 +131,7 @@
 
             <dependency>
                 <groupId>xyz.migoo</groupId>
-                <artifactId>migoo-activemq</artifactId>
+                <artifactId>migoo-active</artifactId>
                 <version>${migoo.version}</version>
             </dependency>
 

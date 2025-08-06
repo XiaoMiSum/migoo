@@ -92,6 +92,8 @@
         <slf4j-api.version>2.0.17</slf4j-api.version>
         <logback.version>1.5.18</logback.version>
         <kryo.version>5.6.2</kryo.version>
+        <freemarker.version>2.3.34</freemarker.version>
+        <caffeine.version>3.1.8</caffeine.version>
 
         <clean.version>3.4.0</clean.version>
         <compiler.version>3.13.0</compiler.version>
@@ -105,14 +107,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <!-- todo 创建 migoo-testng  migoo-junit模块用于支持测试框架集成 -->
     <modules>
         <module>migoo</module>
-        <module>migoo-core</module>
-        <module>migoo-activemq</module>
+        <module>migoo-active</module>
         <module>migoo-dubbo</module>
         <module>migoo-kafka</module>
-        <module>migoo-rabbitmq</module>
+        <module>migoo-rabbit</module>
         <module>migoo-testng</module>
     </modules>
 
@@ -121,19 +121,13 @@
         <dependencies>
             <dependency>
                 <groupId>xyz.migoo</groupId>
-                <artifactId>migoo-core</artifactId>
+                <artifactId>migoo</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>xyz.migoo</groupId>
                 <artifactId>migoo-testng</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>xyz.migoo</groupId>
-                <artifactId>migoo</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -303,6 +297,18 @@
                 <groupId>io.leangen.geantyref</groupId>
                 <artifactId>geantyref</artifactId>
                 <version>${geantyref.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.freemarker</groupId>
+                <artifactId>freemarker-gae</artifactId>
+                <version>${freemarker.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>${caffeine.version}</version>
             </dependency>
         </dependencies>
 

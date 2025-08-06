@@ -1,9 +1,0 @@
-version: ${project.version}
-report:
-  enable: true
-  theme: DARK
-  timeline:
-    enabled: false
-  offline: true
-  output: './out-put'
-  class: xyz.report.StandardReporter
