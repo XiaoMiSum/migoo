@@ -25,6 +25,8 @@
 
 package io.github.xiaomisum.ryze.function;
 
+import io.github.xiaomisum.ryze.core.context.ContextWrapper;
+import io.github.xiaomisum.ryze.core.function.Args;
 import io.github.xiaomisum.ryze.core.function.Function;
 
 import java.util.UUID;
@@ -34,12 +36,17 @@ import java.util.UUID;
  */
 public class Uuid implements Function {
 
+    @Override
+    public String key() {
+        return "uuid";
+    }
+
     /**
      * 返回一个UUID，无参数
      */
+
     @Override
-    public String apply(Args args) {
+    public Object execute(ContextWrapper context, Args args) {
         return UUID.randomUUID().toString();
     }
-
 }

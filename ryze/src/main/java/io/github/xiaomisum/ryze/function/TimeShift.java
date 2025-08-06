@@ -25,6 +25,8 @@
 
 package io.github.xiaomisum.ryze.function;
 
+import io.github.xiaomisum.ryze.core.context.ContextWrapper;
+import io.github.xiaomisum.ryze.core.function.Args;
 import io.github.xiaomisum.ryze.core.function.Function;
 import org.apache.commons.lang3.StringUtils;
 
@@ -40,6 +42,11 @@ import java.util.Locale;
 public class TimeShift implements Function {
 
     private final ZoneId systemDefaultZoneId = ZoneId.systemDefault();
+
+    @Override
+    public String key() {
+        return "timeShift";
+    }
 
     /**
      * 对时间进行操作，支持两个参数，且两个参数都允许为空
@@ -57,16 +64,7 @@ public class TimeShift implements Function {
      * <p>
      * 当两个参数都未传递时，则返回当前时间戳
      */
-    @Override
-    public String apply(Args args) {
-        return args instanceof KwArgs kwArgs ? execute(kwArgs) : execute((LsArgs) args);
-    }
-
-    private String execute(KwArgs args) {
-        return execute(args.getString("format"), args.getString("amount"));
-    }
-
-    private String execute(LsArgs args) {
+    public String execute(ContextWrapper context, Args args) {
         return execute(args.getString(0), args.getString(1));
     }
 

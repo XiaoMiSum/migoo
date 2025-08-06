@@ -25,6 +25,8 @@
 
 package io.github.xiaomisum.ryze.function;
 
+import io.github.xiaomisum.ryze.core.context.ContextWrapper;
+import io.github.xiaomisum.ryze.core.function.Args;
 import io.github.xiaomisum.ryze.core.function.Function;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +36,11 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class RandomString implements Function {
 
+    @Override
+    public String key() {
+        return "randomString";
+    }
+
     /**
      * 获取随机字符串，支持三个参数，且三个参数都允许为空
      * 参数：
@@ -41,29 +48,15 @@ public class RandomString implements Function {
      * string: 基础字符串，允许为空，如果传了该参数，则从该参数中获取字符作为种子生成随机字符串
      * upper: 是否将生成的字符串转为大写，允许为空，默认：false
      */
-    @Override
-    public String apply(Args args) {
-        return args instanceof KwArgs kwArgs ? execute(kwArgs) : execute((LsArgs) args);
-    }
-
-    private String execute(KwArgs args) {
-        var length = args.getIntValue("length");
-        var charsToUse = args.getString("string");
-        var upper = args.getBooleanValue("upper");
-        return execute(length, charsToUse, upper);
-    }
-
-    private String execute(LsArgs args) {
+    public String execute(ContextWrapper context, Args args) {
+        checkMethodArgCount(args, 0, 3);
         var length = args.getString(0).isEmpty() ? 10 : args.getIntValue(0);
         var charsToUse = args.getString(1);
         var upper = args.getBooleanValue(2);
-        return execute(length, charsToUse, upper);
-    }
-
-    private String execute(int length, String charsToUse, boolean upper) {
         length = length == 0 ? 10 : length;
         var randomString = StringUtils.isBlank(charsToUse) ? RandomStringUtils.secure().nextAlphabetic(length)
                 : RandomStringUtils.secure().next(length, charsToUse);
         return upper ? randomString.toUpperCase() : randomString;
     }
+
 }

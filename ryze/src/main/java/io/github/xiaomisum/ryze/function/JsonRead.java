@@ -27,6 +27,8 @@ package io.github.xiaomisum.ryze.function;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONPath;
+import io.github.xiaomisum.ryze.core.context.ContextWrapper;
+import io.github.xiaomisum.ryze.core.function.Args;
 import io.github.xiaomisum.ryze.core.function.Function;
 import org.apache.commons.lang3.StringUtils;
 
@@ -38,6 +40,11 @@ import java.util.Objects;
  */
 public class JsonRead implements Function {
 
+    @Override
+    public String key() {
+        return "jsonRead";
+    }
+    
     /**
      * 通过 json path 读取数据
      * 参数顺序
@@ -48,18 +55,8 @@ public class JsonRead implements Function {
      * @return jsonpath对应数据
      */
     @Override
-    public Object apply(Args args) {
-        if (args.isEmpty() || args.size() < 2) {
-            throw new IllegalArgumentException("args is empty or invalid args. require args 'json','path'");
-        }
-        return args instanceof KwArgs kwArgs ? execute(kwArgs) : execute((LsArgs) args);
-    }
-
-    private Object execute(KwArgs args) {
-        return execute(args.get("json"), args.getString("path"));
-    }
-
-    private Object execute(LsArgs args) {
+    public Object execute(ContextWrapper context, Args args) {
+        checkMethodArgCount(args, 2, 2);
         return execute(args.getFirst(), args.getString(1));
     }
 

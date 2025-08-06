@@ -30,9 +30,9 @@ import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 import freemarker.template.utility.DeepUnwrap;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
+import io.github.xiaomisum.ryze.core.function.Args;
 import io.github.xiaomisum.ryze.core.function.Function;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,7 +42,7 @@ public record FreeMarkerFunctionAdapter(ContextWrapper context, Function functio
 
     @SuppressWarnings("all")
     public Object exec(List args) {
-        List<Object> list = new ArrayList<>();
+        Args list = new Args();
         args.forEach(item -> {
             try {
                 // 将 TemplateModel 包装类对象解包为模板中传递的原始 Object 对象

@@ -25,6 +25,8 @@
 
 package io.github.xiaomisum.ryze.function;
 
+import io.github.xiaomisum.ryze.core.context.ContextWrapper;
+import io.github.xiaomisum.ryze.core.function.Args;
 import io.github.xiaomisum.ryze.core.function.Function;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.lang3.StringUtils;
@@ -43,25 +45,26 @@ public class GoogleAuthCode implements Function {
     private static final int SCRATCH_CODE_LENGTH = 8;
     private static final int BYTES_PER_SCRATCH_CODE = 4;
 
+    @Override
+    public String key() {
+        return "google2fa";
+    }
+
     /**
      * 获取谷歌验证码，支持一个参数，且不允许为空
      * 参数顺序：
      * secret: 谷歌验证器安全码，非空，通过该安全码生成谷歌验证码
      */
+
     @Override
-    public String apply(Args args) {
-        if (args.isEmpty()) {
-            throw new IllegalArgumentException("secretKey con not be null");
+    public Object execute(ContextWrapper context, Args args) {
+        checkMethodArgCount(args, 1, 1);
+        if (StringUtils.isBlank(args.getFirstString())) {
+            throw new IllegalArgumentException("Google 2FA SecretKey 不能为空");
         }
-        return execute(args instanceof LsArgs lsArgs ? lsArgs.getString(0) : ((KwArgs) args).getString("secret"));
+        return generateVerifyCode(args.getFirstString());
     }
 
-    private String execute(String secret) {
-        if (StringUtils.isBlank(secret)) {
-            throw new IllegalArgumentException("secretKey con not be null");
-        }
-        return generateVerifyCode(secret);
-    }
 
     private String generateVerifyCode(String secretKey) {
         var t = (System.currentTimeMillis() / 1000L) / 30L;
@@ -97,4 +100,5 @@ public class GoogleAuthCode implements Function {
         truncatedHash %= 1000000;
         return truncatedHash;
     }
+
 }

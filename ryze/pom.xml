@@ -37,7 +37,7 @@
 
     <artifactId>ryze</artifactId>
     <name>${project.artifactId}</name>
-    <description>core of migoo</description>
+    <description>ryze 测试框架</description>
 
     <dependencies>
 

@@ -25,6 +25,8 @@
 
 package io.github.xiaomisum.ryze.function;
 
+import io.github.xiaomisum.ryze.core.context.ContextWrapper;
+import io.github.xiaomisum.ryze.core.function.Args;
 import io.github.xiaomisum.ryze.core.function.Function;
 import org.apache.commons.lang3.StringUtils;
 
@@ -36,21 +38,20 @@ import java.nio.charset.StandardCharsets;
  */
 public class UrlEncode implements Function {
 
+    @Override
+    public String key() {
+        return "urlEncode";
+    }
+
     /**
      * 将传入的字符串进行 url encode，支持一个参数
      * 参数：
      * content: 待url encode的字符串，非空
      */
     @Override
-    public String apply(Args args) {
-        if (args.isEmpty()) {
-            throw new IllegalArgumentException("content con not be null");
-        }
-        return execute(args instanceof KwArgs kwArgs ? execute(kwArgs.getString("content"))
-                : execute(((LsArgs) args).getString(0)));
-    }
-
-    public String execute(String content) {
+    public String execute(ContextWrapper context, Args args) {
+        checkMethodArgCount(args, 1, 1);
+        String content = args.getFirstString();
         if (StringUtils.isBlank(content)) {
             throw new IllegalArgumentException("content con not be null");
         }

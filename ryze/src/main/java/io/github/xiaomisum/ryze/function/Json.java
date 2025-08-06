@@ -26,27 +26,30 @@
 package io.github.xiaomisum.ryze.function;
 
 import com.alibaba.fastjson2.JSONObject;
+import io.github.xiaomisum.ryze.core.context.ContextWrapper;
+import io.github.xiaomisum.ryze.core.function.Args;
 import io.github.xiaomisum.ryze.core.function.Function;
 
 /**
  * @author xiaomi
  */
 public class Json implements Function {
+    
+    @Override
+    public String key() {
+        return "json";
+    }
 
     /**
      * 将传入的参数转换为JSONObject
      */
     @Override
-    public JSONObject apply(Args args) {
+    public Object execute(ContextWrapper context, Args args) {
         if (args.isEmpty()) {
             throw new IllegalArgumentException("parameters con not be null");
         }
-        if (args instanceof KwArgs kwArgs) {
-            return kwArgs;
-        }
-        LsArgs lsArgs = (LsArgs) args;
         JSONObject json = new JSONObject();
-        lsArgs.forEach(item -> {
+        args.forEach(item -> {
             String[] arr = ((String) item).split("=");
             json.put(arr[0], arr[1]);
         });

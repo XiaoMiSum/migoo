@@ -25,6 +25,8 @@
 
 package io.github.xiaomisum.ryze.function;
 
+import io.github.xiaomisum.ryze.core.context.ContextWrapper;
+import io.github.xiaomisum.ryze.core.function.Args;
 import io.github.xiaomisum.ryze.core.function.Function;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +40,10 @@ import java.security.NoSuchAlgorithmException;
  */
 public class Digest implements Function {
 
+    @Override
+    public String key() {
+        return "digest";
+    }
 
     /**
      * 获取信息摘要，通常为MD5，支持四个参数
@@ -48,31 +54,18 @@ public class Digest implements Function {
      * upper: 是否将结果转为大写，允许为空，默认 false
      */
     @Override
-    public String apply(Args args) {
-        if (args.isEmpty()) {
-            throw new IllegalArgumentException("parameters con not be null");
-        }
-        return args instanceof KwArgs kwArgs ? execute(kwArgs) : execute((LsArgs) args);
-    }
-
-    private String execute(KwArgs args) {
-        var algorithm = args.getString("algorithm");
-        var content = args.getString("content");
-        var salt = args.getString("salt");
-        var upper = args.getBooleanValue("upper");
-        return hex(algorithm, content, salt, upper);
-    }
-
-    private String execute(LsArgs args) {
+    public Object execute(ContextWrapper context, Args args) {
+        checkMethodArgCount(args, 1, 4);
         if (args.size() == 1) {
             args.addFirst("md5");
         }
-        var algorithm = args.getString(0).trim();
-        var content = args.getString(1);
+        var algorithm = (String) args.getFirst();
+        var content = (String) args.get(1);
         var salt = args.getString(2);
         var upper = args.getBooleanValue(3);
         return hex(algorithm, content, salt, upper);
     }
+
 
     private String hex(String algorithm, String content, String salt, boolean upper) {
         if (StringUtils.isBlank(content)) {
@@ -91,4 +84,5 @@ public class Digest implements Function {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
+
 }

@@ -25,6 +25,8 @@
 
 package io.github.xiaomisum.ryze.function;
 
+import io.github.xiaomisum.ryze.core.context.ContextWrapper;
+import io.github.xiaomisum.ryze.core.function.Args;
 import io.github.xiaomisum.ryze.core.function.Function;
 import org.apache.commons.lang3.StringUtils;
 
@@ -38,6 +40,11 @@ import java.time.format.DateTimeFormatter;
  */
 public class Timestamp implements Function {
 
+    @Override
+    public String key() {
+        return "timestamp";
+    }
+
     /**
      * 获取当前时间，支持一个参数
      * 参数：
@@ -46,18 +53,15 @@ public class Timestamp implements Function {
      * 当格式化参数未传递时，则返回当前时间戳
      */
     @Override
-    public String apply(Args args) {
-        return execute(args instanceof KwArgs kwArgs ? kwArgs.getString("format") : ((LsArgs) args).getString(0));
-    }
-
-
-    public String execute(String format) {
+    public String execute(ContextWrapper context, Args args) {
         var localDateTime = LocalDateTime.now(ZoneId.systemDefault());
+        var format = args.getString(0);
         if (StringUtils.isBlank(format)) {
             var offset = ZoneOffset.systemDefault().getRules().getOffset(localDateTime);
             return String.valueOf(localDateTime.toInstant(offset).toEpochMilli());
         }
         return localDateTime.format(DateTimeFormatter.ofPattern(format));
     }
+
 
 }

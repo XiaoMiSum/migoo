@@ -25,6 +25,8 @@
 
 package io.github.xiaomisum.ryze.function;
 
+import io.github.xiaomisum.ryze.core.context.ContextWrapper;
+import io.github.xiaomisum.ryze.core.function.Args;
 import io.github.xiaomisum.ryze.core.function.Function;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -34,6 +36,11 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class Random implements Function {
 
+    @Override
+    public String key() {
+        return "random";
+    }
+
     /**
      * 生成（伪）随机数，支持一个参数
      * 参数：
@@ -41,16 +48,9 @@ public class Random implements Function {
      * 当传入的bound值小于1或空值时，则不限制返回的数据（可能为正数，也可能为负数）
      */
     @Override
-    public Integer apply(Args args) {
-        if (args instanceof KwArgs kwArgs) {
-            return execute(kwArgs.getIntValue("bound"));
-        }
-        var bound = ((LsArgs) args).getIntValue(0);
-        return execute(bound);
-    }
-
-
-    public Integer execute(int bound) {
+    public Integer execute(ContextWrapper context, Args args) {
+        checkMethodArgCount(args, 0, 1);
+        var bound = args.getIntValue(0);
         var random = ThreadLocalRandom.current();
         return bound > 0 ? random.nextInt(bound) : random.nextInt();
     }

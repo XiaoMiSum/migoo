@@ -25,6 +25,8 @@
 
 package io.github.xiaomisum.ryze.function;
 
+import io.github.xiaomisum.ryze.core.context.ContextWrapper;
+import io.github.xiaomisum.ryze.core.function.Args;
 import io.github.xiaomisum.ryze.core.function.Function;
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,6 +35,11 @@ import java.util.Locale;
 
 public class Faker implements Function {
 
+    @Override
+    public String key() {
+        return "faker";
+    }
+
     /**
      * 通过 Faker库生成假数据，支持2个参数
      * 参数：
@@ -40,24 +47,14 @@ public class Faker implements Function {
      * local: 语言，可控，默认为 zh-CN
      */
     @Override
-    public Object apply(Args args) {
-        return args instanceof KwArgs kwArgs ? execute(kwArgs) : execute((LsArgs) args);
-    }
-
-    public Object execute(KwArgs args) {
-        var locale = args.containsKey("local") ? args.getString("locale") : "zh-CN";
-        return execute(locale, args.getString("key"));
-    }
-
-    public Object execute(LsArgs args) {
-        var locale = args.size() < 2 ? "zh-CN" : args.getLast().toString();
-        return execute(locale, args.getString(0));
-    }
-
-    public Object execute(String locale, String key) {
+    public Object execute(ContextWrapper context, Args args) {
+        checkMethodArgCount(args, 1, 2);
+        var key = args.getString(0);
         if (StringUtils.isBlank(key)) {
-            throw new IllegalArgumentException("key con not be null");
+            throw new IllegalArgumentException("第一个参数不能为空，参考格式： Faker库的ClassName.Method");
         }
+        var locale = args.size() < 2 ? "zh-CN" : args.getLast().toString();
+
         try {
             var faker = new com.github.javafaker.Faker(Locale.of(locale));
             var keys = key.split("\\.");

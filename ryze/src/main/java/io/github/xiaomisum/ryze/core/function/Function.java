@@ -27,19 +27,15 @@ package io.github.xiaomisum.ryze.core.function;
 
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 
-import java.util.List;
-
 /**
  * @author xiaomi
  */
 @SuppressWarnings("all")
 public interface Function {
-
-    // todo 函数实现类要重新实现方法
-
+    
     String key();
 
-    default void checkMethodArgCount(List args, int minCnt, int maxCnt) throws RuntimeException {
+    default void checkMethodArgCount(Args args, int minCnt, int maxCnt) throws RuntimeException {
         if (args.size() < minCnt || args.size() > maxCnt) {
             throw new RuntimeException("函数 " + key() + " 参数数量错误, 期望参数数量为  " + minCnt + " ~ " + maxCnt + ", 实际为 " + args.size());
         }
@@ -51,6 +47,6 @@ public interface Function {
      * @param args 扩展函数参数
      * @return 生成的数据
      */
-    Object execute(ContextWrapper context, List args);
+    Object execute(ContextWrapper context, Args args);
 
 }
