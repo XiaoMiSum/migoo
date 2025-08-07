@@ -57,7 +57,7 @@ public abstract class AbstractConfigureElement<SELF extends AbstractConfigureEle
 
     public R process(ContextWrapper context) {
         if (!initialized) {
-            initialized(context.getSessionRunner());
+            initialized();
         }
         var result = getTestResult();
         doProcess(context);

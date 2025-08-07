@@ -81,6 +81,7 @@ public interface TemplateEngine {
             case Computable<?> computable -> computable.evaluate(context);
             case Map map -> evaluate(context, map);
             case List list -> evaluate(context, list);
+            case null -> null;
             default -> object;
         };
     }

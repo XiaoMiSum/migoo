@@ -49,7 +49,7 @@ import static io.github.xiaomisum.ryze.core.testelement.TestElementConstantsInte
  * @author xiaomi
  * Created at 2025/7/19 12:37
  */
-@SuppressWarnings({"rawtypes"})
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class TestElementObjectReader implements ObjectReader<TestElement> {
 
     @Override
@@ -80,5 +80,6 @@ public class TestElementObjectReader implements ObjectReader<TestElement> {
         }
         throw new JSONException("没有匹配的测试集或取样器, JSON String: " + JSON.toJSONString(elementMap));
     }
+
 
 }

@@ -40,7 +40,7 @@ import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.context.TestRunContext;
 import io.github.xiaomisum.ryze.core.extractor.Extractor;
 import io.github.xiaomisum.ryze.core.interceptor.Handler;
-import io.github.xiaomisum.ryze.core.interceptor.Interceptor;
+import io.github.xiaomisum.ryze.core.interceptor.RyzeInterceptor;
 import io.github.xiaomisum.ryze.core.interceptor.SamplerHandler;
 import io.github.xiaomisum.ryze.core.testelement.AbstractTestElementExecutable;
 import io.github.xiaomisum.ryze.support.Collections;
@@ -148,7 +148,7 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
     /**
      * 请求执行前处理。比如请求数据的表达式计算。
      *
-     * <p>该方法在 {@link Interceptor#preHandle(ContextWrapper, Handler)} 之前调用。
+     * <p>该方法在 {@link RyzeInterceptor#preHandle(ContextWrapper, Handler)} 之前调用。
      */
     protected void handleRequest(ContextWrapper context, R result) {
         // do nothing.
@@ -163,7 +163,7 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
     /**
      * 请求执行后处理。
      *
-     * <p>该方法在 {@link Interceptor#preHandle(ContextWrapper, Handler)} 之后调用。
+     * <p>该方法在 {@link RyzeInterceptor#preHandle(ContextWrapper, Handler)} 之后调用。
      */
     protected void handleResponse(ContextWrapper context, R result) {
         // do nothing.

@@ -47,6 +47,7 @@ public class SessionRunner {
      * 用例执行过程中可用来进行数据存取
      */
     private final Map<String, Object> storage = new HashMap<>();
+    private final Configure configure;
     /**
      * Session 当前执行上下文链
      */
@@ -54,7 +55,8 @@ public class SessionRunner {
     private ContextWrapper context;
     private boolean runInTestFrameworkSupport = false;
 
-    SessionRunner() {
+    SessionRunner(Configure configure) {
+        this.configure = configure;
         initContextChain();
     }
 
@@ -63,7 +65,7 @@ public class SessionRunner {
         if (Objects.nonNull(sessionRunner)) {
             return sessionRunner;
         }
-        sessionRunner = new SessionRunner();
+        sessionRunner = new SessionRunner(Configure.defaultConfigure());
         setSession(sessionRunner);
         return sessionRunner;
     }
@@ -82,12 +84,12 @@ public class SessionRunner {
         HOLDER.set(sessionRunner);
     }
 
-    public static void newSession() {
-        HOLDER.set(new SessionRunner());
+    public static void newSession(Configure configure) {
+        HOLDER.set(new SessionRunner(configure));
     }
 
-    public static void newTestFrameworkSession() {
-        var session = new SessionRunner();
+    public static void newTestFrameworkSession(Configure configure) {
+        var session = new SessionRunner(configure);
         session.runInTestFrameworkSupport = true;
         HOLDER.set(session);
     }
@@ -98,7 +100,7 @@ public class SessionRunner {
 
     private void initContextChain() {
         // 会话上下文（运行用例）
-        contextChain.add(ApplicationConfig.getGlobalContext());
+        contextChain.add(configure.getGlobalContext());
         contextChain.add(sessionContext);
 
         // 会话上下文默认值：添加一个空的变量配置
@@ -170,5 +172,9 @@ public class SessionRunner {
 
     public boolean isRunInTestFrameworkSupport() {
         return runInTestFrameworkSupport;
+    }
+
+    public Configure getConfigure() {
+        return configure;
     }
 }

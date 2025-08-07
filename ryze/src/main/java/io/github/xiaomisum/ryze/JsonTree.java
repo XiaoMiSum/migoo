@@ -52,13 +52,13 @@ public class JsonTree extends JSONObject {
     public JsonTree(JSONObject testcase) {
         replaceExpiredKeys(testcase);
         var json = prepare(testcase);
-        initialize(json, isMiGoo(json));
+        initialize(json, isRyzeTestFramework(json));
     }
 
     private void initialize(JSONObject json, boolean isMiGoo) {
         // 1、先删除 MiGoo组件中的变量，减少一次遍历
         var variables = isMiGoo ? json.remove(VARIABLES) : null;
-        if (isMiGooSuite(json)) {
+        if (isRyzeTestsuite(json)) {
             json.put(TEST_CLASS, "__testsuite__");
         }
         json.forEach((key, value) -> {
@@ -85,7 +85,7 @@ public class JsonTree extends JSONObject {
     }
 
     private JSONObject parse(JSONObject json) {
-        return isMiGoo(json) ? new JsonTree(json) : json;
+        return isRyzeTestFramework(json) ? new JsonTree(json) : json;
     }
 
     private JSONObject prepare(Map<?, ?> object) {
@@ -114,21 +114,20 @@ public class JsonTree extends JSONObject {
         return temp;
     }
 
-
-    private boolean isMiGoo(JSONObject json) {
-        return isMiGooSuite(json) || isMiGooSampler(json);
+    private boolean isRyzeTestFramework(JSONObject json) {
+        return isRyzeTestsuite(json) || isRyzeSampler(json);
     }
 
-    private boolean isMiGooSuite(JSONObject json) {
+    private boolean isRyzeTestsuite(JSONObject json) {
         return ((json.containsKey(CHILDREN) || json.containsKey(CHILD)) && json.containsKey(TITLE));
     }
 
-    private boolean isMiGooSampler(JSONObject json) {
+    private boolean isRyzeSampler(JSONObject json) {
         return json.containsKey(TEST_CLASS);
     }
 
     private void replaceExpiredKeys(JSONObject json) {
-        if (!isMiGoo(json)) {
+        if (!isRyzeTestFramework(json)) {
             return;
         }
         if (json.containsKey(CHILD)) {

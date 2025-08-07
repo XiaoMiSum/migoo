@@ -27,14 +27,11 @@ package io.github.xiaomisum.ryze.core;
 
 import io.github.xiaomisum.ryze.core.assertion.Assertion;
 import io.github.xiaomisum.ryze.core.assertion.Rule;
-import io.github.xiaomisum.ryze.core.config.FilterConfigureItem;
-import io.github.xiaomisum.ryze.core.config.GlobalConfigure;
 import io.github.xiaomisum.ryze.core.context.GlobalContext;
 import io.github.xiaomisum.ryze.core.extractor.Extractor;
 import io.github.xiaomisum.ryze.core.function.Function;
-import io.github.xiaomisum.ryze.core.interceptor.Interceptor;
+import io.github.xiaomisum.ryze.core.interceptor.RyzeInterceptor;
 import io.github.xiaomisum.ryze.core.interceptor.report.ReporterListener;
-import io.github.xiaomisum.ryze.core.template.TemplateEngine;
 import io.github.xiaomisum.ryze.core.testelement.TestElement;
 import io.github.xiaomisum.ryze.core.testelement.configure.ConfigureElement;
 import io.github.xiaomisum.ryze.core.testelement.processor.Postprocessor;
@@ -49,8 +46,6 @@ import java.util.Objects;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Supplier;
-
-import static io.github.xiaomisum.ryze.core.testelement.TestElementConstantsInterface.INTERCEPTORS;
 
 /**
  * @author xiaomi
@@ -72,7 +67,6 @@ public class ApplicationConfig {
     private static final ReadWriteLock REPORT_LISTENER_LOCK = new ReentrantReadWriteLock(false);
     private static final ReadWriteLock TEST_INTERCEPTOR_KEY_MAP_LOCK = new ReentrantReadWriteLock(false);
     private static final ReadWriteLock globalContextLock = new ReentrantReadWriteLock(false);
-    private static final ReadWriteLock TEMPLATE_ENGINE_LIST_LOCK = new ReentrantReadWriteLock(false);
 
     private static Map<String, Class<? extends TestElement>> TEST_ELEMENT_KEY_MAP;
     private static Map<String, Class<? extends ConfigureElement>> CONFIG_ELEMENT_KEY_MAP;
@@ -83,10 +77,9 @@ public class ApplicationConfig {
     private static List<Function> FUNCTIONS;
     private static Map<String, Rule> RULE_KEY_MAP;
     private static List<? extends ReporterListener> REPORT_LISTENERS;
-    private static Map<String, Class<? extends Interceptor>> TEST_INTERCEPTOR_KEY_MAP;
+    private static Map<String, Class<? extends RyzeInterceptor>> TEST_INTERCEPTOR_KEY_MAP;
     private static Map<Class<?>, JSONInterceptor> JSON_INTERCEPTOR_KEY_MAP;
     private static GlobalContext globalContext;
-    private static List<Class<? extends TemplateEngine>> TEMPLATE_ENGINE_LIST;
 
     public static Map<String, Class<? extends TestElement>> getTestElementKeyMap() {
         return getDataMap(TEST_ELEMENT_KEY_MAP_LOCK,
@@ -148,7 +141,7 @@ public class ApplicationConfig {
         );
     }
 
-    public static List<Function> getFunctionKeyMap() {
+    public static List<Function> getFunctions() {
         return getDataMap(FUNCTIONS_LOCK,
                 () -> ApplicationConfig.FUNCTIONS,
                 () -> {
@@ -180,11 +173,11 @@ public class ApplicationConfig {
         );
     }
 
-    public static Map<String, Class<? extends Interceptor>> getTestInterceptorKeyMap() {
+    public static Map<String, Class<? extends RyzeInterceptor>> getTestInterceptorKeyMap() {
         return getDataMap(TEST_INTERCEPTOR_KEY_MAP_LOCK,
                 () -> ApplicationConfig.TEST_INTERCEPTOR_KEY_MAP,
                 () -> {
-                    ApplicationConfig.TEST_INTERCEPTOR_KEY_MAP = RyzeServiceLoader.loadAsMapBySPI(Interceptor.class);
+                    ApplicationConfig.TEST_INTERCEPTOR_KEY_MAP = RyzeServiceLoader.loadAsMapBySPI(RyzeInterceptor.class);
                     return ApplicationConfig.TEST_INTERCEPTOR_KEY_MAP;
                 }
         );
@@ -196,29 +189,6 @@ public class ApplicationConfig {
                 () -> {
                     ApplicationConfig.REPORT_LISTENERS = RyzeServiceLoader.loadAsInstanceListBySPI(ReporterListener.class);
                     return ApplicationConfig.REPORT_LISTENERS;
-                }
-        );
-    }
-
-    public static GlobalContext getGlobalContext() {
-        return getDataMap(globalContextLock,
-                () -> ApplicationConfig.globalContext,
-                () -> {
-                    ApplicationConfig.globalContext = new GlobalContext(new GlobalConfigure());
-                    FilterConfigureItem<ReporterListener> items = new FilterConfigureItem<>();
-                    items.addAll(getReporterListeners());
-                    ApplicationConfig.globalContext.getConfigGroup().put(INTERCEPTORS, items);
-                    return ApplicationConfig.globalContext;
-                }
-        );
-    }
-
-    public static List<Class<? extends TemplateEngine>> getTemplateEngines() {
-        return getDataMap(TEMPLATE_ENGINE_LIST_LOCK,
-                () -> ApplicationConfig.TEMPLATE_ENGINE_LIST,
-                () -> {
-                    ApplicationConfig.TEMPLATE_ENGINE_LIST = RyzeServiceLoader.loadAsListBySPI(TemplateEngine.class);
-                    return ApplicationConfig.TEMPLATE_ENGINE_LIST;
                 }
         );
     }

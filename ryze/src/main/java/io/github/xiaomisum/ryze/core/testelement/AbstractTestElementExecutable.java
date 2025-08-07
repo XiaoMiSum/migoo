@@ -124,11 +124,11 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
             return snapshot.testResult;
         }
         if (!initialized) {
-            initialized(session);
+            initialized();
         }
         testStarted(snapshot);
         ContextWrapper context = updateCurrentContextInfo(session, snapshot);
-        handleInterceptors(context);
+        handleFilterInterceptors(context);
         internalRun(context);
         restoreCurrentContextInfo(session, snapshot);
         snapshot.testResult.testEnd();

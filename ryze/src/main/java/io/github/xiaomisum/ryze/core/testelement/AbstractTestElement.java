@@ -35,7 +35,6 @@ import io.github.xiaomisum.ryze.component.extractor.RegexExtractor;
 import io.github.xiaomisum.ryze.component.extractor.ResultExtractor;
 import io.github.xiaomisum.ryze.component.timer.SyncTimer;
 import io.github.xiaomisum.ryze.core.Result;
-import io.github.xiaomisum.ryze.core.SessionRunner;
 import io.github.xiaomisum.ryze.core.assertion.AbstractAssertion;
 import io.github.xiaomisum.ryze.core.assertion.Assertion;
 import io.github.xiaomisum.ryze.core.builder.*;
@@ -43,7 +42,7 @@ import io.github.xiaomisum.ryze.core.config.ConfigureItem;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.extractor.AbstractExtractor;
 import io.github.xiaomisum.ryze.core.extractor.Extractor;
-import io.github.xiaomisum.ryze.core.interceptor.Interceptor;
+import io.github.xiaomisum.ryze.core.interceptor.RyzeInterceptor;
 import io.github.xiaomisum.ryze.core.testelement.configure.AbstractConfigureElement;
 import io.github.xiaomisum.ryze.core.testelement.configure.ConfigureElement;
 import io.github.xiaomisum.ryze.core.testelement.processor.AbstractProcessor;
@@ -98,17 +97,22 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
     @JSONField(name = CONFIG, ordinal = 4)
     protected CONFIG config;
 
-    @JSONField(name = INTERCEPTORS, ordinal = 8)
-    protected List<Interceptor> interceptors;
+    @JSONField(name = INTERCEPTORS, ordinal = 8, deserializeUsing = RyzeInterceptor.class)
+    protected List<RyzeInterceptor> interceptors;
 
     // 元数据，可以挂载一些辅助数据
     @JSONField(name = METADATA, ordinal = 2)
     protected Map<String, Object> metadata = new HashMap<>();
 
-    protected Iterator<Interceptor> preInterceptors;
-    protected Iterator<Interceptor> postInterceptors;
+    @JSONField(serialize = false, deserialize = false)
+    protected Iterator<RyzeInterceptor> preInterceptors;
+    @JSONField(serialize = false, deserialize = false)
+    protected Iterator<RyzeInterceptor> postInterceptors;
+    @JSONField(serialize = false, deserialize = false)
     protected Map<String, Object> rawData;
+    @JSONField(serialize = false, deserialize = false)
     protected SELF runtime;
+    @JSONField(serialize = false, deserialize = false)
     protected boolean initialized = false;
 
     public AbstractTestElement(Builder<SELF, ?, CONFIG, ?, R> builder) {
@@ -116,25 +120,25 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         title = builder.title;
         disabled = builder.disabled;
         config = builder.config;
-        interceptors = builder.interceptors;
+        interceptors = (builder.ryzeInterceptors);
         metadata.putAll(builder.metadata);
     }
 
     public AbstractTestElement() {
     }
 
-    protected void initialized(SessionRunner session) {
+    protected void initialized() {
         initialized = true;
         runtime = copy();
     }
 
-    protected void handleInterceptors(ContextWrapper context) {
+    protected void handleFilterInterceptors(ContextWrapper context) {
         interceptors = Collections.addAllIfNonNull(interceptors, context.getConfigGroup().get(INTERCEPTORS));
         if (Objects.isNull(interceptors) || interceptors.isEmpty()) {
             return;
         }
-        var temp = interceptors.stream().filter(filter -> filter.match(context)).distinct()
-                .sorted(Comparator.comparingInt(Interceptor::getOrder)).toList();
+        var temp = interceptors.stream().filter(interceptor -> interceptor.match(context)).distinct()
+                .sorted(Comparator.comparingInt(RyzeInterceptor::getOrder)).toList();
         preInterceptors = temp.iterator();
         postInterceptors = temp.iterator();
     }
@@ -144,7 +148,6 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
 
     protected SELF newInstance() {
         try {
-            //noinspection unchecked
             return (SELF) this.getClass().getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new RuntimeException(String.format("实例化 %s 失败", this.getClass().getName()), e);
@@ -197,6 +200,14 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         this.config = config;
     }
 
+    public List<RyzeInterceptor> getInterceptors() {
+        return interceptors;
+    }
+
+    public void setInterceptors(List<RyzeInterceptor> interceptors) {
+        this.interceptors = interceptors;
+    }
+
     public Map<String, Object> getMetadata() {
         return metadata;
     }
@@ -240,7 +251,7 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
 
         protected CONFIG config;
 
-        protected List<Interceptor> interceptors;
+        protected List<RyzeInterceptor> ryzeInterceptors;
 
         protected Map<String, Object> metadata = new HashMap<>();
 
@@ -299,13 +310,13 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
-        public SELF interceptors(List<Interceptor> interceptors) {
-            this.interceptors = Collections.addAllIfNonNull(this.interceptors, interceptors);
+        public SELF interceptors(List<RyzeInterceptor> ryzeInterceptors) {
+            this.ryzeInterceptors = Collections.addAllIfNonNull(this.ryzeInterceptors, ryzeInterceptors);
             return self;
         }
 
-        public SELF interceptors(Supplier<Interceptor> supplier) {
-            this.interceptors = Collections.addAllIfNonNull(this.interceptors, Collections.newArrayList(supplier.get()));
+        public SELF interceptors(Supplier<RyzeInterceptor> supplier) {
+            this.ryzeInterceptors = Collections.addAllIfNonNull(this.ryzeInterceptors, Collections.newArrayList(supplier.get()));
             return self;
         }
 

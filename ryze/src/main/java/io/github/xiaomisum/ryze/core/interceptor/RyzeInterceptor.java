@@ -25,14 +25,17 @@
 
 package io.github.xiaomisum.ryze.core.interceptor;
 
+import com.alibaba.fastjson2.annotation.JSONType;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
+import io.github.xiaomisum.ryze.support.fastjson.deserializer.InterceptorObjectReader;
 
 /**
  * 过滤器接口，
  *
  * @author xiaomi
  */
-public interface Interceptor {
+@JSONType(deserializer = InterceptorObjectReader.class)
+public interface RyzeInterceptor {
 
     int getOrder();
 
@@ -42,9 +45,7 @@ public interface Interceptor {
      * @param context 测试上下文
      * @return 如果对 testElement 使用当前过滤器则为 true，否则为 false。
      */
-    default boolean match(ContextWrapper context) {
-        return false;
-    }
+    boolean match(ContextWrapper context);
 
     /**
      * 执行测试元件时调用

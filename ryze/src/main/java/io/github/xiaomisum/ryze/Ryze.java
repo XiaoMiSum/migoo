@@ -43,21 +43,19 @@ import static io.github.xiaomisum.ryze.core.testelement.TestElementConstantsInte
  * @author xiaomi
  */
 @SuppressWarnings({"unchecked"})
-public class MiGoo {
+public class Ryze {
 
 
     private final JsonTree testcase;
 
-    public MiGoo(JsonTree testcase) {
+    public Ryze(JsonTree testcase) {
         this.testcase = testcase;
     }
-
 
     public static Result start(String filePath) {
         var testcase = TestDataLoader.toJavaObject(filePath, JSONObject.class);
         return start(testcase);
     }
-
 
     public static Result start(Map<String, Object> testcase) {
         return start(new JsonTree(testcase));
@@ -65,7 +63,7 @@ public class MiGoo {
 
     public static Result start(JsonTree testcase) {
         try {
-            return new MiGoo(testcase).runTest();
+            return new Ryze(testcase).runTest();
         } finally {
             SessionRunner.removeSession();
         }

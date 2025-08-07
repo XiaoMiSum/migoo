@@ -28,7 +28,7 @@
 
 package io.github.xiaomisum.ryze.core.interceptor.report;
 
-import io.github.xiaomisum.ryze.core.interceptor.Interceptor;
+import io.github.xiaomisum.ryze.core.interceptor.RyzeInterceptor;
 
 /**
  * 测试报告监听器
@@ -36,5 +36,5 @@ import io.github.xiaomisum.ryze.core.interceptor.Interceptor;
  * @author xiaomi
  * Created at 2025/7/20 14:15
  */
-public interface ReporterListener extends Interceptor {
+public interface ReporterListener extends RyzeInterceptor {
 }

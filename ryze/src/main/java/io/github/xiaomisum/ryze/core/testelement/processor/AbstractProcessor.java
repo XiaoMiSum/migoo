@@ -37,8 +37,8 @@ import io.github.xiaomisum.ryze.core.config.ConfigureItem;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.extractor.Extractor;
 import io.github.xiaomisum.ryze.core.interceptor.Handler;
-import io.github.xiaomisum.ryze.core.interceptor.Interceptor;
 import io.github.xiaomisum.ryze.core.interceptor.ProcessorHandler;
+import io.github.xiaomisum.ryze.core.interceptor.RyzeInterceptor;
 import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
 import io.github.xiaomisum.ryze.core.testelement.TestElementConstantsInterface;
 import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
@@ -75,12 +75,12 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
     }
 
     protected ContextWrapper _initialized(SessionRunner session) {
-        super.initialized(session);
+        super.initialized();
         var localContext = new ContextWrapper(session);
         localContext.setTestResult(getTestResult());
         localContext.setTestElement(this);
         runtime.config = (CONFIG) localContext.eval(runtime.config);
-        handleInterceptors(localContext);
+        handleFilterInterceptors(localContext);
         return localContext;
     }
 
@@ -91,8 +91,6 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
             return;
         }
         R result = (R) context.getTestResult();
-        // 子类可以在 sample 方法或其子方法内，在合适的时机再次调用 sampleStart 和 sampleEnd 方法，
-        // 以获取更准确的 sample 时间
         result.sampleStart();
         sample(context, (R) context.getTestResult());
         result.sampleEnd();
@@ -122,7 +120,7 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
     /**
      * 请求执行前处理。比如请求数据的表达式计算。
      *
-     * <p>该方法在 {@link Interceptor#preHandle(ContextWrapper, Handler)} 之前调用。
+     * <p>该方法在 {@link RyzeInterceptor#preHandle(ContextWrapper, Handler)} 之前调用。
      */
     protected void handleRequest(ContextWrapper context, R result) {
         // do nothing.
@@ -137,7 +135,7 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
     /**
      * 请求执行后处理。
      *
-     * <p>该方法在 {@link Interceptor#preHandle(ContextWrapper, Handler)} 之后调用。
+     * <p>该方法在 {@link RyzeInterceptor#preHandle(ContextWrapper, Handler)} 之后调用。
      */
     protected void handleResponse(ContextWrapper context, R result) {
         // do nothing.

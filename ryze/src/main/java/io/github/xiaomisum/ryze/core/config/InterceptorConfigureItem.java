@@ -29,34 +29,45 @@
 package io.github.xiaomisum.ryze.core.config;
 
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
-import io.github.xiaomisum.ryze.core.interceptor.Interceptor;
+import io.github.xiaomisum.ryze.core.interceptor.RyzeInterceptor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author xiaomi
  * Created at 2025/7/20 14:51
  */
-public class FilterConfigureItem<T extends Interceptor> extends ArrayList<T> implements ConfigureItem<FilterConfigureItem<T>> {
+public class InterceptorConfigureItem<T extends RyzeInterceptor> extends ArrayList<T> implements ConfigureItem<InterceptorConfigureItem<T>> {
+
+    public InterceptorConfigureItem() {
+
+    }
+
+    public InterceptorConfigureItem(List<T> interceptors) {
+        super(interceptors);
+    }
 
     @Override
-    public FilterConfigureItem<T> merge(FilterConfigureItem<T> other) {
-        FilterConfigureItem<T> filterConfigItem = new FilterConfigureItem<>();
+    public InterceptorConfigureItem<T> merge(InterceptorConfigureItem<T> other) {
+        InterceptorConfigureItem<T> filterConfigItem = new InterceptorConfigureItem<>();
         filterConfigItem.addAll(this);
-        if (other != null)
+        if (other != null) {
             filterConfigItem.addAll(other);
+        }
+
         return filterConfigItem;
     }
 
     @Override
-    public FilterConfigureItem<T> copy() {
-        FilterConfigureItem<T> filterConfigItem = new FilterConfigureItem<>();
+    public InterceptorConfigureItem<T> copy() {
+        InterceptorConfigureItem<T> filterConfigItem = new InterceptorConfigureItem<>();
         filterConfigItem.addAll(this);
         return filterConfigItem;
     }
 
     @Override
-    public FilterConfigureItem<T> evaluate(ContextWrapper context) {
+    public InterceptorConfigureItem<T> evaluate(ContextWrapper context) {
         return this;
     }
 }

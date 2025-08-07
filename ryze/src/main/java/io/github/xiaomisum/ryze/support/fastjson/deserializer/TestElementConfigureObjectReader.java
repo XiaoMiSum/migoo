@@ -32,9 +32,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.reader.ObjectReader;
-import io.github.xiaomisum.ryze.core.testelement.TestElement;
 import io.github.xiaomisum.ryze.core.testelement.TestElementConfigureGroup;
-import io.github.xiaomisum.ryze.core.testelement.processor.Preprocessor;
 
 import java.lang.reflect.Type;
 
@@ -43,21 +41,6 @@ import java.lang.reflect.Type;
  * Created at 2025/7/19 22:16
  */
 public class TestElementConfigureObjectReader implements ObjectReader<TestElementConfigureGroup> {
-
-    public static void main(String[] args) {
-        var str = """
-                {
-                  "testclass": "jdbc"
-                  "extractors": [{ "testclass": "json", "field": "$.username", "variable_name": "username" }]
-                }
-                """;
-
-        var preprocessor = JSON.parseObject(str, Preprocessor.class);
-        System.out.println(preprocessor.getClass());
-
-        var sampler = JSON.parseObject(str, TestElement.class);
-        System.out.println(sampler.getClass());
-    }
 
     @Override
     public TestElementConfigureGroup readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {

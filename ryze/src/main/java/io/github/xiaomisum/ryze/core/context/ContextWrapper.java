@@ -30,7 +30,6 @@ import io.github.xiaomisum.ryze.core.Result;
 import io.github.xiaomisum.ryze.core.SessionRunner;
 import io.github.xiaomisum.ryze.core.config.ConfigureGroup;
 import io.github.xiaomisum.ryze.core.context.variables.*;
-import io.github.xiaomisum.ryze.core.template.TemplateEngine;
 import io.github.xiaomisum.ryze.core.testelement.TestElement;
 import io.github.xiaomisum.ryze.core.testelement.TestElementConfigureGroup;
 
@@ -51,7 +50,6 @@ public class ContextWrapper {
     private final ConfigureGroup configureGroup;
     private final AllVariablesWrapper allVariablesWrapper;
     private final LocalVariablesWrapper localVariablesWrapper;
-    private TemplateEngine templateEngine;
     // 当前上下文，即最后一个上下文对象
     private Context sessionContext;
     private GlobalContext globalContext;
@@ -146,22 +144,13 @@ public class ContextWrapper {
     // ----------- ContextWrapper 对外 API -------------
 
     /**
-     * 变量 & 函数 计算，如果 obj 不是变量&函数，则返回obj
-     * <p>
-     * 比如 ${var} 表示变量，__func() __func(1,2) __func(a=1.b=2) __func(${var}) __func(a=${var}) 表示函数
-     * <p>
-     * 支持多个变量或函数混合使用
-     * <p>
-     * 比如 ${var1}migoo__func()${var2}test
-     * <p>
-     * 不支持函数嵌套
-     * 比如：__func(__func())、__func(a=__func())
+     * 符合模板引擎的表达式计算（默认模板引擎为：freemarker）
      *
      * @param object 待计算的对象
      * @return 计算后的对象 或 object 原值
      */
     public Object eval(Object object) {
-        return templateEngine.evaluate(this, object);
+        return sessionRunner.getConfigure().getTemplateEngine().evaluate(this, object);
     }
 
     public List<Context> getContextChain() {

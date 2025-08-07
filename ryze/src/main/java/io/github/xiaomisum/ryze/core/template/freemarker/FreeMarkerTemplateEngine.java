@@ -111,7 +111,7 @@ public class FreeMarkerTemplateEngine implements TemplateEngine {
         // 注册内置函数和内置变量
         Map<String, Object> model = new HashMap<>();
         // 注册函数集，以FreeMarkerFunctionAdapter 对参数解包后执行
-        ApplicationConfig.getFunctionKeyMap().forEach(f -> model.put(f.key(), new FreeMarkerFunctionAdapter(context, f)));
+        ApplicationConfig.getFunctions().forEach(f -> model.put(f.key(), new FreeMarkerFunctionAdapter(context, f)));
         // 注册 ContextWrapper 相关对象
         if (context != null) {
             // 注册上下文

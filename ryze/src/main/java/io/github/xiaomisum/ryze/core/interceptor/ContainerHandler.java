@@ -28,18 +28,11 @@
 
 package io.github.xiaomisum.ryze.core.interceptor;
 
-import io.github.xiaomisum.ryze.core.context.ContextWrapper;
-import io.github.xiaomisum.ryze.core.testelement.TestContainerExecutable;
-
 /**
  * 容器类测试元件 过滤器链
  *
  * @author xiaomi
  */
 public interface ContainerHandler extends Handler {
-
-    default boolean match(ContextWrapper context) {
-        return context.getTestElement() instanceof TestContainerExecutable<?, ?, ?>;
-    }
 
 }

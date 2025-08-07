@@ -52,21 +52,28 @@ public class Collections {
         if (Objects.isNull(data)) {
             return target;
         }
-        target = new ArrayList<>(target);     // 防止 target 为不可变 List
+        if (isUnmodifiableList(target)) {
+            target = new ArrayList<>(target);
+        }
+        // 防止 target 为不可变 List
         target.addAll(data);
-        return data;
+        return target;
     }
 
     public static <K, V> Map<K, V> newHashMap(Map<K, V> map) {
         return new HashMap<>(map);
     }
 
+    public static <K, V> Map<K, V> newHashMap() {
+        return new HashMap<>();
+    }
+
     @SafeVarargs
     public static <T> List<T> newArrayList(T... elements) {
         if (elements != null) {
-            return java.util.Arrays.asList(elements);
+            return newArrayList(java.util.Arrays.asList(elements));
         }
-        return java.util.Collections.emptyList();
+        return new ArrayList<>();
     }
 
 
