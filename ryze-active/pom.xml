@@ -38,7 +38,7 @@
     <artifactId>ryze-active</artifactId>
 
     <name>${project.artifactId}</name>
-    <description>activemq sampler for migoo</description>
+    <description>activemq sampler for ryze</description>
 
     <dependencies>
 

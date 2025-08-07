@@ -12,19 +12,19 @@
     <artifactId>ryze-testng</artifactId>
     <name>${project.artifactId}</name>
     <description>a test tool for api</description>
-    <url>https://xiaomisum.github.io/migoo/</url>
+    <url>https://xiaomisum.github.io/ryze/</url>
 
     <licenses>
         <license>
             <name>MIT</name>
-            <url>https://github.com/XiaoMiSum/migoo/blob/master/LICENSE</url>
+            <url>https://github.com/XiaoMiSum/ryze/blob/master/LICENSE</url>
         </license>
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:XiaoMiSum/migoo.git</connection>
-        <developerConnection>scm:git:git@github.com:XiaoMiSum/migoo.git</developerConnection>
-        <url>https://xiaomisum.github.io/migoo/</url>
+        <connection>scm:git:git@github.com:XiaoMiSum/ryze.git</connection>
+        <developerConnection>scm:git:git@github.com:XiaoMiSum/ryze.git</developerConnection>
+        <url>https://xiaomisum.github.io/ryze/</url>
     </scm>
 
     <developers>
@@ -32,7 +32,7 @@
             <name>xiao mi</name>
             <email>mi_xiao@qq.com</email>
             <organization>github</organization>
-            <organizationUrl>https://xiaomisum.github.io/migoo/</organizationUrl>
+            <organizationUrl>https://xiaomisum.github.io/ryze/</organizationUrl>
         </developer>
     </developers>
 

@@ -37,7 +37,7 @@
 
     <name>${project.artifactId}</name>
     <description>a test tool for api</description>
-    <url>https://xiaomisum.github.io/migoo/</url>
+    <url>https://xiaomisum.github.io/ryze/</url>
 
     <licenses>
         <license>
@@ -118,7 +118,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>xyz.migoo</groupId>
+                <groupId>io.github.xiaomisum</groupId>
                 <artifactId>ryze</artifactId>
                 <version>${project.version}</version>
             </dependency>
