@@ -40,7 +40,7 @@ import org.testng.ITestResult;
 import java.util.Objects;
 
 /**
- * 自动运行 MiGooTestNGTestcase，
+ * 自动运行 RyzeTestNGTestcase，
  * <p>
  * 凡继承此类的测试类，若测试用例的参数为 TestElement，则自动运行
  *
@@ -53,8 +53,8 @@ public class RyzeTestcaseAutoRunListener implements IHookable {
     @Override
     public void run(IHookCallBack iHookCallBack, ITestResult iTestResult) {
         logger.debug("IHookable run test: {}", iTestResult.getMethod().getMethodName());
-        if (AnnotationUtils.isNotMiGooTest(iTestResult.getMethod().getConstructorOrMethod().getMethod())) {
-            logger.debug("Method 不是MiGoo注解测试，执行原始测试");
+        if (!AnnotationUtils.isRyzeTest(iTestResult.getMethod().getConstructorOrMethod().getMethod())) {
+            logger.debug("Method 不是Ryze注解测试，执行原始测试");
             iHookCallBack.runTestMethod(iTestResult);
             return;
         }
@@ -64,7 +64,7 @@ public class RyzeTestcaseAutoRunListener implements IHookable {
             iHookCallBack.runTestMethod(iTestResult);
             return;
         }
-        logger.debug("自动执行 MiGoo TestElement");
+        logger.debug("自动执行 Ryze TestElement");
         var result = SessionRunner.getSession().runTest((TestElement<?>) parameters[0]);
         iTestResult.setStatus(result.getStatus().isFailed() ? ITestResult.FAILURE : result.getStatus().isSkipped() ? ITestResult.SKIP :
                 result.getStatus().isPassed() ? ITestResult.SUCCESS : ITestResult.CREATED

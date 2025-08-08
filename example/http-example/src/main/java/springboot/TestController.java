@@ -26,12 +26,14 @@ public class TestController {
 
     @PostMapping
     public Result<?> addUser(@RequestBody Map<String, Object> user) {
-        return Result.getSuccessful(users.put(user.get("id").toString(), user));
+        users.put(user.get("id").toString(), user);
+        return Result.getSuccessful(user);
     }
 
     @PutMapping
     public Result<?> updateUser(@RequestBody Map<String, Object> user) {
-        return Result.getSuccessful(users.put(user.get("id").toString(), user));
+        users.put(user.get("id").toString(), user);
+        return Result.getSuccessful(user);
     }
 
 

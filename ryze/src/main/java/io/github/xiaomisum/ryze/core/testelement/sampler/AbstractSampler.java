@@ -73,6 +73,8 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
 
     public AbstractSampler(Builder builder) {
         super(builder);
+        this.assertions = builder.assertions;
+        this.extractors = builder.extractors;
     }
 
     public AbstractSampler() {
@@ -108,32 +110,31 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
             // 前置处理器可能执行失败，无需执行测试步骤
             return;
         }
-        runtime.config = (CONFIG) context.eval(runtime.config);
-        handleRequest(context, result);
+        runtime.config = (CONFIG) context.evaluate(runtime.config);
         doHandle(context);
-        handleResponse(context, result);
+        if (postInterceptors.hasNext()) {
+            postInterceptors.next().postHandle(context, this);
+        }
         Optional.ofNullable(assertions).orElse(Collections.emptyList()).forEach(assertion -> assertion.assertThat(context));
         Optional.ofNullable(extractors).orElse(Collections.emptyList()).forEach(extractor -> extractor.process(context));
+
     }
 
-    // ---------------------------------------------------------------------
-    // 实现 SampleFilterChain 中的方法
-    // ---------------------------------------------------------------------
 
     @Override
     public final void doHandle(ContextWrapper context) {
         if (preInterceptors.hasNext()) {
             preInterceptors.next().preHandle(context, this);
-            return;
-        }
-        R result = (R) context.getTestResult();
-        // 子类可以在 sample 方法或其子方法内，在合适的时机再次调用 sampleStart 和 sampleEnd 方法，
-        // 以获取更准确的 sample 时间
-        result.sampleStart();
-        sample(context, (R) context.getTestResult());
-        result.sampleEnd();
-        if (postInterceptors.hasNext()) {
-            postInterceptors.next().postHandle(context, this);
+        } else {
+            System.out.println("doHandle: " + System.currentTimeMillis());
+            R result = (R) context.getTestResult();
+            // 子类可以在 sample 方法或其子方法内，在合适的时机再次调用 sampleStart 和 sampleEnd 方法，
+            // 以获取更准确的 sample 时间
+            handleRequest(context, result);
+            result.sampleStart();
+            sample(context, (R) context.getTestResult());
+            result.sampleEnd();
+            handleResponse(context, result);
         }
     }
 
@@ -228,6 +229,18 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
             Groovy.call(closure, builder);
             this.assertions = Collections.addAllIfNonNull(this.assertions, builder.build());
             return self;
+        }
+
+        public SELF validators(List<Assertion> assertions) {
+            return assertions(assertions);
+        }
+
+        public SELF validators(Customizer<ASSERTIONS_BUILDER> customizer) {
+            return assertions(customizer);
+        }
+
+        public SELF validators(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "ASSERTIONS_BUILDER") Closure<?> closure) {
+            return assertions(closure);
         }
 
         public SELF extractors(List<Extractor> extractors) {

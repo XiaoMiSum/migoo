@@ -74,7 +74,7 @@ public class DubboPreprocessor extends AbstractProcessor<DubboPreprocessor, Dubb
 
     @Override
     protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(id, title);
+        return new DefaultSampleResult(runtime.getId(), StringUtils.isBlank(runtime.getTitle()) ? "Dubbo 前置处理器" : runtime.getTitle());
     }
 
     @Override

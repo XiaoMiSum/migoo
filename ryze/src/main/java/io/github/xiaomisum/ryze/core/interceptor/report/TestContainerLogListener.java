@@ -44,7 +44,7 @@ public class TestContainerLogListener implements ReporterListener {
 
     @Override
     public int getOrder() {
-        return Integer.MAX_VALUE;
+        return Integer.MAX_VALUE - 1;
     }
 
     @Override

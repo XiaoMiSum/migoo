@@ -62,7 +62,7 @@ public class HTTPResponseAssertion extends AbstractAssertion {
             var path = "$" + (matcher.group(1) == null ? "[0]" : matcher.group(1)) + matcher.group(2);
             actualValue = JSONPath.extract(JSON.toJSONString(response.headers()), path);
         } else {
-            actualValue = STATUS.contains(field) ? response.statusCode() : response.bytesAsString();
+            actualValue = STATUS.contains(field.toLowerCase()) ? response.statusCode() : response.bytesAsString();
         }
         return res;
     }

@@ -29,8 +29,8 @@ import com.alibaba.fastjson2.annotation.JSONField;
 import io.github.xiaomisum.ryze.core.config.ConfigureItem;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
-import org.apache.commons.lang3.StringUtils;
 import io.github.xiaomisum.ryze.protocol.kafka.KafkaConstantsInterface;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
@@ -98,13 +98,13 @@ public class KafkaConfigureItem implements ConfigureItem<KafkaConfigureItem>, Ka
 
     @Override
     public KafkaConfigureItem evaluate(ContextWrapper context) {
-        ref = (String) context.eval(ref);
-        bootstrapServers = (String) context.eval(bootstrapServers);
-        topic = (String) context.eval(topic);
-        key = (String) context.eval(key);
-        keySerializer = (String) context.eval(keySerializer);
-        valueSerializer = (String) context.eval(valueSerializer);
-        message = context.eval(message);
+        ref = (String) context.evaluate(ref);
+        bootstrapServers = (String) context.evaluate(bootstrapServers);
+        topic = (String) context.evaluate(topic);
+        key = (String) context.evaluate(key);
+        keySerializer = (String) context.evaluate(keySerializer);
+        valueSerializer = (String) context.evaluate(valueSerializer);
+        message = context.evaluate(message);
         return this;
     }
 

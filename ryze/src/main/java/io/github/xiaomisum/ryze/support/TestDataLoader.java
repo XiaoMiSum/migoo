@@ -26,15 +26,18 @@
 package io.github.xiaomisum.ryze.support;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
 import io.github.xiaomisum.ryze.support.yaml.IncludeConstructor;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.List;
 
 /**
  * @author xiaomi
@@ -65,10 +68,24 @@ public class TestDataLoader {
      * @return java对象
      */
     public static <T> T toJavaObject(String path, Type type) {
+        var isList = false;
+        try {
+            isList = type instanceof ParameterizedType parameterizedType ?
+                    List.class.isAssignableFrom(Class.forName(parameterizedType.getRawType().getTypeName()))
+                    : List.class.isAssignableFrom(Class.forName(type.getTypeName()));
+        } catch (Exception e) {
+            // type 为泛型的情况下，Class.forName(type.getTypeName()) 会抛出异常
+            // 所以这里判断 type.getTypeName() 是否为 java.util.List 、 java.util.ArrayList
+            // 此时无法判断 type 是否为 List的其他实现类
+            isList = type.getTypeName().startsWith("java.util.List") || type.getTypeName().startsWith("java.util.ArrayList");
+        }
+
         var result = readFile(path);
         if (result instanceof String string) {
+            string = !isList ? string : JSON.isValidArray(string) ? string : "[" + string + "]";
             return JSON.parseObject(string, type);
         }
+        result = !isList ? result : result instanceof List<?> ? result : JSONArray.of(result);
         return JSON.parseObject(JSON.toJSONString(result), type);
     }
 

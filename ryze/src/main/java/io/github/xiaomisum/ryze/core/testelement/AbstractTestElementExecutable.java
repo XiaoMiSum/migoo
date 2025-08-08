@@ -103,15 +103,15 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
     }
 
 
-    protected void evalConfig(ContextWrapper ctx) {
+    protected void evalConfig(ContextWrapper context) {
         // 变量与config
         RyzeVariables item;
         if (runtime.variables != null && (item = runtime.configGroup.getVariables()) != null) {
-            ctx.eval(item);
+            context.evaluate(item);
         }
         CONFIG config;
         if (runtime.config != null && (config = runtime.configGroup.get(CONFIG)) != null) {
-            ctx.eval(config);
+            context.evaluate(config);
         }
     }
 
@@ -126,23 +126,18 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
         if (!initialized) {
             initialized();
         }
-        testStarted(snapshot);
+
         ContextWrapper context = updateCurrentContextInfo(session, snapshot);
+        runtime.id = (String) context.evaluate(id);
+        runtime.title = (String) context.evaluate(title);
+        snapshot.testResult = getTestResult();
+        context.setTestResult(snapshot.testResult);
+        snapshot.testResult.testStart();
         handleFilterInterceptors(context);
         internalRun(context);
         restoreCurrentContextInfo(session, snapshot);
         snapshot.testResult.testEnd();
         return snapshot.testResult;
-    }
-
-    private void testStarted(Snapshot snapshot) {
-        R result = getTestResult();
-        if (Objects.isNull(result)) {
-            throw new NullPointerException(
-                    String.format("%s#getTestResult() 返回值为 null，请在该方法返回测试组件执行结果对象", this.getClass().getName()));
-        }
-        result.testStart();
-        snapshot.testResult = result;
     }
 
     private ContextWrapper updateCurrentContextInfo(SessionRunner session, Snapshot snapshot) {
@@ -160,7 +155,6 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
         // 另一方面，该对象不是对象状态表示，只是一个临时对象，没有必要使用成员变量
         ContextWrapper context = new ContextWrapper(session);
         context.setTestElement(this);
-        context.setTestResult(snapshot.testResult);
 
         session.setContext(context);
         return context;
@@ -177,7 +171,8 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
         // 处理配置元件
         Optional.ofNullable(configureElements).orElse(Collections.emptyList()).forEach(ele -> ele.process(context));
         // 执行前置动作
-        preprocessors.stream().filter(preprocessor -> !preprocessor.isDisabled())
+        Optional.ofNullable(preprocessors).orElse(Collections.emptyList())
+                .stream().filter(preprocessor -> !preprocessor.isDisabled())
                 .forEach(preprocessor -> preprocessor.process(context));
         if (context.getTestResult().getStatus().isFailed() || context.getTestResult().getStatus().isBroken()) {
             // 前置步骤执行失败，后续步骤无需执行
@@ -185,7 +180,8 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
         }
         // 执行请求
         execute(context, (R) context.getTestResult());
-        postprocessors.stream().filter(postprocessor -> !postprocessor.isDisabled())
+        Optional.ofNullable(postprocessors).orElse(Collections.emptyList())
+                .stream().filter(postprocessor -> !postprocessor.isDisabled())
                 .forEach(postprocessor -> postprocessor.process(context));
         // 关闭配置元件
         Optional.ofNullable(configureElements).orElse(Collections.emptyList()).stream()
@@ -271,17 +267,24 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
         public SELF variables(Consumer<RyzeVariables.Builder> consumer) {
             RyzeVariables.Builder builder = RyzeVariables.builder();
             consumer.accept(builder);
-            this.variables = builder.build();
+            this.variables = (RyzeVariables) Collections.putAllIfNonNull(this.variables, builder.build());
+            return self;
+        }
+
+        public SELF variables(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = RyzeVariables.Builder.class) Closure<?> closure) {
+            RyzeVariables.Builder builder = RyzeVariables.builder();
+            Groovy.call(closure, builder);
+            this.variables = (RyzeVariables) Collections.putAllIfNonNull(this.variables, builder.build());
             return self;
         }
 
         public SELF variables(Map<? extends String, ?> variables) {
-            this.variables = new RyzeVariables(variables);
+            this.variables = (RyzeVariables) Collections.putAllIfNonNull(this.variables, new RyzeVariables(variables));
             return self;
         }
 
         public SELF variables(RyzeVariables variables) {
-            this.variables = variables;
+            this.variables = (RyzeVariables) Collections.putAllIfNonNull(this.variables, variables);
             return self;
         }
 

@@ -84,7 +84,7 @@ public class RabbitSampler extends AbstractSampler<RabbitSampler, RabbitConfigur
 
     @Override
     protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(id, title);
+        return new DefaultSampleResult(runtime.id, runtime.title);
     }
 
     @Override

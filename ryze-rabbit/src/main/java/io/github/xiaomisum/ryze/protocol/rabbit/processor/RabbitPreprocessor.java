@@ -78,7 +78,8 @@ public class RabbitPreprocessor extends AbstractProcessor<RabbitPreprocessor, Ra
 
     @Override
     protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(id, title);
+        return new DefaultSampleResult(runtime.getId(), StringUtils.isBlank(runtime.getTitle()) ? "Rabbit 前置处理器" : runtime.getTitle());
+
     }
 
     @Override

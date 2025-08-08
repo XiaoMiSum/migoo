@@ -29,8 +29,8 @@ import com.alibaba.fastjson2.annotation.JSONField;
 import io.github.xiaomisum.ryze.core.config.ConfigureItem;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
-import org.apache.commons.lang3.StringUtils;
 import io.github.xiaomisum.ryze.protocol.jdbc.JDBCConstantsInterface;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author xiaomi
@@ -88,12 +88,12 @@ public class JDBCConfigureItem implements ConfigureItem<JDBCConfigureItem>, JDBC
 
     @Override
     public JDBCConfigureItem evaluate(ContextWrapper context) {
-        datasource = (String) context.eval(datasource);
-        driver = (String) context.eval(driver);
-        url = (String) context.eval(url);
-        username = (String) context.eval(username);
-        password = (String) context.eval(password);
-        sql = (String) context.eval(sql);
+        datasource = (String) context.evaluate(datasource);
+        driver = (String) context.evaluate(driver);
+        url = (String) context.evaluate(url);
+        username = (String) context.evaluate(username);
+        password = (String) context.evaluate(password);
+        sql = (String) context.evaluate(sql);
         return this;
     }
 

@@ -32,9 +32,10 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Map;
 
 /**
- * migoo 框架支持，标记 一个TestNg 测试方法需支持 migoo框架
+ * migoo 框架支持，标记 一个TestNg 测试方法需支持 ryze框架
  * <p>
  * 在测试执行前 @BeforeMethod 中调用创建 session，
  * 在测试执行后 @AfterMethod 中调用销毁 session
@@ -42,4 +43,34 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 public @interface RyzeTest {
+
+    /**
+     * 数据源：文件路径
+     *
+     * @return 数据源
+     */
+    String value() default "";
+
+    /**
+     * 测试用例是否并行执行
+     *
+     * @return true表示并行执行，false表示顺序执行
+     */
+    boolean parallel() default false;
+
+    /**
+     * 测试用例的分片，默认为空，表示不分片
+     *
+     * @return
+     * @see Datasource
+     */
+    Class<?> type() default Map.class;
+
+    /**
+     * 测试用例的分片，默认为空，表示不分片
+     *
+     * @return 切片规则
+     * @see Datasource
+     */
+    String slice() default "";
 }

@@ -27,7 +27,8 @@
 
 # 日志打印
 io.github.xiaomisum.ryze.core.interceptor.report.TestContainerLogListener
-io.github.xiaomisum.ryze.core.interceptor.report.SampleLogListener
+io.github.xiaomisum.ryze.core.interceptor.report.ProcessorLogListener
+io.github.xiaomisum.ryze.core.interceptor.report.SamplerLogListener
 
 # 测试报告
 io.github.xiaomisum.ryze.core.interceptor.report.TestContainerAllureReportListener

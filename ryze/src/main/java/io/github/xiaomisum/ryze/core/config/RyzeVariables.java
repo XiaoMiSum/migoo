@@ -77,7 +77,7 @@ public class RyzeVariables extends JSONObject implements ConfigureItem<RyzeVaria
 
     @Override
     public RyzeVariables evaluate(ContextWrapper context) {
-        this.replaceAll((key, value) -> context.eval(value));
+        this.replaceAll((key, value) -> context.evaluate(value));
         return this;
     }
 
@@ -85,22 +85,22 @@ public class RyzeVariables extends JSONObject implements ConfigureItem<RyzeVaria
 
         private final RyzeVariables variables = new RyzeVariables();
 
-        public Builder variables(Map<? extends String, ?> variables) {
+        public Builder put(Map<? extends String, ?> variables) {
             this.variables.putAll(variables);
             return this;
         }
 
-        public Builder variables(RyzeVariables variables) {
+        public Builder put(RyzeVariables variables) {
             this.variables.merge(variables);
             return this;
         }
 
-        public Builder variables(Consumer<RyzeVariables> consumer) {
+        public Builder put(Consumer<RyzeVariables> consumer) {
             consumer.accept(variables);
             return this;
         }
 
-        public Builder variables(String name, Object value) {
+        public Builder put(String name, Object value) {
             this.variables.put(name, value);
             return this;
         }

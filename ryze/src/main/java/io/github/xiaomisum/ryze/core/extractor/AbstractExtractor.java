@@ -68,7 +68,7 @@ public abstract class AbstractExtractor implements Extractor, ExtractorConstants
     @Override
     public void process(ContextWrapper context) {
         if (!context.getTestResult().getStatus().isPassed()) {
-            // 非migoo-testng 框架下测试失败不会抛出异常，取样步骤结果失败，无需执行验证器
+            // 非 ryze-testng 框架下测试失败不会抛出异常，取样步骤结果失败，无需执行验证器
             return;
         }
         if (context.getTestResult() instanceof SampleResult result) {

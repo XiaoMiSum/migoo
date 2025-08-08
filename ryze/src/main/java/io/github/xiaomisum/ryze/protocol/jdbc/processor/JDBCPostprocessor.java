@@ -68,7 +68,8 @@ public class JDBCPostprocessor extends AbstractProcessor<JDBCPostprocessor, JDBC
 
     @Override
     protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(id, StringUtils.isBlank(title) ? "JDBC 前置处理器" : title);
+        return new DefaultSampleResult(runtime.getId(), StringUtils.isBlank(runtime.getTitle()) ? "JDBC 后置处理器" : runtime.getTitle());
+
     }
 
     @Override

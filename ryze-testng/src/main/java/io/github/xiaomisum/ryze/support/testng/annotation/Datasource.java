@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
 import java.util.Map;
 
 /**
- * 数据驱动增强注解，以支持从文件中读取 migoo测试用例
+ * 数据驱动增强注解，以支持从文件中读取 测试用例
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

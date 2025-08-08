@@ -30,30 +30,47 @@ package io.github.xiaomisum.ryze.core.interceptor.report;
 
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.interceptor.Handler;
-import io.github.xiaomisum.ryze.core.testelement.TestContainerExecutable;
+import io.github.xiaomisum.ryze.core.testelement.sampler.AbstractSampler;
+import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
+import io.github.xiaomisum.ryze.core.testelement.sampler.Sampler;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author xiaomi
  * Created at 2025/7/20 13:46
  */
-public class TestContainerAllureReportListener implements AllureReportListener {
+@SuppressWarnings({"unchecked", "rawtypes"})
+public class SamplerLogListener implements ReporterListener {
+
+    static final Logger log = LoggerFactory.getLogger("");
 
     @Override
     public int getOrder() {
-        return Integer.MAX_VALUE;
+        return Integer.MAX_VALUE - 1;
     }
 
     @Override
     public boolean match(ContextWrapper context) {
-        return context.getTestElement() instanceof TestContainerExecutable<?, ?, ?>;
+        return context.getTestElement() instanceof Sampler<?>;
     }
 
     @Override
     public void preHandle(ContextWrapper context, Handler handler) {
-        if (handler instanceof TestContainerExecutable<?, ?, ?> container) {
-            AllureReportListener.step(() -> StringUtils.isNotBlank(container.getRuntime().getTitle()) ? container.getRuntime().getTitle()
-                    : "匿名容器：" + container.getClass().getSimpleName(), uuid -> handler.doHandle(context), context);
+        var title = (handler instanceof AbstractSampler<?, ?, ?> sampler && StringUtils.isNotBlank(sampler.getRuntime().getTitle())) ?
+                sampler.getRuntime().getTitle() : "匿名取样器：" + handler.getClass().getSimpleName();
+        log.info("执行：{}\n", title);
+        handler.doHandle(context);
+    }
+
+    @Override
+    public void postHandle(ContextWrapper context, Handler handler) {
+        // todo 需要解决当 preHandle 中有异常，则不会执行 postHandle
+        if (context.getTestResult() instanceof SampleResult result) {
+            log.info("{}{}{}{}{}{}",
+                    "\n--------------- 请求信息 -----------------\n", result.getRequest().format(), "\n",
+                    "\n--------------- 响应信息 -----------------\n", result.getResponse().format(), "\n");
         }
     }
 }

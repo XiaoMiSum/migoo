@@ -183,21 +183,4 @@ public class MagicBox {
         customizer.customize(builder);
         return MagicBox.runTest(title, builder.build());
     }
-    
-    public static void main(String[] args) {
-        suite(suite ->
-                suite.title("test suite")
-                        .variables(var -> var.variables("var1", 1).variables("var2", 2))
-                        .configureElements(ele -> ele.http(
-                                        http -> http.config(conf -> conf.host("127.0.0.1").port("8080").path("/user").headers(header -> {
-                                                    header.put("Content-Type", "application/json");
-                                                    header.put("App", "application/json");
-                                                }
-                                        )))
-                                .jdbc(jdbc -> jdbc.config(conf -> conf.url("jdbc:mysql://127.0.0.1:3306/migoo?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&allowMultiQueries=true")))
-                        ).children(
-                                child -> child.http(sampler -> sampler.assertions(assertion -> assertion.json(json -> json.field("$.status").rule("equals").expected("200"))))
-                        )
-        );
-    }
 }

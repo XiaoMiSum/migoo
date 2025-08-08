@@ -59,7 +59,7 @@ public abstract class AbstractAssertion implements Assertion, AssertionConstants
             return;
         }
         if (context.getTestResult() instanceof SampleResult result) {
-            expected = context.eval(expected);
+            expected = context.evaluate(expected);
             var res = initialized(result);
             var checkRule = ApplicationConfig.getRuleKeyMap().get(rule.toLowerCase(Locale.ROOT));
             if (Objects.isNull(checkRule)) {
@@ -130,7 +130,7 @@ public abstract class AbstractAssertion implements Assertion, AssertionConstants
         }
 
         public SELF field(String field) {
-            this.assertion.rule = field;
+            this.assertion.field = field;
             return self;
         }
 

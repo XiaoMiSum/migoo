@@ -85,7 +85,7 @@ public class ActiveSampler extends AbstractSampler<ActiveSampler, ActiveConfigur
 
     @Override
     protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(id, title);
+        return new DefaultSampleResult(runtime.id, runtime.title);
     }
 
     @Override

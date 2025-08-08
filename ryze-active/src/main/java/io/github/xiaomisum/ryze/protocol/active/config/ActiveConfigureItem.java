@@ -83,13 +83,13 @@ public class ActiveConfigureItem implements ConfigureItem<ActiveConfigureItem>, 
 
     @Override
     public ActiveConfigureItem evaluate(ContextWrapper context) {
-        ref = (String) context.eval(ref);
-        brokerUrl = (String) context.eval(brokerUrl);
-        topic = (String) context.eval(topic);
-        queue = (String) context.eval(queue);
-        username = (String) context.eval(username);
-        password = (String) context.eval(password);
-        message = context.eval(message);
+        ref = (String) context.evaluate(ref);
+        brokerUrl = (String) context.evaluate(brokerUrl);
+        topic = (String) context.evaluate(topic);
+        queue = (String) context.evaluate(queue);
+        username = (String) context.evaluate(username);
+        password = (String) context.evaluate(password);
+        message = context.evaluate(message);
         return this;
     }
 

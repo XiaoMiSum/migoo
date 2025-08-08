@@ -57,14 +57,14 @@ public class DebugSampler extends AbstractSampler<DebugSampler, DebugConfigureIt
 
     @Override
     protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(id, title);
+        return new DefaultSampleResult(runtime.id, runtime.title);
     }
 
     @Override
     protected void sample(ContextWrapper contextWrapper, DefaultSampleResult result) {
         try {
             result.sampleStart();
-            byte[] bytes = JSON.toJSONBytes(config);
+            byte[] bytes = JSON.toJSONBytes(runtime.config);
             result.setRequest(SampleResult.DefaultReal.build(bytes));
             result.setResponse(SampleResult.DefaultReal.build(bytes));
             logger.info("Debug Sampler");

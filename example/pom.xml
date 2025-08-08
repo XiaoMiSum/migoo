@@ -29,19 +29,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>xyz.migoo.example</groupId>
+    <groupId>io.github.xiaomisum.ryze</groupId>
     <artifactId>ryze-example</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
-    <description>example of migoo</description>
-    <url>https://xiaomisum.github.io/migoo/</url>
+    <description>example of ryze</description>
+    <url>https://xiaomisum.github.io/ryze/</url>
 
     <licenses>
         <license>
             <name>MIT</name>
-            <url>https://github.com/XiaoMiSum/migoo/blob/master/LICENSE</url>
+            <url>https://github.com/XiaoMiSum/ryze/blob/master/LICENSE</url>
         </license>
     </licenses>
     <modules>
@@ -56,9 +56,9 @@
 
 
     <scm>
-        <connection>scm:git:git@github.com:XiaoMiSum/migoo.git</connection>
-        <developerConnection>scm:git:git@github.com:XiaoMiSum/migoo.git</developerConnection>
-        <url>https://xiaomisum.github.io/migoo/</url>
+        <connection>scm:git:git@github.com:XiaoMiSum/ryze.git</connection>
+        <developerConnection>scm:git:git@github.com:XiaoMiSum/ryze.git</developerConnection>
+        <url>https://xiaomisum.github.io/ryze/</url>
     </scm>
 
     <developers>
@@ -66,16 +66,15 @@
             <name>xiao mi</name>
             <email>mi_xiao@qq.com</email>
             <organization>github</organization>
-            <organizationUrl>https://xiaomisum.github.io/migoo/</organizationUrl>
+            <organizationUrl>https://xiaomisum.github.io/ryze/</organizationUrl>
         </developer>
     </developers>
 
     <properties>
-        <migoo.version>5.2.1</migoo.version>
+        <ryze.version>6.0.0-bate1</ryze.version>
         <testng.version>7.9.0</testng.version>
         <spring.boot.version>3.3.3</spring.boot.version>
 
-        <junit.version>5.11.4</junit.version>
         <mysql.version>9.1.0</mysql.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
@@ -85,9 +84,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>xyz.migoo</groupId>
+            <groupId>io.github.xiaomisum</groupId>
             <artifactId>ryze</artifactId>
-            <version>${migoo.version}</version>
+            <version>${ryze.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.xiaomisum</groupId>
+            <artifactId>ryze-testng</artifactId>
+            <version>${ryze.version}</version>
         </dependency>
 
         <dependency>
@@ -112,33 +117,27 @@
             </dependency>
 
             <dependency>
-                <groupId>xyz.migoo</groupId>
-                <artifactId>ryze</artifactId>
-                <version>${migoo.version}</version>
+                <groupId>io.github.xiaomisum</groupId>
+                <artifactId>ryze-dubbo</artifactId>
+                <version>${ryze.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>xyz.migoo</groupId>
-                <artifactId>migoo-dubbo</artifactId>
-                <version>${migoo.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>xyz.migoo</groupId>
+                <groupId>io.github.xiaomisum</groupId>
                 <artifactId>ryze-kafka</artifactId>
-                <version>${migoo.version}</version>
+                <version>${ryze.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>xyz.migoo</groupId>
-                <artifactId>migoo-active</artifactId>
-                <version>${migoo.version}</version>
+                <groupId>io.github.xiaomisum</groupId>
+                <artifactId>ryze-active</artifactId>
+                <version>${ryze.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>xyz.migoo</groupId>
-                <artifactId>migoo-rabbitmq</artifactId>
-                <version>${migoo.version}</version>
+                <groupId>io.github.xiaomisum</groupId>
+                <artifactId>ryze-rabbit</artifactId>
+                <version>${ryze.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

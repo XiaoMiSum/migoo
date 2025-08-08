@@ -32,8 +32,8 @@ import com.alibaba.fastjson2.annotation.JSONField;
 import io.github.xiaomisum.ryze.core.config.ConfigureItem;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
-import org.apache.commons.lang3.StringUtils;
 import io.github.xiaomisum.ryze.protocol.dubbo.DubboConstantsInterface;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -88,13 +88,13 @@ public class DubboConfigureItem implements ConfigureItem<DubboConfigureItem>, Du
 
     @Override
     public DubboConfigureItem evaluate(ContextWrapper context) {
-        registry = (Registry) context.eval(registry);
-        reference = (Reference) context.eval(reference);
-        interfaceName = (String) context.eval(interfaceName);
-        method = (String) context.eval(method);
-        parameterTypes = (List<String>) context.eval(parameterTypes);
-        parameters = (List<Object>) context.eval(parameters);
-        attachmentArgs = (Map<String, String>) context.eval(attachmentArgs);
+        registry = (Registry) context.evaluate(registry);
+        reference = (Reference) context.evaluate(reference);
+        interfaceName = (String) context.evaluate(interfaceName);
+        method = (String) context.evaluate(method);
+        parameterTypes = (List<String>) context.evaluate(parameterTypes);
+        parameters = (List<Object>) context.evaluate(parameters);
+        attachmentArgs = (Map<String, String>) context.evaluate(attachmentArgs);
         return this;
     }
 
@@ -227,12 +227,12 @@ public class DubboConfigureItem implements ConfigureItem<DubboConfigureItem>, Du
 
         @Override
         public Registry evaluate(ContextWrapper context) {
-            protocol = (String) context.eval(protocol);
-            address = (String) context.eval(address);
-            username = (String) context.eval(username);
-            password = (String) context.eval(password);
-            group = (String) context.eval(group);
-            version = (String) context.eval(version);
+            protocol = (String) context.evaluate(protocol);
+            address = (String) context.evaluate(address);
+            username = (String) context.evaluate(username);
+            password = (String) context.evaluate(password);
+            group = (String) context.evaluate(group);
+            version = (String) context.evaluate(version);
             return this;
         }
 

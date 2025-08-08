@@ -38,7 +38,7 @@ import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
  * @author xiaomi
  * Created at 2025/7/19 15:47
  */
-@SuppressWarnings({"rawtypes"})
+@SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class AbstractConfigureElement<SELF extends AbstractConfigureElement<SELF, CONFIG, R>, CONFIG extends ConfigureItem<CONFIG>, R extends Result>
         extends AbstractTestElement<AbstractConfigureElement<SELF, CONFIG, R>, CONFIG, R>
         implements ConfigureElement<R>, ConfigureElementConstantsInterface {
@@ -59,6 +59,7 @@ public abstract class AbstractConfigureElement<SELF extends AbstractConfigureEle
         if (!initialized) {
             initialized();
         }
+        runtime.config = (CONFIG) context.evaluate(runtime.config);
         var result = getTestResult();
         doProcess(context);
         return result;

@@ -71,7 +71,7 @@ public class DebugConfigureItem extends JSONObject implements ConfigureItem<Debu
 
     @Override
     public DebugConfigureItem evaluate(ContextWrapper context) {
-        this.replaceAll((key, value) -> context.eval(value));
+        this.replaceAll((key, value) -> context.evaluate(value));
         return this;
     }
 

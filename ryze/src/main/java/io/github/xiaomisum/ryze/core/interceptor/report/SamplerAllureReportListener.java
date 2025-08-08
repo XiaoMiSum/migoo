@@ -14,7 +14,7 @@ public class SamplerAllureReportListener implements AllureReportListener {
 
     @Override
     public int getOrder() {
-        return Integer.MAX_VALUE - 1;
+        return Integer.MAX_VALUE;
     }
 
     @Override

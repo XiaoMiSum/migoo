@@ -28,8 +28,6 @@
 
 package io.github.xiaomisum.ryze.support.testng.annotation;
 
-import org.apache.commons.lang3.Strings;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -48,7 +46,7 @@ public class AnnotationUtils {
         if (Objects.nonNull(datasource)) {
             return datasource;
         }
-        var migoo = method.getAnnotation(Ryze.class);
+        var migoo = method.getAnnotation(RyzeTest.class);
         if (Objects.isNull(migoo)) {
             return null;
         }
@@ -74,7 +72,7 @@ public class AnnotationUtils {
     }
 
     private static boolean isJDKAnnotation(Class<? extends Annotation> annotation) {
-        return Strings.CI.equals(annotation.getPackage().getName(), "java.lang.annotation");
+        return annotation.getPackage().getName().equals("java.lang.annotation");
     }
 
     public static void main(String[] args) throws NoSuchMethodException {
@@ -92,7 +90,7 @@ public class AnnotationUtils {
                 new AnnotationInvocationHandler(values));
     }
 
-    public static boolean isNotMiGooTest(Method method) {
+    public static boolean isRyzeTest(Method method) {
         for (Annotation annotation : method.getDeclaredAnnotations()) {
             if (AnnotationUtils.hasAnnotation(annotation.annotationType(), RyzeTest.class)) {
                 return true;
@@ -101,13 +99,7 @@ public class AnnotationUtils {
         return false;
     }
 
-    static class AnnotationInvocationHandler implements InvocationHandler {
-
-        private final Map<String, Object> values;
-
-        AnnotationInvocationHandler(Map<String, Object> values) {
-            this.values = values;
-        }
+    record AnnotationInvocationHandler(Map<String, Object> values) implements InvocationHandler {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

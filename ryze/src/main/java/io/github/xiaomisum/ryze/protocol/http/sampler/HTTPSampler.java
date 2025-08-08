@@ -40,7 +40,7 @@ public class HTTPSampler extends AbstractSampler<HTTPSampler, HTTPConfigureItem,
 
     @Override
     protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(id, title);
+        return new DefaultSampleResult(runtime.id, runtime.title);
     }
 
     @Override

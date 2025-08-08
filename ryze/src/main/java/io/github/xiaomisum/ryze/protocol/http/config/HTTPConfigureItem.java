@@ -29,12 +29,15 @@
 package io.github.xiaomisum.ryze.protocol.http.config;
 
 import com.alibaba.fastjson2.annotation.JSONField;
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.config.ConfigureItem;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
 import io.github.xiaomisum.ryze.protocol.http.HTTPConstantsInterface;
 import io.github.xiaomisum.ryze.support.Collections;
 import io.github.xiaomisum.ryze.support.Customizer;
+import io.github.xiaomisum.ryze.support.groovy.Groovy;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
@@ -47,7 +50,7 @@ import static io.github.xiaomisum.ryze.core.testelement.TestElementConstantsInte
  * @author xiaomi
  * Created at 2025/7/19 20:17
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTPConstantsInterface {
 
     @JSONField(name = REF)
@@ -118,17 +121,17 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
 
     @Override
     public HTTPConfigureItem evaluate(ContextWrapper context) {
-        protocol = (String) context.eval(protocol);
-        host = (String) context.eval(host);
-        port = (String) context.eval(port);
-        path = (String) context.eval(path);
-        method = (String) context.eval(method);
-        headers = (Map<String, String>) context.eval(headers);
-        cookie = (Map<String, String>) context.eval(cookie);
-        query = (Map<String, Object>) context.eval(query);
-        data = (Map<String, Object>) context.eval(data);
-        body = context.eval(body);
-        binary = context.eval(binary);
+        protocol = (String) context.evaluate(protocol);
+        host = (String) context.evaluate(host);
+        port = (String) context.evaluate(port);
+        path = (String) context.evaluate(path);
+        method = (String) context.evaluate(method);
+        headers = (Map<String, String>) context.evaluate(headers);
+        cookie = (Map<String, String>) context.evaluate(cookie);
+        query = (Map<String, Object>) context.evaluate(query);
+        data = (Map<String, Object>) context.evaluate(data);
+        body = context.evaluate(body);
+        binary = context.evaluate(binary);
         return this;
     }
 
@@ -312,6 +315,13 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
             return self;
         }
 
+        public Builder headers(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = Map.class) Closure<?> closure) {
+            Map<String, String> header = new HashMap<>();
+            Groovy.call(closure, header);
+            configure.headers = Collections.putAllIfNonNull(configure.headers, header);
+            return self;
+        }
+
         public Builder cookie(Map<String, String> cookie) {
             configure.cookie = Collections.putAllIfNonNull(configure.cookie, cookie);
             return self;
@@ -320,6 +330,13 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
         public Builder cookie(Customizer<Map<String, String>> customizer) {
             Map<String, String> cookie = new HashMap<>();
             customizer.customize(cookie);
+            configure.cookie = Collections.putAllIfNonNull(configure.cookie, cookie);
+            return self;
+        }
+
+        public Builder cookie(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = Map.class) Closure<?> closure) {
+            Map<String, String> cookie = new HashMap<>();
+            Groovy.call(closure, cookie);
             configure.cookie = Collections.putAllIfNonNull(configure.cookie, cookie);
             return self;
         }
@@ -336,7 +353,21 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
             return self;
         }
 
+        public Builder query(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = Map.class) Closure<?> closure) {
+            Map<String, Object> query = new HashMap<>();
+            Groovy.call(closure, query);
+            configure.query = Collections.putAllIfNonNull(configure.query, query);
+            return self;
+        }
+
         public Builder data(Map<String, Object> data) {
+            configure.data = Collections.putAllIfNonNull(configure.data, data);
+            return self;
+        }
+
+        public Builder data(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = Map.class) Closure<?> closure) {
+            Map<String, Object> data = new HashMap<>();
+            Groovy.call(closure, data);
             configure.data = Collections.putAllIfNonNull(configure.data, data);
             return self;
         }
@@ -349,9 +380,30 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
         }
 
         public Builder body(Customizer<Map<String, Object>> customizer) {
+            if (configure.body != null && !(configure.body instanceof Map)) {
+                return self;
+            }
             var body = new HashMap<String, Object>();
             customizer.customize(body);
-            configure.body = body;
+            configure.body = Collections.putAllIfNonNull((Map) configure.body, body);
+            return self;
+        }
+
+        public Builder body(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = Map.class) Closure<?> closure) {
+            if (configure.body != null && !(configure.body instanceof Map)) {
+                return self;
+            }
+            Map<String, Object> body = new HashMap<>();
+            Groovy.call(closure, body);
+            configure.body = Collections.putAllIfNonNull((Map) configure.body, body);
+            return self;
+        }
+
+        public Builder body(Map<String, Object> body) {
+            if (configure.body != null && !(configure.body instanceof Map)) {
+                return self;
+            }
+            configure.body = Collections.putAllIfNonNull((Map) configure.body, body);
             return self;
         }
 

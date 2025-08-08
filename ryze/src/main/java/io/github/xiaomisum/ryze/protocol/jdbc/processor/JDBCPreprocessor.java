@@ -68,7 +68,8 @@ public class JDBCPreprocessor extends AbstractProcessor<JDBCPreprocessor, JDBCCo
 
     @Override
     protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(id, StringUtils.isBlank(title) ? "JDBC 前置处理器" : title);
+        return new DefaultSampleResult(runtime.getId(), StringUtils.isBlank(runtime.getTitle()) ? "JDBC 前置处理器" : runtime.getTitle());
+
     }
 
     @Override

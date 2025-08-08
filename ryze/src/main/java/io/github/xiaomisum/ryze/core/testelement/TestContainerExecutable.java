@@ -73,38 +73,39 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
 
     @Override
     public void doHandle(ContextWrapper context) {
-        if (children == null) {
-            return;
-        }
         if (preInterceptors.hasNext()) {
             preInterceptors.next().preHandle(context, this);
-            return;
-        }
-        for (TestElement<R> child : children) {
-            if (Objects.isNull(child)) {
-                continue;
+        } else {
+            for (TestElement<R> child : children) {
+                if (Objects.isNull(child)) {
+                    continue;
+                }
+                R result = context.getSessionRunner().runTest(child);
+                if (context.getTestResult() instanceof TestSuiteResult suiteResult) {
+                    suiteResult.addChild(result);
+                }
+                if (child instanceof Sampler<R> && !result.getStatus().isPassed()) {
+                    // 如果子元件是取样器，并且执行失败，则后续步骤无需执行
+                    break;
+                }
             }
-            R result = context.getSessionRunner().runTest(child);
-            if (context.getTestResult() instanceof TestSuiteResult suiteResult) {
-                suiteResult.addChild(result);
+            var hasFailedChildren = !((TestSuiteResult) context.getTestResult()).getChildren().stream()
+                    .filter(result -> result.getStatus().isBroken() || result.getStatus().isFailed())
+                    .toList().isEmpty();
+            if (hasFailedChildren) {
+                context.getTestResult().setStatus(TestStatus.failed);
             }
-            if (child instanceof Sampler<R> && !result.getStatus().isPassed()) {
-                // 如果子元件是取样器，并且执行失败，则后续步骤无需执行
-                break;
+            if (postInterceptors.hasNext()) {
+                postInterceptors.next().postHandle(context, this);
             }
         }
-        var hasFailedChildren = !((TestSuiteResult) context.getTestResult()).getChildren().stream()
-                .filter(result -> result.getStatus().isBroken() || result.getStatus().isFailed())
-                .toList().isEmpty();
-        if (hasFailedChildren) {
-            context.getTestResult().setStatus(TestStatus.failed);
-        }
-        if (postInterceptors.hasNext()) {
-            postInterceptors.next().postHandle(context, this);
-        }
+
     }
 
     protected void executeChildren(ContextWrapper contextWrapper) {
+        if (children == null) {
+            return;
+        }
         doHandle(contextWrapper);
     }
 
@@ -178,14 +179,14 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
         public SELF children(Customizer<CHILDREN_BUILDER> customizer) {
             CHILDREN_BUILDER builder = getChildrenBuilder();
             customizer.customize(builder);
-            this.configureElements = Collections.addAllIfNonNull(this.configureElements, builder.build());
+            this.children = Collections.addAllIfNonNull(this.children, builder.build());
             return self;
         }
 
         public SELF children(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "CHILDREN_BUILDER") Closure<?> closure) {
             CHILDREN_BUILDER builder = getChildrenBuilder();
             Groovy.call(closure, builder);
-            this.children = Collections.addAllIfNonNull(this.configureElements, builder.build());
+            this.children = Collections.addAllIfNonNull(this.children, builder.build());
             return self;
         }
 

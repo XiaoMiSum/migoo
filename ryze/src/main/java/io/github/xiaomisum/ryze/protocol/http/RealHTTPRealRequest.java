@@ -25,7 +25,6 @@
 
 package io.github.xiaomisum.ryze.protocol.http;
 
-import com.alibaba.fastjson2.JSON;
 import org.apache.commons.lang3.StringUtils;
 import xyz.migoo.simplehttp.Request;
 
@@ -80,10 +79,10 @@ public class RealHTTPRealRequest extends HTTPReal {
         buf.append(method).append(" ").append(url).append(" ").append(version);
         header(buf);
         if (StringUtils.isNotBlank(query)) {
-            buf.append("\n").append("QueryParams as JSON:").append(query);
+            buf.append("\n").append("Request Query:").append(query);
         }
         if (body != null && body.length > 0) {
-            buf.append("\n").append("BodyParams as JSON:").append(JSON.toJSONString(body));
+            buf.append("\n").append("Request Body:").append(bytesAsString());
         }
         return buf.toString();
     }

@@ -79,7 +79,9 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
         var localContext = new ContextWrapper(session);
         localContext.setTestResult(getTestResult());
         localContext.setTestElement(this);
-        runtime.config = (CONFIG) localContext.eval(runtime.config);
+        runtime.id = (String) localContext.evaluate(id);
+        runtime.title = (String) localContext.evaluate(title);
+        runtime.config = (CONFIG) localContext.evaluate(runtime.config);
         handleFilterInterceptors(localContext);
         return localContext;
     }
@@ -88,23 +90,27 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
     public void doHandle(ContextWrapper context) {
         if (preInterceptors.hasNext()) {
             preInterceptors.next().preHandle(context, this);
-            return;
-        }
-        R result = (R) context.getTestResult();
-        result.sampleStart();
-        sample(context, (R) context.getTestResult());
-        result.sampleEnd();
-        if (postInterceptors.hasNext()) {
-            postInterceptors.next().postHandle(context, this);
+        } else {
+            R result = (R) context.getTestResult();
+            handleRequest(context, (R) context.getTestResult());
+            result.sampleStart();
+            sample(context, (R) context.getTestResult());
+            result.sampleEnd();
+            handleResponse(context, (R) context.getTestResult());
         }
     }
 
     @Override
     public void process(ContextWrapper context) {
+        if (!context.getTestResult().getStatus().isPassed()) {
+            // 前置处理器可能执行失败，无需执行测试步骤
+            return;
+        }
         var localContext = initialized ? context : _initialized(context.getSessionRunner());
-        handleRequest(localContext, (R) localContext.getTestResult());
         doHandle(localContext);
-        handleResponse(localContext, (R) localContext.getTestResult());
+        if (postInterceptors.hasNext()) {
+            postInterceptors.next().postHandle(localContext, this);
+        }
         extract(context, localContext);
         var status = localContext.getTestResult().getStatus();
         if (context != localContext && (status.isBroken() || status.isFailed())) {

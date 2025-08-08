@@ -28,6 +28,7 @@
 
 package io.github.xiaomisum.ryze.support.testng;
 
+import io.github.xiaomisum.ryze.core.Configure;
 import io.github.xiaomisum.ryze.core.SessionRunner;
 import io.github.xiaomisum.ryze.support.testng.annotation.AnnotationUtils;
 import org.testng.IInvokedMethod;
@@ -46,18 +47,18 @@ public class RyzeInvokedMethodListener implements IInvokedMethodListener {
         if (!method.isTestMethod()) {
             return;
         }
-        if (AnnotationUtils.isNotMiGooTest(testResult.getMethod().getConstructorOrMethod().getMethod())) {
+        if (!AnnotationUtils.isRyzeTest(testResult.getMethod().getConstructorOrMethod().getMethod())) {
             return;
         }
         // 创建一个 在测试框架中运行时使用的 session
-        SessionRunner.newTestFrameworkSession();
+        SessionRunner.newTestFrameworkSession(Configure.defaultConfigure());
     }
 
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
         if (!method.isTestMethod()) {
             return;
         }
-        if (AnnotationUtils.isNotMiGooTest(testResult.getMethod().getConstructorOrMethod().getMethod())) {
+        if (!AnnotationUtils.isRyzeTest(testResult.getMethod().getConstructorOrMethod().getMethod())) {
             return;
         }
         SessionRunner.removeSession();

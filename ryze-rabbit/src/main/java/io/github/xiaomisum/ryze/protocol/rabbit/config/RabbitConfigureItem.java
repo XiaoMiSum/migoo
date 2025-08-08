@@ -107,16 +107,16 @@ public class RabbitConfigureItem implements ConfigureItem<RabbitConfigureItem>, 
 
     @Override
     public RabbitConfigureItem evaluate(ContextWrapper context) {
-        ref = (String) context.eval(ref);
-        virtualHost = (String) context.eval(virtualHost);
-        host = (String) context.eval(host);
-        port = (String) context.eval(port);
-        username = (String) context.eval(username);
-        password = (String) context.eval(password);
-        message = context.eval(message);
-        queue = (Queue) context.eval(queue);
-        exchange = (Exchange) context.eval(exchange);
-        props = (Props) context.eval(props);
+        ref = (String) context.evaluate(ref);
+        virtualHost = (String) context.evaluate(virtualHost);
+        host = (String) context.evaluate(host);
+        port = (String) context.evaluate(port);
+        username = (String) context.evaluate(username);
+        password = (String) context.evaluate(password);
+        message = context.evaluate(message);
+        queue = (Queue) context.evaluate(queue);
+        exchange = (Exchange) context.evaluate(exchange);
+        props = (Props) context.evaluate(props);
         return this;
     }
 
@@ -245,11 +245,11 @@ public class RabbitConfigureItem implements ConfigureItem<RabbitConfigureItem>, 
 
         @Override
         public Queue evaluate(ContextWrapper context) {
-            name = (String) context.eval(name);
-            durable = (Boolean) context.eval(durable);
-            exclusive = (Boolean) context.eval(exclusive);
-            autoDelete = (Boolean) context.eval(autoDelete);
-            arguments = (Map<String, Object>) context.eval(arguments);
+            name = (String) context.evaluate(name);
+            durable = (Boolean) context.evaluate(durable);
+            exclusive = (Boolean) context.evaluate(exclusive);
+            autoDelete = (Boolean) context.evaluate(autoDelete);
+            arguments = (Map<String, Object>) context.evaluate(arguments);
             return this;
         }
 
@@ -377,9 +377,9 @@ public class RabbitConfigureItem implements ConfigureItem<RabbitConfigureItem>, 
 
         @Override
         public Exchange evaluate(ContextWrapper context) {
-            name = (String) context.eval(name);
-            type = (String) context.eval(type);
-            routingKey = (String) context.eval(routingKey);
+            name = (String) context.evaluate(name);
+            type = (String) context.evaluate(type);
+            routingKey = (String) context.evaluate(routingKey);
             return this;
         }
 
@@ -499,19 +499,19 @@ public class RabbitConfigureItem implements ConfigureItem<RabbitConfigureItem>, 
 
         @Override
         public Props evaluate(ContextWrapper context) {
-            contentType = (String) context.eval(contentType);
-            contentEncoding = (String) context.eval(contentEncoding);
-            headers = (Map<String, Object>) context.eval(headers);
-            deliveryMode = (Integer) context.eval(deliveryMode);
-            priority = (Integer) context.eval(priority);
-            correlationId = (String) context.eval(correlationId);
-            replyTo = (String) context.eval(replyTo);
-            expiration = (String) context.eval(expiration);
-            messageId = (String) context.eval(messageId);
-            type = (String) context.eval(type);
-            userId = (String) context.eval(userId);
-            appId = (String) context.eval(appId);
-            clusterId = (String) context.eval(clusterId);
+            contentType = (String) context.evaluate(contentType);
+            contentEncoding = (String) context.evaluate(contentEncoding);
+            headers = (Map<String, Object>) context.evaluate(headers);
+            deliveryMode = (Integer) context.evaluate(deliveryMode);
+            priority = (Integer) context.evaluate(priority);
+            correlationId = (String) context.evaluate(correlationId);
+            replyTo = (String) context.evaluate(replyTo);
+            expiration = (String) context.evaluate(expiration);
+            messageId = (String) context.evaluate(messageId);
+            type = (String) context.evaluate(type);
+            userId = (String) context.evaluate(userId);
+            appId = (String) context.evaluate(appId);
+            clusterId = (String) context.evaluate(clusterId);
             return this;
         }
 

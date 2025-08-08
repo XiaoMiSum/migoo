@@ -73,7 +73,7 @@ public class HTTPPreprocessor extends AbstractProcessor<HTTPPreprocessor, HTTPCo
 
     @Override
     protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(id, StringUtils.isBlank(title) ? "HTTP 前置处理器" : title);
+        return new DefaultSampleResult(runtime.getId(), StringUtils.isBlank(runtime.getTitle()) ? "HTTP 前置处理器" : runtime.getTitle());
     }
 
     @Override

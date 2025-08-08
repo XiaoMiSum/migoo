@@ -40,9 +40,11 @@ public class Collections {
         if (Objects.isNull(data)) {
             return target;
         }
-        target = new HashMap<>(target);     // 防止 target 为不可变 List
+        if (isUnmodifiableMap(target)) {
+            target = new HashMap<>(target);
+        }
         target.putAll(data);
-        return data;
+        return target;
     }
 
     public static <T> List<T> addAllIfNonNull(List<T> target, List<T> data) {
@@ -55,7 +57,7 @@ public class Collections {
         if (isUnmodifiableList(target)) {
             target = new ArrayList<>(target);
         }
-        // 防止 target 为不可变 List
+
         target.addAll(data);
         return target;
     }

@@ -72,7 +72,7 @@ public class HTTPPostprocessor extends AbstractProcessor<HTTPPostprocessor, HTTP
 
     @Override
     protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(id, StringUtils.isBlank(title) ? "HTTP 后置处理器" : title);
+        return new DefaultSampleResult(runtime.getId(), StringUtils.isBlank(runtime.getTitle()) ? "HTTP 后置处理器" : runtime.getTitle());
     }
 
     @Override

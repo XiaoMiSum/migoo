@@ -72,7 +72,7 @@ public class DebugPostprocessor extends AbstractProcessor<DebugPostprocessor, De
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
         try {
             result.sampleStart();
-            byte[] bytes = JSON.toJSONBytes(config);
+            byte[] bytes = JSON.toJSONBytes(runtime.getConfig());
             result.setRequest(SampleResult.DefaultReal.build(bytes));
             result.setResponse(SampleResult.DefaultReal.build(bytes));
             logger.info("Debug Postprocessor");

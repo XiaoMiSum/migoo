@@ -79,7 +79,8 @@ public class KafkaPostprocessor extends AbstractProcessor<KafkaPostprocessor, Ka
 
     @Override
     protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(id, title);
+        return new DefaultSampleResult(runtime.getId(), StringUtils.isBlank(runtime.getTitle()) ? "Kafka 后置处理器" : runtime.getTitle());
+
     }
 
     @Override

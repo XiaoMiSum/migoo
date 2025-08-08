@@ -68,7 +68,7 @@ public class RedisPostprocessor extends AbstractProcessor<RedisPostprocessor, Re
 
     @Override
     protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(id, StringUtils.isBlank(title) ? "Redis 前置处理器" : title);
+        return new DefaultSampleResult(runtime.getId(), StringUtils.isBlank(runtime.getTitle()) ? "Redis 后置处理器" : runtime.getTitle());
     }
 
     @Override

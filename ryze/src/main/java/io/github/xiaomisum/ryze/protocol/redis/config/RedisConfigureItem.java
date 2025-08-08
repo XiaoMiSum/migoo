@@ -30,8 +30,8 @@ import com.alibaba.fastjson2.annotation.JSONType;
 import io.github.xiaomisum.ryze.core.config.ConfigureItem;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
-import org.apache.commons.lang3.StringUtils;
 import io.github.xiaomisum.ryze.protocol.redis.RedisConstantsInterface;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Locale;
 
@@ -86,10 +86,10 @@ public class RedisConfigureItem implements ConfigureItem<RedisConfigureItem>, Re
 
     @Override
     public RedisConfigureItem evaluate(ContextWrapper context) {
-        datasource = (String) context.eval(datasource);
-        url = (String) context.eval(url);
-        command = (String) context.eval(command);
-        send = (String) context.eval(send);
+        datasource = (String) context.evaluate(datasource);
+        url = (String) context.evaluate(url);
+        command = (String) context.evaluate(command);
+        send = (String) context.evaluate(send);
         return this;
     }
 

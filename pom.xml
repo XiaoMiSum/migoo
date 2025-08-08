@@ -42,14 +42,14 @@
     <licenses>
         <license>
             <name>MIT</name>
-            <url>https://github.com/XiaoMiSum/migoo/blob/master/LICENSE</url>
+            <url>https://github.com/XiaoMiSum/ryze/blob/master/LICENSE</url>
         </license>
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:XiaoMiSum/migoo.git</connection>
-        <developerConnection>scm:git:git@github.com:XiaoMiSum/migoo.git</developerConnection>
-        <url>https://xiaomisum.github.io/migoo/</url>
+        <connection>scm:git:git@github.com:XiaoMiSum/ryze.git</connection>
+        <developerConnection>scm:git:git@github.com:XiaoMiSum/ryze.git</developerConnection>
+        <url>https://xiaomisum.github.io/ryze/</url>
     </scm>
 
     <developers>
@@ -57,7 +57,7 @@
             <name>xiao mi</name>
             <email>mi_xiao@qq.com</email>
             <organization>github</organization>
-            <organizationUrl>https://xiaomisum.github.io/migoo/</organizationUrl>
+            <organizationUrl>https://xiaomisum.github.io/ryze/</organizationUrl>
         </developer>
     </developers>
 
@@ -124,7 +124,7 @@
             </dependency>
 
             <dependency>
-                <groupId>xyz.migoo</groupId>
+                <groupId>xyz.ryze</groupId>
                 <artifactId>ryze-testng</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -199,7 +199,7 @@
                 <version>${yaml.version}</version>
             </dependency>
 
-            <!-- https://mvnrepository.com/artifact/xyz.migoo/simplehttp -->
+            <!-- https://mvnrepository.com/artifact/xyz.ryze/simplehttp -->
             <dependency>
                 <groupId>xyz.migoo</groupId>
                 <artifactId>simplehttp</artifactId>

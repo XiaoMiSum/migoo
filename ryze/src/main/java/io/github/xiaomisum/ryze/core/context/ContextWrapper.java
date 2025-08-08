@@ -149,7 +149,7 @@ public class ContextWrapper {
      * @param object 待计算的对象
      * @return 计算后的对象 或 object 原值
      */
-    public Object eval(Object object) {
+    public Object evaluate(Object object) {
         return sessionRunner.getConfigure().getTemplateEngine().evaluate(this, object);
     }
 

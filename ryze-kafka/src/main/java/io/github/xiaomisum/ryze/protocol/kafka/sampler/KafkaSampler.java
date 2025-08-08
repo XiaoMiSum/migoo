@@ -83,7 +83,7 @@ public class KafkaSampler extends AbstractSampler<KafkaSampler, KafkaConfigureIt
 
     @Override
     protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(id, title);
+        return new DefaultSampleResult(runtime.id, runtime.title);
     }
 
     @Override

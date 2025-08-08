@@ -81,7 +81,8 @@ public class ActivePreprocessor extends AbstractProcessor<ActivePreprocessor, Ac
 
     @Override
     protected DefaultSampleResult getTestResult() {
-        return new DefaultSampleResult(id, title);
+        return new DefaultSampleResult(runtime.getId(), StringUtils.isBlank(runtime.getTitle()) ? "Active 前置处理器" : runtime.getTitle());
+
     }
 
     @Override

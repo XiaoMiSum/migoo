@@ -15,9 +15,9 @@ public class ProcessorAllureReportListener implements AllureReportListener {
 
     @Override
     public int getOrder() {
-        return Integer.MAX_VALUE - 1;
+        return Integer.MAX_VALUE;
     }
-
+    
     @Override
     public void preHandle(ContextWrapper context, Handler handler) {
         if (handler instanceof AbstractProcessor<?, ?, ?> processor) {

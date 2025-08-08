@@ -41,7 +41,10 @@ import java.util.regex.Pattern;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public interface TemplateEngine {
 
-    Pattern EXPRESSION = Pattern.compile("[\\s\\S]*\\$\\{\\w+}[\\s\\S]*");
+    /**
+     * freemarker 模板引擎表达式匹配正则表达式，用于判断模板中是否有模板变量或函数调用
+     */
+    Pattern EXPRESSION = Pattern.compile("[\\s\\S]*\\$\\{.+}[\\s\\S]*");
 
     static boolean hasExpression(String template) {
         return EXPRESSION.matcher(template).matches();
