@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
 import java.util.Map;
 
 /**
- * migoo 框架支持，标记 一个TestNg 测试方法需支持 ryze框架
+ * ryze 框架支持，标记 一个TestNg 测试方法需支持 ryze框架
  * <p>
  * 在测试执行前 @BeforeMethod 中调用创建 session，
  * 在测试执行后 @AfterMethod 中调用销毁 session

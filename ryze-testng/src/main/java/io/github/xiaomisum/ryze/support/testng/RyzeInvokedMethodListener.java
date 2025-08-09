@@ -36,7 +36,7 @@ import org.testng.IInvokedMethodListener;
 import org.testng.ITestResult;
 
 /**
- * 方法执行监听，用于监听 @Test注解的测试方法是否是 MiGoo 测试方法
+ * 方法执行监听，用于监听 @Test注解的测试方法是否是 ryze 测试方法
  *
  * @author xiaomi
  * Created at 2025/8/2 12:58

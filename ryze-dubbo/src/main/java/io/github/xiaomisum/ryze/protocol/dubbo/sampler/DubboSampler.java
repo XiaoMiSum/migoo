@@ -109,7 +109,7 @@ public class DubboSampler extends AbstractSampler<DubboSampler, DubboConfigureIt
 
         request = new ReferenceConfig<>();
         request.setGeneric("true");
-        request.getApplicationModel().getApplicationConfigManager().setApplication(new ApplicationConfig("migoo-dubbo-consumer"));
+        request.getApplicationModel().getApplicationConfigManager().setApplication(new ApplicationConfig("ryze-dubbo-consumer"));
         request.setVersion(referenceConfig.getVersion());
         request.setGroup(referenceConfig.getGroup());
         request.setRetries(referenceConfig.getRetries());

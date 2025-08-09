@@ -55,15 +55,15 @@ public class JsonTree extends JSONObject {
         initialize(json, isRyzeTestFramework(json));
     }
 
-    private void initialize(JSONObject json, boolean isMiGoo) {
-        // 1、先删除 MiGoo组件中的变量，减少一次遍历
-        var variables = isMiGoo ? json.remove(VARIABLES) : null;
+    private void initialize(JSONObject json, boolean isRyze) {
+        // 1、先删除 Ryze组件中的变量，减少一次遍历
+        var variables = isRyze ? json.remove(VARIABLES) : null;
         if (isRyzeTestsuite(json)) {
             json.put(TEST_CLASS, "__testsuite__");
         }
         json.forEach((key, value) -> {
-            // 将 migoo 测试组件 的key 转换为小写
-            var newKey = isMiGoo ? key.toLowerCase(Locale.ROOT) : key;
+            // 将 ryze 测试组件 的key 转换为小写
+            var newKey = isRyze ? key.toLowerCase(Locale.ROOT) : key;
             switch (value) {
                 case JSONObject object -> put(newKey, parse(object));
                 case JSONArray objects -> {
@@ -77,7 +77,7 @@ public class JsonTree extends JSONObject {
                 case null, default -> put(newKey, value);
             }
         });
-        if (isMiGoo) {
+        if (isRyze) {
             // 3、重新添加变量到MiGoo组件
             put(VARIABLES, variables instanceof RyzeVariables ? variables :
                     new RyzeVariables(Optional.ofNullable((JSONObject) variables).orElse(new JSONObject())));

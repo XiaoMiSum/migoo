@@ -41,13 +41,11 @@ public class RyzeTemplateExceptionHandler implements TemplateExceptionHandler {
         StringBuilder builder = new StringBuilder();
         String template = env.getCurrentTemplate().toString();
         if (template.contains(FreeMarkerTemplateEngine.TemplateObjectHandler.NAME)) {
-            template = String.format("${%s}", template.substring(FreeMarkerTemplateEngine.TemplateObjectHandler.NAME.length() + 3
-                    , template.length() - 2));
+            template = String.format("${%s}", template.substring(FreeMarkerTemplateEngine.TemplateObjectHandler.NAME.length() + 3, template.length() - 2));
         }
-        builder
-                .append("\n")
+        builder.append("\n")
                 .append(te.getMessageWithoutStackTop())
-                .append("\nmigoo-freemarker-template：")
+                .append("\nryze-freemarker-template：")
                 .append(template);
         throw new RuntimeException(builder.toString(), te);
     }

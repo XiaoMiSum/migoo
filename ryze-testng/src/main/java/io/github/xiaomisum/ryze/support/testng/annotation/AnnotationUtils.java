@@ -46,15 +46,15 @@ public class AnnotationUtils {
         if (Objects.nonNull(datasource)) {
             return datasource;
         }
-        var migoo = method.getAnnotation(RyzeTest.class);
-        if (Objects.isNull(migoo)) {
+        var ryze = method.getAnnotation(RyzeTest.class);
+        if (Objects.isNull(ryze)) {
             return null;
         }
         var values = new HashMap<String, Object>();
-        values.put("value", migoo.value());
-        values.put("parallel", migoo.parallel());
-        values.put("type", migoo.type());
-        values.put("slice", migoo.slice());
+        values.put("value", ryze.value());
+        values.put("parallel", ryze.parallel());
+        values.put("type", ryze.type());
+        values.put("slice", ryze.slice());
         return newInstance(Datasource.class, values);
     }
 
