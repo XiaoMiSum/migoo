@@ -29,6 +29,7 @@ public class YamlTestCase {
     }
 
     /**
+     * 🚀 推荐使用方式
      * ryze-testng 环境下 自动执行 ryze yaml模板测试用例
      */
     @RyzeTest(value = "测试用例/http.yaml", type = TestSuite.class)

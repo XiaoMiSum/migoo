@@ -16,7 +16,7 @@
 
       启动 active-example 中的 Consumer
 
-# 执行 MiGoo Active 测试
+# 执行 Ryze Active 测试
 
       运行 active-example 中的 Test
 

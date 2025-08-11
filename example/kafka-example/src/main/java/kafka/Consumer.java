@@ -16,14 +16,14 @@ public class Consumer {
         //kafka服务器地址
         props.put("bootstrap.servers", "localhost:9092");
         //必须指定消费者组
-        props.put("group.id", "migoo");
+        props.put("group.id", "ryze");
         //设置数据key和value的序列化处理类
         props.put("key.deserializer", StringDeserializer.class);
         props.put("value.deserializer", StringDeserializer.class);
         //创建消息者实例
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
-        //订阅 migoo.topic 的消息
-        consumer.subscribe(List.of("migoo.topic"));
+        //订阅 ryze.topic 的消息
+        consumer.subscribe(List.of("ryze.topic"));
         //到服务器中读取记录
         while (true) {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));

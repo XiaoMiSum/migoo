@@ -12,7 +12,7 @@
 
       启动 dubbo-example 中的 DubboApplication
 
-# 执行 MiGoo Active 测试
+# 执行 Ryze Active 测试
 
       运行 dubbo-example 中的 Test
 

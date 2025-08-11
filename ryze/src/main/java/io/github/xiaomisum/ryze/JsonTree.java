@@ -78,7 +78,7 @@ public class JsonTree extends JSONObject {
             }
         });
         if (isRyze) {
-            // 3、重新添加变量到MiGoo组件
+            // 3、重新添加变量到 Ryze 组件
             put(VARIABLES, variables instanceof RyzeVariables ? variables :
                     new RyzeVariables(Optional.ofNullable((JSONObject) variables).orElse(new JSONObject())));
         }

@@ -2,7 +2,7 @@
 
       启动 http-example 中的 Application
 
-# 执行 MiGoo Kafka 测试
+# 执行 Ryze Kafka 测试
 
       运行 http-example 中的 Test
 

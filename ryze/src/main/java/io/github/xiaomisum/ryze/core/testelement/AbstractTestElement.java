@@ -943,7 +943,12 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
             return self;
         }
 
-        public SELF http(String rule, Object expected) {
+        public SELF httpStatus(Object expected) {
+            assertions.add(HTTPResponseAssertion.builder().rule("==").field("status").expected(expected).build());
+            return self;
+        }
+
+        public SELF httpStatus(String rule, Object expected) {
             assertions.add(HTTPResponseAssertion.builder().rule(rule).field("status").expected(expected).build());
             return self;
         }

@@ -20,7 +20,7 @@ public class Consumer {
 
     public static void queue(Connection connection) throws Exception {
         Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
-        Destination destination = session.createQueue("migoo.queue");
+        Destination destination = session.createQueue("ryze.queue");
         MessageConsumer consumer = session.createConsumer(destination);
         consumer.setMessageListener(message -> {
             TextMessage textMessage = (TextMessage) message;
@@ -37,7 +37,7 @@ public class Consumer {
 
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
-        Destination destination = session.createTopic("migoo.topic");
+        Destination destination = session.createTopic("ryze.topic");
 
         MessageConsumer consumer = session.createConsumer(destination);
         consumer.setMessageListener(message -> {

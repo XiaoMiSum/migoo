@@ -6,5 +6,5 @@ acks: 1 # 可空
 retries: 5  # 可空
 linger.ms: 20   # 可空
 bootstrap.servers: 127.0.0.1:9092 # 服务器地址
-topic: migoo.topic  # ProducerRecord 中的 topic
-key: migoo # ProducerRecord 中的 key
+topic: ryze.topic  # ProducerRecord 中的 topic
+key: ryze # ProducerRecord 中的 key

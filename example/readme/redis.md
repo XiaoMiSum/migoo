@@ -26,7 +26,7 @@
 
 ![img.png](images/redis.png)
 
-# 执行 MiGoo Redis 测试
+# 执行 Ryze Redis 测试
 
       运行 redis-example 中的 Test
 

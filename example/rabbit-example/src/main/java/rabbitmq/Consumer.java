@@ -24,7 +24,7 @@ public class Consumer {
             // 创建通道
             var channel = connection.createChannel();
             // 声明队列
-            channel.queueDeclare("migoo.topic", false, false, false, null);
+            channel.queueDeclare("ryze.topic", false, false, false, null);
             System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
             // 定义回调函数
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
@@ -33,7 +33,7 @@ public class Consumer {
             };
             while (true) {
 // 开始消费消息
-                channel.basicConsume("migoo.topic", true, deliverCallback, consumerTag -> {
+                channel.basicConsume("ryze.topic", true, deliverCallback, consumerTag -> {
                 });
             }
 

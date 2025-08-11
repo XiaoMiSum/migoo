@@ -1,11 +1,11 @@
 title: 复杂HTTP取样器
 testclass: http
 variables: # 变量
-  username: migoo
+  username: ryze
 config:
   method: post
   protocol: http
-  host: migoo.xyz
+  host: 127.0.0.1
   path: /api/login
   body: { userName: '${username}', password: '123456qq', sign: '__digest(${username}123456qq)' }
 extractors: ## 提取器

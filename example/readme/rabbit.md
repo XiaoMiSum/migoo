@@ -16,7 +16,7 @@
 
       启动 rabbit-example 中的 Consumer
 
-# 执行 MiGoo RabbitMQ 测试
+# 执行 Ryze RabbitMQ 测试
 
       运行 rabbit-example 中的 Test
 

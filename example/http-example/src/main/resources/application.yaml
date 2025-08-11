@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: migoo-http-server
+    name: ryze-http-server
   lifecycle:
     timeout-per-shutdown-phase: 60s
   # Jackson 配置项

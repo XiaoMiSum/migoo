@@ -1,7 +1,7 @@
 testclass: rabbitmq_postprocessor  # 后置处理器类型
 config: # 处理器配置
   queue: # 队列配置
-    name: migoo.topic  # 消息队列名称
+    name: ryze.topic  # 消息队列名称
     durable:  # 是否持久化队列，可空，默认值：false
     exclusive:  # 是否独占队列，可空，默认值：false
     auto_delete:  # 是否自动删除，可空，默认值：false

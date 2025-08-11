@@ -30,7 +30,7 @@
 
       启动 kafka-example 中的 Consumer
 
-# 执行 MiGoo Kafka 测试
+# 执行 Ryze Kafka 测试
 
       运行 kafka-example 中的 Test
 

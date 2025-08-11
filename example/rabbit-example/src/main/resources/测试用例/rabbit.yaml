@@ -9,7 +9,7 @@ children: # 执行步骤
   - title: 步骤1
     testclass: RabbitMQSampler
     variables: # 变量
-      username: migoo
+      username: ryze
     config:
       message: # 发送的消息，ProducerRecord中的 value, 可以是任意json对象、字符串、数字等
         name: 步骤1：标准RabbitMQ取样器

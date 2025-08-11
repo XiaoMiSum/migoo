@@ -1,5 +1,5 @@
 title: jdbc_sampler_4
-testclass: jdbcSampler # 取样器类型
+testclass: jdbc # 取样器类型
 configelements:
   - '配置元件/jdbc_defaults.yaml'
 config: # 取样器配置

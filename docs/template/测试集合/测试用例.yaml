@@ -24,7 +24,7 @@ children: # 执行步骤
   - title: 步骤1
     testclass: http
     variables: # 变量
-      username: migoo
+      username: ryze
     config:
       method: post
       path: /api/login
@@ -38,7 +38,7 @@ children: # 执行步骤
   - title: 步骤2
     testclass: http
     variables: # 变量
-      username: migoo
+      username: ryze
     config:
       method: post
       path: /api/login

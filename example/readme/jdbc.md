@@ -12,7 +12,7 @@
 
         host: localhost   port: 43306   password: 123456
 
-4. 创建数据库：migoo_test
+4. 创建数据库：ryze-test
 
 5. 创建测试表，并写入数据
 
@@ -32,7 +32,7 @@
         -- ----------------------------
         INSERT INTO `t_001` VALUES (1, 100, 'A1');
 
-# 执行 MiGoo MySql 测试
+# 执行 Ryze MySql 测试
 
       运行 jdbc-example 中的 Test
 

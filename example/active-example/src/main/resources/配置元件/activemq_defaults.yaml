@@ -2,5 +2,5 @@
 testclass: activemq_defaults  # 取样器类型
 username: artemis # activemq 用户名
 password: artemis # activemq 密码
-topic: migoo.topic
+topic: ryze.topic
 broker.url: 'tcp://127.0.0.1:61616'
