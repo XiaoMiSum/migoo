@@ -102,10 +102,6 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
 
     @Override
     public void process(ContextWrapper context) {
-        if (!context.getTestResult().getStatus().isPassed()) {
-            // 前置处理器可能执行失败，无需执行测试步骤
-            return;
-        }
         var localContext = initialized ? context : _initialized(context.getSessionRunner());
         doHandle(localContext);
         if (postInterceptors.hasNext()) {

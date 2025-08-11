@@ -86,8 +86,9 @@ public class JDBCDatasource extends AbstractConfigureElement<JDBCDatasource, JDB
         dataSource.setUrl(runtime.getConfig().url);
         dataSource.setUsername(runtime.getConfig().username);
         dataSource.setPassword(runtime.getConfig().password);
-        dataSource.setMaxActive(runtime.getConfig().maxActive);
-        dataSource.setMaxWait(runtime.getConfig().maxWait);
+        // 使用getter 获取数值，因为在这里面做了数值判断
+        dataSource.setMaxActive(runtime.getConfig().getMaxActive());
+        dataSource.setMaxWait(runtime.getConfig().getMaxWait());
         context.getSessionRunner().getContext().getLocalVariablesWrapper().put(refName, dataSource);
     }
 

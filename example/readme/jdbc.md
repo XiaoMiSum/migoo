@@ -6,11 +6,11 @@
 
 2. 启动 MySql，将容器 6379端口映射到宿主机 46379端口
 
-        docker run -d --name mysql -p 43306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql
+        docker run -d --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql
 
 3. 使用数据库客户端连接 mysql
 
-        host: localhost   port: 43306   password: 123456
+        host: localhost   port: 3306   password: 123456
 
 4. 创建数据库：ryze-test
 

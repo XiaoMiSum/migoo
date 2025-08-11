@@ -126,7 +126,6 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
         if (preInterceptors.hasNext()) {
             preInterceptors.next().preHandle(context, this);
         } else {
-            System.out.println("doHandle: " + System.currentTimeMillis());
             R result = (R) context.getTestResult();
             // 子类可以在 sample 方法或其子方法内，在合适的时机再次调用 sampleStart 和 sampleEnd 方法，
             // 以获取更准确的 sample 时间

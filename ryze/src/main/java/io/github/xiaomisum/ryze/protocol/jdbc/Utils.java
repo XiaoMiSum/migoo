@@ -40,7 +40,7 @@ import java.sql.Statement;
  */
 public class Utils {
 
-    public static byte[] toJSONBytes(Statement statement) throws SQLException {
+    public static String toJSONBytes(Statement statement) throws SQLException {
         try (var result = statement.getResultSet()) {
             var results = new JSONArray();
             var meta = result.getMetaData();
@@ -52,11 +52,11 @@ public class Utils {
                 }
                 results.add(item);
             }
-            return results.size() == 1 ? results.getJSONObject(0).toJSONBBytes() : results.toJSONBBytes();
+            return results.size() == 1 ? results.getJSONObject(0).toJSONString() : results.toJSONString();
         }
     }
 
     public static byte[] toJSONBytes(boolean bool, Statement statement) throws SQLException {
-        return bool ? toJSONBytes(statement) : ("Affected rows: " + statement.getUpdateCount()).getBytes();
+        return (bool ? toJSONBytes(statement) : "Affected rows: " + statement.getUpdateCount()).getBytes();
     }
 }

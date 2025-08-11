@@ -19,8 +19,8 @@ class GroovyCodeTestCase {
                     refName "jdbc_source"
                     config {
                         username "root"
-                        password "123456"
-                        url "jdbc:mysql://127.0.0.1:43306/ryze_test?characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2b8&failOverReadOnly=false"
+                        password "123456qq!"
+                        url "jdbc:mysql://127.0.0.1:3306/ryze-test?characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2b8&failOverReadOnly=false"
                     }
                 }
             }
@@ -89,17 +89,25 @@ class GroovyCodeTestCase {
                     refName "jdbc_source"
                     config {
                         username "root"
-                        password "123456"
-                        url "jdbc:mysql://127.0.0.1:43306/ryze_test?characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2b8&failOverReadOnly=false"
+                        password "123456qq!"
+                        url "jdbc:mysql://127.0.0.1:3306/ryze-test?characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2b8&failOverReadOnly=false"
                     }
                 }
             }
             preprocessors {
                 jdbc {
-                    title "前置处理器更新用户"
+                    title "前置处理器写入用户"
                     config {
                         datasource "jdbc_source"
-                        sql "update t_001  set name = \"ryze_jdbc_preprocessor\" where tick = \"jdbc_preprocessor\";"
+                        sql "insert into t_001 (tick, name) values (\"jdbc_preprocessor\", \"ryze_jdbc_preprocessor\");"
+                    }
+                }
+            }
+            postprocessors {
+                jdbc {
+                    config {
+                        datasource "jdbc_source"
+                        sql "truncate table t_001;"
                     }
                 }
             }
@@ -118,21 +126,49 @@ class GroovyCodeTestCase {
     @RyzeTest
     void test3() {
         MagicBox.jdbc({
-            title "步骤1——更新用户：tick = jdbc_preprocessor"
+            title "步骤1——插入用户：tick = jdbc_preprocessor"
+            configureElements {
+                jdbc {
+                    refName "jdbc_source"
+                    config {
+                        username "root"
+                        password "123456qq!"
+                        url "jdbc:mysql://127.0.0.1:3306/ryze-test?characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2b8&failOverReadOnly=false"
+                    }
+                }
+            }
             config {
                 datasource "jdbc_source"
-                sql "update t_001  set name = \"ryze_jdbc_preprocessor\" where tick = \"jdbc_preprocessor\";"
+                sql "insert into t_001 (tick, name) values (\"http_sampler\", \"ryze_http_sampler\");"
             }
         })
 
         MagicBox.jdbc({
-            title "步骤2——查找用户：tick = jdbc_preprocessor"
+            title "步骤2——查找用户：tick = ryze_http_sampler"
+            configureElements {
+                jdbc {
+                    refName "jdbc_source"
+                    config {
+                        username "root"
+                        password "123456qq!"
+                        url "jdbc:mysql://127.0.0.1:3306/ryze-test?characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2b8&failOverReadOnly=false"
+                    }
+                }
+            }
+            postprocessors {
+                jdbc {
+                    config {
+                        datasource "jdbc_source"
+                        sql "truncate table t_001;"
+                    }
+                }
+            }
             config {
                 datasource "jdbc_source"
-                sql "select * from t_001  where tick = \"jdbc_preprocessor\";"
+                sql "select * from t_001  where tick = \"http_sampler\";"
             }
             assertions {
-                json { field "\$.data.name" expected "ryze_http_sampler" }
+                json { field "\$.name" expected "ryze_http_sampler" }
             }
         })
     }

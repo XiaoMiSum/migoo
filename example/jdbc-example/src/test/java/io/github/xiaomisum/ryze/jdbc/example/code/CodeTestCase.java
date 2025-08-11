@@ -16,8 +16,8 @@ public class CodeTestCase {
             suite.variables(var -> var.put("tick", "ryze"));
             suite.variables(Map.of("a", 1, "b", 2));
             suite.configureElements(ele -> ele.jdbc(jdbc -> jdbc.refName("jdbc_source")
-                    .config(config -> config.username("root").password("123456")
-                            .url("jdbc:mysql://127.0.0.1:43306/ryze_test?characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2b8&failOverReadOnly=false")
+                    .config(config -> config.username("root").password("123456qq!")
+                            .url("jdbc:mysql://127.0.0.1:3306/ryze-test?characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2b8&failOverReadOnly=false")
                     )));
             suite.preprocessors(pre ->
                     pre.jdbc(jdbc -> jdbc.config(config -> config.datasource("jdbc_source").sql("insert into t_001 (tick, name) values (\"jdbc_preprocessor\", \"jdbc_preprocessor\");")))
@@ -37,11 +37,12 @@ public class CodeTestCase {
     public void test2() {
         MagicBox.jdbc("测试用例- test2()", sampler -> {
             sampler.configureElements(ele -> ele.jdbc(jdbc -> jdbc.refName("jdbc_source")
-                    .config(config -> config.username("root").password("123456").url("jdbc:mysql://127.0.0.1:43306/ryze_test?characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2b8&failOverReadOnly=false"))
+                    .config(config -> config.username("root").password("123456qq!").url("jdbc:mysql://127.0.0.1:3306/ryze-test?characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2b8&failOverReadOnly=false"))
             ));
-            sampler.preprocessors(pre -> pre.jdbc(jdbc ->
-                    jdbc.title("前置处理器更新用户").config(config -> config.datasource("jdbc_source").sql("update t_001  set name = \"ryze_jdbc_preprocessor\" where tick = \"jdbc_preprocessor\";")))
+            sampler.preprocessors(pre -> pre.jdbc(jdbc -> jdbc.title("前置处理器插入用户")
+                    .config(config -> config.datasource("jdbc_source").sql("insert into t_001 (tick, name) values (\"jdbc_preprocessor\", \"ryze_jdbc_preprocessor\");")))
             );
+            sampler.postprocessors(post -> post.jdbc(jdbc -> jdbc.config(config -> config.datasource("jdbc_source").sql("truncate table t_001;"))));
             sampler.config(config -> config.datasource("jdbc_source").sql("select * from t_001  where tick = \"jdbc_preprocessor\";"));
             sampler.validators(validator -> validator.json(json -> json.field("$.name").expected("ryze_jdbc_preprocessor")));
         });
@@ -51,13 +52,20 @@ public class CodeTestCase {
     @Test
     @RyzeTest
     public void test3() {
-        MagicBox.jdbc(jdbc -> jdbc.title("步骤1——更新用户：tick = jdbc_preprocessor")
-                .config(config -> config.datasource("jdbc_source").sql("update t_001  set name = \"ryze_jdbc_preprocessor\" where tick = \"jdbc_preprocessor\";"))
+        MagicBox.jdbc(jdbc -> jdbc.title("步骤1——插入用户：tick = jdbc_preprocessor")
+                .configureElements(ele -> ele.jdbc(j -> j.refName("jdbc_source")
+                        .config(config -> config.username("root").password("123456qq!").url("jdbc:mysql://127.0.0.1:3306/ryze-test?characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2b8&failOverReadOnly=false"))
+                ))
+                .config(config -> config.datasource("jdbc_source").sql("insert into t_001 (tick, name) values (\"jdbc_preprocessor\", \"ryze_http_sampler\");"))
         );
 
         MagicBox.jdbc(jdbc -> jdbc.title("步骤2——查找用户：tick = jdbc_preprocessor")
+                .configureElements(ele -> ele.jdbc(j -> j.refName("jdbc_source")
+                        .config(config -> config.username("root").password("123456qq!").url("jdbc:mysql://127.0.0.1:3306/ryze-test?characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2b8&failOverReadOnly=false"))
+                ))
+                .postprocessors(post -> post.jdbc(j -> j.config(config -> config.datasource("jdbc_source").sql("truncate table t_001;"))))
                 .config(config -> config.datasource("jdbc_source").sql("select * from t_001  where tick = \"jdbc_preprocessor\";"))
-                .assertions(assertions -> assertions.json("$.data.name", "ryze_http_sampler"))
+                .assertions(assertions -> assertions.json("$.name", "ryze_http_sampler"))
         );
     }
 }

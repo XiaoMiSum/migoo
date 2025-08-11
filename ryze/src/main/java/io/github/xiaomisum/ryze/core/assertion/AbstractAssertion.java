@@ -31,6 +31,7 @@ import io.github.xiaomisum.ryze.core.TestStatus;
 import io.github.xiaomisum.ryze.core.builder.IBuilder;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -61,6 +62,7 @@ public abstract class AbstractAssertion implements Assertion, AssertionConstants
         if (context.getTestResult() instanceof SampleResult result) {
             expected = context.evaluate(expected);
             var res = initialized(result);
+            rule = StringUtils.isBlank(rule) ? "==" : rule;
             var checkRule = ApplicationConfig.getRuleKeyMap().get(rule.toLowerCase(Locale.ROOT));
             if (Objects.isNull(checkRule)) {
                 res.setStatus(TestStatus.failed);

@@ -61,6 +61,9 @@ public class JsonTree extends JSONObject {
         if (isRyzeTestsuite(json)) {
             json.put(TEST_CLASS, "__testsuite__");
         }
+        if (isRyzeSampler(json)) {
+            json.put(TEST_CLASS, json.getString(TEST_CLASS).toLowerCase(Locale.ROOT));
+        }
         json.forEach((key, value) -> {
             // 将 ryze 测试组件 的key 转换为小写
             var newKey = isRyze ? key.toLowerCase(Locale.ROOT) : key;
