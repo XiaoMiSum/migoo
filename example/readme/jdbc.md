@@ -4,7 +4,7 @@
 
         docker pull mysql
 
-2. 启动 MySql，将容器 6379端口映射到宿主机 46379端口
+2. 启动 MySql，将容器 6379端口映射到宿主机 6379端口
 
         docker run -d --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql
 

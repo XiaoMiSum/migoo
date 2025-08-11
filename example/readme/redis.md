@@ -4,9 +4,9 @@
 
         docker pull redis
 
-2. 启动 Redis，将容器 6379端口映射到宿主机 46379端口
+2. 启动 Redis，将容器 6379端口映射到宿主机 6379端口
 
-        docker run -d -p 46379:6379 --name redis redis:latest
+        docker run -d -p 6379:6379 --name redis redis:latest
 
 3. 在Redis 容器中打开一个 shell
 

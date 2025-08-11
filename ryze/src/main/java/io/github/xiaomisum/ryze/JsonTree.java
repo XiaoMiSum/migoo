@@ -58,12 +58,6 @@ public class JsonTree extends JSONObject {
     private void initialize(JSONObject json, boolean isRyze) {
         // 1、先删除 Ryze组件中的变量，减少一次遍历
         var variables = isRyze ? json.remove(VARIABLES) : null;
-        if (isRyzeTestsuite(json)) {
-            json.put(TEST_CLASS, "__testsuite__");
-        }
-        if (isRyzeSampler(json)) {
-            json.put(TEST_CLASS, json.getString(TEST_CLASS).toLowerCase(Locale.ROOT));
-        }
         json.forEach((key, value) -> {
             // 将 ryze 测试组件 的key 转换为小写
             var newKey = isRyze ? key.toLowerCase(Locale.ROOT) : key;
@@ -80,6 +74,12 @@ public class JsonTree extends JSONObject {
                 case null, default -> put(newKey, value);
             }
         });
+        if (isRyzeTestsuite(json)) {
+            json.put(TEST_CLASS, "__testsuite__");
+        }
+        if (isRyzeSampler(json)) {
+            json.put(TEST_CLASS, json.getString(TEST_CLASS).toLowerCase(Locale.ROOT));
+        }
         if (isRyze) {
             // 3、重新添加变量到 Ryze 组件
             put(VARIABLES, variables instanceof RyzeVariables ? variables :

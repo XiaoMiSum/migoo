@@ -126,7 +126,7 @@ public class RedisConfigureItem implements ConfigureItem<RedisConfigureItem>, Re
     }
 
     public int getTimeout() {
-        return timeout;
+        return timeout > 0 ? timeout : 10000;
     }
 
     public void setTimeout(int timeout) {
@@ -134,7 +134,7 @@ public class RedisConfigureItem implements ConfigureItem<RedisConfigureItem>, Re
     }
 
     public int getMaxTotal() {
-        return maxTotal;
+        return maxTotal > 0 ? maxTotal : 10;
     }
 
     public void setMaxTotal(int maxTotal) {
@@ -142,7 +142,7 @@ public class RedisConfigureItem implements ConfigureItem<RedisConfigureItem>, Re
     }
 
     public int getMaxIdle() {
-        return maxIdle;
+        return maxIdle > 0 ? maxIdle : 5;
     }
 
     public void setMaxIdle(int maxIdle) {
@@ -150,7 +150,7 @@ public class RedisConfigureItem implements ConfigureItem<RedisConfigureItem>, Re
     }
 
     public int getMinIdle() {
-        return minIdle;
+        return minIdle > 0 ? minIdle : 1;
     }
 
     public void setMinIdle(int minIdle) {

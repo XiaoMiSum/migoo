@@ -65,14 +65,14 @@ public class RedisDatasource extends AbstractConfigureElement<RedisDatasource, R
     @Override
     protected void doProcess(ContextWrapper context) {
         var poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxTotal(runtime.getConfig().maxTotal);
-        poolConfig.setMaxIdle(runtime.getConfig().maxIdle);
-        poolConfig.setMinIdle(runtime.getConfig().minIdle);
+        poolConfig.setMaxTotal(runtime.getConfig().getMaxTotal());
+        poolConfig.setMaxIdle(runtime.getConfig().getMaxIdle());
+        poolConfig.setMinIdle(runtime.getConfig().getMinIdle());
         var uri = URI.create(runtime.getConfig().url);
         var username = JedisURIHelper.getUser(uri);
         var password = JedisURIHelper.getPassword(uri);
         var database = JedisURIHelper.getDBIndex(uri);
-        jedisPool = new JedisPool(poolConfig, uri.getHost(), uri.getPort(), runtime.getConfig().timeout, username, password, database);
+        jedisPool = new JedisPool(poolConfig, uri.getHost(), uri.getPort(), runtime.getConfig().getTimeout(), username, password, database);
         context.getSessionRunner().getContext().getLocalVariablesWrapper().put(refName, this);
     }
 

@@ -1,4 +1,4 @@
-package io.github.xiaomisum.ryze.jdbc.example.yaml;
+package io.github.xiaomisum.ryze.redis.example.yaml;
 
 import io.github.xiaomisum.ryze.Ryze;
 import io.github.xiaomisum.ryze.core.testelement.TestElement;
@@ -14,7 +14,7 @@ public class YamlTestCase {
      */
     @Test
     public void test1() {
-        var result = Ryze.start("测试用例/jdbc.yaml");
+        var result = Ryze.start("测试用例/redis.yaml");
         // 非 ryze-testng 环境，需要自行断言测试结果，否则 allure 报告最外层的测试会标记成功
         assert result.getStatus().isPassed();
     }
@@ -25,16 +25,16 @@ public class YamlTestCase {
     @RyzeTest
     @Test
     public void test2() {
-        Ryze.start("取样器/jdbc_sampler5.yaml");
+        Ryze.start("取样器/redis_sampler5.yaml");
     }
 
     /**
      * 🚀 推荐使用方式
      * ryze-testng 环境下 自动执行 ryze yaml模板测试用例
      */
-    @RyzeTest(value = "测试用例/jdbc.yaml", type = TestSuite.class)
+    @RyzeTest(value = "测试用例/redis.yaml", type = TestSuite.class)
     @Test
     public void test3(TestElement<?> element) {
-        // 无需像test2一样 编写执行代码 Ryze.start("取样器/jdbc_sampler5.yaml");
+        // 无需像test2一样 编写执行代码 Ryze.start("取样器/redis_sampler5.yaml");
     }
 }
