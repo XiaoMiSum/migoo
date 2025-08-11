@@ -39,6 +39,3 @@
 - Consumer 控制台打印 Kafka Sampler 发送的 message
 
   ![kafka_consumer](images/kafka_consumer.png)
-- 项目根目录下生成 out-put，并保存HTML 报告
-
-  ![kafka_example_reports](images/kafka_example_reports.png)

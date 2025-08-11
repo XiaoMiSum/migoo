@@ -15,13 +15,13 @@ username: guest # rabbitmq 用户名，可空，默认值：guest
 password: guest # rabbitmq 密码，可空，默认值：guest
 timeout: 5000 # 连接超时时间，毫秒，默认值：60000
 queue: # 队列配置
-  name: migoo  # 消息队列名称
+  name: ryze  # 消息队列名称
   durable:  # 是否持久化队列，可空，默认值：false
   exclusive:  # 是否独占队列，可空，默认值：false
   auto_delete:  # 是否自动删除，可空，默认值：false
   arguments:  # 消息队列其他属性，keyword对象，可空
 exchange: # exchange 配置，可空，简单模式（不经过交换机）时，此配置为空
-  name: migoo # exchange 名称
+  name: ryze # exchange 名称
   type: topic # 交换机类型，参考值：fanout、direct、topic，可空，默认值：topic
   routing_key:  # 路由key，当 type为 fanout 时可空
 ```
@@ -39,13 +39,13 @@ config: # 处理器配置
   password: guest # rabbitmq 密码，可空，默认值：guest
   timeout: 5000 # 连接超时时间，毫秒，默认值：60000
   queue: # 队列配置
-    name: migoo  # 消息队列名称
+    name: ryze  # 消息队列名称
     durable:  # 是否持久化队列，可空，默认值：false
     exclusive:  # 是否独占队列，可空，默认值：false
     auto_delete:  # 是否自动删除，可空，默认值：false
     arguments:  # 消息队列其他属性，keyword对象，可空
   exchange: # exchange 配置，可空，简单模式（不经过交换机）时，此配置为空
-    name: migoo # exchange 名称
+    name: ryze # exchange 名称
     type: topic # 交换机类型，参考值：fanout、direct、topic，可空，默认值：topic
     routing_key:  # 路由key，当 type为 fanout 时可空
   props: # 消息的其他属性，可空，非空时该配置下的所有属性均需设值
@@ -80,13 +80,13 @@ config: # 处理器配置
   password: guest # rabbitmq 密码，可空，默认值：guest
   timeout: 5000 # 连接超时时间，毫秒，默认值：60000
   queue: # 队列配置
-    name: migoo  # 消息队列名称
+    name: ryze  # 消息队列名称
     durable:  # 是否持久化队列，可空，默认值：false
     exclusive:  # 是否独占队列，可空，默认值：false
     auto_delete:  # 是否自动删除，可空，默认值：false
     arguments:  # 消息队列其他属性，keyword对象，可空
   exchange: # exchange 配置，可空，简单模式（不经过交换机）时，此配置为空
-    name: migoo # exchange 名称
+    name: ryze # exchange 名称
     type: topic # 交换机类型，参考值：fanout、direct、topic，可空，默认值：topic
     routing_key:  # 路由key，当 type为 fanout 时可空
   props: # 消息的其他属性，可空，非空时该配置下的所有属性均需设值
@@ -122,13 +122,13 @@ config: # 取样器配置
   password: guest # rabbitmq 密码，可空，默认值：guest
   timeout: 5000 # 连接超时时间，毫秒，默认值：60000
   queue: # 队列配置
-    name: migoo  # 消息队列名称
+    name: ryze  # 消息队列名称
     durable:  # 是否持久化队列，可空，默认值：false
     exclusive:  # 是否独占队列，可空，默认值：false
     auto_delete:  # 是否自动删除，可空，默认值：false
     arguments:  # 消息队列其他属性，keyword对象，可空
   exchange: # exchange 配置，可空，简单模式（不经过交换机）时，此配置为空
-    name: migoo # exchange 名称
+    name: ryze # exchange 名称
     type: topic # 交换机类型，参考值：fanout、direct、topic，可空，默认值：topic
     routing_key:  # 路由key，当 type为 fanout 时可空
   props: # 消息的其他属性，可空，非空时该配置下的所有属性均需设值

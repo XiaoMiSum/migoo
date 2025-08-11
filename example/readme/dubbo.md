@@ -21,6 +21,3 @@
 - DubboApplication 控制台打印 dubbo Sampler 的请求信息
 
   ![dubbo_service](images/dubbo_service.png)
-- 项目根目录下生成 out-put，并保存HTML 报告
-
-  ![dubbo_example_reports](images/dubbo_example_reports.png)

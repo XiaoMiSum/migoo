@@ -25,6 +25,3 @@
 - Consumer 控制台打印 Rabbit MQ Sampler 发送的 message
 
   ![rabbit_consumer](images/rabbit_consumer.png)
-- 项目根目录下生成 out-put，并保存HTML 报告
-
-  ![rabbit_example_reports](images/rabbit_example_reports.png)

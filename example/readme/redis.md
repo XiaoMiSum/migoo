@@ -35,6 +35,3 @@
 - Redis-cli 查看 keys *
 
   ![redis_cli_keys](images/redis_cli_keys.png)
-- 项目根目录下生成 out-put，并保存HTML 报告
-
-  ![redis_example_reports](images/redis_example_reports.png)

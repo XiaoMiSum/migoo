@@ -37,7 +37,3 @@
       运行 jdbc-example 中的 Test
 
 # 执行结果
-
-- 项目根目录下生成 out-put，并保存HTML 报告
-
-  ![mysql_example_reports](images/mysql_example_reports.png)

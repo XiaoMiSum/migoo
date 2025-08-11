@@ -37,7 +37,7 @@ config: # 处理器配置
     h1: 1
   query: { } # url中的参数，如: ?id=1&name=t {id: 1, name: t}
   data: { } # 请求data
-  body: { userName: 'migoo', password: '123456qq' } # 请求body 优先级高于 data
+  body: { userName: 'ryze', password: '123456qq' } # 请求body 优先级高于 data
 ```
 
 ### 后置处理器 [示例](../template/处理器/http_postprocessor.yaml)
@@ -55,7 +55,7 @@ config: # 处理器配置
     h1: 1
   query: { } # url中的参数，如: ?id=1&name=t {id: 1, name: t}
   data: { } # 请求data
-  body: { userName: 'migoo', password: '123456qq' } # 请求body 优先级高于 data
+  body: { userName: 'ryze', password: '123456qq' } # 请求body 优先级高于 data
 ```
 
 ## 取样器 [示例](../template/取样器/http_sampler.yaml)
@@ -74,7 +74,7 @@ config: # 取样器配置
   path: /user   # 接口path
   query: { } # url中的参数，如: ?id=1&name=t {id: 1, name: t}
   data: { } # 请求data
-  body: { userName: 'migoo', password: '123456qq' } # 请求body 优先级高于 data
+  body: { userName: 'ryze', password: '123456qq' } # 请求body 优先级高于 data
 ```
 
 # 常见问题

@@ -43,7 +43,7 @@ config: # 取样器配置
     timeout: 5000
     async: false
     load_balance: random
-  interface: protocol.xyz.migoo.dubbo.dubboserver.service.DemoService  # 接口类名全称
+  interface: protocol.xyz.ryze.dubbo.dubboserver.service.DemoService  # 接口类名全称
   method: sayHello  # 接口方法
   parameter_types: # 方法参数类型，根据接口定义
     - java.lang.String
