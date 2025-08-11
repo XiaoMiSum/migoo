@@ -101,6 +101,7 @@ public class TestDataLoader {
                 return new String(bytes, StandardCharsets.UTF_8);
             }
         } catch (Exception ignored) {
+            ignored.printStackTrace();
         }
         throw new RuntimeException("读取文件失败: " + path);
     }

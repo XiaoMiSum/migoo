@@ -11,11 +11,13 @@
 
     <artifactId>dubbo-example</artifactId>
 
+
     <dependencies>
         <dependency>
             <groupId>io.github.xiaomisum</groupId>
             <artifactId>ryze-dubbo</artifactId>
         </dependency>
+
 
         <dependency>
             <groupId>org.apache.dubbo</groupId>
@@ -23,6 +25,14 @@
             <version>3.3.2</version>
             <type>pom</type>
         </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo</artifactId>
+            <version>3.3.2</version>
+        </dependency>
+
     </dependencies>
 
 </project>

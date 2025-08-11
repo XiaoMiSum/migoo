@@ -75,10 +75,10 @@ public class JsonTree extends JSONObject {
             }
         });
         if (isRyzeTestsuite(json)) {
-            json.put(TEST_CLASS, "__testsuite__");
+            put(TEST_CLASS, "__testsuite__");
         }
         if (isRyzeSampler(json)) {
-            json.put(TEST_CLASS, json.getString(TEST_CLASS).toLowerCase(Locale.ROOT));
+            put(TEST_CLASS, json.getString(TEST_CLASS).toLowerCase(Locale.ROOT));
         }
         if (isRyze) {
             // 3、重新添加变量到 Ryze 组件

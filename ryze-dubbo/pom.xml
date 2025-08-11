@@ -46,7 +46,6 @@
         <dependency>
             <groupId>io.github.xiaomisum</groupId>
             <artifactId>ryze</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>

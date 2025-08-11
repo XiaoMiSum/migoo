@@ -26,19 +26,27 @@
  *
  */
 
-package dubbo;
+package io.github.xiaomisum.ryze.dubbo.example;
+
+import org.apache.dubbo.rpc.RpcContext;
 
 import java.util.concurrent.CompletableFuture;
 
 /**
  * @author mi.xiao
- * @date 2021/7/3 17:50
+ * @date 2021/7/3 17:51
  */
-public interface DemoService {
+public class DemoServiceImpl implements DemoService {
 
-    String sayHello(String name);
-
-    default CompletableFuture<String> sayHelloAsync(String name) {
-        return CompletableFuture.completedFuture(sayHello(name));
+    @Override
+    public String sayHello(String name) {
+        System.out.println("Hello " + name);
+        return "Hello " + name + ", response from provider: " + RpcContext.getContext().getLocalAddress();
     }
+
+    @Override
+    public CompletableFuture<String> sayHelloAsync(String name) {
+        return null;
+    }
+
 }

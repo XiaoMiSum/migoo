@@ -1,7 +1,7 @@
 title: redis_sampler_5
 testclass: redis # 取样器类型
 configelements:
-  - !incloud '配置元件/redis_defaults.yaml'
+  - !include '配置元件/redis_defaults.yaml'
 config: # 取样器配置
   datasource: redis_source
   command: lindex
