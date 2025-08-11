@@ -25,8 +25,14 @@
 
 package io.github.xiaomisum.ryze.protocol.kafka.builder;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.builder.DefaultExtractorsBuilder;
 import io.github.xiaomisum.ryze.core.builder.ExtensiblePreprocessorsBuilder;
+import io.github.xiaomisum.ryze.protocol.kafka.processor.KafkaPreprocessor;
+import io.github.xiaomisum.ryze.support.Customizer;
+
+import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
  * kafka 自定义前置处理器列表构建器，提供 kafka 自定义前置处理器列表的构建方法
@@ -37,5 +43,29 @@ public class KafkaPreprocessorsBuilder extends ExtensiblePreprocessorsBuilder<Ka
 
     public static KafkaPreprocessorsBuilder builder() {
         return new KafkaPreprocessorsBuilder();
+    }
+
+    public KafkaPreprocessorsBuilder kafka(KafkaPreprocessor preprocessor) {
+        this.preprocessors.add(preprocessor);
+        return self;
+    }
+
+    public KafkaPreprocessorsBuilder kafka(KafkaPreprocessor.Builder child) {
+        this.preprocessors.add(child.build());
+        return self;
+    }
+
+    public KafkaPreprocessorsBuilder kafka(Customizer<KafkaPreprocessor.Builder> customizer) {
+        var builder = KafkaPreprocessor.builder();
+        customizer.customize(builder);
+        this.preprocessors.add(builder.build());
+        return self;
+    }
+
+    public KafkaPreprocessorsBuilder kafka(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = KafkaPreprocessor.Builder.class) Closure<?> closure) {
+        var builder = KafkaPreprocessor.builder();
+        call(closure, builder);
+        this.preprocessors.add(builder.build());
+        return self;
     }
 }

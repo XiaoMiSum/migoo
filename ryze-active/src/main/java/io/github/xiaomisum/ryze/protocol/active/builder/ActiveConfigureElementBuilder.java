@@ -25,7 +25,13 @@
 
 package io.github.xiaomisum.ryze.protocol.active.builder;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.builder.ExtensibleConfigureElementsBuilder;
+import io.github.xiaomisum.ryze.protocol.active.config.ActiveDefaults;
+import io.github.xiaomisum.ryze.support.Customizer;
+
+import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
  * active 自定义配置元件列表构建器，提供 active 自定义配置元件列表的构建方法
@@ -36,5 +42,29 @@ public class ActiveConfigureElementBuilder extends ExtensibleConfigureElementsBu
 
     public static ActiveConfigureElementBuilder builder() {
         return new ActiveConfigureElementBuilder();
+    }
+    
+    public ActiveConfigureElementBuilder active(ActiveDefaults defaults) {
+        configureElements.add(defaults);
+        return self;
+    }
+
+    public ActiveConfigureElementBuilder active(Customizer<ActiveDefaults.Builder> customizer) {
+        var builder = ActiveDefaults.builder();
+        customizer.customize(builder);
+        configureElements.add(builder.build());
+        return self;
+    }
+
+    public ActiveConfigureElementBuilder active(ActiveDefaults.Builder builder) {
+        configureElements.add(builder.build());
+        return self;
+    }
+
+    public ActiveConfigureElementBuilder active(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = ActiveDefaults.Builder.class) Closure<?> closure) {
+        var builder = ActiveDefaults.builder();
+        call(closure, builder);
+        configureElements.add(builder.build());
+        return self;
     }
 }

@@ -25,8 +25,14 @@
 
 package io.github.xiaomisum.ryze.protocol.kafka.builder;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.builder.DefaultExtractorsBuilder;
 import io.github.xiaomisum.ryze.core.builder.ExtensiblePostprocessorsBuilder;
+import io.github.xiaomisum.ryze.protocol.kafka.processor.KafkaPostprocessor;
+import io.github.xiaomisum.ryze.support.Customizer;
+
+import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
  * kafka 自定义后置处理器列表构建器，提供 kafka 自定义后置处理器列表的构建方法
@@ -37,5 +43,29 @@ public class KafkaPostprocessorsBuilder extends ExtensiblePostprocessorsBuilder<
 
     public static KafkaPostprocessorsBuilder builder() {
         return new KafkaPostprocessorsBuilder();
+    }
+
+    public KafkaPostprocessorsBuilder kafka(KafkaPostprocessor postprocessor) {
+        this.postprocessors.add(postprocessor);
+        return self;
+    }
+
+    public KafkaPostprocessorsBuilder kafka(KafkaPostprocessor.Builder builder) {
+        this.postprocessors.add(builder.build());
+        return self;
+    }
+
+    public KafkaPostprocessorsBuilder kafka(Customizer<KafkaPostprocessor.Builder> customizer) {
+        var builder = KafkaPostprocessor.builder();
+        customizer.customize(builder);
+        this.postprocessors.add(builder.build());
+        return self;
+    }
+
+    public KafkaPostprocessorsBuilder kafka(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = KafkaPostprocessor.Builder.class) Closure<?> closure) {
+        var builder = KafkaPostprocessor.builder();
+        call(closure, builder);
+        this.postprocessors.add(builder.build());
+        return self;
     }
 }

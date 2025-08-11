@@ -29,6 +29,7 @@ import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.builder.ExtensibleChildrenBuilder;
 import io.github.xiaomisum.ryze.protocol.rabbit.sampler.RabbitSampler;
+import io.github.xiaomisum.ryze.support.Customizer;
 
 import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
@@ -50,6 +51,13 @@ public class RabbitSamplersBuilder extends ExtensibleChildrenBuilder<RabbitSampl
 
     public RabbitSamplersBuilder rabbit(RabbitSampler.Builder child) {
         this.children.add(child.build());
+        return self;
+    }
+
+    public RabbitSamplersBuilder rabbit(Customizer<RabbitSampler.Builder> customizer) {
+        var builder = RabbitSampler.builder();
+        customizer.customize(builder);
+        this.children.add(builder.build());
         return self;
     }
 

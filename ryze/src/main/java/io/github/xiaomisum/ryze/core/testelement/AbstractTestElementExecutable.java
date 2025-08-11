@@ -325,6 +325,11 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
             return self;
         }
 
+        public SELF preprocessors(List<Preprocessor> preprocessors) {
+            this.preprocessors = Collections.addAllIfNonNull(this.preprocessors, preprocessors);
+            return self;
+        }
+
         public SELF preprocessors(Customizer<PREPROCESSORS_BUILDER> customizer) {
             PREPROCESSORS_BUILDER builder = getPreprocessorsBuilder();
             customizer.customize(builder);
@@ -336,6 +341,11 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
             PREPROCESSORS_BUILDER builder = getPreprocessorsBuilder();
             Groovy.call(closure, builder);
             this.preprocessors = Collections.addAllIfNonNull(this.preprocessors, builder.build());
+            return self;
+        }
+
+        public SELF postprocessors(List<Postprocessor> postprocessors) {
+            this.postprocessors = Collections.addAllIfNonNull(this.postprocessors, postprocessors);
             return self;
         }
 

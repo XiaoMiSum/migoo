@@ -29,6 +29,7 @@ import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.builder.ExtensibleChildrenBuilder;
 import io.github.xiaomisum.ryze.protocol.dubbo.sampler.DubboSampler;
+import io.github.xiaomisum.ryze.support.Customizer;
 
 import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
@@ -50,6 +51,13 @@ public class DubboSamplersBuilder extends ExtensibleChildrenBuilder<DubboSampler
 
     public DubboSamplersBuilder dubbo(DubboSampler.Builder child) {
         this.children.add(child.build());
+        return self;
+    }
+
+    public DubboSamplersBuilder dubbo(Customizer<DubboSampler.Builder> customizer) {
+        var builder = DubboSampler.builder();
+        customizer.customize(builder);
+        this.children.add(builder.build());
         return self;
     }
 

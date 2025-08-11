@@ -25,8 +25,14 @@
 
 package io.github.xiaomisum.ryze.protocol.rabbit.builder;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.builder.DefaultExtractorsBuilder;
 import io.github.xiaomisum.ryze.core.builder.ExtensiblePostprocessorsBuilder;
+import io.github.xiaomisum.ryze.protocol.rabbit.processor.RabbitPostprocessor;
+import io.github.xiaomisum.ryze.support.Customizer;
+
+import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
  * rabbit 自定义后置处理器列表构建器，提供 rabbit 自定义后置处理器列表的构建方法
@@ -37,5 +43,29 @@ public class RabbitPostprocessorsBuilder extends ExtensiblePostprocessorsBuilder
 
     public static RabbitPostprocessorsBuilder builder() {
         return new RabbitPostprocessorsBuilder();
+    }
+
+    public RabbitPostprocessorsBuilder rabbit(RabbitPostprocessor postprocessor) {
+        this.postprocessors.add(postprocessor);
+        return self;
+    }
+
+    public RabbitPostprocessorsBuilder rabbit(RabbitPostprocessor.Builder builder) {
+        this.postprocessors.add(builder.build());
+        return self;
+    }
+
+    public RabbitPostprocessorsBuilder rabbit(Customizer<RabbitPostprocessor.Builder> customizer) {
+        var builder = RabbitPostprocessor.builder();
+        customizer.customize(builder);
+        this.postprocessors.add(builder.build());
+        return self;
+    }
+
+    public RabbitPostprocessorsBuilder rabbit(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = RabbitPostprocessor.Builder.class) Closure<?> closure) {
+        var builder = RabbitPostprocessor.builder();
+        call(closure, builder);
+        this.postprocessors.add(builder.build());
+        return self;
     }
 }

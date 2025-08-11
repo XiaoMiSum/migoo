@@ -25,7 +25,13 @@
 
 package io.github.xiaomisum.ryze.protocol.kafka.builder;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.builder.ExtensibleConfigureElementsBuilder;
+import io.github.xiaomisum.ryze.protocol.kafka.config.KafkaDefaults;
+import io.github.xiaomisum.ryze.support.Customizer;
+
+import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
  * kafka 自定义配置元件列表构建器，提供 kafka 自定义配置元件列表的构建方法
@@ -36,5 +42,29 @@ public class KafkaConfigureElementBuilder extends ExtensibleConfigureElementsBui
 
     public static KafkaConfigureElementBuilder builder() {
         return new KafkaConfigureElementBuilder();
+    }
+
+    public KafkaConfigureElementBuilder kafka(KafkaDefaults defaults) {
+        this.configureElements.add(defaults);
+        return self;
+    }
+
+    public KafkaConfigureElementBuilder kafka(KafkaDefaults.Builder builder) {
+        this.configureElements.add(builder.build());
+        return self;
+    }
+
+    public KafkaConfigureElementBuilder kafka(Customizer<KafkaDefaults.Builder> customizer) {
+        var builder = KafkaDefaults.builder();
+        customizer.customize(builder);
+        this.configureElements.add(builder.build());
+        return self;
+    }
+
+    public KafkaConfigureElementBuilder kafka(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = KafkaDefaults.Builder.class) Closure<?> closure) {
+        var builder = KafkaDefaults.builder();
+        call(closure, builder);
+        this.configureElements.add(builder.build());
+        return self;
     }
 }

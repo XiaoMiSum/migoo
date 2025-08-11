@@ -25,8 +25,14 @@
 
 package io.github.xiaomisum.ryze.protocol.dubbo.builder;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.builder.DefaultExtractorsBuilder;
 import io.github.xiaomisum.ryze.core.builder.ExtensiblePostprocessorsBuilder;
+import io.github.xiaomisum.ryze.protocol.dubbo.processor.DubboPostprocessor;
+import io.github.xiaomisum.ryze.support.Customizer;
+
+import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
  * dubbo 自定义后置处理器列表构建器，提供 dubbo 自定义后置处理器列表的构建方法
@@ -38,4 +44,29 @@ public class DubboPostprocessorsBuilder extends ExtensiblePostprocessorsBuilder<
     public static DubboPostprocessorsBuilder builder() {
         return new DubboPostprocessorsBuilder();
     }
+
+    public DubboPostprocessorsBuilder dubbo(DubboPostprocessor postprocessor) {
+        postprocessors.add(postprocessor);
+        return self;
+    }
+
+    public DubboPostprocessorsBuilder dubbo(Customizer<DubboPostprocessor.Builder> customizer) {
+        var builder = DubboPostprocessor.builder();
+        customizer.customize(builder);
+        postprocessors.add(builder.build());
+        return self;
+    }
+
+    public DubboPostprocessorsBuilder dubbo(DubboPostprocessor.Builder builder) {
+        postprocessors.add(builder.build());
+        return self;
+    }
+
+    public DubboPostprocessorsBuilder dubbo(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = DubboPostprocessor.Builder.class) Closure<?> closure) {
+        var builder = DubboPostprocessor.builder();
+        call(closure, builder);
+        postprocessors.add(builder.build());
+        return self;
+    }
+
 }

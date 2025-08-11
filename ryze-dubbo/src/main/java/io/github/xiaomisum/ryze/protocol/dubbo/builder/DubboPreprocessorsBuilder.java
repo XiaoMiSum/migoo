@@ -25,8 +25,14 @@
 
 package io.github.xiaomisum.ryze.protocol.dubbo.builder;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.builder.DefaultExtractorsBuilder;
 import io.github.xiaomisum.ryze.core.builder.ExtensiblePreprocessorsBuilder;
+import io.github.xiaomisum.ryze.protocol.dubbo.processor.DubboPreprocessor;
+import io.github.xiaomisum.ryze.support.Customizer;
+
+import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
  * dubbo 自定义前置处理器列表构建器，提供 dubbo 自定义前置处理器列表的构建方法
@@ -35,7 +41,32 @@ import io.github.xiaomisum.ryze.core.builder.ExtensiblePreprocessorsBuilder;
  */
 public class DubboPreprocessorsBuilder extends ExtensiblePreprocessorsBuilder<DubboPreprocessorsBuilder, DefaultExtractorsBuilder> {
 
+
     public static DubboPreprocessorsBuilder builder() {
         return new DubboPreprocessorsBuilder();
+    }
+
+    public DubboPreprocessorsBuilder dubbo(DubboPreprocessor preprocessor) {
+        preprocessors.add(preprocessor);
+        return self;
+    }
+
+    public DubboPreprocessorsBuilder dubbo(Customizer<DubboPreprocessor.Builder> customizer) {
+        var builder = DubboPreprocessor.builder();
+        customizer.customize(builder);
+        preprocessors.add(builder.build());
+        return self;
+    }
+
+    public DubboPreprocessorsBuilder dubbo(DubboPreprocessor.Builder builder) {
+        preprocessors.add(builder.build());
+        return self;
+    }
+
+    public DubboPreprocessorsBuilder dubbo(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = DubboPreprocessor.Builder.class) Closure<?> closure) {
+        var builder = DubboPreprocessor.builder();
+        call(closure, builder);
+        preprocessors.add(builder.build());
+        return self;
     }
 }

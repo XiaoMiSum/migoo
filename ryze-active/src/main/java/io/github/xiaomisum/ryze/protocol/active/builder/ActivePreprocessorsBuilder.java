@@ -25,8 +25,14 @@
 
 package io.github.xiaomisum.ryze.protocol.active.builder;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.builder.DefaultExtractorsBuilder;
 import io.github.xiaomisum.ryze.core.builder.ExtensiblePreprocessorsBuilder;
+import io.github.xiaomisum.ryze.protocol.active.processor.ActivePreprocessor;
+import io.github.xiaomisum.ryze.support.Customizer;
+
+import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
  * active 自定义前置处理器列表构建器，提供 active 自定义前置处理器列表的构建方法
@@ -37,5 +43,29 @@ public class ActivePreprocessorsBuilder extends ExtensiblePreprocessorsBuilder<A
 
     public static ActivePreprocessorsBuilder builder() {
         return new ActivePreprocessorsBuilder();
+    }
+
+    public ActivePreprocessorsBuilder active(ActivePreprocessor preprocessor) {
+        preprocessors.add(preprocessor);
+        return self;
+    }
+
+    public ActivePreprocessorsBuilder active(Customizer<ActivePreprocessor.Builder> customizer) {
+        var builder = ActivePreprocessor.builder();
+        customizer.customize(builder);
+        preprocessors.add(builder.build());
+        return self;
+    }
+
+    public ActivePreprocessorsBuilder active(ActivePreprocessor.Builder builder) {
+        preprocessors.add(builder.build());
+        return self;
+    }
+
+    public ActivePreprocessorsBuilder active(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = ActivePreprocessor.Builder.class) Closure<?> closure) {
+        var builder = ActivePreprocessor.builder();
+        call(closure, builder);
+        preprocessors.add(builder.build());
+        return self;
     }
 }

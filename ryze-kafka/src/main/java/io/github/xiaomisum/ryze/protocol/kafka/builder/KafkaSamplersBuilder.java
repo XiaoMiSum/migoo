@@ -29,6 +29,7 @@ import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.builder.ExtensibleChildrenBuilder;
 import io.github.xiaomisum.ryze.protocol.kafka.sampler.KafkaSampler;
+import io.github.xiaomisum.ryze.support.Customizer;
 
 import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
@@ -50,6 +51,13 @@ public class KafkaSamplersBuilder extends ExtensibleChildrenBuilder<KafkaSampler
 
     public KafkaSamplersBuilder kafka(KafkaSampler.Builder child) {
         this.children.add(child.build());
+        return self;
+    }
+
+    public KafkaSamplersBuilder kafka(Customizer<KafkaSampler.Builder> customizer) {
+        var builder = KafkaSampler.builder();
+        customizer.customize(builder);
+        this.children.add(builder.build());
         return self;
     }
 

@@ -25,7 +25,13 @@
 
 package io.github.xiaomisum.ryze.protocol.rabbit.builder;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.builder.ExtensibleConfigureElementsBuilder;
+import io.github.xiaomisum.ryze.protocol.rabbit.config.RabbitDefaults;
+import io.github.xiaomisum.ryze.support.Customizer;
+
+import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
  * rabbit 自定义配置元件列表构建器，提供 rabbit 自定义配置元件列表的构建方法
@@ -36,5 +42,29 @@ public class RabbitConfigureElementBuilder extends ExtensibleConfigureElementsBu
 
     public static RabbitConfigureElementBuilder builder() {
         return new RabbitConfigureElementBuilder();
+    }
+
+    public RabbitConfigureElementBuilder rabbit(RabbitDefaults child) {
+        this.configureElements.add(child);
+        return self;
+    }
+
+    public RabbitConfigureElementBuilder rabbit(RabbitDefaults.Builder builder) {
+        this.configureElements.add(builder.build());
+        return self;
+    }
+
+    public RabbitConfigureElementBuilder rabbit(Customizer<RabbitDefaults.Builder> customizer) {
+        var builder = RabbitDefaults.builder();
+        customizer.customize(builder);
+        this.configureElements.add(builder.build());
+        return self;
+    }
+
+    public RabbitConfigureElementBuilder rabbit(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = RabbitDefaults.Builder.class) Closure<?> closure) {
+        var builder = RabbitDefaults.builder();
+        call(closure, builder);
+        this.configureElements.add(builder.build());
+        return self;
     }
 }

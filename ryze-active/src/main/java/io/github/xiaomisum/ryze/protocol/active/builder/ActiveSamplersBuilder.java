@@ -29,6 +29,7 @@ import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.builder.ExtensibleChildrenBuilder;
 import io.github.xiaomisum.ryze.protocol.active.sampler.ActiveSampler;
+import io.github.xiaomisum.ryze.support.Customizer;
 
 import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
@@ -50,6 +51,13 @@ public class ActiveSamplersBuilder extends ExtensibleChildrenBuilder<ActiveSampl
 
     public ActiveSamplersBuilder active(ActiveSampler.Builder child) {
         this.children.add(child.build());
+        return self;
+    }
+
+    public ActiveSamplersBuilder active(Customizer<ActiveSampler.Builder> customizer) {
+        var builder = ActiveSampler.builder();
+        customizer.customize(builder);
+        this.children.add(builder.build());
         return self;
     }
 
