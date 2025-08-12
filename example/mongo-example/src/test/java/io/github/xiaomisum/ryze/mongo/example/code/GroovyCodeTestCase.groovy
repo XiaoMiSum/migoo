@@ -21,18 +21,18 @@ class GroovyCodeTestCase {
             configureElements(MongoConfigureElementsBuilder.class, {
                 mongo {
                     config {
-                        bootstrapServers "127.0.0.1:9092"
-                        topic "ryze.topic"
-                        key "ryze"
+                        url "127.0.0.1:9092"
+                        database "ryze.topic"
+                        collection "ryze.topic"
                     }
                 }
             })
             preprocessors(MongoPreprocessorsBuilder.class, {
                 mongo {
                     config {
-                        message(HashMap.class, message -> {
-                            message.put("username", "\${tick}")
-                            message.put("age", 18)
+                        action "insert"
+                        dataMap(data -> {
+                            data.put("username", "\${tick}")
                         })
                     }
                 }
@@ -70,9 +70,9 @@ class GroovyCodeTestCase {
             configureElements(MongoConfigureElementsBuilder.class, {
                 mongo {
                     config {
-                        bootstrapServers "127.0.0.1:9092"
-                        topic "ryze.topic"
-                        key "ryze"
+                        url "127.0.0.1:9092"
+                        database "ryze.topic"
+                        collection "ryze.topic"
                     }
                 }
             })
@@ -100,9 +100,9 @@ class GroovyCodeTestCase {
             configureElements(MongoConfigureElementsBuilder.class, {
                 mongo {
                     config {
-                        bootstrapServers "127.0.0.1:9092"
-                        topic "ryze.topic"
-                        key "ryze"
+                        url "127.0.0.1:9092"
+                        database "ryze.topic"
+                        collection "ryze.topic"
                     }
                 }
             })
@@ -116,9 +116,9 @@ class GroovyCodeTestCase {
             configureElements(MongoConfigureElementsBuilder.class, {
                 mongo {
                     config {
-                        bootstrapServers "127.0.0.1:9092"
-                        topic "ryze.topic"
-                        key "ryze"
+                        url "127.0.0.1:9092"
+                        database "ryze.topic"
+                        collection "ryze.topic"
                     }
                 }
             })

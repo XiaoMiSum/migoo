@@ -22,7 +22,11 @@ public class CodeTestCase {
             suite.variables(var -> var.put("tick", "mongo_preprocessor"));
             suite.variables(Map.of("a", 1, "b", 2));
             suite.configureElements(MongoConfigureElementsBuilder.class, builder -> builder
-                    .mongo(mongo -> mongo.config(config -> config.bootstrapServers("127.0.0.1:9092").topic("ryze.topic").key("ryze")))
+                    .mongo(mongo -> mongo.config(config -> config
+                            .url("")
+                            .database("")
+                            .collection(""))
+                    )
             );
             suite.preprocessors(MongoPreprocessorsBuilder.class, builder -> builder
                     .mongo(mongo -> mongo.config(config -> config.message(HashMap.class, message -> {
@@ -49,7 +53,11 @@ public class CodeTestCase {
     public void test2() {
         MongoMagicBox.mongo("测试用例- test2()", sampler -> {
             sampler.configureElements(MongoConfigureElementsBuilder.class, builder -> builder
-                    .mongo(mongo -> mongo.config(config -> config.bootstrapServers("127.0.0.1:9092").topic("ryze.topic").key("ryze")))
+                    .mongo(mongo -> mongo.config(config -> config
+                            .url("")
+                            .database("")
+                            .collection(""))
+                    )
             );
             sampler.preprocessors(MongoPreprocessorsBuilder.class, builder -> builder
                     .mongo(mongo -> mongo.config(config -> config.message(HashMap.class, message -> {
@@ -67,7 +75,11 @@ public class CodeTestCase {
     public void test3() {
         MongoMagicBox.mongo("测试用例- test3()-1", sampler -> {
             sampler.configureElements(MongoConfigureElementsBuilder.class, builder -> builder
-                    .mongo(mongo -> mongo.config(config -> config.bootstrapServers("127.0.0.1:9092").topic("ryze.topic").key("ryze")))
+                    .mongo(mongo -> mongo.config(config -> config
+                            .url("")
+                            .database("")
+                            .collection(""))
+                    )
             );
             sampler.config(config -> config.message(List.of(1, 2, 3, 4)));
         });
@@ -75,7 +87,11 @@ public class CodeTestCase {
 
         MongoMagicBox.mongo("测试用例- test3()-2", sampler -> {
             sampler.configureElements(MongoConfigureElementsBuilder.class, builder -> builder
-                    .mongo(mongo -> mongo.config(config -> config.bootstrapServers("127.0.0.1:9092").topic("ryze.topic").key("ryze")))
+                    .mongo(mongo -> mongo.config(config -> config
+                            .url("")
+                            .database("")
+                            .collection(""))
+                    )
             );
             sampler.config(config -> config.message(true));
         });
