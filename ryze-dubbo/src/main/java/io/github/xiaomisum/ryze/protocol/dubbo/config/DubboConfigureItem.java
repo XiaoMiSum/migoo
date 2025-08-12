@@ -29,14 +29,22 @@
 package io.github.xiaomisum.ryze.protocol.dubbo.config;
 
 import com.alibaba.fastjson2.annotation.JSONField;
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.config.ConfigureItem;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
 import io.github.xiaomisum.ryze.protocol.dubbo.DubboConstantsInterface;
+import io.github.xiaomisum.ryze.support.Collections;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
+
+import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
  * @author xiaomi
@@ -131,6 +139,12 @@ public class DubboConfigureItem implements ConfigureItem<DubboConfigureItem>, Du
     }
 
     public List<String> getParameterTypes() {
+        if (Objects.isNull(parameterTypes) && Objects.nonNull(parameters)) {
+            parameterTypes = Collections.newArrayList();
+            for (var parameter : parameters) {
+                parameterTypes.add(parameter.getClass().getName());
+            }
+        }
         return parameterTypes;
     }
 
@@ -163,27 +177,11 @@ public class DubboConfigureItem implements ConfigureItem<DubboConfigureItem>, Du
     }
 
 
-    public enum Protocol {
-        /**
-         * Dubbo 注册中心协议
-         */
-        ZOOKEEPER("zookeeper://"),
-        NACOS("nacos://");
-
-        private final String protocol;
-
-        Protocol(String protocol) {
-            this.protocol = protocol;
-        }
-
-        public String getProtocol() {
-            return this.protocol;
-        }
-
-    }
-
     public static class Registry implements ConfigureItem<Registry> {
 
+        /**
+         * 过期配置，合并到 {@link #address}
+         */
         @JSONField(name = PROTOCOL)
         protected String protocol;
 
@@ -237,7 +235,7 @@ public class DubboConfigureItem implements ConfigureItem<DubboConfigureItem>, Du
         }
 
         public String getProtocol() {
-            return StringUtils.isBlank(protocol) ? "ZOOKEEPER" : protocol.toUpperCase(Locale.ROOT);
+            return StringUtils.isNotBlank(protocol) ? protocol.toLowerCase(Locale.ROOT) : "";
         }
 
         public void setProtocol(String protocol) {
@@ -291,6 +289,13 @@ public class DubboConfigureItem implements ConfigureItem<DubboConfigureItem>, Du
 
             private Registry registry = new Registry();
 
+            /**
+             * 过期配置，合并到 {@link #address(String)}
+             *
+             * @param protocol
+             * @return
+             */
+            @Deprecated(since = "6.0.0")
             public Builder protocol(String protocol) {
                 registry.protocol = protocol;
                 return self;
@@ -489,6 +494,13 @@ public class DubboConfigureItem implements ConfigureItem<DubboConfigureItem>, Du
             return self;
         }
 
+        public Builder registry(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = Registry.Builder.class) Closure<?> closure) {
+            var builder = Registry.builder();
+            call(closure, builder);
+            configure.registry = builder.build();
+            return self;
+        }
+
         public Builder registry(Registry.Builder registry) {
             configure.registry = registry.build();
             return self;
@@ -502,6 +514,13 @@ public class DubboConfigureItem implements ConfigureItem<DubboConfigureItem>, Du
         public Builder reference(Consumer<Reference.Builder> consumer) {
             var builder = Reference.builder();
             consumer.accept(builder);
+            configure.reference = builder.build();
+            return self;
+        }
+
+        public Builder reference(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = Reference.Builder.class) Closure<?> closure) {
+            var builder = Reference.builder();
+            call(closure, builder);
             configure.reference = builder.build();
             return self;
         }
@@ -526,59 +545,79 @@ public class DubboConfigureItem implements ConfigureItem<DubboConfigureItem>, Du
             return self;
         }
 
-        public Builder parameterTypes(List<String> parameterTypes) {
-            configure.parameterTypes = parameterTypes;
-            return self;
+        public Builder parameters(Consumer<List<Object>> consumer) {
+            List<Object> parameters = Collections.newArrayList();
+            consumer.accept(parameters);
+            return parameters(parameters);
         }
 
-        public Builder addParameterType(String parameterType) {
-            synchronized (this) {
-                if (Objects.isNull(configure.parameterTypes)) {
-                    synchronized (this) {
-                        configure.parameterTypes = new ArrayList<>();
-                    }
-                }
-            }
-            configure.parameterTypes.add(parameterType);
-            return self;
+        public Builder parameters(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = List.class) Closure<?> closure) {
+            List<Object> parameters = Collections.newArrayList();
+            call(closure, parameters);
+            return parameters(parameters);
         }
 
         public Builder parameters(List<Object> parameters) {
-            configure.parameters = parameters;
+            configure.parameters = Collections.addAllIfNonNull(configure.parameters, parameters);
+            if (Objects.nonNull(parameters) && !parameters.isEmpty()) {
+                List<String> parameterTypes = Collections.newArrayList();
+                for (Object parameter : parameters) {
+                    parameterTypes.add(parameter.getClass().getName());
+                }
+                configure.parameterTypes = Collections.addAllIfNonNull(configure.parameterTypes, Collections.newArrayList(parameterTypes));
+            }
             return self;
         }
 
-        public Builder addParameter(Object parameter) {
-            synchronized (this) {
-                if (Objects.isNull(configure.parameters)) {
-                    synchronized (this) {
-                        configure.parameters = new ArrayList<>();
-                    }
-                }
-            }
-            configure.parameters.add(parameter);
+        public Builder parameters(Object parameter) {
+            return parameters(Collections.newArrayList(parameter));
+        }
+
+        public Builder attachmentArgs(Consumer<Map<String, String>> consumer) {
+            Map<String, String> attachmentArgs = Collections.newHashMap();
+            consumer.accept(attachmentArgs);
+            configure.attachmentArgs = Collections.putAllIfNonNull(configure.attachmentArgs, attachmentArgs);
+            return self;
+        }
+
+        public Builder attachmentArgs(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = List.class) Closure<?> closure) {
+            Map<String, String> attachmentArgs = Collections.newHashMap();
+            call(closure, attachmentArgs);
+            configure.attachmentArgs = Collections.putAllIfNonNull(configure.attachmentArgs, attachmentArgs);
             return self;
         }
 
         public Builder attachmentArgs(Map<String, String> attachmentArgs) {
-            configure.attachmentArgs = attachmentArgs;
+            configure.attachmentArgs = Collections.putAllIfNonNull(configure.attachmentArgs, attachmentArgs);
             return self;
         }
 
         public Builder attachmentArgs(String name, String value) {
-            synchronized (this) {
-                if (Objects.isNull(configure.attachmentArgs)) {
-                    synchronized (this) {
-                        configure.attachmentArgs = new HashMap<>();
-                    }
-                }
-            }
-            configure.attachmentArgs.put(name, value);
+            configure.attachmentArgs = Collections.putAllIfNonNull(configure.attachmentArgs, (Map<String, String>) Collections.of(name, value));
             return self;
         }
 
         public Builder ref(String ref) {
             configure.ref = ref;
+            return self;
+        }
+
+        public Builder config(Consumer<DubboConfigureItem.Builder> consumer) {
+            var builder = DubboConfigureItem.builder();
+            consumer.accept(builder);
+            configure = configure.merge(builder.build());
+            return self;
+        }
+
+        public Builder config(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = DubboConfigureItem.Builder.class) Closure<?> closure) {
+            var builder = DubboConfigureItem.builder();
+            call(closure, builder);
+            configure = configure.merge(builder.build());
+            return self;
+        }
+
+        public Builder config(DubboConfigureItem.Builder builder) {
+            configure = configure.merge(builder.build());
             return self;
         }
 

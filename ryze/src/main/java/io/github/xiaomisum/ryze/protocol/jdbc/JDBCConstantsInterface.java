@@ -51,6 +51,6 @@ public interface JDBCConstantsInterface extends TestElementConstantsInterface {
     /**
      * 废弃属性，请使用 sql @see {@link #SQL}
      */
-    @Deprecated(since = "5.3.0")
+    @Deprecated(since = "6.0.0")
     String STATEMENT = "statement";
 }

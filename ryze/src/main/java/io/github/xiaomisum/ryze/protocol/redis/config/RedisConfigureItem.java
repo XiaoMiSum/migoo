@@ -27,6 +27,8 @@ package io.github.xiaomisum.ryze.protocol.redis.config;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.alibaba.fastjson2.annotation.JSONType;
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.config.ConfigureItem;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
@@ -34,6 +36,9 @@ import io.github.xiaomisum.ryze.protocol.redis.RedisConstantsInterface;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Locale;
+import java.util.function.Consumer;
+
+import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
  * @author xiaomi
@@ -201,6 +206,25 @@ public class RedisConfigureItem implements ConfigureItem<RedisConfigureItem>, Re
 
         public Builder minIdle(int minIdle) {
             configure.minIdle = minIdle;
+            return self;
+        }
+
+        public Builder config(Consumer<RedisConfigureItem.Builder> consumer) {
+            var builder = RedisConfigureItem.builder();
+            consumer.accept(builder);
+            configure = configure.merge(builder.build());
+            return self;
+        }
+
+        public Builder config(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = RedisConfigureItem.Builder.class) Closure<?> closure) {
+            var builder = RedisConfigureItem.builder();
+            call(closure, builder);
+            configure = configure.merge(builder.build());
+            return self;
+        }
+
+        public Builder config(RedisConfigureItem.Builder builder) {
+            configure = configure.merge(builder.build());
             return self;
         }
 

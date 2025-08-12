@@ -22,30 +22,28 @@ public class CodeTestCase {
             suite.variables(Map.of("a", 1, "b", 2));
             suite.configureElements(DubboConfigureElementBuilder.builder()
                     .dubbo(dubbo -> dubbo.config(config -> config
-                            .registry(registry -> registry.protocol("zookeeper").address("localhost:42181"))
+                            .registry(registry -> registry.address("zookeeper://localhost:42181"))
                             .reference(reference -> reference.retries(1).timeout(5000).async(false).loadBalance("random"))).build()
                     ).build());
             suite.preprocessors(DubboPreprocessorsBuilder.builder()
                     .dubbo(dubbo -> dubbo.config(config -> config.interfaceName("io.github.xiaomisum.ryze.dubbo.example.DemoService")
                             .method("sayHello")
-                            .addParameterType("java.lang.String")
-                            .addParameter("${tick}")))
+                            .parameters("${tick}")))
                     .build());
             suite.postprocessors(DubboPostprocessorsBuilder.builder()
                     .dubbo(dubbo -> dubbo.config(config -> config.interfaceName("io.github.xiaomisum.ryze.dubbo.example.DemoService")
                             .method("sayHello")
-                            .addParameterType("java.lang.String")
-                            .addParameter("dubbo_postprocessor")))
+                            .parameters("dubbo_postprocessor")))
                     .build());
             suite.children(DubboSamplersBuilder.builder()
                     .dubbo(dubbo -> dubbo.title("步骤1").variables("username", "ryze")
                             .config(config -> config.interfaceName("io.github.xiaomisum.ryze.dubbo.example.DemoService")
-                                    .method("sayHello").addParameterType("java.lang.String").addParameter("步骤1: dubbo_sampler")))
+                                    .method("sayHello").parameters("步骤1: dubbo_sampler")))
                     .build());
             suite.children(DubboSamplersBuilder.builder()
                     .dubbo(dubbo -> dubbo.title("步骤1").variables("username", "ryze")
                             .config(config -> config.interfaceName("io.github.xiaomisum.ryze.dubbo.example.DemoService")
-                                    .method("sayHello").addParameterType("java.lang.String").addParameter("步骤2: dubbo_sampler")))
+                                    .method("sayHello").parameters("步骤2: dubbo_sampler")))
                     .build());
         });
     }
@@ -56,17 +54,16 @@ public class CodeTestCase {
         DubboMagicBox.dubbo("测试用例- test2()", sampler -> {
             sampler.configureElements(DubboConfigureElementBuilder.builder()
                     .dubbo(dubbo -> dubbo.config(config -> config
-                            .registry(registry -> registry.protocol("zookeeper").address("localhost:42181"))
+                            .registry(registry -> registry.address("zookeeper://localhost:42181"))
                             .reference(reference -> reference.retries(1).timeout(5000).async(false).loadBalance("random"))).build()
                     ).build());
             sampler.preprocessors(DubboPreprocessorsBuilder.builder()
                     .dubbo(dubbo -> dubbo.config(config -> config.interfaceName("io.github.xiaomisum.ryze.dubbo.example.DemoService")
                             .method("sayHello")
-                            .addParameterType("java.lang.String")
-                            .addParameter("${tick}")))
+                            .parameters("dubbo_preprocessor")))
                     .build());
             sampler.config(config -> config.interfaceName("io.github.xiaomisum.ryze.dubbo.example.DemoService")
-                    .method("sayHello").addParameterType("java.lang.String").addParameter("步骤1: dubbo_sampler")).build();
+                    .method("sayHello").parameters("test2(): dubbo_sampler")).build();
         });
     }
 
@@ -77,21 +74,21 @@ public class CodeTestCase {
         DubboMagicBox.dubbo("测试用例- test3()-1", sampler -> {
             sampler.configureElements(DubboConfigureElementBuilder.builder()
                     .dubbo(dubbo -> dubbo.config(config -> config
-                            .registry(registry -> registry.protocol("zookeeper").address("localhost:42181"))
+                            .registry(registry -> registry.address("zookeeper://localhost:42181"))
                             .reference(reference -> reference.retries(1).timeout(5000).async(false).loadBalance("random"))).build()
                     ).build());
             sampler.config(config -> config.interfaceName("io.github.xiaomisum.ryze.dubbo.example.DemoService")
-                    .method("sayHello").addParameterType("java.lang.String").addParameter("步骤1: dubbo_sampler")).build();
+                    .method("sayHello").parameters("步骤1: dubbo_sampler")).build();
         });
 
         DubboMagicBox.dubbo("测试用例- test3()-2", sampler -> {
             sampler.configureElements(DubboConfigureElementBuilder.builder()
                     .dubbo(dubbo -> dubbo.config(config -> config
-                            .registry(registry -> registry.protocol("zookeeper").address("localhost:42181"))
+                            .registry(registry -> registry.address("zookeeper://localhost:42181"))
                             .reference(reference -> reference.retries(1).timeout(5000).async(false).loadBalance("random"))).build()
                     ).build());
             sampler.config(config -> config.interfaceName("io.github.xiaomisum.ryze.dubbo.example.DemoService")
-                    .method("sayHello").addParameterType("java.lang.String").addParameter("步骤2: dubbo_sampler")).build();
+                    .method("sayHello").parameters("步骤2: dubbo_sampler")).build();
         });
     }
 }

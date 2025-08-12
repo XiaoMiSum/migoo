@@ -64,7 +64,7 @@ public class DubboPostprocessor extends AbstractProcessor<DubboPostprocessor, Du
     }
 
     public DubboPostprocessor(Builder builder) {
-        super();
+        super(builder);
     }
 
     public static Builder builder() {
@@ -114,8 +114,8 @@ public class DubboPostprocessor extends AbstractProcessor<DubboPostprocessor, Du
         request.setLoadbalance(referenceConfig.getLoadBalance());
         request.setInterface(runtime.getConfig().getInterfaceName());
         var registry = new RegistryConfig();
-        var protocol = DubboConfigureItem.Protocol.valueOf(registryConfig.getProtocol());
-        registry.setAddress(protocol.getProtocol() + registryConfig.getAddress());
+        registry.setAddress(StringUtils.isBlank(registryConfig.getProtocol()) ? registryConfig.getAddress()
+                : registryConfig.getProtocol() + "://" + registryConfig.getAddress());
         registry.setGroup(registryConfig.getGroup());
         registry.setUsername(registryConfig.getUsername());
         registry.setPassword(registryConfig.getPassword());

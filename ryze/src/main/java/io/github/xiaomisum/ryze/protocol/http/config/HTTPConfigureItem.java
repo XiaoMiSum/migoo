@@ -43,8 +43,10 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import static io.github.xiaomisum.ryze.core.testelement.TestElementConstantsInterface.REF;
+import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
  * @author xiaomi
@@ -419,6 +421,25 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
 
         public Builder binary(Object binary) {
             configure.binary = binary;
+            return self;
+        }
+
+        public Builder config(Consumer<HTTPConfigureItem.Builder> consumer) {
+            var builder = HTTPConfigureItem.builder();
+            consumer.accept(builder);
+            configure = configure.merge(builder.build());
+            return self;
+        }
+
+        public Builder config(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = HTTPConfigureItem.Builder.class) Closure<?> closure) {
+            var builder = HTTPConfigureItem.builder();
+            call(closure, builder);
+            configure = configure.merge(builder.build());
+            return self;
+        }
+
+        public Builder config(HTTPConfigureItem.Builder builder) {
+            configure = configure.merge(builder.build());
             return self;
         }
 

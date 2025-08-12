@@ -176,9 +176,27 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
             return self;
         }
 
+
+        public <T extends ExtensibleChildrenBuilder> SELF children(Class<T> type, Customizer<T> customizer) {
+            try {
+                T builder = type.getConstructor().newInstance();
+                customizer.customize(builder);
+                this.children = Collections.addAllIfNonNull(this.children, builder.build());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return self;
+        }
+
         public SELF children(Customizer<CHILDREN_BUILDER> customizer) {
             CHILDREN_BUILDER builder = getChildrenBuilder();
             customizer.customize(builder);
+            this.children = Collections.addAllIfNonNull(this.children, builder.build());
+            return self;
+        }
+
+        public <T extends ExtensibleChildrenBuilder> SELF children(Class<T> type, @DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "T") Closure<T> closure) {
+            var builder = Groovy.builder(type, closure);
             this.children = Collections.addAllIfNonNull(this.children, builder.build());
             return self;
         }

@@ -54,6 +54,7 @@ public class DubboApplication {
 
         DubboBootstrap bootstrap = DubboBootstrap.getInstance();
         bootstrap.application(new ApplicationConfig("demo-service"))
+                //.protocol(new ProtocolConfig(CommonConstants.TRIPLE, 50051))
                 .registry(new RegistryConfig("zookeeper://127.0.0.1:42181"))
                 .service(service)
                 .start()

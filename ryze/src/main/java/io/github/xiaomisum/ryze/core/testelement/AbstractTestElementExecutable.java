@@ -30,6 +30,9 @@ import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.Result;
 import io.github.xiaomisum.ryze.core.SessionRunner;
+import io.github.xiaomisum.ryze.core.builder.ExtensibleConfigureElementsBuilder;
+import io.github.xiaomisum.ryze.core.builder.ExtensiblePostprocessorsBuilder;
+import io.github.xiaomisum.ryze.core.builder.ExtensiblePreprocessorsBuilder;
 import io.github.xiaomisum.ryze.core.config.ConfigureItem;
 import io.github.xiaomisum.ryze.core.config.RyzeVariables;
 import io.github.xiaomisum.ryze.core.context.Context;
@@ -311,9 +314,26 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
             return self;
         }
 
+        public <T extends ExtensibleConfigureElementsBuilder> SELF configureElements(Class<T> type, Customizer<T> customizer) {
+            try {
+                T builder = type.getConstructor().newInstance();
+                customizer.customize(builder);
+                this.configureElements = Collections.addAllIfNonNull(this.configureElements, builder.build());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return self;
+        }
+
         public SELF configureElements(Customizer<CONFIGURES_BUILDER> customizer) {
             CONFIGURES_BUILDER builder = getConfiguresBuilder();
             customizer.customize(builder);
+            this.configureElements = Collections.addAllIfNonNull(this.configureElements, builder.build());
+            return self;
+        }
+
+        public <T extends ExtensibleConfigureElementsBuilder> SELF configureElements(Class<T> type, @DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "T") Closure<T> closure) {
+            var builder = Groovy.builder(type, closure);
             this.configureElements = Collections.addAllIfNonNull(this.configureElements, builder.build());
             return self;
         }
@@ -330,9 +350,26 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
             return self;
         }
 
+        public <T extends ExtensiblePreprocessorsBuilder> SELF preprocessors(Class<T> type, Customizer<T> customizer) {
+            try {
+                T builder = type.getConstructor().newInstance();
+                customizer.customize(builder);
+                this.preprocessors = Collections.addAllIfNonNull(this.preprocessors, builder.build());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return self;
+        }
+
         public SELF preprocessors(Customizer<PREPROCESSORS_BUILDER> customizer) {
             PREPROCESSORS_BUILDER builder = getPreprocessorsBuilder();
             customizer.customize(builder);
+            this.preprocessors = Collections.addAllIfNonNull(this.preprocessors, builder.build());
+            return self;
+        }
+
+        public <T extends ExtensiblePreprocessorsBuilder> SELF preprocessors(Class<T> type, @DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "T") Closure<T> closure) {
+            var builder = Groovy.builder(type, closure);
             this.preprocessors = Collections.addAllIfNonNull(this.preprocessors, builder.build());
             return self;
         }
@@ -349,9 +386,27 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
             return self;
         }
 
+
+        public <T extends ExtensiblePostprocessorsBuilder> SELF postprocessors(Class<T> type, Customizer<T> customizer) {
+            try {
+                T builder = type.getConstructor().newInstance();
+                customizer.customize(builder);
+                this.postprocessors = Collections.addAllIfNonNull(this.postprocessors, builder.build());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return self;
+        }
+
         public SELF postprocessors(Customizer<POSTPROCESSORS_BUILDER> customizer) {
             POSTPROCESSORS_BUILDER builder = getPostprocessorsBuilder();
             customizer.customize(builder);
+            this.postprocessors = Collections.addAllIfNonNull(this.postprocessors, builder.build());
+            return self;
+        }
+
+        public <T extends ExtensiblePostprocessorsBuilder> SELF postprocessors(Class<T> type, @DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "T") Closure<T> closure) {
+            var builder = Groovy.builder(type, closure);
             this.postprocessors = Collections.addAllIfNonNull(this.postprocessors, builder.build());
             return self;
         }

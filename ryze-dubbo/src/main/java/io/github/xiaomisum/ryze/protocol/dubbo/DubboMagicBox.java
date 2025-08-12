@@ -38,7 +38,7 @@ import io.github.xiaomisum.ryze.support.groovy.Groovy;
  *
  * @author xiaomi
  */
-public class DubboMagicBox {
+public class DubboMagicBox extends MagicBox {
 
     public static Result dubbo(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = DubboSampler.Builder.class) Closure<?> closure) {
         return dubbo("", closure);
@@ -48,7 +48,7 @@ public class DubboMagicBox {
                                @DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = DubboSampler.Builder.class) Closure<?> closure) {
         var builder = DubboSampler.builder();
         Groovy.call(closure, builder);
-        return MagicBox.runTest(title, builder.build());
+        return runTest(title, builder.build());
     }
 
     public static Result dubbo(Customizer<DubboSampler.Builder> customizer) {
@@ -58,6 +58,6 @@ public class DubboMagicBox {
     public static Result dubbo(String title, Customizer<DubboSampler.Builder> customizer) {
         var builder = DubboSampler.builder();
         customizer.customize(builder);
-        return MagicBox.runTest(title, builder.build());
+        return runTest(title, builder.build());
     }
 }

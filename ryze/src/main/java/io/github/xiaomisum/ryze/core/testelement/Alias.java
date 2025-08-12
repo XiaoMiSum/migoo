@@ -35,13 +35,13 @@ import java.lang.annotation.Target;
  *
  * @author xiaomi
  */
-@Deprecated(since = "5.3.0", forRemoval = true)
+@Deprecated(since = "6.0.0", forRemoval = true)
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Alias {
 
     String[] value();
 
-    @Deprecated(since = "5.3.0", forRemoval = true)
+    @Deprecated(since = "6.0.0", forRemoval = true)
     String[] aliasList() default {};
 }

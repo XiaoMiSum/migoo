@@ -43,6 +43,10 @@ public interface DubboConstantsInterface extends TestElementConstantsInterface {
 
     String REFERENCE_OBJECT = "inner_reference_object";
 
+    /**
+     * 移除该配置，合并到 {@link #ADDRESS}
+     */
+    @Deprecated(since = "6.0.0")
     String PROTOCOL = "protocol";
 
     String GROUP = "group";
@@ -55,6 +59,9 @@ public interface DubboConstantsInterface extends TestElementConstantsInterface {
 
     String PASSWORD = "password";
 
+    /**
+     * 包含协议，格式：protocol://host:port，如：zookeeper://127.0.0.1:2181
+     */
     String ADDRESS = "address";
 
     String TIMEOUT = "timeout";

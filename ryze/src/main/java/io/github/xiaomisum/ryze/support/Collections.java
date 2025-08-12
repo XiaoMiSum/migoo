@@ -62,7 +62,7 @@ public class Collections {
         return target;
     }
 
-    public static Map<String, Object> of(Object... keywords) {
+    public static Map<String, ?> of(Object... keywords) {
         if (keywords == null || keywords.length == 0) {
             return new HashMap<>();
         }
