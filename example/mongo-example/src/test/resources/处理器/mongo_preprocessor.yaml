@@ -1,5 +1,5 @@
-testclass: mongo_preprocessor # mongo 后置处理器类型
+testclass: mongo_preprocessor # mongo 前置处理器类型
+title: mongo_preprocessor 插入数据
 config: # 处理器配置
-  message: # 发送的消息，ProducerRecord中的 value, 可以是任意json对象、字符串、数字等
-    name: ryze.test.processor
-    value: mongo_preprocessor
+  action: insert  # 操作类型：find、insert、update、delete
+  data: { } # 条件，非空
