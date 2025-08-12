@@ -26,10 +26,14 @@
 package io.github.xiaomisum.ryze.protocol.rabbit.config;
 
 import com.alibaba.fastjson2.annotation.JSONField;
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.config.ConfigureItem;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
 import io.github.xiaomisum.ryze.protocol.rabbit.RabbitConstantsInterface;
+import io.github.xiaomisum.ryze.support.Customizer;
+import io.github.xiaomisum.ryze.support.groovy.Groovy;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
@@ -129,7 +133,7 @@ public class RabbitConfigureItem implements ConfigureItem<RabbitConfigureItem>, 
     }
 
     public String getVirtualHost() {
-        return virtualHost;
+        return StringUtils.isBlank(virtualHost) ? "/" : virtualHost;
     }
 
     public void setVirtualHost(String virtualHost) {
@@ -741,6 +745,17 @@ public class RabbitConfigureItem implements ConfigureItem<RabbitConfigureItem>, 
             return self;
         }
 
+        public <T> Builder message(Class<T> type, Customizer<T> customizer) {
+            try {
+                T message = type.getConstructor().newInstance();
+                customizer.customize(message);
+                configure.setMessage(message);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return self;
+        }
+
         public Builder message(Object message) {
             this.configure.message = message;
             return self;
@@ -778,6 +793,13 @@ public class RabbitConfigureItem implements ConfigureItem<RabbitConfigureItem>, 
             return self;
         }
 
+        public Builder queue(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = Queue.Builder.class) Closure<?> closure) {
+            var builder = Queue.Builder.builder();
+            Groovy.call(closure, builder);
+            this.configure.queue = builder.build();
+            return self;
+        }
+
         public Builder exchange(Exchange exchange) {
             this.configure.exchange = exchange;
             return self;
@@ -795,6 +817,13 @@ public class RabbitConfigureItem implements ConfigureItem<RabbitConfigureItem>, 
             return self;
         }
 
+        public Builder exchange(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = Exchange.Builder.class) Closure<?> closure) {
+            var builder = Exchange.Builder.builder();
+            Groovy.call(closure, builder);
+            this.configure.exchange = builder.build();
+            return self;
+        }
+
         public Builder props(Props props) {
             this.configure.props = props;
             return self;
@@ -808,6 +837,13 @@ public class RabbitConfigureItem implements ConfigureItem<RabbitConfigureItem>, 
         public Builder props(Consumer<Props.Builder> consumer) {
             var builder = Props.Builder.builder();
             consumer.accept(builder);
+            this.configure.props = builder.build();
+            return self;
+        }
+
+        public Builder props(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = Props.Builder.class) Closure<?> closure) {
+            var builder = Props.Builder.builder();
+            Groovy.call(closure, builder);
             this.configure.props = builder.build();
             return self;
         }

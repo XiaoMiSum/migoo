@@ -38,7 +38,7 @@ import io.github.xiaomisum.ryze.support.groovy.Groovy;
  *
  * @author xiaomi
  */
-public class RabbitMagicBox {
+public class RabbitMagicBox extends MagicBox {
 
     public static Result rabbit(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = RabbitSampler.Builder.class) Closure<?> closure) {
         return rabbit("", closure);

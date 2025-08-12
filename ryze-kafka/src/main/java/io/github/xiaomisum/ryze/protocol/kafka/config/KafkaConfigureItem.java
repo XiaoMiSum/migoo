@@ -30,8 +30,11 @@ import io.github.xiaomisum.ryze.core.config.ConfigureItem;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
 import io.github.xiaomisum.ryze.protocol.kafka.KafkaConstantsInterface;
+import io.github.xiaomisum.ryze.support.Customizer;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -223,10 +226,33 @@ public class KafkaConfigureItem implements ConfigureItem<KafkaConfigureItem>, Ka
             return self;
         }
 
-        public Builder message(Object message) {
-            configure.message = message;
+        public <T> Builder message(Class<T> type, Customizer<T> customizer) {
+            try {
+                T message = type.getConstructor().newInstance();
+                customizer.customize(message);
+                configure.setMessage(message);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             return self;
         }
+
+
+        public Builder message(Object message) {
+            this.configure.message = message;
+            return self;
+        }
+
+        public Builder message(List<?> message) {
+            this.configure.message = message;
+            return self;
+        }
+
+        public Builder message(Map<?, ?> message) {
+            this.configure.message = message;
+            return self;
+        }
+
 
         public Builder keySerializer(String keySerializer) {
             configure.keySerializer = keySerializer;

@@ -103,7 +103,7 @@ public class RabbitSampler extends AbstractSampler<RabbitSampler, RabbitConfigur
             result.sampleStart();
             AMQP.BasicProperties properties = getBasicProperties();
             var exchange = runtime.config.getExchange();
-            var exchangeName = Objects.isNull(exchange) ? null : exchange.getName();
+            var exchangeName = Objects.isNull(exchange) ? "" : exchange.getName();
             var routingKey = Objects.isNull(exchange) ? null : exchange.getRoutingKey();
 
             if (Objects.nonNull(exchange)) {

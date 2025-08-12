@@ -98,7 +98,7 @@ public class RabbitPreprocessor extends AbstractProcessor<RabbitPreprocessor, Ra
             result.sampleStart();
             AMQP.BasicProperties properties = getBasicProperties();
             var exchange = runtime.getConfig().getExchange();
-            var exchangeName = Objects.isNull(exchange) ? null : exchange.getName();
+            var exchangeName = Objects.isNull(exchange) ? "" : exchange.getName();
             var routingKey = Objects.isNull(exchange) ? null : exchange.getRoutingKey();
 
             if (Objects.nonNull(exchange)) {

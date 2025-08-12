@@ -30,6 +30,7 @@ import io.github.xiaomisum.ryze.core.config.ConfigureItem;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
 import io.github.xiaomisum.ryze.protocol.active.ActiveConstantsInterface;
+import io.github.xiaomisum.ryze.support.Customizer;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.commons.lang3.StringUtils;
 
@@ -183,6 +184,17 @@ public class ActiveConfigureItem implements ConfigureItem<ActiveConfigureItem>, 
 
         public Builder message(Object message) {
             configure.setMessage(message);
+            return self;
+        }
+
+        public <T> Builder message(Class<T> type, Customizer<T> customizer) {
+            try {
+                T message = type.getConstructor().newInstance();
+                customizer.customize(message);
+                configure.setMessage(message);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             return self;
         }
 

@@ -38,7 +38,7 @@ import io.github.xiaomisum.ryze.support.groovy.Groovy;
  *
  * @author xiaomi
  */
-public class ActiveMagicBox {
+public class ActiveMagicBox extends MagicBox {
 
     public static Result active(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = ActiveSampler.Builder.class) Closure<?> closure) {
         return active("", closure);

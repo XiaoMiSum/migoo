@@ -38,7 +38,7 @@ import io.github.xiaomisum.ryze.support.groovy.Groovy;
  *
  * @author xiaomi
  */
-public class KafkaMagicBox {
+public class KafkaMagicBox extends MagicBox {
 
     public static Result kafka(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = KafkaSampler.Builder.class) Closure<?> closure) {
         return kafka("", closure);

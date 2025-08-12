@@ -55,7 +55,7 @@ public class RabbitPreprocessorsBuilder extends ExtensiblePreprocessorsBuilder<R
         return self;
     }
 
-    public RabbitPreprocessorsBuilder kafka(Customizer<RabbitPreprocessor.Builder> customizer) {
+    public RabbitPreprocessorsBuilder rabbit(Customizer<RabbitPreprocessor.Builder> customizer) {
         var builder = RabbitPreprocessor.builder();
         customizer.customize(builder);
         this.preprocessors.add(builder.build());

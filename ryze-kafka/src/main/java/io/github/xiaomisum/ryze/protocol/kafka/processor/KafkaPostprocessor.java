@@ -116,7 +116,7 @@ public class KafkaPostprocessor extends AbstractProcessor<KafkaPostprocessor, Ka
         // 2. 创建Kafka对象
         var props = new Properties();
         props.put(BOOTSTRAP_SERVERS, runtime.getConfig().getBootstrapServers());
-        props.put(ACKS, runtime.getConfig().getAcks());
+        props.put(ACKS, runtime.getConfig().getAcks().toString());
         props.put(RETRIES, runtime.getConfig().getRetries());
         props.put(LINGER_MS, runtime.getConfig().getLingerMs());
         props.put(KEY_SERIALIZER, runtime.getConfig().getKeySerializer());
