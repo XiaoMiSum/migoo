@@ -126,7 +126,37 @@
             </dependency>
 
             <dependency>
-                <groupId>xyz.ryze</groupId>
+                <groupId>io.github.xiaomisum</groupId>
+                <artifactId>ryze-active</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.xiaomisum</groupId>
+                <artifactId>ryze-dubbo</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.xiaomisum</groupId>
+                <artifactId>ryze-kafka</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.xiaomisum</groupId>
+                <artifactId>ryze-mongo</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.xiaomisum</groupId>
+                <artifactId>ryze-rabbit</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.xiaomisum</groupId>
                 <artifactId>ryze-testng</artifactId>
                 <version>${project.version}</version>
             </dependency>
