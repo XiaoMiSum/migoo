@@ -25,5 +25,4 @@
 #  */
 #
 
-io.github.xiaomisum.ryze.protocol.active.config.ActiveDefaults
 io.github.xiaomisum.ryze.protocol.active.sampler.ActiveSampler

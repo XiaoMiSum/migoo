@@ -25,4 +25,7 @@
 #  */
 #
 
-io.github.xiaomisum.ryze.protocol.kafka.sampler.KafkaSampler
+io.github.xiaomisum.ryze.protocol.mongo.config.MongoDefaults
+
+
+

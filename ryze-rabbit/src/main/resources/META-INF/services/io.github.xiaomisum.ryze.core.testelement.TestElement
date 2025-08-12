@@ -25,5 +25,4 @@
 #  */
 #
 
-io.github.xiaomisum.ryze.protocol.rabbit.config.RabbitDefaults
 io.github.xiaomisum.ryze.protocol.rabbit.sampler.RabbitSampler

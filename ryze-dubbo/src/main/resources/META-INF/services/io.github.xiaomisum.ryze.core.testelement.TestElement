@@ -25,5 +25,4 @@
 #  */
 #
 
-io.github.xiaomisum.ryze.protocol.dubbo.config.DubboDefaults
 io.github.xiaomisum.ryze.protocol.dubbo.sampler.DubboSampler
