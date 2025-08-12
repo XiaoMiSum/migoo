@@ -1,7 +1,7 @@
 package io.github.xiaomisum.ryze.rabbit.example.code;
 
 import io.github.xiaomisum.ryze.protocol.rabbit.RabbitMagicBox;
-import io.github.xiaomisum.ryze.protocol.rabbit.builder.RabbitConfigureElementBuilder;
+import io.github.xiaomisum.ryze.protocol.rabbit.builder.RabbitConfigureElementsBuilder;
 import io.github.xiaomisum.ryze.protocol.rabbit.builder.RabbitPostprocessorsBuilder;
 import io.github.xiaomisum.ryze.protocol.rabbit.builder.RabbitPreprocessorsBuilder;
 import io.github.xiaomisum.ryze.protocol.rabbit.builder.RabbitSamplersBuilder;
@@ -21,7 +21,7 @@ public class CodeTestCase {
             suite.variables("id", 1);
             suite.variables(var -> var.put("tick", "rabbit_preprocessor"));
             suite.variables(Map.of("a", 1, "b", 2));
-            suite.configureElements(RabbitConfigureElementBuilder.class, builder -> builder
+            suite.configureElements(RabbitConfigureElementsBuilder.class, builder -> builder
                     .rabbit(rabbit -> rabbit.config(config -> config.host("127.0.0.1").port("5672").username("guest").password("guest")))
             );
             suite.preprocessors(RabbitPreprocessorsBuilder.class, builder -> builder
@@ -51,7 +51,7 @@ public class CodeTestCase {
     @RyzeTest
     public void test2() {
         RabbitMagicBox.rabbit("测试用例- test2()", sampler -> {
-            sampler.configureElements(RabbitConfigureElementBuilder.class, builder -> builder
+            sampler.configureElements(RabbitConfigureElementsBuilder.class, builder -> builder
                     .rabbit(rabbit -> rabbit.config(config -> config.host("127.0.0.1").port("5672").username("guest").password("guest")))
             );
             sampler.preprocessors(RabbitPreprocessorsBuilder.class, builder -> builder
@@ -69,7 +69,7 @@ public class CodeTestCase {
     @RyzeTest
     public void test3() {
         RabbitMagicBox.rabbit("测试用例- test3()-1", sampler -> {
-            sampler.configureElements(RabbitConfigureElementBuilder.class, builder -> builder
+            sampler.configureElements(RabbitConfigureElementsBuilder.class, builder -> builder
                     .rabbit(rabbit -> rabbit.config(config -> config.host("127.0.0.1").port("5672").username("guest").password("guest")))
 
             );
@@ -78,7 +78,7 @@ public class CodeTestCase {
 
 
         RabbitMagicBox.rabbit("测试用例- test3()-2", sampler -> {
-            sampler.configureElements(RabbitConfigureElementBuilder.class, builder -> builder
+            sampler.configureElements(RabbitConfigureElementsBuilder.class, builder -> builder
                     .rabbit(rabbit -> rabbit.config(config -> config.host("127.0.0.1").port("5672").username("guest").password("guest")))
             );
             sampler.config(config -> config.message(true).queue(queue -> queue.name("ryze.topic")));

@@ -39,14 +39,12 @@ import io.github.xiaomisum.ryze.core.testelement.KW;
 import io.github.xiaomisum.ryze.core.testelement.sampler.AbstractSampler;
 import io.github.xiaomisum.ryze.core.testelement.sampler.DefaultSampleResult;
 import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
-import io.github.xiaomisum.ryze.core.testelement.sampler.Sampler;
 import io.github.xiaomisum.ryze.protocol.mongo.Mongo;
 import io.github.xiaomisum.ryze.protocol.mongo.MongoConstantsInterface;
 import io.github.xiaomisum.ryze.protocol.mongo.MongoRealRequest;
 import io.github.xiaomisum.ryze.protocol.mongo.builder.MongoConfigureElementsBuilder;
 import io.github.xiaomisum.ryze.protocol.mongo.builder.MongoPostprocessorsBuilder;
 import io.github.xiaomisum.ryze.protocol.mongo.builder.MongoPreprocessorsBuilder;
-import io.github.xiaomisum.ryze.protocol.mongo.builder.MongoSamplersBuilder;
 import io.github.xiaomisum.ryze.protocol.mongo.config.MongoConfigItem;
 import org.apache.commons.lang3.StringUtils;
 
@@ -56,7 +54,7 @@ import java.util.Objects;
  * @author xiaomi
  */
 @KW(value = {"mongo_sampler", "mongo", "mongodb"})
-public class MongoSampler extends AbstractSampler<MongoSampler, MongoConfigItem, DefaultSampleResult> implements Sampler<DefaultSampleResult>, MongoConstantsInterface {
+public class MongoSampler extends AbstractSampler<MongoSampler, MongoConfigItem, DefaultSampleResult> implements MongoConstantsInterface {
 
     @JSONField(serialize = false, deserialize = false)
     private MongoClientSettings settings;
@@ -68,7 +66,6 @@ public class MongoSampler extends AbstractSampler<MongoSampler, MongoConfigItem,
     }
 
     public MongoSampler() {
-        super();
     }
 
     public static Builder builder() {
@@ -124,7 +121,11 @@ public class MongoSampler extends AbstractSampler<MongoSampler, MongoConfigItem,
      */
     public static class Builder extends AbstractSampler.Builder<MongoSampler, MongoSampler.Builder, MongoConfigItem,
             MongoConfigItem.Builder, MongoConfigureElementsBuilder, MongoPreprocessorsBuilder, MongoPostprocessorsBuilder,
-            DefaultAssertionsBuilder, DefaultExtractorsBuilder, MongoSamplersBuilder> {
+            DefaultAssertionsBuilder, DefaultExtractorsBuilder, DefaultSampleResult> {
+
+        public Builder() {
+        }
+
         @Override
         public MongoSampler build() {
             return new MongoSampler(this);

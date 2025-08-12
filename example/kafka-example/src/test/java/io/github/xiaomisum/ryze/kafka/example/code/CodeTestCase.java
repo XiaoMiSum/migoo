@@ -1,7 +1,7 @@
 package io.github.xiaomisum.ryze.kafka.example.code;
 
 import io.github.xiaomisum.ryze.protocol.kafka.KafkaMagicBox;
-import io.github.xiaomisum.ryze.protocol.kafka.builder.KafkaConfigureElementBuilder;
+import io.github.xiaomisum.ryze.protocol.kafka.builder.KafkaConfigureElementsBuilder;
 import io.github.xiaomisum.ryze.protocol.kafka.builder.KafkaPostprocessorsBuilder;
 import io.github.xiaomisum.ryze.protocol.kafka.builder.KafkaPreprocessorsBuilder;
 import io.github.xiaomisum.ryze.protocol.kafka.builder.KafkaSamplersBuilder;
@@ -21,7 +21,7 @@ public class CodeTestCase {
             suite.variables("id", 1);
             suite.variables(var -> var.put("tick", "kafka_preprocessor"));
             suite.variables(Map.of("a", 1, "b", 2));
-            suite.configureElements(KafkaConfigureElementBuilder.class, builder -> builder
+            suite.configureElements(KafkaConfigureElementsBuilder.class, builder -> builder
                     .kafka(kafka -> kafka.config(config -> config.bootstrapServers("127.0.0.1:9092").topic("ryze.topic").key("ryze")))
             );
             suite.preprocessors(KafkaPreprocessorsBuilder.class, builder -> builder
@@ -48,7 +48,7 @@ public class CodeTestCase {
     @RyzeTest
     public void test2() {
         KafkaMagicBox.kafka("测试用例- test2()", sampler -> {
-            sampler.configureElements(KafkaConfigureElementBuilder.class, builder -> builder
+            sampler.configureElements(KafkaConfigureElementsBuilder.class, builder -> builder
                     .kafka(kafka -> kafka.config(config -> config.bootstrapServers("127.0.0.1:9092").topic("ryze.topic").key("ryze")))
             );
             sampler.preprocessors(KafkaPreprocessorsBuilder.class, builder -> builder
@@ -66,7 +66,7 @@ public class CodeTestCase {
     @RyzeTest
     public void test3() {
         KafkaMagicBox.kafka("测试用例- test3()-1", sampler -> {
-            sampler.configureElements(KafkaConfigureElementBuilder.class, builder -> builder
+            sampler.configureElements(KafkaConfigureElementsBuilder.class, builder -> builder
                     .kafka(kafka -> kafka.config(config -> config.bootstrapServers("127.0.0.1:9092").topic("ryze.topic").key("ryze")))
             );
             sampler.config(config -> config.message(List.of(1, 2, 3, 4)));
@@ -74,7 +74,7 @@ public class CodeTestCase {
 
 
         KafkaMagicBox.kafka("测试用例- test3()-2", sampler -> {
-            sampler.configureElements(KafkaConfigureElementBuilder.class, builder -> builder
+            sampler.configureElements(KafkaConfigureElementsBuilder.class, builder -> builder
                     .kafka(kafka -> kafka.config(config -> config.bootstrapServers("127.0.0.1:9092").topic("ryze.topic").key("ryze")))
             );
             sampler.config(config -> config.message(true));

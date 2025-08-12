@@ -37,7 +37,7 @@ import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
 import io.github.xiaomisum.ryze.core.testelement.sampler.Sampler;
 import io.github.xiaomisum.ryze.protocol.active.ActiveConstantsInterface;
 import io.github.xiaomisum.ryze.protocol.active.RealActiveRequest;
-import io.github.xiaomisum.ryze.protocol.active.builder.ActiveConfigureElementBuilder;
+import io.github.xiaomisum.ryze.protocol.active.builder.ActiveConfigureElementsBuilder;
 import io.github.xiaomisum.ryze.protocol.active.builder.ActivePostprocessorsBuilder;
 import io.github.xiaomisum.ryze.protocol.active.builder.ActivePreprocessorsBuilder;
 import io.github.xiaomisum.ryze.protocol.active.config.ActiveConfigureItem;
@@ -153,7 +153,7 @@ public class ActiveSampler extends AbstractSampler<ActiveSampler, ActiveConfigur
     }
 
     public static class Builder extends AbstractSampler.Builder<ActiveSampler, Builder, ActiveConfigureItem,
-            ActiveConfigureItem.Builder, ActiveConfigureElementBuilder, ActivePreprocessorsBuilder, ActivePostprocessorsBuilder,
+            ActiveConfigureItem.Builder, ActiveConfigureElementsBuilder, ActivePreprocessorsBuilder, ActivePostprocessorsBuilder,
             DefaultAssertionsBuilder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public ActiveSampler build() {
@@ -171,8 +171,8 @@ public class ActiveSampler extends AbstractSampler<ActiveSampler, ActiveConfigur
         }
 
         @Override
-        protected ActiveConfigureElementBuilder getConfiguresBuilder() {
-            return ActiveConfigureElementBuilder.builder();
+        protected ActiveConfigureElementsBuilder getConfiguresBuilder() {
+            return ActiveConfigureElementsBuilder.builder();
         }
 
         @Override

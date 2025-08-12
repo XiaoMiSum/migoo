@@ -38,7 +38,7 @@ import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
 import io.github.xiaomisum.ryze.core.testelement.sampler.Sampler;
 import io.github.xiaomisum.ryze.protocol.rabbit.RabbitConstantsInterface;
 import io.github.xiaomisum.ryze.protocol.rabbit.RealRabbitRequest;
-import io.github.xiaomisum.ryze.protocol.rabbit.builder.RabbitConfigureElementBuilder;
+import io.github.xiaomisum.ryze.protocol.rabbit.builder.RabbitConfigureElementsBuilder;
 import io.github.xiaomisum.ryze.protocol.rabbit.builder.RabbitPostprocessorsBuilder;
 import io.github.xiaomisum.ryze.protocol.rabbit.builder.RabbitPreprocessorsBuilder;
 import io.github.xiaomisum.ryze.protocol.rabbit.config.RabbitConfigureItem;
@@ -190,7 +190,7 @@ public class RabbitSampler extends AbstractSampler<RabbitSampler, RabbitConfigur
     }
 
     public static class Builder extends AbstractSampler.Builder<RabbitSampler, Builder, RabbitConfigureItem,
-            RabbitConfigureItem.Builder, RabbitConfigureElementBuilder, RabbitPreprocessorsBuilder, RabbitPostprocessorsBuilder,
+            RabbitConfigureItem.Builder, RabbitConfigureElementsBuilder, RabbitPreprocessorsBuilder, RabbitPostprocessorsBuilder,
             DefaultAssertionsBuilder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public RabbitSampler build() {
@@ -208,8 +208,8 @@ public class RabbitSampler extends AbstractSampler<RabbitSampler, RabbitConfigur
         }
 
         @Override
-        protected RabbitConfigureElementBuilder getConfiguresBuilder() {
-            return RabbitConfigureElementBuilder.builder();
+        protected RabbitConfigureElementsBuilder getConfiguresBuilder() {
+            return RabbitConfigureElementsBuilder.builder();
         }
 
         @Override

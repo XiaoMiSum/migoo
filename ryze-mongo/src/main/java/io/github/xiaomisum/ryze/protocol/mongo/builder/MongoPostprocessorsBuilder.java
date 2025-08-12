@@ -35,7 +35,7 @@ import io.github.xiaomisum.ryze.support.Customizer;
 import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
- * active 自定义后置处理器列表构建器，提供 active 自定义后置处理器列表的构建方法
+ * mongo 自定义后置处理器列表构建器，提供 mongo 自定义后置处理器列表的构建方法
  *
  * @author xiaomi
  */
@@ -45,24 +45,24 @@ public class MongoPostprocessorsBuilder extends ExtensiblePostprocessorsBuilder<
         return new MongoPostprocessorsBuilder();
     }
 
-    public MongoPostprocessorsBuilder active(MongoPostprocessor postprocessor) {
+    public MongoPostprocessorsBuilder mongo(MongoPostprocessor postprocessor) {
         postprocessors.add(postprocessor);
         return self;
     }
 
-    public MongoPostprocessorsBuilder active(Customizer<MongoPostprocessor.Builder> customizer) {
+    public MongoPostprocessorsBuilder mongo(Customizer<MongoPostprocessor.Builder> customizer) {
         var builder = MongoPostprocessor.builder();
         customizer.customize(builder);
         postprocessors.add(builder.build());
         return self;
     }
 
-    public MongoPostprocessorsBuilder active(MongoPostprocessor.Builder builder) {
+    public MongoPostprocessorsBuilder mongo(MongoPostprocessor.Builder builder) {
         postprocessors.add(builder.build());
         return self;
     }
 
-    public MongoPostprocessorsBuilder active(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = MongoPostprocessor.Builder.class) Closure<?> closure) {
+    public MongoPostprocessorsBuilder mongo(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = MongoPostprocessor.Builder.class) Closure<?> closure) {
         var builder = MongoPostprocessor.builder();
         call(closure, builder);
         postprocessors.add(builder.build());

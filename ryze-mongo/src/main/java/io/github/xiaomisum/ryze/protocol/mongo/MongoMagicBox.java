@@ -23,48 +23,41 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package io.github.xiaomisum.ryze.protocol.mongo.builder;
+package io.github.xiaomisum.ryze.protocol.mongo;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
-import io.github.xiaomisum.ryze.core.builder.ExtensibleChildrenBuilder;
+import io.github.xiaomisum.ryze.MagicBox;
+import io.github.xiaomisum.ryze.core.Result;
 import io.github.xiaomisum.ryze.protocol.mongo.sampler.MongoSampler;
 import io.github.xiaomisum.ryze.support.Customizer;
-
-import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
+import io.github.xiaomisum.ryze.support.groovy.Groovy;
 
 /**
- * mongo 自定义取样器列表构建器，提供 mongo 自定义取样器列表的构建方法
+ * 魔法盒子 提供函数式取样器执行入口
  *
  * @author xiaomi
  */
-public class MongoSamplersBuilder extends ExtensibleChildrenBuilder<MongoSamplersBuilder> {
+public class MongoMagicBox extends MagicBox {
 
-    public static MongoSamplersBuilder builder() {
-        return new MongoSamplersBuilder();
+    public static Result mongo(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = MongoSampler.Builder.class) Closure<?> closure) {
+        return mongo("", closure);
     }
 
-    public MongoSamplersBuilder mongo(MongoSampler child) {
-        this.children.add(child);
-        return self;
+    public static Result mongo(String title,
+                               @DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = MongoSampler.Builder.class) Closure<?> closure) {
+        var builder = MongoSampler.builder();
+        Groovy.call(closure, builder);
+        return MagicBox.runTest(title, builder.build());
     }
 
-    public MongoSamplersBuilder mongo(MongoSampler.Builder child) {
-        this.children.add(child.build());
-        return self;
+    public static Result mongo(Customizer<MongoSampler.Builder> customizer) {
+        return mongo("", customizer);
     }
 
-    public MongoSamplersBuilder mongo(Customizer<MongoSampler.Builder> customizer) {
+    public static Result mongo(String title, Customizer<MongoSampler.Builder> customizer) {
         var builder = MongoSampler.builder();
         customizer.customize(builder);
-        this.children.add(builder.build());
-        return self;
-    }
-
-    public MongoSamplersBuilder mongo(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = MongoSampler.Builder.class) Closure<?> closure) {
-        var builder = MongoSampler.builder();
-        call(closure, builder);
-        this.children.add(builder.build());
-        return self;
+        return MagicBox.runTest(title, builder.build());
     }
 }

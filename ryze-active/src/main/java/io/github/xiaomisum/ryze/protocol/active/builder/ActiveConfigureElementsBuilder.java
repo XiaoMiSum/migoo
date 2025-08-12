@@ -38,30 +38,30 @@ import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
  *
  * @author xiaomi
  */
-public class ActiveConfigureElementBuilder extends ExtensibleConfigureElementsBuilder<ActiveConfigureElementBuilder> {
+public class ActiveConfigureElementsBuilder extends ExtensibleConfigureElementsBuilder<ActiveConfigureElementsBuilder> {
 
-    public static ActiveConfigureElementBuilder builder() {
-        return new ActiveConfigureElementBuilder();
+    public static ActiveConfigureElementsBuilder builder() {
+        return new ActiveConfigureElementsBuilder();
     }
-    
-    public ActiveConfigureElementBuilder active(ActiveDefaults defaults) {
+
+    public ActiveConfigureElementsBuilder active(ActiveDefaults defaults) {
         configureElements.add(defaults);
         return self;
     }
 
-    public ActiveConfigureElementBuilder active(Customizer<ActiveDefaults.Builder> customizer) {
+    public ActiveConfigureElementsBuilder active(Customizer<ActiveDefaults.Builder> customizer) {
         var builder = ActiveDefaults.builder();
         customizer.customize(builder);
         configureElements.add(builder.build());
         return self;
     }
 
-    public ActiveConfigureElementBuilder active(ActiveDefaults.Builder builder) {
+    public ActiveConfigureElementsBuilder active(ActiveDefaults.Builder builder) {
         configureElements.add(builder.build());
         return self;
     }
 
-    public ActiveConfigureElementBuilder active(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = ActiveDefaults.Builder.class) Closure<?> closure) {
+    public ActiveConfigureElementsBuilder active(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = ActiveDefaults.Builder.class) Closure<?> closure) {
         var builder = ActiveDefaults.builder();
         call(closure, builder);
         configureElements.add(builder.build());

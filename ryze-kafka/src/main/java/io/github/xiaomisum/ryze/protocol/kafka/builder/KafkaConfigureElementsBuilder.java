@@ -38,30 +38,30 @@ import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
  *
  * @author xiaomi
  */
-public class KafkaConfigureElementBuilder extends ExtensibleConfigureElementsBuilder<KafkaConfigureElementBuilder> {
+public class KafkaConfigureElementsBuilder extends ExtensibleConfigureElementsBuilder<KafkaConfigureElementsBuilder> {
 
-    public static KafkaConfigureElementBuilder builder() {
-        return new KafkaConfigureElementBuilder();
+    public static KafkaConfigureElementsBuilder builder() {
+        return new KafkaConfigureElementsBuilder();
     }
 
-    public KafkaConfigureElementBuilder kafka(KafkaDefaults defaults) {
+    public KafkaConfigureElementsBuilder kafka(KafkaDefaults defaults) {
         this.configureElements.add(defaults);
         return self;
     }
 
-    public KafkaConfigureElementBuilder kafka(KafkaDefaults.Builder builder) {
+    public KafkaConfigureElementsBuilder kafka(KafkaDefaults.Builder builder) {
         this.configureElements.add(builder.build());
         return self;
     }
 
-    public KafkaConfigureElementBuilder kafka(Customizer<KafkaDefaults.Builder> customizer) {
+    public KafkaConfigureElementsBuilder kafka(Customizer<KafkaDefaults.Builder> customizer) {
         var builder = KafkaDefaults.builder();
         customizer.customize(builder);
         this.configureElements.add(builder.build());
         return self;
     }
 
-    public KafkaConfigureElementBuilder kafka(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = KafkaDefaults.Builder.class) Closure<?> closure) {
+    public KafkaConfigureElementsBuilder kafka(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = KafkaDefaults.Builder.class) Closure<?> closure) {
         var builder = KafkaDefaults.builder();
         call(closure, builder);
         this.configureElements.add(builder.build());

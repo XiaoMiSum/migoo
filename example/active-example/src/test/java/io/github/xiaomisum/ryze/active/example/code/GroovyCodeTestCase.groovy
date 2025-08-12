@@ -2,7 +2,7 @@ package io.github.xiaomisum.ryze.active.example.code
 
 import io.github.xiaomisum.ryze.active.example.TestObj
 import io.github.xiaomisum.ryze.protocol.active.ActiveMagicBox
-import io.github.xiaomisum.ryze.protocol.active.builder.ActiveConfigureElementBuilder
+import io.github.xiaomisum.ryze.protocol.active.builder.ActiveConfigureElementsBuilder
 import io.github.xiaomisum.ryze.protocol.active.builder.ActivePostprocessorsBuilder
 import io.github.xiaomisum.ryze.protocol.active.builder.ActivePreprocessorsBuilder
 import io.github.xiaomisum.ryze.protocol.active.builder.ActiveSamplersBuilder
@@ -19,7 +19,7 @@ class GroovyCodeTestCase {
             variables("id", 1)
             variables { put("tick", "ryze") }
             variables Map.of("a", 1, "b", 2)
-            configureElements(ActiveConfigureElementBuilder.class, {
+            configureElements(ActiveConfigureElementsBuilder.class, {
                 active {
                     config {
                         username "artemis"
@@ -69,7 +69,7 @@ class GroovyCodeTestCase {
     @RyzeTest
     void test2() {
         ActiveMagicBox.active("测试用例- test2()", sampler -> {
-            configureElements(ActiveConfigureElementBuilder.class, {
+            configureElements(ActiveConfigureElementsBuilder.class, {
                 active {
                     config {
                         username "artemis"
@@ -100,7 +100,7 @@ class GroovyCodeTestCase {
     void test3() {
         ActiveMagicBox.active({
             title "步骤1——插入用户：tick = redis_preprocessor"
-            configureElements(ActiveConfigureElementBuilder.class, {
+            configureElements(ActiveConfigureElementsBuilder.class, {
                 active {
                     config {
                         username "artemis"
@@ -117,7 +117,7 @@ class GroovyCodeTestCase {
 
         ActiveMagicBox.active({
             title "步骤2——查找用户：tick = ryze_http_sampler"
-            configureElements(ActiveConfigureElementBuilder.class, {
+            configureElements(ActiveConfigureElementsBuilder.class, {
                 active {
                     config {
                         username "artemis"

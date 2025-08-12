@@ -37,7 +37,7 @@ import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
 import io.github.xiaomisum.ryze.core.testelement.sampler.Sampler;
 import io.github.xiaomisum.ryze.protocol.kafka.KafkaConstantsInterface;
 import io.github.xiaomisum.ryze.protocol.kafka.RealKafkaRequest;
-import io.github.xiaomisum.ryze.protocol.kafka.builder.KafkaConfigureElementBuilder;
+import io.github.xiaomisum.ryze.protocol.kafka.builder.KafkaConfigureElementsBuilder;
 import io.github.xiaomisum.ryze.protocol.kafka.builder.KafkaPostprocessorsBuilder;
 import io.github.xiaomisum.ryze.protocol.kafka.builder.KafkaPreprocessorsBuilder;
 import io.github.xiaomisum.ryze.protocol.kafka.config.KafkaConfigureItem;
@@ -135,7 +135,7 @@ public class KafkaSampler extends AbstractSampler<KafkaSampler, KafkaConfigureIt
     }
 
     public static class Builder extends AbstractSampler.Builder<KafkaSampler, Builder, KafkaConfigureItem,
-            KafkaConfigureItem.Builder, KafkaConfigureElementBuilder, KafkaPreprocessorsBuilder, KafkaPostprocessorsBuilder,
+            KafkaConfigureItem.Builder, KafkaConfigureElementsBuilder, KafkaPreprocessorsBuilder, KafkaPostprocessorsBuilder,
             DefaultAssertionsBuilder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public KafkaSampler build() {
@@ -153,8 +153,8 @@ public class KafkaSampler extends AbstractSampler<KafkaSampler, KafkaConfigureIt
         }
 
         @Override
-        protected KafkaConfigureElementBuilder getConfiguresBuilder() {
-            return KafkaConfigureElementBuilder.builder();
+        protected KafkaConfigureElementsBuilder getConfiguresBuilder() {
+            return KafkaConfigureElementsBuilder.builder();
         }
 
         @Override

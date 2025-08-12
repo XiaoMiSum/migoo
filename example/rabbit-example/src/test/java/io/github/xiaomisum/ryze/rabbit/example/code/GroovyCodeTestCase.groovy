@@ -1,7 +1,7 @@
 package io.github.xiaomisum.ryze.rabbit.example.code
 
 import io.github.xiaomisum.ryze.protocol.rabbit.RabbitMagicBox
-import io.github.xiaomisum.ryze.protocol.rabbit.builder.RabbitConfigureElementBuilder
+import io.github.xiaomisum.ryze.protocol.rabbit.builder.RabbitConfigureElementsBuilder
 import io.github.xiaomisum.ryze.protocol.rabbit.builder.RabbitPostprocessorsBuilder
 import io.github.xiaomisum.ryze.protocol.rabbit.builder.RabbitPreprocessorsBuilder
 import io.github.xiaomisum.ryze.protocol.rabbit.builder.RabbitSamplersBuilder
@@ -19,7 +19,7 @@ class GroovyCodeTestCase {
             variables("id", 1)
             variables { put("tick", "ryze") }
             variables Map.of("a", 1, "b", 2)
-            configureElements(RabbitConfigureElementBuilder.class, {
+            configureElements(RabbitConfigureElementsBuilder.class, {
                 rabbit {
                     config {
                         host "127.0.0.1"
@@ -82,7 +82,7 @@ class GroovyCodeTestCase {
     @RyzeTest
     void test2() {
         RabbitMagicBox.rabbit("测试用例- test2()", sampler -> {
-            configureElements(RabbitConfigureElementBuilder.class, {
+            configureElements(RabbitConfigureElementsBuilder.class, {
                 rabbit {
                     config {
                         host "127.0.0.1"
@@ -119,7 +119,7 @@ class GroovyCodeTestCase {
     void test3() {
         RabbitMagicBox.rabbit({
             title "步骤1——插入用户：tick = redis_preprocessor"
-            configureElements(RabbitConfigureElementBuilder.class, {
+            configureElements(RabbitConfigureElementsBuilder.class, {
                 rabbit {
                     config {
                         host "127.0.0.1"
@@ -139,7 +139,7 @@ class GroovyCodeTestCase {
 
         RabbitMagicBox.rabbit({
             title "步骤2——查找用户：tick = ryze_http_sampler"
-            configureElements(RabbitConfigureElementBuilder.class, {
+            configureElements(RabbitConfigureElementsBuilder.class, {
                 rabbit {
                     config {
                         host "127.0.0.1"

@@ -2,7 +2,7 @@ package io.github.xiaomisum.ryze.dubbo.example.code
 
 
 import io.github.xiaomisum.ryze.protocol.dubbo.DubboMagicBox
-import io.github.xiaomisum.ryze.protocol.dubbo.builder.DubboConfigureElementBuilder
+import io.github.xiaomisum.ryze.protocol.dubbo.builder.DubboConfigureElementsBuilder
 import io.github.xiaomisum.ryze.protocol.dubbo.builder.DubboPreprocessorsBuilder
 import io.github.xiaomisum.ryze.protocol.dubbo.builder.DubboSamplersBuilder
 import io.github.xiaomisum.ryze.support.testng.annotation.RyzeTest
@@ -18,7 +18,7 @@ class GroovyCodeTestCase {
             variables("id", 1)
             variables { put("tick", "ryze") }
             variables Map.of("a", 1, "b", 2)
-            configureElements(DubboConfigureElementBuilder.class, {
+            configureElements(DubboConfigureElementsBuilder.class, {
                 dubbo {
                     config {
                         registry {
@@ -69,7 +69,7 @@ class GroovyCodeTestCase {
     @RyzeTest
     void test2() {
         DubboMagicBox.dubbo("测试用例- test2()", sampler -> {
-            configureElements(DubboConfigureElementBuilder.class, {
+            configureElements(DubboConfigureElementsBuilder.class, {
                 dubbo {
                     config {
                         registry {
@@ -107,7 +107,7 @@ class GroovyCodeTestCase {
     void test3() {
         DubboMagicBox.dubbo({
             title "步骤1——插入用户：tick = redis_preprocessor"
-            configureElements(DubboConfigureElementBuilder.class, {
+            configureElements(DubboConfigureElementsBuilder.class, {
                 dubbo {
                     config {
                         registry {
@@ -131,7 +131,7 @@ class GroovyCodeTestCase {
 
         DubboMagicBox.dubbo({
             title "步骤2——查找用户：tick = ryze_http_sampler"
-            configureElements(DubboConfigureElementBuilder.class, {
+            configureElements(DubboConfigureElementsBuilder.class, {
                 dubbo {
                     config {
                         registry {

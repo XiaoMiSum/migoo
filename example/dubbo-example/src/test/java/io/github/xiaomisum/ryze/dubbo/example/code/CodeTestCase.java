@@ -2,7 +2,7 @@ package io.github.xiaomisum.ryze.dubbo.example.code;
 
 import io.github.xiaomisum.ryze.MagicBox;
 import io.github.xiaomisum.ryze.protocol.dubbo.DubboMagicBox;
-import io.github.xiaomisum.ryze.protocol.dubbo.builder.DubboConfigureElementBuilder;
+import io.github.xiaomisum.ryze.protocol.dubbo.builder.DubboConfigureElementsBuilder;
 import io.github.xiaomisum.ryze.protocol.dubbo.builder.DubboPostprocessorsBuilder;
 import io.github.xiaomisum.ryze.protocol.dubbo.builder.DubboPreprocessorsBuilder;
 import io.github.xiaomisum.ryze.protocol.dubbo.builder.DubboSamplersBuilder;
@@ -20,7 +20,7 @@ public class CodeTestCase {
             suite.variables("id", 1);
             suite.variables(var -> var.put("tick", "dubbo_preprocessor"));
             suite.variables(Map.of("a", 1, "b", 2));
-            suite.configureElements(DubboConfigureElementBuilder.builder()
+            suite.configureElements(DubboConfigureElementsBuilder.builder()
                     .dubbo(dubbo -> dubbo.config(config -> config
                             .registry(registry -> registry.address("zookeeper://localhost:42181"))
                             .reference(reference -> reference.retries(1).timeout(5000).async(false).loadBalance("random"))).build()
@@ -52,7 +52,7 @@ public class CodeTestCase {
     @RyzeTest
     public void test2() {
         DubboMagicBox.dubbo("测试用例- test2()", sampler -> {
-            sampler.configureElements(DubboConfigureElementBuilder.builder()
+            sampler.configureElements(DubboConfigureElementsBuilder.builder()
                     .dubbo(dubbo -> dubbo.config(config -> config
                             .registry(registry -> registry.address("zookeeper://localhost:42181"))
                             .reference(reference -> reference.retries(1).timeout(5000).async(false).loadBalance("random"))).build()
@@ -72,7 +72,7 @@ public class CodeTestCase {
     @RyzeTest
     public void test3() {
         DubboMagicBox.dubbo("测试用例- test3()-1", sampler -> {
-            sampler.configureElements(DubboConfigureElementBuilder.builder()
+            sampler.configureElements(DubboConfigureElementsBuilder.builder()
                     .dubbo(dubbo -> dubbo.config(config -> config
                             .registry(registry -> registry.address("zookeeper://localhost:42181"))
                             .reference(reference -> reference.retries(1).timeout(5000).async(false).loadBalance("random"))).build()
@@ -82,7 +82,7 @@ public class CodeTestCase {
         });
 
         DubboMagicBox.dubbo("测试用例- test3()-2", sampler -> {
-            sampler.configureElements(DubboConfigureElementBuilder.builder()
+            sampler.configureElements(DubboConfigureElementsBuilder.builder()
                     .dubbo(dubbo -> dubbo.config(config -> config
                             .registry(registry -> registry.address("zookeeper://localhost:42181"))
                             .reference(reference -> reference.retries(1).timeout(5000).async(false).loadBalance("random"))).build()

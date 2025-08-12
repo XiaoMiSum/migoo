@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2022.  Lorem XiaoMiSum (mi_xiao@qq.com)
+ * Copyright (c) 2024.  Lorem XiaoMiSum (mi_xiao@qq.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,48 +23,48 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package io.github.xiaomisum.ryze.protocol.dubbo.builder;
+package io.github.xiaomisum.ryze.protocol.rabbit.builder;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.builder.ExtensibleConfigureElementsBuilder;
-import io.github.xiaomisum.ryze.protocol.dubbo.config.DubboDefaults;
+import io.github.xiaomisum.ryze.protocol.rabbit.config.RabbitDefaults;
 import io.github.xiaomisum.ryze.support.Customizer;
 
 import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
- * dubbo 自定义配置元件列表构建器，提供 dubbo 自定义配置元件列表的构建方法
+ * rabbit 自定义配置元件列表构建器，提供 rabbit 自定义配置元件列表的构建方法
  *
  * @author xiaomi
  */
-public class DubboConfigureElementBuilder extends ExtensibleConfigureElementsBuilder<DubboConfigureElementBuilder> {
-    
-    public static DubboConfigureElementBuilder builder() {
-        return new DubboConfigureElementBuilder();
+public class RabbitConfigureElementsBuilder extends ExtensibleConfigureElementsBuilder<RabbitConfigureElementsBuilder> {
+
+    public static RabbitConfigureElementsBuilder builder() {
+        return new RabbitConfigureElementsBuilder();
     }
 
-    public DubboConfigureElementBuilder dubbo(DubboDefaults defaults) {
-        configureElements.add(defaults);
+    public RabbitConfigureElementsBuilder rabbit(RabbitDefaults child) {
+        this.configureElements.add(child);
         return self;
     }
 
-    public DubboConfigureElementBuilder dubbo(Customizer<DubboDefaults.Builder> customizer) {
-        var builder = DubboDefaults.builder();
+    public RabbitConfigureElementsBuilder rabbit(RabbitDefaults.Builder builder) {
+        this.configureElements.add(builder.build());
+        return self;
+    }
+
+    public RabbitConfigureElementsBuilder rabbit(Customizer<RabbitDefaults.Builder> customizer) {
+        var builder = RabbitDefaults.builder();
         customizer.customize(builder);
-        configureElements.add(builder.build());
+        this.configureElements.add(builder.build());
         return self;
     }
 
-    public DubboConfigureElementBuilder dubbo(DubboDefaults.Builder builder) {
-        configureElements.add(builder.build());
-        return self;
-    }
-
-    public DubboConfigureElementBuilder dubbo(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = DubboDefaults.Builder.class) Closure<?> closure) {
-        var builder = DubboDefaults.builder();
+    public RabbitConfigureElementsBuilder rabbit(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = RabbitDefaults.Builder.class) Closure<?> closure) {
+        var builder = RabbitDefaults.builder();
         call(closure, builder);
-        configureElements.add(builder.build());
+        this.configureElements.add(builder.build());
         return self;
     }
 }

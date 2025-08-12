@@ -52,6 +52,7 @@
         <module>redis-example</module>
         <module>jdbc-example</module>
         <module>rabbit-example</module>
+        <module>mongo-example</module>
     </modules>
 
 
@@ -131,6 +132,12 @@
             <dependency>
                 <groupId>io.github.xiaomisum</groupId>
                 <artifactId>ryze-active</artifactId>
+                <version>${ryze.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.xiaomisum</groupId>
+                <artifactId>ryze-mongo</artifactId>
                 <version>${ryze.version}</version>
             </dependency>
 

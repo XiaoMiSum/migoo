@@ -37,7 +37,7 @@ import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
 import io.github.xiaomisum.ryze.core.testelement.sampler.Sampler;
 import io.github.xiaomisum.ryze.protocol.dubbo.DubboConstantsInterface;
 import io.github.xiaomisum.ryze.protocol.dubbo.RealDubboRequest;
-import io.github.xiaomisum.ryze.protocol.dubbo.builder.DubboConfigureElementBuilder;
+import io.github.xiaomisum.ryze.protocol.dubbo.builder.DubboConfigureElementsBuilder;
 import io.github.xiaomisum.ryze.protocol.dubbo.builder.DubboPostprocessorsBuilder;
 import io.github.xiaomisum.ryze.protocol.dubbo.builder.DubboPreprocessorsBuilder;
 import io.github.xiaomisum.ryze.protocol.dubbo.config.DubboConfigureItem;
@@ -136,7 +136,7 @@ public class DubboSampler extends AbstractSampler<DubboSampler, DubboConfigureIt
     }
 
     public static class Builder extends AbstractSampler.Builder<DubboSampler, Builder, DubboConfigureItem,
-            DubboConfigureItem.Builder, DubboConfigureElementBuilder, DubboPreprocessorsBuilder, DubboPostprocessorsBuilder,
+            DubboConfigureItem.Builder, DubboConfigureElementsBuilder, DubboPreprocessorsBuilder, DubboPostprocessorsBuilder,
             DefaultAssertionsBuilder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public DubboSampler build() {
@@ -154,8 +154,8 @@ public class DubboSampler extends AbstractSampler<DubboSampler, DubboConfigureIt
         }
 
         @Override
-        protected DubboConfigureElementBuilder getConfiguresBuilder() {
-            return DubboConfigureElementBuilder.builder();
+        protected DubboConfigureElementsBuilder getConfiguresBuilder() {
+            return DubboConfigureElementsBuilder.builder();
         }
 
         @Override
