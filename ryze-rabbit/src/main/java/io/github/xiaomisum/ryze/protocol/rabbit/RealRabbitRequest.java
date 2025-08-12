@@ -45,6 +45,7 @@ public class RealRabbitRequest extends SampleResult.Real {
 
     private String username;
     private String password;
+    private String virtualHost;
 
     private RabbitConfigureItem.Queue queue;
 
@@ -61,6 +62,7 @@ public class RealRabbitRequest extends SampleResult.Real {
         result.password = config.getPassword();
         result.queue = config.getQueue();
         result.exchange = config.getExchange();
+        result.virtualHost = config.getVirtualHost();
         return result;
     }
 
@@ -69,7 +71,8 @@ public class RealRabbitRequest extends SampleResult.Real {
         var buf = new StringBuilder();
         buf.append("rabbit server address: ").append(address).append("\n")
                 .append("username: ").append(username).append("\n")
-                .append("password: ").append(password).append("\n");
+                .append("password: ").append(password).append("\n")
+                .append("virtualHost: ").append(virtualHost).append("\n");
         if (Objects.nonNull(queue)) {
             buf.append("Queue as JSON: ").append(JSON.toJSONString(queue)).append("\n");
         }

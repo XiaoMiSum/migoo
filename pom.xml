@@ -33,7 +33,7 @@
     <artifactId>ryze-parent</artifactId>
     <packaging>pom</packaging>
 
-    <version>6.0.0-bate2</version>
+    <version>6.0.0-bate3</version>
 
     <name>${project.artifactId}</name>
     <description>a test tool for api</description>
@@ -73,6 +73,7 @@
         <kafka.version>4.0.0</kafka.version>
         <druid.version>1.2.24</druid.version>
         <dubbo.version>3.3.2</dubbo.version>
+        <mongo.version>5.5.1</mongo.version>
         <rabbitmq.version>5.24.0</rabbitmq.version>
         <simplehttp.version>2.2.3</simplehttp.version>
 
@@ -113,6 +114,7 @@
         <module>ryze-kafka</module>
         <module>ryze-rabbit</module>
         <module>ryze-testng</module>
+        <module>ryze-mongo</module>
     </modules>
 
     <dependencyManagement>
@@ -135,6 +137,11 @@
                 <version>${groovy.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongodb-driver-sync</artifactId>
+                <version>${mongo.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.testng</groupId>

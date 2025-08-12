@@ -37,7 +37,6 @@ import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
 import io.github.xiaomisum.ryze.protocol.http.HTTPConstantsInterface;
 import io.github.xiaomisum.ryze.support.Collections;
 import io.github.xiaomisum.ryze.support.Customizer;
-import io.github.xiaomisum.ryze.support.groovy.Groovy;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
@@ -317,12 +316,6 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
             return self;
         }
 
-        public Builder headers(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = Map.class) Closure<?> closure) {
-            Map<String, String> header = new HashMap<>();
-            Groovy.call(closure, header);
-            configure.headers = Collections.putAllIfNonNull(configure.headers, header);
-            return self;
-        }
 
         public Builder cookie(Map<String, String> cookie) {
             configure.cookie = Collections.putAllIfNonNull(configure.cookie, cookie);
@@ -332,13 +325,6 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
         public Builder cookie(Customizer<Map<String, String>> customizer) {
             Map<String, String> cookie = new HashMap<>();
             customizer.customize(cookie);
-            configure.cookie = Collections.putAllIfNonNull(configure.cookie, cookie);
-            return self;
-        }
-
-        public Builder cookie(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = Map.class) Closure<?> closure) {
-            Map<String, String> cookie = new HashMap<>();
-            Groovy.call(closure, cookie);
             configure.cookie = Collections.putAllIfNonNull(configure.cookie, cookie);
             return self;
         }
@@ -355,21 +341,7 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
             return self;
         }
 
-        public Builder query(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = Map.class) Closure<?> closure) {
-            Map<String, Object> query = new HashMap<>();
-            Groovy.call(closure, query);
-            configure.query = Collections.putAllIfNonNull(configure.query, query);
-            return self;
-        }
-
         public Builder data(Map<String, Object> data) {
-            configure.data = Collections.putAllIfNonNull(configure.data, data);
-            return self;
-        }
-
-        public Builder data(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = Map.class) Closure<?> closure) {
-            Map<String, Object> data = new HashMap<>();
-            Groovy.call(closure, data);
             configure.data = Collections.putAllIfNonNull(configure.data, data);
             return self;
         }
@@ -387,16 +359,6 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
             }
             var body = new HashMap<String, Object>();
             customizer.customize(body);
-            configure.body = Collections.putAllIfNonNull((Map) configure.body, body);
-            return self;
-        }
-
-        public Builder body(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = Map.class) Closure<?> closure) {
-            if (configure.body != null && !(configure.body instanceof Map)) {
-                return self;
-            }
-            Map<String, Object> body = new HashMap<>();
-            Groovy.call(closure, body);
             configure.body = Collections.putAllIfNonNull((Map) configure.body, body);
             return self;
         }
