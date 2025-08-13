@@ -52,8 +52,8 @@ public class RedisConfigureItem implements ConfigureItem<RedisConfigureItem>, Re
     protected String url;
     @JSONField(name = COMMAND, ordinal = 6)
     protected String command;
-    @JSONField(name = SEND, ordinal = 7)
-    protected String send;
+    @JSONField(name = ARGS, ordinal = 7)
+    protected String args;
     @JSONField(name = TIMEOUT, ordinal = 2)
     protected int timeout;
     @JSONField(name = MAX_TOTAL, ordinal = 3)
@@ -81,7 +81,7 @@ public class RedisConfigureItem implements ConfigureItem<RedisConfigureItem>, Re
         self.datasource = StringUtils.isBlank(self.datasource) ? localOther.datasource : self.datasource;
         self.url = StringUtils.isBlank(self.url) ? localOther.url : self.url;
         self.command = StringUtils.isBlank(self.command) ? localOther.command : self.command;
-        self.send = StringUtils.isBlank(self.send) ? localOther.send : self.send;
+        self.args = StringUtils.isBlank(self.args) ? localOther.args : self.args;
         self.timeout = (self.timeout = self.timeout > 0 ? localOther.timeout : self.timeout) > 0 ? self.timeout : 10000;
         self.maxTotal = (self.maxTotal = self.maxTotal > 0 ? localOther.maxTotal : self.maxTotal) > 0 ? self.maxTotal : 10;
         self.maxIdle = (self.maxIdle = self.maxIdle > 0 ? localOther.maxIdle : self.maxIdle) > 0 ? self.maxIdle : 5;
@@ -94,7 +94,7 @@ public class RedisConfigureItem implements ConfigureItem<RedisConfigureItem>, Re
         datasource = (String) context.evaluate(datasource);
         url = (String) context.evaluate(url);
         command = (String) context.evaluate(command);
-        send = (String) context.evaluate(send);
+        args = (String) context.evaluate(args);
         return this;
     }
 
@@ -122,12 +122,12 @@ public class RedisConfigureItem implements ConfigureItem<RedisConfigureItem>, Re
         this.command = command;
     }
 
-    public String getSend() {
-        return send;
+    public String getArgs() {
+        return args;
     }
 
-    public void setSend(String send) {
-        this.send = send;
+    public void setArgs(String send) {
+        this.args = args;
     }
 
     public int getTimeout() {
@@ -184,8 +184,8 @@ public class RedisConfigureItem implements ConfigureItem<RedisConfigureItem>, Re
             return self;
         }
 
-        public Builder send(String send) {
-            configure.send = send;
+        public Builder args(String args) {
+            configure.args = args;
             return self;
         }
 

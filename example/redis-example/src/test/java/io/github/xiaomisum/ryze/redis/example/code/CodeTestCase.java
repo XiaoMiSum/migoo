@@ -18,8 +18,8 @@ public class CodeTestCase {
             suite.configureElements(ele -> ele.redis(redis -> redis.refName("redis_source")
                     .config(config -> config.url("redis://127.0.0.1:6379"))));
             suite.children(child -> child.redis(redis -> redis.title("步骤1").variables("username", "ryze")
-                    .config(config -> config.datasource("redis_source").command("set").send("test_case,${tick}"))));
-            suite.children(child -> child.redis(redis -> redis.title("步骤2").config(config -> config.datasource("redis_source").command("get").send("test_case"))
+                    .config(config -> config.datasource("redis_source").command("set").args("test_case,${tick}"))));
+            suite.children(child -> child.redis(redis -> redis.title("步骤2").config(config -> config.datasource("redis_source").command("get").args("test_case"))
                     .validators(validator -> validator.result(result -> result.expected("${tick}")))));
         });
     }
@@ -31,9 +31,9 @@ public class CodeTestCase {
             sampler.configureElements(ele -> ele.redis(redis -> redis.refName("redis_source")
                     .config(config -> config.url("redis://127.0.0.1:6379"))));
             sampler.preprocessors(pre -> pre.redis(redis -> redis.title("前置处理器写入key")
-                    .config(config -> config.datasource("redis_source").command("set").send("test2_redis_preprocessor,test2_redis_preprocessor")))
+                    .config(config -> config.datasource("redis_source").command("set").args("test2_redis_preprocessor,test2_redis_preprocessor")))
             );
-            sampler.config(config -> config.datasource("redis_source").command("get").send("test2_redis_preprocessor"));
+            sampler.config(config -> config.datasource("redis_source").command("get").args("test2_redis_preprocessor"));
             sampler.validators(validator -> validator.result(result -> result.expected("test2_redis_preprocessor")));
         });
     }
@@ -45,13 +45,13 @@ public class CodeTestCase {
         MagicBox.redis(redis -> redis.title("步骤1——插入用户：tick = redis_preprocessor")
                 .configureElements(ele -> ele.redis(r -> r.refName("redis_source")
                         .config(config -> config.url("redis://127.0.0.1:6379"))))
-                .config(config -> config.datasource("redis_source").command("set").send("test3_redis_sampler,test3_redis_sampler"))
+                .config(config -> config.datasource("redis_source").command("set").args("test3_redis_sampler,test3_redis_sampler"))
         );
 
         MagicBox.redis(redis -> redis.title("步骤2——查找用户：tick = test3_redis_sampler")
                 .configureElements(ele -> ele.redis(r -> r.refName("redis_source")
                         .config(config -> config.url("redis://127.0.0.1:6379"))))
-                .config(config -> config.datasource("redis_source").command("get").send("test3_redis_sampler"))
+                .config(config -> config.datasource("redis_source").command("get").args("test3_redis_sampler"))
                 .validators(validator -> validator.result(result -> result.expected("test3_redis_sampler")))
         );
     }

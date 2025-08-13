@@ -67,7 +67,7 @@ public interface RedisConstantsInterface extends TestElementConstantsInterface {
     /**
      * 废弃属性，请使用 timeout @see {@link #TIMEOUT}
      */
-    @Deprecated(since = "6.0.0")
+    @Deprecated(since = "6.0.0", forRemoval = true)
     String TIME_OUT = "time_out";
 
     String TIMEOUT = "timeout";
@@ -80,5 +80,11 @@ public interface RedisConstantsInterface extends TestElementConstantsInterface {
 
     String COMMAND = "command";
 
+    String ARGS = "args";
+
+    /**
+     * 废弃属性，请使用 args @see {@link #ARGS}
+     */
+    @Deprecated(since = "6.0.0", forRemoval = true)
     String SEND = "send";
 }

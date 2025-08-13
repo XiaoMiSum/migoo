@@ -29,7 +29,7 @@ class GroovyCodeTestCase {
                     config {
                         datasource "redis_source"
                         command "set"
-                        send "test_case,\${tick}"
+                        args "test_case,\${tick}"
                     }
                 }
             }
@@ -40,7 +40,7 @@ class GroovyCodeTestCase {
                     config {
                         datasource "redis_source"
                         command "get"
-                        send "test_case"
+                        args "test_case"
                     }
                     validators {
                         result { expected "\${tick}" }
@@ -68,14 +68,14 @@ class GroovyCodeTestCase {
                     config {
                         datasource "redis_source"
                         command "set"
-                        send "test2_redis_preprocessor,test2_redis_preprocessor"
+                        args "test2_redis_preprocessor,test2_redis_preprocessor"
                     }
                 }
             }
             config {
                 datasource "redis_source"
                 command "get"
-                send "test2_redis_preprocessor"
+                args "test2_redis_preprocessor"
             }
             validators {
                 result { expected "test2_redis_preprocessor" }
@@ -100,7 +100,7 @@ class GroovyCodeTestCase {
             config {
                 datasource "redis_source"
                 command "set"
-                send "test3_redis_sampler,test3_redis_sampler"
+                args "test3_redis_sampler,test3_redis_sampler"
             }
         })
 
@@ -117,7 +117,7 @@ class GroovyCodeTestCase {
             config {
                 datasource "redis_source"
                 command "get"
-                send "test3_redis_sampler"
+                args "test3_redis_sampler"
             }
             assertions {
                 result { expected "test3_redis_sampler" }

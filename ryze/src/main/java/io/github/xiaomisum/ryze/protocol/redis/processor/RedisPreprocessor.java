@@ -76,7 +76,7 @@ public class RedisPreprocessor extends AbstractProcessor<RedisPreprocessor, Redi
         result.sampleStart();
         try (var jedis = datasource.getConnection()) {
             var command = runtime.getConfig().getCommand();
-            var response = jedis.sendCommand(Protocol.Command.valueOf(command), runtime.getConfig().getSend().split(","));
+            var response = jedis.sendCommand(Protocol.Command.valueOf(command), runtime.getConfig().getArgs().split(","));
             bytes = Utils.toBytes(response);
         } finally {
             result.sampleEnd();
@@ -92,7 +92,7 @@ public class RedisPreprocessor extends AbstractProcessor<RedisPreprocessor, Redi
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
-        result.setRequest(new RealRedisRequest(datasource.getUrl(), runtime.getConfig().getCommand(), runtime.getConfig().getSend()));
+        result.setRequest(new RealRedisRequest(datasource.getUrl(), runtime.getConfig().getCommand(), runtime.getConfig().getArgs()));
         result.setResponse(SampleResult.DefaultReal.build(bytes));
     }
 

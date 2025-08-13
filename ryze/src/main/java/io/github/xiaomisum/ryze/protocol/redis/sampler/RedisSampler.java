@@ -73,7 +73,7 @@ public class RedisSampler extends AbstractSampler<RedisSampler, RedisConfigureIt
         result.sampleStart();
         try (var jedis = datasource.getConnection()) {
             var command = runtime.config.getCommand();
-            var response = jedis.sendCommand(Protocol.Command.valueOf(command), runtime.config.getSend().split(","));
+            var response = jedis.sendCommand(Protocol.Command.valueOf(command), runtime.config.getArgs().split(","));
             bytes = Utils.toBytes(response);
         } finally {
             result.sampleEnd();
@@ -89,7 +89,7 @@ public class RedisSampler extends AbstractSampler<RedisSampler, RedisConfigureIt
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
-        result.setRequest(new RealRedisRequest(datasource.getUrl(), runtime.config.getCommand(), runtime.config.getSend()));
+        result.setRequest(new RealRedisRequest(datasource.getUrl(), runtime.config.getCommand(), runtime.config.getArgs()));
         result.setResponse(SampleResult.DefaultReal.build(bytes));
     }
 
