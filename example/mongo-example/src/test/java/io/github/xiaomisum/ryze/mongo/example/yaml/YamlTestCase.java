@@ -25,7 +25,7 @@ public class YamlTestCase {
     @RyzeTest
     @Test
     public void test2() {
-        Ryze.start("取样器/mongo.yaml");
+        Ryze.start("取样器/mongo_sampler.yaml");
     }
 
     /**
@@ -35,6 +35,6 @@ public class YamlTestCase {
     @RyzeTest(value = "测试用例/mongo.yaml", type = TestSuite.class)
     @Test
     public void test3(TestElement<?> element) {
-        // 无需像test2一样 编写执行代码 Ryze.start("取样器/mongo.yaml");
+        // 无需像test2一样 编写执行代码 Ryze.start("取样器/mongo_sampler.yaml");
     }
 }

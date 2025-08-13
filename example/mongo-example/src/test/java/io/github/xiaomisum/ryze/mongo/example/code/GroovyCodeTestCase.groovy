@@ -5,6 +5,7 @@ import io.github.xiaomisum.ryze.protocol.mongo.builder.MongoConfigureElementsBui
 import io.github.xiaomisum.ryze.protocol.mongo.builder.MongoPostprocessorsBuilder
 import io.github.xiaomisum.ryze.protocol.mongo.builder.MongoPreprocessorsBuilder
 import io.github.xiaomisum.ryze.protocol.mongo.builder.MongoSamplersBuilder
+import io.github.xiaomisum.ryze.support.Collections
 import io.github.xiaomisum.ryze.support.testng.annotation.RyzeTest
 import org.testng.annotations.Test
 
@@ -15,15 +16,15 @@ class GroovyCodeTestCase {
     @RyzeTest
     void test1() {
         MongoMagicBox.suite("测试用例", {
-            variables("id", 1)
-            variables { put("tick", "ryze") }
+            variables("author", "\${faker('book.author')}")
+            variables { put("title", "\${faker('book.title')}") }
             variables Map.of("a", 1, "b", 2)
             configureElements(MongoConfigureElementsBuilder.class, {
                 mongo {
                     config {
-                        url "127.0.0.1:9092"
-                        database "ryze.topic"
-                        collection "ryze.topic"
+                        url "mongodb://root:123456@127.0.0.1:27017/?authSource=admin"
+                        database "demo"
+                        collection "book"
                     }
                 }
             })
@@ -32,7 +33,9 @@ class GroovyCodeTestCase {
                     config {
                         action "insert"
                         dataMap(data -> {
-                            data.put("username", "\${tick}")
+                            data.put("name", "\${title}")
+                            data.put("author", "\${author}")
+                            data.put("isbn", "\${timestamp()}")
                         })
                     }
                 }
@@ -40,7 +43,8 @@ class GroovyCodeTestCase {
             postprocessors(MongoPostprocessorsBuilder.class, {
                 mongo {
                     config {
-                        message "test1: mongo_postprocessor_test "
+                        action "delete"
+                        condition { condition -> { condition.put("name", Map.of("\$eq", "\${title}")) } }
                     }
                 }
             })
@@ -48,7 +52,13 @@ class GroovyCodeTestCase {
                 mongo {
                     title "步骤1"
                     config {
-                        message Map.of("name", "\${tick}  步骤1：标准mongo取样器")
+                        insertData { data ->
+                            {
+                                data.put("name", "\${title}")
+                                data.put("author", "\${author}")
+                                data.put("isbn", "\${timestamp()}")
+                            }
+                        }
                     }
                 }
             })
@@ -56,7 +66,14 @@ class GroovyCodeTestCase {
                 mongo {
                     title "步骤2"
                     config {
-                        message Map.of("name", "\${tick}  步骤2：标准mongo取样器")
+                        select { condition -> { condition.put("name", Map.of("\$eq", "\${name}")) } }
+                    }
+                    validators {
+                        json {
+                            field "\$[0].name"
+                            rule "=="
+                            expected "\${name}"
+                        }
                     }
                 }
             })
@@ -70,23 +87,21 @@ class GroovyCodeTestCase {
             configureElements(MongoConfigureElementsBuilder.class, {
                 mongo {
                     config {
-                        url "127.0.0.1:9092"
-                        database "ryze.topic"
-                        collection "ryze.topic"
-                    }
-                }
-            })
-            preprocessors(MongoPreprocessorsBuilder.class, {
-                mongo {
-                    config {
-                        message(TestObj.class, test -> {
-                            test.setName("hahaha")
-                        })
+                        url "mongodb://root:123456@127.0.0.1:27017/?authSource=admin"
+                        database "demo"
+                        collection "book"
                     }
                 }
             })
             config {
-                message 123456
+                action "find"
+            }
+            validators {
+                json {
+                    field "\$.size()"
+                    rule ">="
+                    expected "1"
+                }
             }
         })
     }
@@ -95,35 +110,45 @@ class GroovyCodeTestCase {
     @Test
     @RyzeTest
     void test3() {
+        var variable = ["name": "ryze", "author": "test"]
         MongoMagicBox.mongo({
             title "步骤1——插入用户：tick = redis_preprocessor"
+            variables(variable)
             configureElements(MongoConfigureElementsBuilder.class, {
                 mongo {
                     config {
-                        url "127.0.0.1:9092"
-                        database "ryze.topic"
-                        collection "ryze.topic"
+                        url "mongodb://root:123456@127.0.0.1:27017/?authSource=admin"
+                        database "demo"
+                        collection "book"
                     }
                 }
             })
             config {
-                message([1, 2, 3, 4, 5])
+                update(Collections.of("\$set", Collections.of("author", "\${author}")), Collections.of("name", "\${name}"))
             }
         })
 
         MongoMagicBox.mongo({
             title "步骤2——查找用户：tick = ryze_http_sampler"
+            variables(variable)
             configureElements(MongoConfigureElementsBuilder.class, {
                 mongo {
                     config {
-                        url "127.0.0.1:9092"
-                        database "ryze.topic"
-                        collection "ryze.topic"
+                        url "mongodb://root:123456@127.0.0.1:27017/?authSource=admin"
+                        database "demo"
+                        collection "book"
                     }
                 }
             })
             config {
-                message true
+                select { condition -> condition.put("name", Map.of("\$eq", "\${name}")) }
+            }
+            validators {
+                json {
+                    field "\$[0].author"
+                    rule "=="
+                    expected "\${author}"
+                }
             }
         })
     }

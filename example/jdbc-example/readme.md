@@ -34,6 +34,6 @@
 
 # 执行 Ryze MySql 测试
 
-      运行 jdbc-example 中的 Test
+      运行 jdbc-example 中的 Test（可能需要修改测试用例中的数据库密码）
 
 # 执行结果

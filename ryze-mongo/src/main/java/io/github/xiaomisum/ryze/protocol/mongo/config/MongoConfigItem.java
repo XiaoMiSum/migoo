@@ -1,4 +1,3 @@
-package io.github.xiaomisum.ryze.protocol.mongo.config;
 /*
  *
  *  * The MIT License (MIT)
@@ -27,7 +26,11 @@ package io.github.xiaomisum.ryze.protocol.mongo.config;
  *
  */
 
+package io.github.xiaomisum.ryze.protocol.mongo.config;
+
+
 import com.alibaba.fastjson2.annotation.JSONField;
+import groovy.lang.Closure;
 import io.github.xiaomisum.ryze.core.config.ConfigureItem;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
@@ -35,6 +38,7 @@ import io.github.xiaomisum.ryze.protocol.mongo.MongoConstantsInterface;
 import io.github.xiaomisum.ryze.support.Collections;
 import io.github.xiaomisum.ryze.support.Customizer;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
 import java.util.HashMap;
 import java.util.List;
@@ -185,6 +189,67 @@ public class MongoConfigItem implements ConfigureItem<MongoConfigItem>, MongoCon
         public Builder action(String action) {
             configure.action = action;
             return self;
+        }
+
+        public Builder find() {
+            return action(FIND);
+        }
+
+        public Builder find(Map<String, Object> condition) {
+            return action(FIND).condition(condition);
+        }
+
+        public Builder find(Customizer<Map<String, Object>> customizer) {
+            return action(FIND).condition(customizer);
+        }
+
+        /**
+         * 在 Groovy中使用 select 代替 find，因为在 groovy中有个默认方法名称 find，会与 find 方法冲突
+         * <p>
+         * {@link DefaultGroovyMethods#find(Object, Closure)}
+         *
+         * @param customizer 函数式表达式
+         * @return self
+         */
+        public Builder select(Customizer<Map<String, Object>> customizer) {
+            return action(FIND).condition(customizer);
+        }
+
+
+        public Builder insert(Map<String, Object> data) {
+            return action(INSERT).data(data);
+        }
+
+        public Builder insertData(Customizer<Map<String, Object>> customizer) {
+            return action(INSERT).dataMap(customizer);
+        }
+
+        public Builder insert(List<Object> data) {
+            return action(INSERT).data(data);
+        }
+
+        public Builder insertList(Customizer<List<Object>> customizer) {
+            return action(INSERT).dataList(customizer);
+        }
+
+        public Builder update(Map<String, Object> data, Map<String, Object> condition) {
+            return action(UPDATE).data(data).condition(condition);
+        }
+
+        public Builder update(Customizer<Map<String, Object>> data, Customizer<Map<String, Object>> condition) {
+            return action(UPDATE).dataMap(data).condition(condition);
+        }
+
+        public Builder delete() {
+            return action(DELETE);
+        }
+
+        public Builder delete(Map<String, Object> condition) {
+            return action(DELETE).condition(condition);
+        }
+
+        public Builder delete(Customizer<Map<String, Object>> customizer) {
+            return action(DELETE).condition(customizer);
         }
 
         public Builder condition(Map<String, Object> condition) {

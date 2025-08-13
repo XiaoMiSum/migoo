@@ -62,18 +62,19 @@ public class Collections {
         return target;
     }
 
-    public static Map<String, ?> of(Object... keywords) {
+    public static Map of(Object... keywords) {
         if (keywords == null || keywords.length == 0) {
             return new HashMap<>();
         }
-        var map = new HashMap<String, Object>();
+        var map = new HashMap<>();
         for (int i = 0; i < keywords.length; i += 2) {
             if (i + 1 < keywords.length) {
-                map.put((String) keywords[i], keywords[i + 1]);
+                map.put(keywords[i], keywords[i + 1]);
             }
         }
         return map;
     }
+
 
     public static <K, V> Map<K, V> newHashMap(Map<K, V> map) {
         return new HashMap<>(map);

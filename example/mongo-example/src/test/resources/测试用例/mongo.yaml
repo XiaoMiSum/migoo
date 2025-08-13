@@ -12,4 +12,6 @@ children: # 执行步骤
     testclass: mongo  # 取样器类型
     config: # 取样器配置  # 数据源，可空
       action: find  # 操作类型：find、insert、update、delete
-      condition: { } # 条件，非空
+      condition: { name: { $eq: '${name}' } } # 条件，非空
+    validators:
+      - { testclass: json, field: '$.name', expected: '${name}', rule: 'equals' }

@@ -8,6 +8,9 @@
 
 ryze 支持自定义变量 或 函数动态生成测试数据
 
+注意：6.0.0
+版本开始，变量与函数功能由正则表达式匹配替换，更换为Freemarker模板，详情请查看 [Freemarker](https://freemarker.apache.org/docs/index.html)
+
 [详情](./help/变量与函数.md)
 
 # 提取器
