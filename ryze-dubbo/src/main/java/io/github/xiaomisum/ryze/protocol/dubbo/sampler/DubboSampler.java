@@ -35,6 +35,7 @@ import io.github.xiaomisum.ryze.core.testelement.sampler.AbstractSampler;
 import io.github.xiaomisum.ryze.core.testelement.sampler.DefaultSampleResult;
 import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
 import io.github.xiaomisum.ryze.core.testelement.sampler.Sampler;
+import io.github.xiaomisum.ryze.protocol.dubbo.Dubbo;
 import io.github.xiaomisum.ryze.protocol.dubbo.DubboConstantsInterface;
 import io.github.xiaomisum.ryze.protocol.dubbo.RealDubboRequest;
 import io.github.xiaomisum.ryze.protocol.dubbo.builder.DubboConfigureElementsBuilder;
@@ -42,10 +43,7 @@ import io.github.xiaomisum.ryze.protocol.dubbo.builder.DubboPostprocessorsBuilde
 import io.github.xiaomisum.ryze.protocol.dubbo.builder.DubboPreprocessorsBuilder;
 import io.github.xiaomisum.ryze.protocol.dubbo.config.DubboConfigureItem;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ReferenceConfig;
-import org.apache.dubbo.config.RegistryConfig;
-import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.service.GenericService;
 
 import java.util.Objects;
@@ -82,17 +80,7 @@ public class DubboSampler extends AbstractSampler<DubboSampler, DubboConfigureIt
 
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
-        try {
-            if (Objects.nonNull(runtime.config.getAttachmentArgs()) && !runtime.config.getAttachmentArgs().isEmpty()) {
-                RpcContext.getClientAttachment().setAttachments(runtime.config.getAttachmentArgs());
-            }
-            var parameterTypes = Objects.isNull(runtime.config.getParameterTypes()) ? new String[0] : runtime.config.getParameterTypes().toArray(String[]::new);
-            var parameters = Objects.isNull(runtime.config.getParameters()) ? new Object[0] : runtime.config.getParameters().toArray();
-            result.sampleStart();
-            response = request.get().$invoke(runtime.config.getMethod(), parameterTypes, parameters);
-        } finally {
-            result.sampleEnd();
-        }
+        response = Dubbo.execute(request, runtime.config, result);
     }
 
     @Override
@@ -104,28 +92,7 @@ public class DubboSampler extends AbstractSampler<DubboSampler, DubboConfigureIt
         var otherConfig = (DubboConfigureItem) context.getLocalVariablesWrapper().get(ref);
         runtime.setConfig(localConfig.merge(otherConfig));
         // 2. 创建Dubbo对象
-        var registryConfig = runtime.config.getRegistry();
-        var referenceConfig = runtime.config.getReference();
-
-        request = new ReferenceConfig<>();
-        request.setGeneric("true");
-        request.getApplicationModel().getApplicationConfigManager().setApplication(new ApplicationConfig("ryze-dubbo-consumer"));
-        request.setVersion(referenceConfig.getVersion());
-        request.setGroup(referenceConfig.getGroup());
-        request.setRetries(referenceConfig.getRetries());
-        request.setTimeout(referenceConfig.getTimeout());
-        request.setAsync(referenceConfig.getAsync());
-        request.setLoadbalance(referenceConfig.getLoadBalance());
-        request.setInterface(runtime.config.getInterfaceName());
-        var registry = new RegistryConfig();
-        registry.setAddress(StringUtils.isBlank(registryConfig.getProtocol()) ? registryConfig.getAddress()
-                : registryConfig.getProtocol() + "://" + registryConfig.getAddress());
-        registry.setGroup(registryConfig.getGroup());
-        registry.setUsername(registryConfig.getUsername());
-        registry.setPassword(registryConfig.getPassword());
-        registry.setVersion(registryConfig.getVersion());
-        registry.setTimeout(registry.getTimeout());
-        request.setRegistry(registry);
+        request = Dubbo.handleRequest(runtime.config);
     }
 
     @Override

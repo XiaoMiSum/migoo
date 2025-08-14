@@ -33,14 +33,14 @@ import java.util.List;
 /**
  * @author xiaomi
  */
-public abstract class HTTPReal extends SampleResult.Real {
+public abstract class HTTPRealResult extends SampleResult.Real {
 
 
     protected String version;
 
     protected List<Header> headers;
 
-    public HTTPReal(byte[] bytes) {
+    public HTTPRealResult(byte[] bytes) {
         super(bytes);
     }
 

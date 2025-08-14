@@ -33,7 +33,7 @@ import java.util.Arrays;
 /**
  * @author xiaomi
  */
-public class RealHTTPRealRequest extends HTTPReal {
+public class RealHTTPRealResultRequest extends HTTPRealResult {
 
     private final String url;
 
@@ -44,7 +44,7 @@ public class RealHTTPRealRequest extends HTTPReal {
     private final byte[] body;
 
 
-    public RealHTTPRealRequest(Request request) {
+    public RealHTTPRealResultRequest(Request request) {
         super(new byte[0]);
         url = request.uri();
         method = request.method();

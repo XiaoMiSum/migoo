@@ -31,7 +31,7 @@ import io.github.xiaomisum.ryze.core.assertion.AbstractAssertion;
 import io.github.xiaomisum.ryze.core.assertion.AssertionResult;
 import io.github.xiaomisum.ryze.core.testelement.KW;
 import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
-import io.github.xiaomisum.ryze.protocol.http.RealHTTPRealResponse;
+import io.github.xiaomisum.ryze.protocol.http.RealHTTPRealResultResponse;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -55,7 +55,7 @@ public class HTTPResponseAssertion extends AbstractAssertion {
     @Override
     protected AssertionResult initialized(SampleResult result) {
         var res = new AssertionResult("HTTP响应断言: ");
-        var response = (RealHTTPRealResponse) result.getResponse();
+        var response = (RealHTTPRealResultResponse) result.getResponse();
         field = StringUtils.isBlank(field) ? BODY : field;
         var matcher = PATTERN.matcher(field);
         if (matcher.find()) {

@@ -29,7 +29,11 @@
 package io.github.xiaomisum.ryze.protocol.mongo;
 
 import com.alibaba.fastjson2.JSON;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
+import io.github.xiaomisum.ryze.core.testelement.sampler.DefaultSampleResult;
+import io.github.xiaomisum.ryze.protocol.mongo.config.MongoConfigItem;
 import io.github.xiaomisum.ryze.support.Collections;
 import org.bson.Document;
 
@@ -39,20 +43,40 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static io.github.xiaomisum.ryze.protocol.mongo.MongoConstantsInterface.*;
+
 /**
  * @author xiaomi
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class Mongo {
 
-    public static byte[] find(MongoCollection<Document> collection, Map<String, Object> condition) {
+    public static byte[] execute(MongoClientSettings settings, MongoConfigItem config, DefaultSampleResult result) {
+
+        try (var client = MongoClients.create(settings)) {
+            var database = client.getDatabase(config.getDatabase());
+            var collection = database.getCollection(config.getCollection());
+            var data = config.getData();
+            result.sampleStart();
+            return switch (config.getAction()) {
+                case INSERT -> insert(collection, data);
+                case UPDATE -> update(collection, config.getCondition(), data);
+                case DELETE -> delete(collection, config.getCondition());
+                case null, default -> find(collection, config.getCondition());
+            };
+        } finally {
+            result.sampleEnd();
+        }
+    }
+
+    private static byte[] find(MongoCollection<Document> collection, Map<String, Object> condition) {
         var result = collection.find(toDocument(condition));
         List<Object> response = new ArrayList<>();
         result.forEach(response::add);
         return JSON.toJSONBytes(response.isEmpty() ? Collections.newHashMap() : response.size() == 1 ? response.getFirst() : response);
     }
 
-    public static byte[] insert(MongoCollection<Document> collection, Object data) {
+    private static byte[] insert(MongoCollection<Document> collection, Object data) {
         List<Document> documents = Objects.isNull(data) ? List.of()
                 : data instanceof Map<?, ?> map ? List.of(toDocument((Map<String, Object>) map))
                 : data instanceof List<?> items ? toDocuments(items) : List.of();
@@ -60,7 +84,7 @@ public class Mongo {
         return ("Affected rows: " + documents.size()).getBytes(StandardCharsets.UTF_8);
     }
 
-    public static byte[] update(MongoCollection<Document> collection, Map<String, Object> condition, Object data) {
+    private static byte[] update(MongoCollection<Document> collection, Map<String, Object> condition, Object data) {
         List<Document> documents = Objects.isNull(data) ? List.of()
                 : data instanceof Map<?, ?> map ? List.of(toDocument((Map<String, Object>) map))
                 : data instanceof List<?> items ? toDocuments(items) : List.of();
@@ -68,12 +92,12 @@ public class Mongo {
         return ("Affected rows: " + updateResult.getModifiedCount()).getBytes(StandardCharsets.UTF_8);
     }
 
-    public static byte[] delete(MongoCollection<Document> collection, Map<String, Object> condition) {
+    private static byte[] delete(MongoCollection<Document> collection, Map<String, Object> condition) {
         var deleteResult = collection.deleteMany(toDocument(condition));
         return ("Affected rows: " + deleteResult.getDeletedCount()).getBytes(StandardCharsets.UTF_8);
     }
 
-    public static List<Document> toDocuments(List<?> sources) {
+    private static List<Document> toDocuments(List<?> sources) {
         var documents = new ArrayList<Document>();
         if (Objects.nonNull(sources)) {
             sources.forEach(item -> documents.add(toDocument((Map<String, Object>) item)));
@@ -81,7 +105,7 @@ public class Mongo {
         return documents;
     }
 
-    public static Document toDocument(Map<String, Object> one) {
+    private static Document toDocument(Map<String, Object> one) {
         var document = new Document();
         if (Objects.nonNull(one)) {
             one.forEach(document::append);

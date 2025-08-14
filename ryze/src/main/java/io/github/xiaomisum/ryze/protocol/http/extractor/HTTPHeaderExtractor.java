@@ -33,7 +33,7 @@ import io.github.xiaomisum.ryze.core.extractor.AbstractExtractor;
 import io.github.xiaomisum.ryze.core.extractor.ExtractResult;
 import io.github.xiaomisum.ryze.core.testelement.KW;
 import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
-import io.github.xiaomisum.ryze.protocol.http.RealHTTPRealResponse;
+import io.github.xiaomisum.ryze.protocol.http.RealHTTPRealResultResponse;
 
 /**
  * HTTP 响应提取器，仅支持提取请求头中的数据，请求头存在多个时，默认返回第一个匹配的
@@ -56,7 +56,7 @@ public class HTTPHeaderExtractor extends AbstractExtractor {
     @Override
     protected ExtractResult extract(SampleResult result) {
         var res = new ExtractResult("HTTP响应 提取: " + field);
-        var response = (RealHTTPRealResponse) result.getResponse();
+        var response = (RealHTTPRealResultResponse) result.getResponse();
         Object value = null;
         var headers = response.headers().stream().filter(header -> header.getName().equalsIgnoreCase(field)).toList();
         if (!headers.isEmpty()) {

@@ -34,14 +34,14 @@ import java.util.Objects;
 /**
  * @author xiaomi
  */
-public class RealHTTPRealResponse extends HTTPReal {
+public class RealHTTPRealResultResponse extends HTTPRealResult {
 
     private int statusCode;
 
     private String message;
 
 
-    public RealHTTPRealResponse(Response response) {
+    public RealHTTPRealResultResponse(Response response) {
         super(Objects.isNull(response) ? new byte[0] : response.bytes());
         if (Objects.isNull(response)) {
             return;

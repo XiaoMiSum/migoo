@@ -33,12 +33,15 @@ import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
 import io.github.xiaomisum.ryze.protocol.rabbit.config.RabbitConfigureItem;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
  * @author xiaomi
  * Created at 2025/7/26 22:24
  */
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class RealRabbitRequest extends SampleResult.Real {
 
     private String address;
@@ -55,7 +58,13 @@ public class RealRabbitRequest extends SampleResult.Real {
         super(bytes);
     }
 
-    public static RealRabbitRequest build(RabbitConfigureItem config, String message) {
+    public static RealRabbitRequest build(RabbitConfigureItem config) {
+        var message = switch (config.getMessage()) {
+            case Map map -> JSON.toJSONString(map);
+            case List list -> JSON.toJSONString(list);
+            case null -> "";
+            default -> config.getMessage().toString();
+        };
         var result = new RealRabbitRequest(message.getBytes());
         result.address = config.getHost() + ":" + config.getPort();
         result.username = config.getUsername();

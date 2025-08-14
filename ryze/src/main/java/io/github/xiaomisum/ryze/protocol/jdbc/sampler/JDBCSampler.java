@@ -34,11 +34,10 @@ import io.github.xiaomisum.ryze.core.testelement.sampler.AbstractSampler;
 import io.github.xiaomisum.ryze.core.testelement.sampler.DefaultSampleResult;
 import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
 import io.github.xiaomisum.ryze.core.testelement.sampler.Sampler;
+import io.github.xiaomisum.ryze.protocol.jdbc.JDBC;
 import io.github.xiaomisum.ryze.protocol.jdbc.JDBCConstantsInterface;
 import io.github.xiaomisum.ryze.protocol.jdbc.RealJDBCRequest;
 import io.github.xiaomisum.ryze.protocol.jdbc.config.JDBCConfigureItem;
-
-import static io.github.xiaomisum.ryze.protocol.jdbc.Utils.toJSONBytes;
 
 /**
  * @author xiaomi
@@ -70,15 +69,7 @@ public class JDBCSampler extends AbstractSampler<JDBCSampler, JDBCConfigureItem,
 
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
-        result.sampleStart();
-        try (var conn = datasource.getConnection(); var statement = conn.createStatement()) {
-            var bool = statement.execute(runtime.config.getSql());
-            bytes = toJSONBytes(bool, statement);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            result.sampleEnd();
-        }
+        bytes = JDBC.execute(datasource, runtime.getConfig().getSql(), result);
     }
 
     @Override

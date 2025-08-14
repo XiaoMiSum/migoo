@@ -31,7 +31,6 @@ package io.github.xiaomisum.ryze.protocol.mongo.processsor;
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
-import com.mongodb.client.MongoClients;
 import io.github.xiaomisum.ryze.core.builder.DefaultExtractorsBuilder;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.testelement.KW;
@@ -77,19 +76,7 @@ public class MongoPostprocessor extends AbstractProcessor<MongoPostprocessor, Mo
 
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
-        try (var client = MongoClients.create(settings)) {
-            var database = client.getDatabase(runtime.getConfig().getDatabase());
-            var collection = database.getCollection(runtime.getConfig().getCollection());
-            var data = runtime.getConfig().getData();
-            response = switch (runtime.getConfig().getAction()) {
-                case INSERT -> Mongo.insert(collection, data);
-                case UPDATE -> Mongo.update(collection, runtime.getConfig().getCondition(), data);
-                case DELETE -> Mongo.delete(collection, runtime.getConfig().getCondition());
-                case null, default -> Mongo.find(collection, runtime.getConfig().getCondition());
-            };
-        } finally {
-            result.sampleEnd();
-        }
+        response = Mongo.execute(settings, runtime.getConfig(), result);
     }
 
     @Override
@@ -97,14 +84,10 @@ public class MongoPostprocessor extends AbstractProcessor<MongoPostprocessor, Mo
         super.handleRequest(context, result);
         // 1. 合并配置项
         var localConfig = Objects.isNull(runtime.getConfig()) ? new MongoConfigItem() : runtime.getConfig();
-        var datasource = StringUtils.isBlank(localConfig.getRef()) ?
-                DEF_REF_NAME_KEY : localConfig.getRef();
+        var datasource = StringUtils.isBlank(localConfig.getRef()) ? DEF_REF_NAME_KEY : localConfig.getRef();
         var otherConfig = (MongoConfigItem) context.getLocalVariablesWrapper().get(datasource);
         runtime.setConfig(localConfig.merge(otherConfig));
-        settings = MongoClientSettings.builder()
-                .applyConnectionString(new ConnectionString(runtime.getConfig().getUrl()))
-                .retryWrites(true)
-                .build();
+        settings = MongoClientSettings.builder().applyConnectionString(new ConnectionString(runtime.getConfig().getUrl())).retryWrites(true).build();
     }
 
     @Override

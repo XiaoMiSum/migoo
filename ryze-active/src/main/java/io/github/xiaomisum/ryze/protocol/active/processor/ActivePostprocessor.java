@@ -25,7 +25,6 @@
 
 package io.github.xiaomisum.ryze.protocol.active.processor;
 
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
 import io.github.xiaomisum.ryze.core.builder.DefaultExtractorsBuilder;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
@@ -34,6 +33,7 @@ import io.github.xiaomisum.ryze.core.testelement.processor.AbstractProcessor;
 import io.github.xiaomisum.ryze.core.testelement.processor.Postprocessor;
 import io.github.xiaomisum.ryze.core.testelement.sampler.DefaultSampleResult;
 import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
+import io.github.xiaomisum.ryze.protocol.active.Active;
 import io.github.xiaomisum.ryze.protocol.active.ActiveConstantsInterface;
 import io.github.xiaomisum.ryze.protocol.active.RealActiveRequest;
 import io.github.xiaomisum.ryze.protocol.active.config.ActiveConfigureItem;
@@ -44,8 +44,6 @@ import jakarta.jms.Session;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -87,28 +85,7 @@ public class ActivePostprocessor extends AbstractProcessor<ActivePostprocessor, 
 
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
-        var message = switch (runtime.getConfig().getMessage()) {
-            case Map map -> JSON.toJSONString(map);
-            case List list -> JSON.toJSONString(list);
-            case null -> "";
-            default -> runtime.getConfig().getMessage().toString();
-        };
-        try {
-            result.sampleStart();
-            connection = factory.createConnection();
-            connection.start();
-            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            var destination = StringUtils.isNotBlank(runtime.getConfig().getQueue()) ? session.createQueue(runtime.getConfig().getQueue())
-                    : session.createTopic(runtime.getConfig().getTopic());
-            producer = session.createProducer(destination);
-            var textMessage = session.createTextMessage(message);
-            producer.send(textMessage);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            result.sampleEnd();
-            this.request = RealActiveRequest.build(runtime.getConfig(), message);
-        }
+        this.request = Active.execute(runtime.getConfig(), factory, result);
     }
 
 
@@ -129,24 +106,7 @@ public class ActivePostprocessor extends AbstractProcessor<ActivePostprocessor, 
         super.handleResponse(context, result);
         result.setRequest(request);
         result.setResponse(SampleResult.DefaultReal.build(new byte[0]));
-        if (producer != null) {
-            try {
-                producer.close();
-            } catch (Exception ignored) {
-            }
-        }
-        if (session != null) {
-            try {
-                session.close();
-            } catch (Exception ignored) {
-            }
-        }
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (Exception ignored) {
-            }
-        }
+        factory = null;
     }
 
     public static class Builder extends AbstractProcessor.PostprocessorBuilder<ActivePostprocessor, Builder, ActiveConfigureItem,

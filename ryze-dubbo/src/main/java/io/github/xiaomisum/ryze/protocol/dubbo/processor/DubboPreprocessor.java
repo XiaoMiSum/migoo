@@ -34,14 +34,12 @@ import io.github.xiaomisum.ryze.core.testelement.processor.AbstractProcessor;
 import io.github.xiaomisum.ryze.core.testelement.processor.Preprocessor;
 import io.github.xiaomisum.ryze.core.testelement.sampler.DefaultSampleResult;
 import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
+import io.github.xiaomisum.ryze.protocol.dubbo.Dubbo;
 import io.github.xiaomisum.ryze.protocol.dubbo.DubboConstantsInterface;
 import io.github.xiaomisum.ryze.protocol.dubbo.RealDubboRequest;
 import io.github.xiaomisum.ryze.protocol.dubbo.config.DubboConfigureItem;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ReferenceConfig;
-import org.apache.dubbo.config.RegistryConfig;
-import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.service.GenericService;
 
 import java.util.Objects;
@@ -79,17 +77,7 @@ public class DubboPreprocessor extends AbstractProcessor<DubboPreprocessor, Dubb
 
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
-        try {
-            if (Objects.nonNull(runtime.getConfig().getAttachmentArgs()) && !runtime.getConfig().getAttachmentArgs().isEmpty()) {
-                RpcContext.getClientAttachment().setAttachments(runtime.getConfig().getAttachmentArgs());
-            }
-            var parameterTypes = Objects.isNull(runtime.getConfig().getParameterTypes()) ? new String[0] : runtime.getConfig().getParameterTypes().toArray(String[]::new);
-            var parameters = Objects.isNull(runtime.getConfig().getParameters()) ? new Object[0] : runtime.getConfig().getParameters().toArray();
-            result.sampleStart();
-            response = request.get().$invoke(runtime.getConfig().getMethod(), parameterTypes, parameters);
-        } finally {
-            result.sampleEnd();
-        }
+        response = Dubbo.execute(request, runtime.getConfig(), result);
     }
 
     @Override
@@ -101,28 +89,7 @@ public class DubboPreprocessor extends AbstractProcessor<DubboPreprocessor, Dubb
         var otherConfig = (DubboConfigureItem) context.getLocalVariablesWrapper().get(ref);
         runtime.setConfig(localConfig.merge(otherConfig));
         // 2. 创建Dubbo对象
-        var registryConfig = runtime.getConfig().getRegistry();
-        var referenceConfig = runtime.getConfig().getReference();
-
-        request = new ReferenceConfig<>();
-        request.setGeneric("true");
-        request.getApplicationModel().getApplicationConfigManager().setApplication(new ApplicationConfig("ryze-dubbo-consumer"));
-        request.setVersion(referenceConfig.getVersion());
-        request.setGroup(referenceConfig.getGroup());
-        request.setRetries(referenceConfig.getRetries());
-        request.setTimeout(referenceConfig.getTimeout());
-        request.setAsync(referenceConfig.getAsync());
-        request.setLoadbalance(referenceConfig.getLoadBalance());
-        request.setInterface(runtime.getConfig().getInterfaceName());
-        var registry = new RegistryConfig();
-        registry.setAddress(StringUtils.isBlank(registryConfig.getProtocol()) ? registryConfig.getAddress()
-                : registryConfig.getProtocol() + "://" + registryConfig.getAddress());
-        registry.setGroup(registryConfig.getGroup());
-        registry.setUsername(registryConfig.getUsername());
-        registry.setPassword(registryConfig.getPassword());
-        registry.setVersion(registryConfig.getVersion());
-        registry.setTimeout(registry.getTimeout());
-        request.setRegistry(registry);
+        request = Dubbo.handleRequest(runtime.getConfig());
     }
 
     @Override

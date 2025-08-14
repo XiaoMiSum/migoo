@@ -25,14 +25,28 @@
 
 package io.github.xiaomisum.ryze.protocol.redis;
 
+import io.github.xiaomisum.ryze.core.testelement.sampler.DefaultSampleResult;
+import io.github.xiaomisum.ryze.protocol.redis.config.RedisDatasource;
+import redis.clients.jedis.Protocol;
+
 import java.util.List;
 
 /**
  * @author xiaomi
  */
-public class Utils {
+public class Redis {
 
-    public static byte[] toBytes(Object result) {
+    public static byte[] execute(RedisDatasource datasource, String command, String args, DefaultSampleResult result) {
+        result.sampleStart();
+        try (var jedis = datasource.getConnection()) {
+            var response = jedis.sendCommand(Protocol.Command.valueOf(command), args.split(","));
+            return toBytes(response);
+        } finally {
+            result.sampleEnd();
+        }
+    }
+
+    private static byte[] toBytes(Object result) {
         return switch (result) {
             case null -> new byte[0];
             case List<?> results -> {

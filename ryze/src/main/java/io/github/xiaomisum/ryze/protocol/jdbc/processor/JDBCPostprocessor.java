@@ -34,12 +34,11 @@ import io.github.xiaomisum.ryze.core.testelement.processor.AbstractProcessor;
 import io.github.xiaomisum.ryze.core.testelement.processor.Postprocessor;
 import io.github.xiaomisum.ryze.core.testelement.sampler.DefaultSampleResult;
 import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
+import io.github.xiaomisum.ryze.protocol.jdbc.JDBC;
 import io.github.xiaomisum.ryze.protocol.jdbc.JDBCConstantsInterface;
 import io.github.xiaomisum.ryze.protocol.jdbc.RealJDBCRequest;
 import io.github.xiaomisum.ryze.protocol.jdbc.config.JDBCConfigureItem;
 import org.apache.commons.lang3.StringUtils;
-
-import static io.github.xiaomisum.ryze.protocol.jdbc.Utils.toJSONBytes;
 
 /**
  * @author xiaomi
@@ -69,20 +68,11 @@ public class JDBCPostprocessor extends AbstractProcessor<JDBCPostprocessor, JDBC
     @Override
     protected DefaultSampleResult getTestResult() {
         return new DefaultSampleResult(runtime.getId(), StringUtils.isBlank(runtime.getTitle()) ? "JDBC 后置处理器" : runtime.getTitle());
-
     }
 
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
-        result.sampleStart();
-        try (var conn = datasource.getConnection(); var statement = conn.createStatement()) {
-            var bool = statement.execute(runtime.getConfig().getSql());
-            bytes = toJSONBytes(bool, statement);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            result.sampleEnd();
-        }
+        bytes = JDBC.execute(datasource, runtime.getConfig().getSql(), result);
     }
 
     @Override

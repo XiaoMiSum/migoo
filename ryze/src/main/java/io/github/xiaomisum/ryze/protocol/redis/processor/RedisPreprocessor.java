@@ -35,11 +35,10 @@ import io.github.xiaomisum.ryze.core.testelement.sampler.DefaultSampleResult;
 import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
 import io.github.xiaomisum.ryze.protocol.jdbc.JDBCConstantsInterface;
 import io.github.xiaomisum.ryze.protocol.redis.RealRedisRequest;
-import io.github.xiaomisum.ryze.protocol.redis.Utils;
+import io.github.xiaomisum.ryze.protocol.redis.Redis;
 import io.github.xiaomisum.ryze.protocol.redis.config.RedisConfigureItem;
 import io.github.xiaomisum.ryze.protocol.redis.config.RedisDatasource;
 import org.apache.commons.lang3.StringUtils;
-import redis.clients.jedis.Protocol;
 
 /**
  * @author xiaomi
@@ -73,14 +72,7 @@ public class RedisPreprocessor extends AbstractProcessor<RedisPreprocessor, Redi
 
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
-        result.sampleStart();
-        try (var jedis = datasource.getConnection()) {
-            var command = runtime.getConfig().getCommand();
-            var response = jedis.sendCommand(Protocol.Command.valueOf(command), runtime.getConfig().getArgs().split(","));
-            bytes = Utils.toBytes(response);
-        } finally {
-            result.sampleEnd();
-        }
+        bytes = Redis.execute(datasource, runtime.getConfig().getCommand(), runtime.getConfig().getArgs(), result);
     }
 
     @Override

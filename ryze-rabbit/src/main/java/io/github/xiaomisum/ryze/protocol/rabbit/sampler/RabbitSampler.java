@@ -25,9 +25,8 @@
 
 package io.github.xiaomisum.ryze.protocol.rabbit.sampler;
 
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
-import com.rabbitmq.client.*;
+import com.rabbitmq.client.ConnectionFactory;
 import io.github.xiaomisum.ryze.core.builder.DefaultAssertionsBuilder;
 import io.github.xiaomisum.ryze.core.builder.DefaultExtractorsBuilder;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
@@ -36,6 +35,7 @@ import io.github.xiaomisum.ryze.core.testelement.sampler.AbstractSampler;
 import io.github.xiaomisum.ryze.core.testelement.sampler.DefaultSampleResult;
 import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
 import io.github.xiaomisum.ryze.core.testelement.sampler.Sampler;
+import io.github.xiaomisum.ryze.protocol.rabbit.Rabbit;
 import io.github.xiaomisum.ryze.protocol.rabbit.RabbitConstantsInterface;
 import io.github.xiaomisum.ryze.protocol.rabbit.RealRabbitRequest;
 import io.github.xiaomisum.ryze.protocol.rabbit.builder.RabbitConfigureElementsBuilder;
@@ -44,10 +44,6 @@ import io.github.xiaomisum.ryze.protocol.rabbit.builder.RabbitPreprocessorsBuild
 import io.github.xiaomisum.ryze.protocol.rabbit.config.RabbitConfigureItem;
 import org.apache.commons.lang3.StringUtils;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -59,16 +55,7 @@ import java.util.Objects;
 public class RabbitSampler extends AbstractSampler<RabbitSampler, RabbitConfigureItem, DefaultSampleResult> implements Sampler<DefaultSampleResult>, RabbitConstantsInterface {
 
     @JSONField(serialize = false)
-    private RealRabbitRequest request;
-
-    @JSONField(serialize = false)
     private ConnectionFactory factory;
-    @JSONField(serialize = false)
-    private Connection connection;
-    @JSONField(serialize = false)
-    private Channel channel;
-    @JSONField(serialize = false)
-    private byte[] response;
 
     public RabbitSampler(Builder builder) {
         super(builder);
@@ -89,64 +76,7 @@ public class RabbitSampler extends AbstractSampler<RabbitSampler, RabbitConfigur
 
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
-        var message = switch (runtime.config.getMessage()) {
-            case Map map -> JSON.toJSONString(map);
-            case List list -> JSON.toJSONString(list);
-            case null -> "";
-            default -> runtime.config.getMessage().toString();
-        };
-        try {
-            connection = factory.newConnection();
-            channel = connection.createChannel();
-            var queue = runtime.config.getQueue();
-            channel.queueDeclare(queue.getName(), queue.getDurable(), queue.getExclusive(), queue.getAutoDelete(), queue.getArguments());
-            result.sampleStart();
-            AMQP.BasicProperties properties = getBasicProperties();
-            var exchange = runtime.config.getExchange();
-            var exchangeName = Objects.isNull(exchange) ? "" : exchange.getName();
-            var routingKey = Objects.isNull(exchange) ? null : exchange.getRoutingKey();
-
-            if (Objects.nonNull(exchange)) {
-                channel.exchangeDeclare(exchangeName,
-                        switch (exchange.getType()) {
-                            case EXCHANGE_TYPE_FANOUT -> BuiltinExchangeType.FANOUT;
-                            case EXCHANGE_TYPE_DIRECT -> BuiltinExchangeType.DIRECT;
-                            default -> BuiltinExchangeType.TOPIC;
-                        });
-                routingKey = EXCHANGE_TYPE_FANOUT.equals(exchange.getType()) ? null : exchange.getRoutingKey();
-                channel.queueBind(exchange.getName(), exchange.getType(), routingKey);
-            }
-            channel.basicPublish(exchangeName, queue.getName(), properties, message.getBytes(StandardCharsets.UTF_8));
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            result.sampleEnd();
-            this.request = RealRabbitRequest.build(runtime.config, message);
-        }
-    }
-
-    private AMQP.BasicProperties getBasicProperties() {
-        AMQP.BasicProperties properties = null;
-        if (Objects.nonNull(runtime.config.getProps())) {
-            properties = new AMQP.BasicProperties(
-                    runtime.config.getProps().getContentType(),
-                    runtime.config.getProps().getContentEncoding(),
-                    runtime.config.getProps().getHeaders(),
-                    runtime.config.getProps().getDeliveryMode(),
-                    runtime.config.getProps().getPriority(),
-                    runtime.config.getProps().getCorrelationId(),
-                    runtime.config.getProps().getReplyTo(),
-                    runtime.config.getProps().getExpiration(),
-                    runtime.config.getProps().getMessageId(),
-                    new Date(),
-                    runtime.config.getProps().getType(),
-                    runtime.config.getProps().getUserId(),
-                    runtime.config.getProps().getAppId(),
-                    runtime.config.getProps().getClusterId()
-            );
-        }
-        return properties;
+        Rabbit.execute(factory, runtime.config, result);
     }
 
 
@@ -159,33 +89,14 @@ public class RabbitSampler extends AbstractSampler<RabbitSampler, RabbitConfigur
         var otherConfig = (RabbitConfigureItem) context.getLocalVariablesWrapper().get(ref);
         runtime.setConfig(localConfig.merge(otherConfig));
         // 2. 创建Rabbit 连接池对象
-        factory = new ConnectionFactory();
-        factory.setConnectionTimeout(runtime.config.getTimeout());
-        factory.setVirtualHost(runtime.config.getVirtualHost());
-        factory.setHost(runtime.config.getHost());
-        factory.setPort(Integer.parseInt(runtime.config.getPort()));
-        factory.setUsername(runtime.config.getUsername());
-        factory.setPassword(runtime.config.getPassword());
-
+        factory = Rabbit.handleRequest(runtime.getConfig());
     }
 
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
-        result.setRequest(request);
-        result.setResponse(SampleResult.DefaultReal.build(response));
-        if (channel != null) {
-            try {
-                channel.close();
-            } catch (Exception ignored) {
-            }
-        }
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (Exception ignored) {
-            }
-        }
+        result.setRequest(RealRabbitRequest.build(runtime.config));
+        result.setResponse(SampleResult.DefaultReal.build(new byte[0]));
         factory = null;
     }
 

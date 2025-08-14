@@ -28,8 +28,10 @@
 
 package io.github.xiaomisum.ryze.protocol.jdbc;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import io.github.xiaomisum.ryze.core.testelement.sampler.DefaultSampleResult;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -38,9 +40,21 @@ import java.sql.Statement;
  * @author xiaomi
  * Created at 2025/7/21 19:31
  */
-public class Utils {
+public class JDBC {
 
-    public static String toJSONBytes(Statement statement) throws SQLException {
+    public static byte[] execute(DruidDataSource datasource, String sql, DefaultSampleResult result) {
+        result.sampleStart();
+        try (var conn = datasource.getConnection(); var statement = conn.createStatement()) {
+            var hasResultSet = statement.execute(sql);
+            return (hasResultSet ? toJSONBytes(statement) : "Affected rows: " + statement.getUpdateCount()).getBytes();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            result.sampleEnd();
+        }
+    }
+
+    private static String toJSONBytes(Statement statement) throws SQLException {
         try (var result = statement.getResultSet()) {
             var results = new JSONArray();
             var meta = result.getMetaData();
@@ -54,9 +68,5 @@ public class Utils {
             }
             return results.size() == 1 ? results.getJSONObject(0).toJSONString() : results.toJSONString();
         }
-    }
-
-    public static byte[] toJSONBytes(boolean bool, Statement statement) throws SQLException {
-        return (bool ? toJSONBytes(statement) : "Affected rows: " + statement.getUpdateCount()).getBytes();
     }
 }
