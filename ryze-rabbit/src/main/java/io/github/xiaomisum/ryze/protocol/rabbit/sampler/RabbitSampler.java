@@ -25,6 +25,7 @@
 
 package io.github.xiaomisum.ryze.protocol.rabbit.sampler;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.rabbitmq.client.ConnectionFactory;
 import io.github.xiaomisum.ryze.core.builder.DefaultAssertionsBuilder;
@@ -57,6 +58,9 @@ public class RabbitSampler extends AbstractSampler<RabbitSampler, RabbitConfigur
     @JSONField(serialize = false)
     private ConnectionFactory factory;
 
+    @JSONField(serialize = false)
+    private String message;
+
     public RabbitSampler(Builder builder) {
         super(builder);
     }
@@ -76,7 +80,7 @@ public class RabbitSampler extends AbstractSampler<RabbitSampler, RabbitConfigur
 
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
-        Rabbit.execute(factory, runtime.config, result);
+        Rabbit.execute(factory, runtime.config, message, result);
     }
 
 
@@ -90,12 +94,18 @@ public class RabbitSampler extends AbstractSampler<RabbitSampler, RabbitConfigur
         runtime.setConfig(localConfig.merge(otherConfig));
         // 2. 创建Rabbit 连接池对象
         factory = Rabbit.handleRequest(runtime.getConfig());
+        message = switch (config.getMessage()) {
+            case Number number -> number.toString();
+            case Boolean bool -> bool.toString();
+            case null -> "";
+            default -> JSON.toJSONString(config.getMessage());
+        };
+        result.setRequest(RealRabbitRequest.build(runtime.getConfig(), message));
     }
 
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
-        result.setRequest(RealRabbitRequest.build(runtime.config));
         result.setResponse(SampleResult.DefaultReal.build(new byte[0]));
         factory = null;
     }

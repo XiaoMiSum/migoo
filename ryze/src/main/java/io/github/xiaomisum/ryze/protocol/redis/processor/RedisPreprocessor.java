@@ -67,7 +67,6 @@ public class RedisPreprocessor extends AbstractProcessor<RedisPreprocessor, Redi
     @Override
     protected DefaultSampleResult getTestResult() {
         return new DefaultSampleResult(runtime.getId(), StringUtils.isBlank(runtime.getTitle()) ? "Redis 前置处理器" : runtime.getTitle());
-
     }
 
     @Override
@@ -79,12 +78,12 @@ public class RedisPreprocessor extends AbstractProcessor<RedisPreprocessor, Redi
     protected void handleRequest(ContextWrapper context, DefaultSampleResult result) {
         super.handleRequest(context, result);
         datasource = (RedisDatasource) context.getLocalVariablesWrapper().get(runtime.getConfig().getDatasource());
+        result.setRequest(new RealRedisRequest(datasource.getUrl(), runtime.getConfig().getCommand(), runtime.getConfig().getArgs()));
     }
 
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
-        result.setRequest(new RealRedisRequest(datasource.getUrl(), runtime.getConfig().getCommand(), runtime.getConfig().getArgs()));
         result.setResponse(SampleResult.DefaultReal.build(bytes));
     }
 

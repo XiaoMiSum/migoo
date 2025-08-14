@@ -90,12 +90,12 @@ public class MongoSampler extends AbstractSampler<MongoSampler, MongoConfigItem,
         var otherConfig = (MongoConfigItem) context.getLocalVariablesWrapper().get(datasource);
         runtime.setConfig(localConfig.merge(otherConfig));
         settings = MongoClientSettings.builder().applyConnectionString(new ConnectionString(runtime.getConfig().getUrl())).retryWrites(true).build();
+        result.setRequest(MongoRealRequest.build(runtime.getConfig()));
     }
 
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
-        result.setRequest(MongoRealRequest.build(runtime.getConfig()));
         result.setResponse(SampleResult.DefaultReal.build(response));
     }
 

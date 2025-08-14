@@ -25,7 +25,6 @@
 
 package io.github.xiaomisum.ryze.protocol.active;
 
-import com.alibaba.fastjson2.JSON;
 import io.github.xiaomisum.ryze.core.testelement.sampler.DefaultSampleResult;
 import io.github.xiaomisum.ryze.protocol.active.config.ActiveConfigureItem;
 import jakarta.jms.ConnectionFactory;
@@ -33,23 +32,13 @@ import jakarta.jms.MessageProducer;
 import jakarta.jms.Session;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * @author mi.xiao
  * @date 2021/4/13 20:08
  */
-@SuppressWarnings({"unchecked", "rawtypes"})
 public class Active {
 
-    public static void execute(ActiveConfigureItem config, ConnectionFactory factory, DefaultSampleResult result) {
-        var message = switch (config.getMessage()) {
-            case Map map -> JSON.toJSONString(map);
-            case List list -> JSON.toJSONString(list);
-            case null -> "";
-            default -> config.getMessage().toString();
-        };
+    public static void execute(ActiveConfigureItem config, ConnectionFactory factory, String message, DefaultSampleResult result) {
         MessageProducer producer = null;
         result.sampleStart();
         try (var connection = factory.createConnection(); var session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)) {

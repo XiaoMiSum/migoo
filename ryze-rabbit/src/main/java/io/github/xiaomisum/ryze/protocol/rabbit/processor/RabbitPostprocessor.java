@@ -25,9 +25,8 @@
 
 package io.github.xiaomisum.ryze.protocol.rabbit.processor;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import io.github.xiaomisum.ryze.core.builder.DefaultExtractorsBuilder;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
@@ -53,14 +52,10 @@ import java.util.Objects;
 public class RabbitPostprocessor extends AbstractProcessor<RabbitPostprocessor, RabbitConfigureItem, DefaultSampleResult> implements Postprocessor, RabbitConstantsInterface {
 
     @JSONField(serialize = false)
-    private RealRabbitRequest request;
+    private String message;
 
     @JSONField(serialize = false)
     private ConnectionFactory factory;
-    @JSONField(serialize = false)
-    private Connection connection;
-    @JSONField(serialize = false)
-    private Channel channel;
 
     public RabbitPostprocessor() {
         super();
@@ -82,7 +77,7 @@ public class RabbitPostprocessor extends AbstractProcessor<RabbitPostprocessor, 
 
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
-        Rabbit.execute(factory, runtime.getConfig(), result);
+        Rabbit.execute(factory, runtime.getConfig(), message, result);
     }
 
     @Override
@@ -95,12 +90,18 @@ public class RabbitPostprocessor extends AbstractProcessor<RabbitPostprocessor, 
         runtime.setConfig(localConfig.merge(otherConfig));
         // 2. 创建Rabbit 连接池对象
         factory = Rabbit.handleRequest(runtime.getConfig());
+        message = switch (config.getMessage()) {
+            case Number number -> number.toString();
+            case Boolean bool -> bool.toString();
+            case null -> "";
+            default -> JSON.toJSONString(config.getMessage());
+        };
+        result.setRequest(RealRabbitRequest.build(runtime.getConfig(), message));
     }
 
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
-        result.setRequest(request);
         result.setResponse(SampleResult.DefaultReal.build(new byte[0]));
         factory = null;
     }

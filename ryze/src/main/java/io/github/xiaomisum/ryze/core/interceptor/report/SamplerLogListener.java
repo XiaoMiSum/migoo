@@ -37,6 +37,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 /**
  * @author xiaomi
  * Created at 2025/7/20 13:46
@@ -70,7 +72,7 @@ public class SamplerLogListener implements ReporterListener {
         if (context.getTestResult() instanceof SampleResult result) {
             log.info("{}{}{}{}{}{}",
                     "\n--------------- 请求信息 -----------------\n", result.getRequest().format(), "\n",
-                    "\n--------------- 响应信息 -----------------\n", result.getResponse().format(), "\n");
+                    "\n--------------- 响应信息 -----------------\n", Objects.isNull(result.getResponse()) ? "" : result.getResponse().format(), "\n");
         }
     }
 }

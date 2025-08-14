@@ -33,8 +33,6 @@ import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
 import io.github.xiaomisum.ryze.protocol.rabbit.config.RabbitConfigureItem;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -58,13 +56,7 @@ public class RealRabbitRequest extends SampleResult.Real {
         super(bytes);
     }
 
-    public static RealRabbitRequest build(RabbitConfigureItem config) {
-        var message = switch (config.getMessage()) {
-            case Map map -> JSON.toJSONString(map);
-            case List list -> JSON.toJSONString(list);
-            case null -> "";
-            default -> config.getMessage().toString();
-        };
+    public static RealRabbitRequest build(RabbitConfigureItem config, String message) {
         var result = new RealRabbitRequest(message.getBytes());
         result.address = config.getHost() + ":" + config.getPort();
         result.username = config.getUsername();

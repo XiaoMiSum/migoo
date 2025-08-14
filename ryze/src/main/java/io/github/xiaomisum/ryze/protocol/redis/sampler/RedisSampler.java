@@ -76,12 +76,12 @@ public class RedisSampler extends AbstractSampler<RedisSampler, RedisConfigureIt
     protected void handleRequest(ContextWrapper context, DefaultSampleResult result) {
         super.handleRequest(context, result);
         datasource = (RedisDatasource) context.getLocalVariablesWrapper().get(runtime.config.getDatasource());
+        result.setRequest(new RealRedisRequest(datasource.getUrl(), runtime.getConfig().getCommand(), runtime.getConfig().getArgs()));
     }
 
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
-        result.setRequest(new RealRedisRequest(datasource.getUrl(), runtime.config.getCommand(), runtime.config.getArgs()));
         result.setResponse(SampleResult.DefaultReal.build(bytes));
     }
 

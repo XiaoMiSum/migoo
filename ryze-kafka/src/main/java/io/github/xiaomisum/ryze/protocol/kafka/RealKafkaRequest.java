@@ -28,19 +28,14 @@
 
 package io.github.xiaomisum.ryze.protocol.kafka;
 
-import com.alibaba.fastjson2.JSON;
 import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
 import io.github.xiaomisum.ryze.protocol.kafka.config.KafkaConfigureItem;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author xiaomi
  * Created at 2025/7/26 22:24
  */
-@SuppressWarnings({"unchecked", "rawtypes"})
 public class RealKafkaRequest extends SampleResult.Real {
 
     private String address;
@@ -53,13 +48,7 @@ public class RealKafkaRequest extends SampleResult.Real {
         super(bytes);
     }
 
-    public static RealKafkaRequest build(KafkaConfigureItem config) {
-        var message = switch (config.getMessage()) {
-            case Map map -> JSON.toJSONString(map);
-            case List list -> JSON.toJSONString(list);
-            case null -> "";
-            default -> config.getMessage().toString();
-        };
+    public static RealKafkaRequest build(KafkaConfigureItem config, String message) {
         var result = new RealKafkaRequest(message.getBytes());
         result.address = config.getBootstrapServers();
         result.topic = config.getTopic();

@@ -90,6 +90,7 @@ public class DubboPreprocessor extends AbstractProcessor<DubboPreprocessor, Dubb
         runtime.setConfig(localConfig.merge(otherConfig));
         // 2. 创建Dubbo对象
         request = Dubbo.handleRequest(runtime.getConfig());
+        result.setRequest(RealDubboRequest.build(runtime.getConfig(), request.getRegistry().getAddress()));
     }
 
     @Override

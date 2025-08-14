@@ -25,6 +25,7 @@
 
 package io.github.xiaomisum.ryze.protocol.kafka.sampler;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
 import io.github.xiaomisum.ryze.core.builder.DefaultAssertionsBuilder;
 import io.github.xiaomisum.ryze.core.builder.DefaultExtractorsBuilder;
@@ -56,6 +57,10 @@ public class KafkaSampler extends AbstractSampler<KafkaSampler, KafkaConfigureIt
     @JSONField(serialize = false)
     private byte[] response;
 
+    @JSONField(serialize = false)
+    private String message;
+
+
     public KafkaSampler(Builder builder) {
         super(builder);
     }
@@ -75,7 +80,7 @@ public class KafkaSampler extends AbstractSampler<KafkaSampler, KafkaConfigureIt
 
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
-        response = Kafka.execute(runtime.config, result);
+        response = Kafka.execute(runtime.config, message, result);
     }
 
 
@@ -87,12 +92,18 @@ public class KafkaSampler extends AbstractSampler<KafkaSampler, KafkaConfigureIt
         var ref = StringUtils.isBlank(localConfig.getRef()) ? DEF_REF_NAME_KEY : localConfig.getRef();
         var otherConfig = (KafkaConfigureItem) context.getLocalVariablesWrapper().get(ref);
         runtime.setConfig(localConfig.merge(otherConfig));
+        message = switch (config.getMessage()) {
+            case Number number -> number.toString();
+            case Boolean bool -> bool.toString();
+            case null -> "";
+            default -> JSON.toJSONString(config.getMessage());
+        };
+        result.setRequest(RealKafkaRequest.build(runtime.getConfig(), message));
     }
 
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
-        result.setRequest(RealKafkaRequest.build(runtime.config));
         result.setResponse(SampleResult.DefaultReal.build(response));
     }
 

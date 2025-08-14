@@ -25,6 +25,7 @@
 
 package io.github.xiaomisum.ryze.protocol.kafka.processor;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
 import io.github.xiaomisum.ryze.core.builder.DefaultExtractorsBuilder;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
@@ -52,6 +53,9 @@ public class KafkaPostprocessor extends AbstractProcessor<KafkaPostprocessor, Ka
     @JSONField(serialize = false)
     private byte[] response;
 
+    @JSONField(serialize = false)
+    private String message;
+
     public KafkaPostprocessor() {
         super();
     }
@@ -72,7 +76,7 @@ public class KafkaPostprocessor extends AbstractProcessor<KafkaPostprocessor, Ka
 
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
-        response = Kafka.execute(runtime.getConfig(), result);
+        response = Kafka.execute(runtime.getConfig(), message, result);
     }
 
 
@@ -84,13 +88,18 @@ public class KafkaPostprocessor extends AbstractProcessor<KafkaPostprocessor, Ka
         var ref = StringUtils.isBlank(localConfig.getRef()) ? DEF_REF_NAME_KEY : localConfig.getRef();
         var otherConfig = (KafkaConfigureItem) context.getLocalVariablesWrapper().get(ref);
         runtime.setConfig(localConfig.merge(otherConfig));
-        // 2. 创建Kafka对象
+        message = switch (config.getMessage()) {
+            case Number number -> number.toString();
+            case Boolean bool -> bool.toString();
+            case null -> "";
+            default -> JSON.toJSONString(config.getMessage());
+        };
+        result.setRequest(RealKafkaRequest.build(runtime.getConfig(), message));
     }
 
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
-        result.setRequest(RealKafkaRequest.build(runtime.getConfig()));
         result.setResponse(SampleResult.DefaultReal.build(response));
     }
 

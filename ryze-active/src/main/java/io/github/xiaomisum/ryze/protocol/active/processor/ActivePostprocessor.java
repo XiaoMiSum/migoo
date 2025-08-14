@@ -25,6 +25,7 @@
 
 package io.github.xiaomisum.ryze.protocol.active.processor;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
 import io.github.xiaomisum.ryze.core.builder.DefaultExtractorsBuilder;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
@@ -48,10 +49,14 @@ import java.util.Objects;
  * @date 2021/4/13 20:08
  */
 @KW({"active_mq", "activemq", "active", "active_postprocessor"})
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class ActivePostprocessor extends AbstractProcessor<ActivePostprocessor, ActiveConfigureItem, DefaultSampleResult> implements Postprocessor, ActiveConstantsInterface {
 
     @JSONField(serialize = false)
     private ConnectionFactory factory;
+
+    @JSONField(serialize = false)
+    private String message;
 
     public ActivePostprocessor() {
         super();
@@ -72,7 +77,7 @@ public class ActivePostprocessor extends AbstractProcessor<ActivePostprocessor, 
 
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
-        Active.execute(runtime.getConfig(), factory, result);
+        Active.execute(runtime.getConfig(), factory, message, result);
     }
 
 
@@ -86,12 +91,19 @@ public class ActivePostprocessor extends AbstractProcessor<ActivePostprocessor, 
         runtime.setConfig(localConfig.merge(otherConfig));
         // 2. 创建ActiveMQ 连接池;
         factory = new ActiveMQConnectionFactory(runtime.getConfig().getUsername(), runtime.getConfig().getPassword(), runtime.getConfig().getBrokerUrl());
+        message = switch (config.getMessage()) {
+            case Number number -> number.toString();
+            case Boolean bool -> bool.toString();
+            case null -> "";
+            default -> JSON.toJSONString(config.getMessage());
+        };
+        result.setRequest(RealActiveRequest.build(runtime.getConfig(), message));
     }
 
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
-        result.setRequest(RealActiveRequest.build(runtime.getConfig()));
+
         result.setResponse(SampleResult.DefaultReal.build(new byte[0]));
         factory = null;
     }

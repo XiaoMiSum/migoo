@@ -28,13 +28,9 @@
 
 package io.github.xiaomisum.ryze.protocol.active;
 
-import com.alibaba.fastjson2.JSON;
 import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
 import io.github.xiaomisum.ryze.protocol.active.config.ActiveConfigureItem;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author xiaomi
@@ -57,13 +53,7 @@ public class RealActiveRequest extends SampleResult.Real {
         super(bytes);
     }
 
-    public static RealActiveRequest build(ActiveConfigureItem config) {
-        var message = switch (config.getMessage()) {
-            case Map map -> JSON.toJSONString(map);
-            case List list -> JSON.toJSONString(list);
-            case null -> "";
-            default -> config.getMessage().toString();
-        };
+    public static RealActiveRequest build(ActiveConfigureItem config, String message) {
         var result = new RealActiveRequest(message.getBytes());
         result.address = config.getBrokerUrl();
         result.topic = config.getTopic();

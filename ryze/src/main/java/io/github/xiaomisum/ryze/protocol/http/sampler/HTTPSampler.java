@@ -56,12 +56,12 @@ public class HTTPSampler extends AbstractSampler<HTTPSampler, HTTPConfigureItem,
         runtime.setConfig(localConfig.merge(otherConfig));
         // 2. 创建http对象
         request = HTTPClient.build(runtime.getConfig());
+        result.setRequest(new RealHTTPRealResultRequest(request));
     }
 
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
-        result.setRequest(new RealHTTPRealResultRequest(request));
         result.setResponse(new RealHTTPRealResultResponse(response));
     }
 

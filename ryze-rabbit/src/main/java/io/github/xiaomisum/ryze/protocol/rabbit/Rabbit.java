@@ -28,7 +28,6 @@
 
 package io.github.xiaomisum.ryze.protocol.rabbit;
 
-import com.alibaba.fastjson2.JSON;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.ConnectionFactory;
@@ -37,8 +36,6 @@ import io.github.xiaomisum.ryze.protocol.rabbit.config.RabbitConfigureItem;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import static io.github.xiaomisum.ryze.protocol.rabbit.RabbitConstantsInterface.EXCHANGE_TYPE_DIRECT;
@@ -51,13 +48,7 @@ import static io.github.xiaomisum.ryze.protocol.rabbit.RabbitConstantsInterface.
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class Rabbit {
 
-    public static void execute(ConnectionFactory factory, RabbitConfigureItem config, DefaultSampleResult result) {
-        var message = switch (config.getMessage()) {
-            case Map map -> JSON.toJSONString(map);
-            case List list -> JSON.toJSONString(list);
-            case null -> "";
-            default -> config.getMessage().toString();
-        };
+    public static void execute(ConnectionFactory factory, RabbitConfigureItem config, String message, DefaultSampleResult result) {
         try (var connection = factory.newConnection(); var channel = connection.createChannel()) {
             var queue = config.getQueue();
             channel.queueDeclare(queue.getName(), queue.getDurable(), queue.getExclusive(), queue.getAutoDelete(), queue.getArguments());

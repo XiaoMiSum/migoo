@@ -93,12 +93,12 @@ public class DubboSampler extends AbstractSampler<DubboSampler, DubboConfigureIt
         runtime.setConfig(localConfig.merge(otherConfig));
         // 2. 创建Dubbo对象
         request = Dubbo.handleRequest(runtime.config);
+        result.setRequest(RealDubboRequest.build(runtime.config, request.getRegistry().getAddress()));
     }
 
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
-        result.setRequest(RealDubboRequest.build(runtime.config, request.getRegistry().getAddress()));
         result.setResponse(SampleResult.DefaultReal.build(JSON.toJSONBytes(response)));
     }
 

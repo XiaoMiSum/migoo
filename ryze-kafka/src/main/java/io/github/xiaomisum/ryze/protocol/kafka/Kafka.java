@@ -25,7 +25,6 @@
 
 package io.github.xiaomisum.ryze.protocol.kafka;
 
-import com.alibaba.fastjson2.JSON;
 import io.github.xiaomisum.ryze.core.testelement.sampler.DefaultSampleResult;
 import io.github.xiaomisum.ryze.protocol.kafka.config.KafkaConfigureItem;
 import io.github.xiaomisum.ryze.support.Collections;
@@ -33,8 +32,6 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
 
 import static io.github.xiaomisum.ryze.protocol.kafka.KafkaConstantsInterface.*;
 
@@ -45,13 +42,7 @@ import static io.github.xiaomisum.ryze.protocol.kafka.KafkaConstantsInterface.*;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class Kafka {
 
-    public static byte[] execute(KafkaConfigureItem config, DefaultSampleResult result) {
-        var message = switch (config.getMessage()) {
-            case Map map -> JSON.toJSONString(map);
-            case List list -> JSON.toJSONString(list);
-            case null -> "";
-            default -> config.getMessage().toString();
-        };
+    public static byte[] execute(KafkaConfigureItem config, String message, DefaultSampleResult result) {
         var props = Collections.of(BOOTSTRAP_SERVERS, config.getBootstrapServers(), ACKS, config.getAcks().toString(), RETRIES, config.getRetries(),
                 LINGER_MS, config.getLingerMs(), KEY_SERIALIZER, config.getKeySerializer(), VALUE_SERIALIZER, config.getValueSerializer());
         try (var producer = new KafkaProducer<String, String>(props)) {

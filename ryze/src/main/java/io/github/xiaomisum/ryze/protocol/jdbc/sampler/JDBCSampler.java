@@ -76,12 +76,12 @@ public class JDBCSampler extends AbstractSampler<JDBCSampler, JDBCConfigureItem,
     protected void handleRequest(ContextWrapper context, DefaultSampleResult result) {
         super.handleRequest(context, result);
         datasource = (DruidDataSource) context.getAllVariablesWrapper().get(runtime.config.getDatasource());
+        result.setRequest(new RealJDBCRequest(datasource.getUrl(), datasource.getUsername(), datasource.getPassword(), runtime.config.getSql()));
     }
 
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
-        result.setRequest(new RealJDBCRequest(datasource.getUrl(), datasource.getUsername(), datasource.getPassword(), runtime.config.getSql()));
         result.setResponse(SampleResult.DefaultReal.build(bytes));
     }
 
