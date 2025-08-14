@@ -43,7 +43,7 @@ import java.util.Map;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class Active {
 
-    public static RealActiveRequest execute(ActiveConfigureItem config, ConnectionFactory factory, DefaultSampleResult result) {
+    public static void execute(ActiveConfigureItem config, ConnectionFactory factory, DefaultSampleResult result) {
         var message = switch (config.getMessage()) {
             case Map map -> JSON.toJSONString(map);
             case List list -> JSON.toJSONString(list);
@@ -57,7 +57,6 @@ public class Active {
             producer = session.createProducer(destination);
             var textMessage = session.createTextMessage(message);
             producer.send(textMessage);
-            return RealActiveRequest.build(config, message);
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {

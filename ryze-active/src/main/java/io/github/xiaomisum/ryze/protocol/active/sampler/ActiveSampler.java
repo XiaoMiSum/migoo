@@ -56,8 +56,6 @@ import java.util.Objects;
 public class ActiveSampler extends AbstractSampler<ActiveSampler, ActiveConfigureItem, DefaultSampleResult> implements Sampler<DefaultSampleResult>, ActiveConstantsInterface {
 
     @JSONField(serialize = false)
-    private RealActiveRequest request;
-    @JSONField(serialize = false)
     private ConnectionFactory factory;
 
     public ActiveSampler() {
@@ -79,9 +77,8 @@ public class ActiveSampler extends AbstractSampler<ActiveSampler, ActiveConfigur
 
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
-        this.request = Active.execute(runtime.config, factory, result);
+        Active.execute(runtime.config, factory, result);
     }
-
 
     @Override
     protected void handleRequest(ContextWrapper context, DefaultSampleResult result) {
@@ -98,7 +95,7 @@ public class ActiveSampler extends AbstractSampler<ActiveSampler, ActiveConfigur
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
-        result.setRequest(request);
+        result.setRequest(RealActiveRequest.build(runtime.getConfig()));
         result.setResponse(SampleResult.DefaultReal.build(new byte[0]));
         factory = null;
     }

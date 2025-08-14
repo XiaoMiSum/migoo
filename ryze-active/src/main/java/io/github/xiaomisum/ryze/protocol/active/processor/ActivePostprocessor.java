@@ -37,10 +37,7 @@ import io.github.xiaomisum.ryze.protocol.active.Active;
 import io.github.xiaomisum.ryze.protocol.active.ActiveConstantsInterface;
 import io.github.xiaomisum.ryze.protocol.active.RealActiveRequest;
 import io.github.xiaomisum.ryze.protocol.active.config.ActiveConfigureItem;
-import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
-import jakarta.jms.MessageProducer;
-import jakarta.jms.Session;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.lang3.StringUtils;
 
@@ -51,19 +48,10 @@ import java.util.Objects;
  * @date 2021/4/13 20:08
  */
 @KW({"active_mq", "activemq", "active", "active_postprocessor"})
-@SuppressWarnings({"unchecked", "rawtypes"})
 public class ActivePostprocessor extends AbstractProcessor<ActivePostprocessor, ActiveConfigureItem, DefaultSampleResult> implements Postprocessor, ActiveConstantsInterface {
 
     @JSONField(serialize = false)
-    private RealActiveRequest request;
-    @JSONField(serialize = false)
     private ConnectionFactory factory;
-    @JSONField(serialize = false)
-    private Connection connection;
-    @JSONField(serialize = false)
-    private Session session;
-    @JSONField(serialize = false)
-    private MessageProducer producer;
 
     public ActivePostprocessor() {
         super();
@@ -80,12 +68,11 @@ public class ActivePostprocessor extends AbstractProcessor<ActivePostprocessor, 
     @Override
     protected DefaultSampleResult getTestResult() {
         return new DefaultSampleResult(runtime.getId(), StringUtils.isBlank(runtime.getTitle()) ? "Active 后置处理器" : runtime.getTitle());
-
     }
 
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
-        this.request = Active.execute(runtime.getConfig(), factory, result);
+        Active.execute(runtime.getConfig(), factory, result);
     }
 
 
@@ -104,7 +91,7 @@ public class ActivePostprocessor extends AbstractProcessor<ActivePostprocessor, 
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
-        result.setRequest(request);
+        result.setRequest(RealActiveRequest.build(runtime.getConfig()));
         result.setResponse(SampleResult.DefaultReal.build(new byte[0]));
         factory = null;
     }

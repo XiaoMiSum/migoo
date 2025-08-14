@@ -37,10 +37,7 @@ import io.github.xiaomisum.ryze.protocol.active.Active;
 import io.github.xiaomisum.ryze.protocol.active.ActiveConstantsInterface;
 import io.github.xiaomisum.ryze.protocol.active.RealActiveRequest;
 import io.github.xiaomisum.ryze.protocol.active.config.ActiveConfigureItem;
-import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
-import jakarta.jms.MessageProducer;
-import jakarta.jms.Session;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.lang3.StringUtils;
 
@@ -55,15 +52,7 @@ import java.util.Objects;
 public class ActivePreprocessor extends AbstractProcessor<ActivePreprocessor, ActiveConfigureItem, DefaultSampleResult> implements Preprocessor, ActiveConstantsInterface {
 
     @JSONField(serialize = false)
-    private RealActiveRequest request;
-    @JSONField(serialize = false)
     private ConnectionFactory factory;
-    @JSONField(serialize = false)
-    private Connection connection;
-    @JSONField(serialize = false)
-    private Session session;
-    @JSONField(serialize = false)
-    private MessageProducer producer;
 
     public ActivePreprocessor() {
         super();
@@ -85,9 +74,8 @@ public class ActivePreprocessor extends AbstractProcessor<ActivePreprocessor, Ac
 
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
-        this.request = Active.execute(runtime.getConfig(), factory, result);
+        Active.execute(runtime.getConfig(), factory, result);
     }
-
 
     @Override
     protected void handleRequest(ContextWrapper context, DefaultSampleResult result) {
@@ -104,7 +92,7 @@ public class ActivePreprocessor extends AbstractProcessor<ActivePreprocessor, Ac
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
-        result.setRequest(request);
+        result.setRequest(RealActiveRequest.build(runtime.getConfig()));
         result.setResponse(SampleResult.DefaultReal.build(new byte[0]));
         factory = null;
     }
