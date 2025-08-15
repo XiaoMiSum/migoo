@@ -163,6 +163,9 @@ class GroovyCodeTestCase {
         // 以独立的 http sampler 执行测试步骤
         // 无法共用前置步骤提取的变量，建议在单步骤用例下使用此方式
         MagicBox.http {
+            variables {
+                put "id", "1"
+            }
             title "步骤1——获取用户：id = \${id}"
             config {
                 protocol "http"
@@ -201,6 +204,9 @@ class GroovyCodeTestCase {
         }
 
         MagicBox.http {
+            variables {
+                put "t_body", Collections.of("id", "ryze", "name", "ryze_http_preprocessor", "age", 0)
+            }
             title "步骤3——获取用户：id =\${t_body.id}"
             config {
                 protocol "http"

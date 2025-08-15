@@ -54,7 +54,7 @@ public class TestContainerAllureReportListener implements AllureReportListener<T
     public boolean preHandle(ContextWrapper context, TestContainerExecutable<?, ?, ?> runtime) {
         var title = StringUtils.isNotBlank(context.getTestResult().getTitle()) ? context.getTestResult().getTitle()
                 : "匿名 - " + context.getTestElement().getClass().getSimpleName();
-        AllureReportListener.startStep(() -> title, context);
+        AllureReportListener.startStep(title, context);
         return true;
     }
 

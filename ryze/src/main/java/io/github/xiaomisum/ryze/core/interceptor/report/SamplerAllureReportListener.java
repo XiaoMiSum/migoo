@@ -21,9 +21,9 @@ public class SamplerAllureReportListener implements AllureReportListener {
     public void afterCompletion(ContextWrapper context) {
         var handler = context.getTestElement();
         if (handler instanceof AbstractSampler<?, ?, ?> sampler) {
-            AllureReportListener.startStep(() -> sampler.getRuntime().getTitle(), context);
+            AllureReportListener.startStep(sampler.getRuntime().getTitle(), context);
         } else if (handler instanceof Sampler<?> sampler) {
-            AllureReportListener.startStep(() -> "匿名取样器：" + sampler.getClass().getSimpleName(), context);
+            AllureReportListener.startStep("匿名取样器：" + sampler.getClass().getSimpleName(), context);
         }
         AllureReportListener.stopStep(context);
     }

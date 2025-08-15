@@ -31,13 +31,11 @@ package io.github.xiaomisum.ryze.core.interceptor.report;
 import io.github.xiaomisum.ryze.core.TestStatus;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
-import io.qameta.allure.model.Status;
+import io.qameta.allure.Allure;
 import io.qameta.allure.model.StepResult;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 
-import static io.qameta.allure.Allure.getLifecycle;
 import static io.qameta.allure.util.ResultsUtils.getStatus;
 import static io.qameta.allure.util.ResultsUtils.getStatusDetails;
 
@@ -54,22 +52,18 @@ public interface AllureReportListener<T extends AbstractTestElement<?, ?, ?>> ex
      *
      * @param name 步骤名称
      */
-    static void startStep(Supplier<String> name, ContextWrapper context) {
+    static void startStep(String name, ContextWrapper context) {
         String uuid = context.getUuid();
-        getLifecycle().startStep(uuid, new StepResult().setName(name.get()));
-        if (Objects.isNull(context.getTestResult().getThrowable())) {
-            getLifecycle().updateStep(uuid, step -> step
-                    .setName(name.get())
-                    .setStatus(context.getTestResult().getStatus().getAllureStatus()));
-        } else {
-            getLifecycle().updateStep(uuid, step -> step
-                    .setStatus(getStatus(context.getTestResult().getThrowable()).orElse(Status.BROKEN))
-                    .setStatusDetails(getStatusDetails(context.getTestResult().getThrowable()).orElse(null)));
-            context.getTestResult().setStatus(TestStatus.failed);
+        var step = new StepResult().setName(name)
+                .setStatus(getStatus(context.getTestResult().getThrowable()).orElse(context.getTestResult().getStatus().getAllureStatus()))
+                .setStatusDetails(getStatusDetails(context.getTestResult().getThrowable()).orElse(null));
+        Allure.getLifecycle().startStep(uuid, step);
+        if (!Objects.isNull(context.getTestResult().getThrowable())) {
+            context.getTestResult().setStatus(context.getTestResult().getThrowable() instanceof AssertionError ? TestStatus.failed : TestStatus.broken);
         }
     }
 
     static void stopStep(ContextWrapper context) {
-        getLifecycle().stopStep(context.getUuid());
+        Allure.getLifecycle().stopStep(context.getUuid());
     }
 }

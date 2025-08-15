@@ -5,6 +5,7 @@ import io.github.xiaomisum.ryze.core.testelement.processor.AbstractProcessor;
 import io.github.xiaomisum.ryze.core.testelement.processor.Processor;
 import org.apache.commons.lang3.StringUtils;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class ProcessorAllureReportListener implements AllureReportListener {
 
     @Override
@@ -21,10 +22,10 @@ public class ProcessorAllureReportListener implements AllureReportListener {
     public void afterCompletion(ContextWrapper context) {
         var handler = context.getTestElement();
         if (handler instanceof AbstractProcessor<?, ?, ?> processor) {
-            AllureReportListener.startStep(() -> StringUtils.isNotBlank(processor.getRuntime().getTitle()) ? processor.getRuntime().getTitle()
+            AllureReportListener.startStep(StringUtils.isNotBlank(processor.getRuntime().getTitle()) ? processor.getRuntime().getTitle()
                     : "匿名处理器：" + processor.getClass().getSimpleName(), context);
         } else if (handler instanceof Processor processor) {
-            AllureReportListener.startStep(() -> "匿名处理器：" + processor.getClass().getSimpleName(), context);
+            AllureReportListener.startStep("匿名处理器：" + processor.getClass().getSimpleName(), context);
         }
         AllureReportListener.stopStep(context);
     }
