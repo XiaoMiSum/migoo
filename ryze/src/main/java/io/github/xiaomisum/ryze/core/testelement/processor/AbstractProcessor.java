@@ -36,10 +36,9 @@ import io.github.xiaomisum.ryze.core.builder.ExtensibleExtractorsBuilder;
 import io.github.xiaomisum.ryze.core.config.ConfigureItem;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.extractor.Extractor;
-import io.github.xiaomisum.ryze.core.interceptor.Handler;
-import io.github.xiaomisum.ryze.core.interceptor.ProcessorHandler;
 import io.github.xiaomisum.ryze.core.interceptor.RyzeInterceptor;
 import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
+import io.github.xiaomisum.ryze.core.testelement.TestElement;
 import io.github.xiaomisum.ryze.core.testelement.TestElementConstantsInterface;
 import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
 import io.github.xiaomisum.ryze.support.Collections;
@@ -56,7 +55,7 @@ import java.util.Optional;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CONFIG, R>, CONFIG extends ConfigureItem<CONFIG>, R extends SampleResult>
         extends AbstractTestElement<AbstractProcessor<SELF, CONFIG, R>, CONFIG, R>
-        implements Processor, ProcessorHandler, TestElementConstantsInterface {
+        implements Processor, TestElementConstantsInterface {
 
     @JSONField(name = EXTRACTORS, ordinal = 10)
     protected List<Extractor> extractors;
@@ -87,42 +86,43 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
     }
 
     @Override
-    public void doHandle(ContextWrapper context) {
-        if (preInterceptors.hasNext()) {
-            preInterceptors.next().preHandle(context, this);
-        } else {
-            R result = (R) context.getTestResult();
-            handleRequest(context, (R) context.getTestResult());
-            result.sampleStart();
-            sample(context, (R) context.getTestResult());
-            result.sampleEnd();
-            handleResponse(context, (R) context.getTestResult());
-        }
-    }
-
-    @Override
     public void process(ContextWrapper context) {
         var localContext = initialized ? context : _initialized(context.getSessionRunner());
-        doHandle(localContext);
-        if (postInterceptors.hasNext()) {
-            postInterceptors.next().postHandle(localContext, this);
+        var result = (R) localContext.getTestResult();
+        runtime.config = (CONFIG) context.evaluate(runtime.config);
+        try {
+            // 执行前置处理
+            if (chain.applyPreHandle(localContext, runtime)) {
+                // 业务处理
+                handleRequest(localContext, result);
+                result.sampleStart();
+                sample(localContext, result);
+                result.sampleEnd();
+                handleResponse(localContext, result);
+                // 执行后置处理
+                chain.applyPostHandle(localContext, runtime);
+                Optional.ofNullable(extractors).orElse(Collections.emptyList()).forEach(extractor -> extractor.process(localContext));
+                //  context 与 localContext 中的 lastContext 是同一对象，无需再进行变量合并
+                //  context.getLocalVariablesWrapper().getLastVariables().merge(localContext.getLocalVariablesWrapper().getLastVariables());
+            }
+        } catch (Throwable throwable) {
+            // 1、processor 执行异常 2、extractor 提取异常  设置父级执行异常
+            localContext.getTestResult().setThrowable(throwable);
+            context.getTestResult().setThrowable(throwable);
+        } finally {
+            // 最终处理
+            chain.triggerAfterCompletion(localContext);
+            var status = localContext.getTestResult().getStatus();
+            if (context != localContext && (status.isBroken() || status.isFailed())) {
+                context.getTestResult().setStatus(localContext.getTestResult().getStatus());
+            }
         }
-        extract(context, localContext);
-        var status = localContext.getTestResult().getStatus();
-        if (context != localContext && (status.isBroken() || status.isFailed())) {
-            context.getTestResult().setStatus(localContext.getTestResult().getStatus());
-        }
-    }
-
-    private void extract(ContextWrapper context, ContextWrapper localContext) {
-        Optional.ofNullable(extractors).orElse(Collections.emptyList()).forEach(extractor -> extractor.process(localContext));
-        context.getLocalVariablesWrapper().getLastVariables().merge(localContext.getLocalVariablesWrapper().getLastVariables());
     }
 
     /**
      * 请求执行前处理。比如请求数据的表达式计算。
      *
-     * <p>该方法在 {@link RyzeInterceptor#preHandle(ContextWrapper, Handler)} 之前调用。
+     * <p>该方法在 {@link RyzeInterceptor#preHandle(ContextWrapper, TestElement)} )} 之前调用。
      */
     protected void handleRequest(ContextWrapper context, R result) {
         // do nothing.
@@ -137,7 +137,7 @@ public abstract class AbstractProcessor<SELF extends AbstractProcessor<SELF, CON
     /**
      * 请求执行后处理。
      *
-     * <p>该方法在 {@link RyzeInterceptor#preHandle(ContextWrapper, Handler)} 之后调用。
+     * <p>该方法在 {@link RyzeInterceptor#postHandle(ContextWrapper, TestElement)} 之后调用。
      */
     protected void handleResponse(ContextWrapper context, R result) {
         // do nothing.

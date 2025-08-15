@@ -32,6 +32,7 @@ import com.alibaba.fastjson2.annotation.JSONField;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import io.github.xiaomisum.ryze.core.Result;
+import io.github.xiaomisum.ryze.core.SessionRunner;
 import io.github.xiaomisum.ryze.core.TestStatus;
 import io.github.xiaomisum.ryze.core.builder.ExtensibleChildrenBuilder;
 import io.github.xiaomisum.ryze.core.builder.ExtensibleConfigureElementsBuilder;
@@ -39,7 +40,6 @@ import io.github.xiaomisum.ryze.core.builder.ExtensiblePostprocessorsBuilder;
 import io.github.xiaomisum.ryze.core.builder.ExtensiblePreprocessorsBuilder;
 import io.github.xiaomisum.ryze.core.config.ConfigureItem;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
-import io.github.xiaomisum.ryze.core.interceptor.ContainerHandler;
 import io.github.xiaomisum.ryze.core.testelement.sampler.Sampler;
 import io.github.xiaomisum.ryze.support.Collections;
 import io.github.xiaomisum.ryze.support.Customizer;
@@ -58,7 +58,7 @@ import java.util.Objects;
 @SuppressWarnings("all")
 public abstract class TestContainerExecutable<SELF extends TestContainerExecutable<SELF, CONFIG, R>,
         CONFIG extends ConfigureItem<CONFIG>, R extends Result>
-        extends AbstractTestElementExecutable<SELF, CONFIG, R> implements ContainerHandler {
+        extends AbstractTestElementExecutable<SELF, CONFIG, R> {
 
     @JSONField(name = CHILDREN, ordinal = 10)
     protected List<TestElement<R>> children;
@@ -71,11 +71,17 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
         this.children = builder.children;
     }
 
-    @Override
-    public void doHandle(ContextWrapper context) {
-        if (preInterceptors.hasNext()) {
-            preInterceptors.next().preHandle(context, this);
-        } else {
+    protected void executeChildren(ContextWrapper context) {
+        if (children == null) {
+            return;
+        }
+
+        try {
+            // 执行前置处理
+            if (!chain.applyPreHandle(context, runtime)) {
+                return;
+            }
+            // 业务处理
             for (TestElement<R> child : children) {
                 if (Objects.isNull(child)) {
                     continue;
@@ -95,18 +101,17 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
             if (hasFailedChildren) {
                 context.getTestResult().setStatus(TestStatus.failed);
             }
-            if (postInterceptors.hasNext()) {
-                postInterceptors.next().postHandle(context, this);
+            chain.applyPostHandle(context, runtime);
+        } catch (Throwable throwable) {
+            context.getTestResult().setStatus(throwable instanceof AssertionError ? TestStatus.failed : TestStatus.broken);
+            if (SessionRunner.getSession().isRunInTestFrameworkSupport()) {
+                throw throwable;
             }
+        } finally {
+            // 最终处理
+            chain.triggerAfterCompletion(context);
         }
 
-    }
-
-    protected void executeChildren(ContextWrapper contextWrapper) {
-        if (children == null) {
-            return;
-        }
-        doHandle(contextWrapper);
     }
 
     @Override

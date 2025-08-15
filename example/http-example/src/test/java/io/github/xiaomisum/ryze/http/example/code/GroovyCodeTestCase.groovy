@@ -74,14 +74,14 @@ class GroovyCodeTestCase {
                     config {
                         method "POST"
                         path '/user'
-                        body { putAll([id: "ryze", name: "ryze_http_sampler", age: 0]) }
+                        body { body -> body.putAll([id: "ryze", name: "ryze_http_sampler", age: 0]) }
 
                     }
                     validators {
                         http {
                             field 'statusCode'
                             rule "=="
-                            expected 200
+                            expected 400
                         }
                     }
                 }
@@ -128,7 +128,7 @@ class GroovyCodeTestCase {
                     config {
                         method "POST"
                         path '/user'
-                        body { putAll([id: "ryze", name: "ryze_http_preprocessor", age: 0]) }
+                        body { body -> body.putAll([id: "ryze", name: "ryze_http_preprocessor", age: 0]) }
                     }
                     extractors {
                         json {
@@ -188,7 +188,7 @@ class GroovyCodeTestCase {
                 port "58081"
                 method "POST"
                 path '/user'
-                body { putAll([id: "ryze", name: "ryze_http_sampler", age: 0]) }
+                body { body -> body.putAll([id: "ryze", name: "ryze_http_sampler", age: 0]) }
 
             }
             validators {

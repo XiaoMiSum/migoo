@@ -29,9 +29,6 @@
 package io.github.xiaomisum.ryze.core.testelement.processor;
 
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
-import io.github.xiaomisum.ryze.core.extractor.Extractor;
-
-import java.util.List;
 
 /**
  * @author xiaomi
@@ -53,9 +50,4 @@ public interface Processor {
      * @return 处理结果
      */
     void process(ContextWrapper context);
-
-    /**
-     * 解决反序列化时，extractors 为 null 的问题
-     */
-    void setExtractors(List<Extractor> extractors);
 }

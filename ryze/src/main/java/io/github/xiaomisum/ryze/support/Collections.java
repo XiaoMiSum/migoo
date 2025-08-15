@@ -33,6 +33,31 @@ import java.util.*;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class Collections {
 
+    public static <K, V> Map<K, V> unmodifiableMap(Map<K, V> m) {
+        return java.util.Collections.unmodifiableMap(m);
+    }
+
+    public static boolean isUnmodifiableMap(Map map) {
+        // 先通过类名快速判断
+        String className = map.getClass().getName();
+        if (className.contains("UnmodifiableMap") || className.contains("ImmutableMap") ||
+                className.startsWith("java.util.ImmutableCollections$")) {
+            return true;
+        }
+        if (map instanceof HashMap || map instanceof TreeMap) {
+            return false;
+        }
+        // 类名未知时，通过行为测试确认
+        String testKey = "__unmodifiable_test_key_%s__".formatted(System.currentTimeMillis());
+        try {
+            map.put(testKey, "");
+            map.remove(testKey);
+            return false;
+        } catch (UnsupportedOperationException e) {
+            return true;
+        }
+    }
+
     public static <K, V> Map<K, V> putAllIfNonNull(Map<K, V> target, Map<K, V> data) {
         if (Objects.isNull(target)) {
             return data;
@@ -105,10 +130,6 @@ public class Collections {
         return java.util.Collections.emptyIterator();
     }
 
-    public static <K, V> Map<K, V> unmodifiableMap(Map<K, V> m) {
-        return java.util.Collections.unmodifiableMap(m);
-    }
-
     public static <T> List<T> unmodifiableList(List<T> list) {
         return java.util.Collections.unmodifiableList(list);
     }
@@ -117,25 +138,9 @@ public class Collections {
         java.util.Collections.sort(list);
     }
 
-    public static boolean isUnmodifiableMap(Map map) {
-        // 先通过类名快速判断
-        String className = map.getClass().getName();
-        if (className.contains("UnmodifiableMap") || className.contains("ImmutableMap") ||
-                className.startsWith("java.util.ImmutableCollections$")) {
-            return true;
-        }
-        if (map instanceof HashMap || map instanceof TreeMap) {
-            return false;
-        }
-        // 类名未知时，通过行为测试确认
-        String testKey = "__unmodifiable_test_key_%s__".formatted(System.currentTimeMillis());
-        try {
-            map.put(testKey, "");
-            map.remove(testKey);
-            return false;
-        } catch (UnsupportedOperationException e) {
-            return true;
-        }
+
+    public static void reverse(List<?> list) {
+        java.util.Collections.reverse(list);
     }
 
     public static boolean isUnmodifiableList(List list) {

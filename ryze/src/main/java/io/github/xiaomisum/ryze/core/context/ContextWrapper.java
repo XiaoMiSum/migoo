@@ -36,6 +36,7 @@ import io.github.xiaomisum.ryze.core.testelement.TestElementConfigureGroup;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * 测试上下文包装器，提供了处理上下文链的各种方法
@@ -62,6 +63,7 @@ public class ContextWrapper {
     // 测试元件信息
     private TestElement<?> testElement;
     private Result testResult;
+    private String uuid;
 
     // ----------- 构造器 -------------
 
@@ -104,6 +106,7 @@ public class ContextWrapper {
     public ContextWrapper(SessionRunner sessionRunner) {
         this(sessionRunner.getContextChain());
         this.sessionRunner = sessionRunner;
+        this.uuid = UUID.randomUUID().toString();
     }
 
     // == 构造器辅助方法 ==
@@ -211,5 +214,9 @@ public class ContextWrapper {
 
     public void setGlobalVariablesWrapper(GlobalVariablesWrapper globalVariablesWrapper) {
         this.globalVariablesWrapper = globalVariablesWrapper;
+    }
+
+    public String getUuid() {
+        return uuid;
     }
 }

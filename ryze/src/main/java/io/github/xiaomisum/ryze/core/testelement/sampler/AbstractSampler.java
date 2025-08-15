@@ -39,10 +39,9 @@ import io.github.xiaomisum.ryze.core.context.Context;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.context.TestRunContext;
 import io.github.xiaomisum.ryze.core.extractor.Extractor;
-import io.github.xiaomisum.ryze.core.interceptor.Handler;
 import io.github.xiaomisum.ryze.core.interceptor.RyzeInterceptor;
-import io.github.xiaomisum.ryze.core.interceptor.SamplerHandler;
 import io.github.xiaomisum.ryze.core.testelement.AbstractTestElementExecutable;
+import io.github.xiaomisum.ryze.core.testelement.TestElement;
 import io.github.xiaomisum.ryze.support.Collections;
 import io.github.xiaomisum.ryze.support.Customizer;
 import io.github.xiaomisum.ryze.support.KryoUtil;
@@ -62,7 +61,7 @@ import java.util.Optional;
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG, R>, CONFIG extends ConfigureItem<CONFIG>, R extends SampleResult>
-        extends AbstractTestElementExecutable<SELF, CONFIG, R> implements Sampler<R>, SamplerHandler {
+        extends AbstractTestElementExecutable<SELF, CONFIG, R> implements Sampler<R> {
 
     @JSONField(name = VALIDATORS, ordinal = 9)
     protected List<Assertion> assertions;
@@ -111,31 +110,29 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
             return;
         }
         runtime.config = (CONFIG) context.evaluate(runtime.config);
-        doHandle(context);
-        if (postInterceptors.hasNext()) {
-            postInterceptors.next().postHandle(context, this);
-        }
-        Optional.ofNullable(assertions).orElse(Collections.emptyList()).forEach(assertion -> assertion.assertThat(context));
-        Optional.ofNullable(extractors).orElse(Collections.emptyList()).forEach(extractor -> extractor.process(context));
-
-    }
-
-
-    @Override
-    public final void doHandle(ContextWrapper context) {
-        if (preInterceptors.hasNext()) {
-            preInterceptors.next().preHandle(context, this);
-        } else {
-            R result = (R) context.getTestResult();
-            // 子类可以在 sample 方法或其子方法内，在合适的时机再次调用 sampleStart 和 sampleEnd 方法，
-            // 以获取更准确的 sample 时间
-            handleRequest(context, result);
-            result.sampleStart();
-            sample(context, (R) context.getTestResult());
-            result.sampleEnd();
-            handleResponse(context, result);
+        try {
+            // 执行前置处理
+            if (chain.applyPreHandle(context, runtime)) {
+                // 业务处理
+                handleRequest(context, result);
+                result.sampleStart();
+                sample(context, result);
+                result.sampleEnd();
+                handleResponse(context, result);
+                // 执行后置处理
+                chain.applyPostHandle(context, runtime);
+                Optional.ofNullable(assertions).orElse(Collections.emptyList()).forEach(assertion -> assertion.assertThat(context));
+                Optional.ofNullable(extractors).orElse(Collections.emptyList()).forEach(extractor -> extractor.process(context));
+            }
+        } catch (Throwable throwable) {
+            // 1、sampler 执行异常 2、assertion 断言异常 3、extractor 提取异常
+            result.setThrowable(throwable);
+        } finally {
+            // 最终处理
+            chain.triggerAfterCompletion(context);
         }
     }
+
 
     @Override
     public SELF copy() {
@@ -148,7 +145,7 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
     /**
      * 请求执行前处理。比如请求数据的表达式计算。
      *
-     * <p>该方法在 {@link RyzeInterceptor#preHandle(ContextWrapper, Handler)} 之前调用。
+     * <p>该方法在 {@link RyzeInterceptor#preHandle(ContextWrapper, TestElement)} 之前调用。
      */
     protected void handleRequest(ContextWrapper context, R result) {
         // do nothing.
@@ -163,7 +160,7 @@ public abstract class AbstractSampler<SELF extends AbstractSampler<SELF, CONFIG,
     /**
      * 请求执行后处理。
      *
-     * <p>该方法在 {@link RyzeInterceptor#preHandle(ContextWrapper, Handler)} 之后调用。
+     * <p>该方法在 {@link RyzeInterceptor#postHandle(ContextWrapper, TestElement)} 之后调用。
      */
     protected void handleResponse(ContextWrapper context, R result) {
         // do nothing.

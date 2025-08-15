@@ -42,6 +42,7 @@ import io.github.xiaomisum.ryze.core.config.ConfigureItem;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.extractor.AbstractExtractor;
 import io.github.xiaomisum.ryze.core.extractor.Extractor;
+import io.github.xiaomisum.ryze.core.interceptor.HandlerExecutionChain;
 import io.github.xiaomisum.ryze.core.interceptor.RyzeInterceptor;
 import io.github.xiaomisum.ryze.core.testelement.configure.AbstractConfigureElement;
 import io.github.xiaomisum.ryze.core.testelement.configure.ConfigureElement;
@@ -105,15 +106,13 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
     protected Map<String, Object> metadata = new HashMap<>();
 
     @JSONField(serialize = false, deserialize = false)
-    protected Iterator<RyzeInterceptor> preInterceptors;
-    @JSONField(serialize = false, deserialize = false)
-    protected Iterator<RyzeInterceptor> postInterceptors;
-    @JSONField(serialize = false, deserialize = false)
     protected Map<String, Object> rawData;
     @JSONField(serialize = false, deserialize = false)
     protected SELF runtime;
     @JSONField(serialize = false, deserialize = false)
     protected boolean initialized = false;
+    @JSONField(serialize = false, deserialize = false)
+    protected HandlerExecutionChain chain;
 
     public AbstractTestElement(Builder<SELF, ?, CONFIG, ?, R> builder) {
         id = builder.id;
@@ -137,10 +136,10 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         if (Objects.isNull(interceptors) || interceptors.isEmpty()) {
             return;
         }
-        var temp = interceptors.stream().filter(interceptor -> interceptor.match(context)).distinct()
+        //
+        var runtimeInterceptors = interceptors.stream().filter(interceptor -> interceptor.supports(context)).distinct()
                 .sorted(Comparator.comparingInt(RyzeInterceptor::getOrder)).toList();
-        preInterceptors = temp.iterator();
-        postInterceptors = temp.iterator();
+        chain = new HandlerExecutionChain(runtimeInterceptors);
     }
 
     protected abstract R getTestResult();

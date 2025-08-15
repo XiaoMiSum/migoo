@@ -205,7 +205,7 @@ public abstract class AbstractTestElementExecutable<SELF extends AbstractTestEle
     /**
      * 测试元件的功能实现，比如发起 HTTP 请求
      */
-    protected abstract void execute(ContextWrapper ctx, R testResult);
+    protected abstract void execute(ContextWrapper context, R result);
 
     // getter/setter
 

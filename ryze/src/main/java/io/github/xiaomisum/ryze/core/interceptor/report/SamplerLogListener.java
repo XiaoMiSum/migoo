@@ -29,8 +29,7 @@
 package io.github.xiaomisum.ryze.core.interceptor.report;
 
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
-import io.github.xiaomisum.ryze.core.interceptor.Handler;
-import io.github.xiaomisum.ryze.core.testelement.sampler.AbstractSampler;
+import io.github.xiaomisum.ryze.core.testelement.TestElement;
 import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
 import io.github.xiaomisum.ryze.core.testelement.sampler.Sampler;
 import org.apache.commons.lang3.StringUtils;
@@ -50,29 +49,29 @@ public class SamplerLogListener implements ReporterListener {
 
     @Override
     public int getOrder() {
-        return Integer.MAX_VALUE - 1;
+        return Integer.MIN_VALUE;
     }
 
     @Override
-    public boolean match(ContextWrapper context) {
+    public boolean supports(ContextWrapper context) {
         return context.getTestElement() instanceof Sampler<?>;
     }
 
     @Override
-    public void preHandle(ContextWrapper context, Handler handler) {
-        var title = (handler instanceof AbstractSampler<?, ?, ?> sampler && StringUtils.isNotBlank(sampler.getRuntime().getTitle())) ?
-                sampler.getRuntime().getTitle() : "匿名取样器：" + handler.getClass().getSimpleName();
-        log.info("执行：{}\n", title);
-        handler.doHandle(context);
+    public boolean preHandle(ContextWrapper context, TestElement runtime) {
+        var title = StringUtils.isNotBlank(context.getTestResult().getTitle()) ? context.getTestResult().getTitle()
+                : "匿名 - " + context.getTestElement().getClass().getSimpleName();
+        log.info("执行步骤：{}\n", title);
+        return true;
     }
 
     @Override
-    public void postHandle(ContextWrapper context, Handler handler) {
-        // todo 需要解决当 preHandle 中有异常，则不会执行 postHandle
+    public void afterCompletion(ContextWrapper context) {
         if (context.getTestResult() instanceof SampleResult result) {
             log.info("{}{}{}{}{}{}",
-                    "\n--------------- 请求信息 -----------------\n", result.getRequest().format(), "\n",
+                    "\n--------------- 请求信息 -----------------\n", Objects.isNull(result.getRequest()) ? "" : result.getRequest().format(), "\n",
                     "\n--------------- 响应信息 -----------------\n", Objects.isNull(result.getResponse()) ? "" : result.getResponse().format(), "\n");
+            printStackTrace(result.getThrowable(), log);
         }
     }
 }

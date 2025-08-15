@@ -40,6 +40,7 @@ public abstract class Result implements Serializable {
     private TestStatus status = TestStatus.passed;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private Throwable throwable;
 
 
     public Result(String title) {
@@ -95,4 +96,11 @@ public abstract class Result implements Serializable {
         this.endTime = endTime;
     }
 
+    public Throwable getThrowable() {
+        return throwable;
+    }
+
+    public void setThrowable(Throwable throwable) {
+        this.throwable = throwable;
+    }
 }

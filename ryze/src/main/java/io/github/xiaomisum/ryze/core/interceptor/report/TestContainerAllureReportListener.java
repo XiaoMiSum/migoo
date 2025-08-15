@@ -29,31 +29,38 @@
 package io.github.xiaomisum.ryze.core.interceptor.report;
 
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
-import io.github.xiaomisum.ryze.core.interceptor.Handler;
 import io.github.xiaomisum.ryze.core.testelement.TestContainerExecutable;
 import org.apache.commons.lang3.StringUtils;
+
+import static io.qameta.allure.Allure.getLifecycle;
 
 /**
  * @author xiaomi
  * Created at 2025/7/20 13:46
  */
-public class TestContainerAllureReportListener implements AllureReportListener {
+public class TestContainerAllureReportListener implements AllureReportListener<TestContainerExecutable<?, ?, ?>> {
 
     @Override
     public int getOrder() {
-        return Integer.MAX_VALUE;
+        return Integer.MIN_VALUE + 1;
     }
 
     @Override
-    public boolean match(ContextWrapper context) {
+    public boolean supports(ContextWrapper context) {
         return context.getTestElement() instanceof TestContainerExecutable<?, ?, ?>;
     }
 
     @Override
-    public void preHandle(ContextWrapper context, Handler handler) {
-        if (handler instanceof TestContainerExecutable<?, ?, ?> container) {
-            AllureReportListener.step(() -> StringUtils.isNotBlank(container.getRuntime().getTitle()) ? container.getRuntime().getTitle()
-                    : "匿名容器：" + container.getClass().getSimpleName(), uuid -> handler.doHandle(context), context);
-        }
+    public boolean preHandle(ContextWrapper context, TestContainerExecutable<?, ?, ?> runtime) {
+        var title = StringUtils.isNotBlank(context.getTestResult().getTitle()) ? context.getTestResult().getTitle()
+                : "匿名 - " + context.getTestElement().getClass().getSimpleName();
+        AllureReportListener.startStep(() -> title, context);
+        return true;
+    }
+
+    @Override
+    public void afterCompletion(ContextWrapper context) {
+        getLifecycle().updateStep(context.getUuid(), step -> step.setStatus(context.getTestResult().getStatus().getAllureStatus()));
+        AllureReportListener.stopStep(context);
     }
 }

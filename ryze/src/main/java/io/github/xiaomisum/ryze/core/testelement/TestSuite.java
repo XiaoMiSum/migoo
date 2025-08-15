@@ -58,8 +58,8 @@ public class TestSuite extends TestContainerExecutable<TestSuite, EmptyConfigure
     }
 
     @Override
-    protected void execute(ContextWrapper ctx, TestSuiteResult testResult) {
-        executeChildren(ctx);
+    protected void execute(ContextWrapper context, TestSuiteResult result) {
+        executeChildren(context);
     }
 
     /**

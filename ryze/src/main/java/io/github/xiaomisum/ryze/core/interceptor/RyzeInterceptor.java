@@ -27,37 +27,60 @@ package io.github.xiaomisum.ryze.core.interceptor;
 
 import com.alibaba.fastjson2.annotation.JSONType;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
+import io.github.xiaomisum.ryze.core.testelement.TestElement;
 import io.github.xiaomisum.ryze.support.fastjson.deserializer.InterceptorObjectReader;
 
 /**
- * 过滤器接口，
+ * 拦截器接口
+ * <p>
+ * 执行顺序为：preHandle -> 自定义业务 -> postHandle -> afterCompletion
+ * <p>
+ * 多个拦截器之间是串行执行的，即：
+ * 拦截器 A preHandle -> 拦截器B preHandle ... -> 自定义业务 -> 拦截器 B postHandle -> 拦截器 A postHandle ...
+ * -> 拦截器 A afterCompletion -> 拦截器 B afterCompletion ...
  *
  * @author xiaomi
  */
 @JSONType(deserializer = InterceptorObjectReader.class)
-public interface RyzeInterceptor {
+@SuppressWarnings({"unchecked", "rawtypes"})
+public interface RyzeInterceptor<T extends TestElement> {
 
     int getOrder();
 
     /**
-     * 计算当前测试元件对象是否需要应用该过滤器
+     * 计算当前测试元件对象是否需要应用该拦截器
      *
      * @param context 测试上下文
-     * @return 如果对 testElement 使用当前过滤器则为 true，否则为 false。
+     * @return 如果对 testElement 使用当前拦截器则为 true，否则为 false。
      */
-    boolean match(ContextWrapper context);
+    boolean supports(ContextWrapper context);
 
     /**
-     * 执行测试元件时调用
+     * 执行测试组件业务前执行
      *
      * @param context 测试上下文
-     * @param handler 运行过滤器链
+     * @param runtime TestElement 运行时数据
      */
-    default void preHandle(ContextWrapper context, Handler handler) {
-        handler.doHandle(context);
+    default boolean preHandle(ContextWrapper context, T runtime) {
+        return true;
     }
 
 
-    default void postHandle(ContextWrapper context, Handler handler) {
+    /**
+     * 执行测试组件业务后执行
+     *
+     * @param context 测试上下文
+     * @param runtime TestElement 运行时数据
+     */
+    default void postHandle(ContextWrapper context, T runtime) {
     }
+
+    /**
+     * 拦截器最终处理，一般用于打印日志
+     *
+     * @param context 测试上下文
+     */
+    default void afterCompletion(ContextWrapper context) {
+    }
+
 }

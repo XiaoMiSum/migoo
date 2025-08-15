@@ -28,7 +28,10 @@
 
 package io.github.xiaomisum.ryze.core.interceptor.report;
 
+import io.github.xiaomisum.ryze.core.SessionRunner;
 import io.github.xiaomisum.ryze.core.interceptor.RyzeInterceptor;
+import io.github.xiaomisum.ryze.core.testelement.TestElement;
+import org.slf4j.Logger;
 
 /**
  * 测试报告监听器
@@ -36,5 +39,22 @@ import io.github.xiaomisum.ryze.core.interceptor.RyzeInterceptor;
  * @author xiaomi
  * Created at 2025/7/20 14:15
  */
-public interface ReporterListener extends RyzeInterceptor {
+public interface ReporterListener<T extends TestElement<?>> extends RyzeInterceptor<T> {
+
+
+    default void printStackTrace(Throwable throwable, Logger log) {
+        if (throwable == null) {
+            return;
+        }
+        log.error(throwable.getMessage(), throwable);
+        try {
+            if (SessionRunner.getSession().isRunInTestFrameworkSupport()) {
+                throw throwable;
+            }
+        } catch (AssertionError | RuntimeException t) {
+            throw t;
+        } catch (Throwable e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
 }

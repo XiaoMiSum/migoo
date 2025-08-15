@@ -41,6 +41,7 @@ import java.util.List;
 
 import static io.github.xiaomisum.ryze.core.testelement.TestElementConstantsInterface.INTERCEPTORS;
 
+@SuppressWarnings({"rawtypes"})
 public class Configure {
 
     private static final String RYZE_ENABLE_ALLURE_REPORT = "ryze.report.allure";
@@ -79,6 +80,7 @@ public class Configure {
         items.addAll(interceptors);
         configure.setBuiltinInterceptors(items);
         var globalContext = new GlobalContext(new GlobalConfigure());
+        // todo 全局配置可以考虑固定位置存放全局变量
         globalContext.getConfigGroup().put(INTERCEPTORS, items);
         configure.setGlobalContext(globalContext);
         return configure;

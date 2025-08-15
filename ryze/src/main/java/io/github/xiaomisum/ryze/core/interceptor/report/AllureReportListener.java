@@ -28,14 +28,13 @@
 
 package io.github.xiaomisum.ryze.core.interceptor.report;
 
-import io.github.xiaomisum.ryze.core.SessionRunner;
 import io.github.xiaomisum.ryze.core.TestStatus;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
+import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
 import io.qameta.allure.model.Status;
 import io.qameta.allure.model.StepResult;
 
-import java.util.UUID;
-import java.util.function.Consumer;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import static io.qameta.allure.Allure.getLifecycle;
@@ -48,32 +47,29 @@ import static io.qameta.allure.util.ResultsUtils.getStatusDetails;
  * @author xiaomi
  * Created at 2025/7/20 14:15
  */
-public interface AllureReportListener extends ReporterListener {
+public interface AllureReportListener<T extends AbstractTestElement<?, ?, ?>> extends ReporterListener<T> {
 
     /**
      * 功能上相当于 <code>Allure.step(...)</code>
      *
      * @param name 步骤名称
-     * @param code 步骤开始和结束之间的代码
      */
-    static void step(Supplier<String> name, Consumer<Object> code, ContextWrapper context) {
-        String uuid = UUID.randomUUID().toString();
+    static void startStep(Supplier<String> name, ContextWrapper context) {
+        String uuid = context.getUuid();
         getLifecycle().startStep(uuid, new StepResult().setName(name.get()));
-        try {
-            code.accept(uuid);
-            getLifecycle().updateStep(uuid, stepResult -> stepResult
+        if (Objects.isNull(context.getTestResult().getThrowable())) {
+            getLifecycle().updateStep(uuid, step -> step
                     .setName(name.get())
                     .setStatus(context.getTestResult().getStatus().getAllureStatus()));
-        } catch (Throwable throwable) {
-            getLifecycle().updateStep(uuid, stepResult -> stepResult
-                    .setStatus(getStatus(throwable).orElse(Status.BROKEN))
-                    .setStatusDetails(getStatusDetails(throwable).orElse(null)));
+        } else {
+            getLifecycle().updateStep(uuid, step -> step
+                    .setStatus(getStatus(context.getTestResult().getThrowable()).orElse(Status.BROKEN))
+                    .setStatusDetails(getStatusDetails(context.getTestResult().getThrowable()).orElse(null)));
             context.getTestResult().setStatus(TestStatus.failed);
-            if (SessionRunner.getSession().isRunInTestFrameworkSupport()) {
-                throw throwable;
-            }
-        } finally {
-            getLifecycle().stopStep(uuid);
         }
+    }
+
+    static void stopStep(ContextWrapper context) {
+        getLifecycle().stopStep(context.getUuid());
     }
 }
