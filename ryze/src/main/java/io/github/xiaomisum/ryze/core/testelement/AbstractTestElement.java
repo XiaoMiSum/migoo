@@ -144,7 +144,6 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
 
     protected abstract R getTestResult();
 
-
     protected SELF newInstance() {
         try {
             return (SELF) this.getClass().getDeclaredConstructor().newInstance();

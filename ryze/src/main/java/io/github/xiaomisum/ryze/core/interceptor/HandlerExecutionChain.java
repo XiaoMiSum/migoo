@@ -2,7 +2,6 @@ package io.github.xiaomisum.ryze.core.interceptor;
 
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.testelement.TestElement;
-import io.github.xiaomisum.ryze.support.Collections;
 
 import java.util.List;
 
@@ -12,7 +11,7 @@ public class HandlerExecutionChain<T extends TestElement<?>> {
     private int executedIndex = -1;
 
     public HandlerExecutionChain(List<RyzeInterceptor> interceptors) {
-        this.interceptors = Collections.newArrayList(interceptors);
+        this.interceptors = interceptors;
     }
 
     // 前置处理
