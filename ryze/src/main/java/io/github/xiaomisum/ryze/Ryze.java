@@ -33,7 +33,7 @@ import com.alibaba.fastjson2.JSONObject;
 import io.github.xiaomisum.ryze.core.ApplicationConfig;
 import io.github.xiaomisum.ryze.core.Result;
 import io.github.xiaomisum.ryze.core.SessionRunner;
-import io.github.xiaomisum.ryze.support.TestDataLoader;
+import io.github.xiaomisum.ryze.support.dataloader.TestDataLoaderChain;
 
 import java.util.Map;
 
@@ -53,7 +53,7 @@ public class Ryze {
     }
 
     public static Result start(String filePath) {
-        var testcase = TestDataLoader.toJavaObject(filePath, JSONObject.class);
+        JSONObject testcase = TestDataLoaderChain.loadTestData(filePath, JSONObject.class);
         return start(testcase);
     }
 

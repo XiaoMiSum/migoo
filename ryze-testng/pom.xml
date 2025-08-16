@@ -51,12 +51,6 @@
         </dependency>
 
         <dependency>
-            <groupId>io.leangen.geantyref</groupId>
-            <artifactId>geantyref</artifactId>
-        </dependency>
-
-
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <scope>test</scope>
