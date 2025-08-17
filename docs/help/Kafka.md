@@ -8,15 +8,16 @@ Kafka 默认配置：使用该组件，可配置 Kafka协议的默认配置，�
 
 ```yaml
 # kafka 默认配置，各配置项的优先级为：取样器 > 默认配置
-testclass: kafka_defaults # 配置元件类型
-key.serializer: org.apache.kafka.common.serialization.StringSerializer # key 序列化 可空
-value.serializer: org.apache.kafka.common.serialization.StringSerializer # value 序列化 可空
-acks: 1 # 可空
-retries: 5  # 可空
-linger.ms: 20   # 可空
-bootstrap.servers: 192.168.1.7:9092 # 服务器地址
-topic: xxxx  # ProducerRecord 中的 topic
-key: xxxx # ProducerRecord 中的 key
+testclass: kafka # 配置元件类型
+config: # 可简化填写，无需config关键字，直接将配置内容至于首层
+  key.serializer: org.apache.kafka.common.serialization.StringSerializer # key 序列化 可空
+  value.serializer: org.apache.kafka.common.serialization.StringSerializer # value 序列化 可空
+  acks: 1 # 可空
+  retries: 5  # 可空
+  linger.ms: 20   # 可空
+  bootstrap.servers: 192.168.1.7:9092 # 服务器地址
+  topic: xxxx  # ProducerRecord 中的 topic
+  key: xxxx # ProducerRecord 中的 key
 ```
 
 ## 处理器
@@ -24,9 +25,9 @@ key: xxxx # ProducerRecord 中的 key
 ### 前置处理器 [示例](../template/处理器/kafka_preprocessor.yaml)
 
 ```yaml
-testclass: kafka_preprocessor # kafka 前置处理器类型
+testclass: kafka # kafka 前置处理器类型
 config: # 处理器配置
-  topic: migoo.topic # ProducerRecord 中的 topic
+  topic: ryze.topic # ProducerRecord 中的 topic
   key: test # ProducerRecord 中的 key
   bootstrap.servers: 192.168.1.7:9092 # 服务器地址
   key.serializer: org.apache.kafka.common.serialization.StringSerializer # key 序列化 可空
@@ -42,9 +43,9 @@ config: # 处理器配置
 ### 后置处理器 [示例](../template/处理器/kafka_postprocessor.yaml)
 
 ```yaml
-testclass: kafka_postprocessor # kafka 后置处理器类型
+testclass: kafka # kafka 后置处理器类型
 config: # 处理器配置
-  topic: migoo.topic # ProducerRecord 中的 topic
+  topic: ryze.topic # ProducerRecord 中的 topic
   key: test # ProducerRecord 中的 key
   bootstrap.servers: 192.168.1.7:9092 # 服务器地址
   key.serializer: org.apache.kafka.common.serialization.StringSerializer # key 序列化 可空
@@ -61,9 +62,9 @@ config: # 处理器配置
 
 ```yaml
 title: 标准kafka取样器
-testclass: kafkaSampler # 取样器类型
+testclass: kafka # 取样器类型
 config: # 取样器配置
-  topic: migoo.topic # ProducerRecord 中的 topic
+  topic: ryze.topic # ProducerRecord 中的 topic
   key: test # ProducerRecord 中的 key
   bootstrap.servers: 192.168.1.7:9092 # 服务器地址
   key.serializer: org.apache.kafka.common.serialization.StringSerializer # key 序列化 可空

@@ -1,8 +1,0 @@
-title: redis_sampler_4
-testclass: redisSampler # 取样器类型
-configelements:
-  - '@F(classpath:配置元件/redis_defaults.yaml)'
-config: # 取样器配置
-  datasource: redis_source
-  command: lpush
-  send: test_list,redis_sampler_4

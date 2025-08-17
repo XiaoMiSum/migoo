@@ -1,2 +1,2 @@
-testclass: result_extractor  # result 提取器类型
-variable_name: status # 变量名称
+testclass: result  # result 提取器类型
+ref_name: status # 变量名称

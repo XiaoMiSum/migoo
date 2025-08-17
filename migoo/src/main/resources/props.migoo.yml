@@ -1,7 +1,0 @@
-migoo.version: ${project.version}
-migoo.report.enable: true
-migoo.report.theme: DARK
-migoo.report.timeline.enabled: false
-migoo.report.offline: true
-migoo.report.output: './out-put'
-migoo.report.class: xyz.migoo.report.StandardReporter

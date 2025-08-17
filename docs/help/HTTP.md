@@ -8,15 +8,16 @@ HTTP 默认配置：使用该组件，可配置 HTTP协议的默认配置，降�
 
 ```yaml
 # Http 默认配置，各配置项的优先级为：取样器 > 默认配置
-testclass: http_defaults  # 配置元件类型
-method: GET  # 请求方法，默认Get
-protocol: http  # 请求协议，http、https，可空，默认 http
-host: localhost
-port: 8080 # 端口，默认 80
-path: /test # 接口路径，可空
-http/2: false # 是否 http2， ture、false，可空，默认 false
-headers: # 请求头，可空
-  h1: 1
+testclass: http  # 配置元件类型
+config: # 可简化填写，无需config关键字，直接将配置内容至于首层
+  method: GET  # 请求方法，默认Get
+  protocol: http  # 请求协议，http、https，可空，默认 http
+  host: localhost
+  port: 8080 # 端口，默认 80
+  path: /test # 接口路径，可空
+  http/2: false # 是否 http2， ture、false，可空，默认 false
+  headers: # 请求头，可空
+    h1: 1
 ```
 
 ## 处理器
@@ -24,7 +25,7 @@ headers: # 请求头，可空
 ### 前置处理器 [示例](../template/处理器/http_preprocessor.yaml)
 
 ```yaml
-testclass: http_preprocessor  # http前置处理器 类型
+testclass: http  # http前置处理器 类型
 config: # 处理器配置
   method: post   # 请求方法
   protocol: http   # 请求协议，默认 http
@@ -36,13 +37,13 @@ config: # 处理器配置
     h1: 1
   query: { } # url中的参数，如: ?id=1&name=t {id: 1, name: t}
   data: { } # 请求data
-  body: { userName: 'migoo', password: '123456qq' } # 请求body 优先级高于 data
+  body: { userName: 'ryze', password: '123456qq' } # 请求body 优先级高于 data
 ```
 
 ### 后置处理器 [示例](../template/处理器/http_postprocessor.yaml)
 
 ```yaml
-testclass: http_postprocessor  # http后置处理器 类型
+testclass: http  # http后置处理器 类型
 config: # 处理器配置
   method: post   # 请求方法
   protocol: http   # 请求协议，默认 http
@@ -54,14 +55,14 @@ config: # 处理器配置
     h1: 1
   query: { } # url中的参数，如: ?id=1&name=t {id: 1, name: t}
   data: { } # 请求data
-  body: { userName: 'migoo', password: '123456qq' } # 请求body 优先级高于 data
+  body: { userName: 'ryze', password: '123456qq' } # 请求body 优先级高于 data
 ```
 
 ## 取样器 [示例](../template/取样器/http_sampler.yaml)
 
 ```yaml
 title: 标准HTTP取样器
-testclass: httpsampler # 取样器类型
+testclass: http # 取样器类型
 config: # 取样器配置
   method: post   # 请求方法
   protocol: http   # 请求协议，默认 http
@@ -73,7 +74,7 @@ config: # 取样器配置
   path: /user   # 接口path
   query: { } # url中的参数，如: ?id=1&name=t {id: 1, name: t}
   data: { } # 请求data
-  body: { userName: 'migoo', password: '123456qq' } # 请求body 优先级高于 data
+  body: { userName: 'ryze', password: '123456qq' } # 请求body 优先级高于 data
 ```
 
 # 常见问题

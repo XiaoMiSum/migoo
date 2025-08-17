@@ -8,19 +8,20 @@ Dubbo 默认配置：使用该组件，可配置 Dubbo协议的默认配置，�
 
 ```yaml
 # Dubbo 默认配置，各配置项的优先级为：取样器 > 默认配置
-testclass: dubbo_defaults # 取样器类型
-registry: # 注册中心配置
-  protocol: zookeeper # zookeeper、nacos
-  address: localhost:2181
-  username:
-  password:
-  version: 1.0.0
-reference: # reference配置
-  version: 1.0.0
-  retries: 1
-  timeout: 5000
-  async: false
-  load_balance: random
+testclass: dubbo # 取样器类型
+config: # 可简化填写，无需config关键字，直接将配置内容至于首层
+  registry: # 注册中心配置
+    protocol: zookeeper # zookeeper、nacos
+    address: localhost:2181
+    username:
+    password:
+    version: 1.0.0
+  reference: # reference配置
+    version: 1.0.0
+    retries: 1
+    timeout: 5000
+    async: false
+    load_balance: random
 ```
 
 ## 处理器
@@ -28,7 +29,7 @@ reference: # reference配置
 ### 前置处理器 [示例](../template/处理器/dubbo_preprocessor.yaml)
 
 ```yaml
-testclass: DubboPreprocessor # http前置处理器 类型
+testclass: dubbo # http前置处理器 类型
 config: # 取样器配置
   registry: # 注册中心配置
     protocol: zookeeper
@@ -42,7 +43,7 @@ config: # 取样器配置
     timeout: 5000
     async: false
     load_balance: random
-  interface: protocol.xyz.migoo.dubbo.dubboserver.service.DemoService  # 接口类名全称
+  interface: protocol.xyz.ryze.dubbo.dubboserver.service.DemoService  # 接口类名全称
   method: sayHello  # 接口方法
   parameter_types: # 方法参数类型，根据接口定义
     - java.lang.String
@@ -54,7 +55,7 @@ config: # 取样器配置
 ### 后置处理器 [示例](../template/处理器/dubbo_postprocessor.yaml)
 
 ```yaml
-testclass: DubboPostprocessor # http后置处理器 类型
+testclass: dubbo # http后置处理器 类型
 config: # 取样器配置
   registry: # 注册中心配置
     protocol: zookeeper
@@ -68,7 +69,7 @@ config: # 取样器配置
     timeout: 5000
     async: false
     load_balance: random
-  interface: protocol.xyz.migoo.dubbo.dubboserver.service.DemoService  # 接口类名全称
+  interface: io.github.xiaomisum.ryze.dubbo.example.DemoService  # 接口类名全称
   method: sayHello  # 接口方法
   parameter_types: # 方法参数类型，根据接口定义
     - java.lang.String
@@ -81,7 +82,7 @@ config: # 取样器配置
 
 ```yaml
 title: 标准dubbo取样器
-testclass: DubboSampler # 取样器类型
+testclass: dubbo # 取样器类型
 config: # 取样器配置
   registry: # 注册中心配置
     protocol: zookeeper
@@ -96,7 +97,7 @@ config: # 取样器配置
     group: test
     async: false
     load_balance: random
-  interface: protocol.xyz.migoo.dubbo.dubboserver.service.DemoService  # 接口类名全称
+  interface: io.github.xiaomisum.ryze.dubbo.example.DemoService  # 接口类名全称
   method: sayHello  # 接口方法
   parameter_types: # 方法参数类型，根据接口定义
     - java.lang.String

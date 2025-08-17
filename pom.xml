@@ -29,34 +29,27 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>xyz.migoo</groupId>
-    <artifactId>migoo-parent</artifactId>
+    <groupId>io.github.xiaomisum</groupId>
+    <artifactId>ryze-parent</artifactId>
     <packaging>pom</packaging>
 
-    <version>6.0.0-bate1</version>
+    <version>6.0.0</version>
 
     <name>${project.artifactId}</name>
     <description>a test tool for api</description>
-    <url>https://xiaomisum.github.io/migoo/</url>
-
-    <distributionManagement>
-        <relocation>
-            <groupId>io.github.xiaomisum</groupId>
-            <artifactId>ryze-parent</artifactId>
-        </relocation>
-    </distributionManagement>
+    <url>https://xiaomisum.github.io/ryze/</url>
 
     <licenses>
         <license>
             <name>MIT</name>
-            <url>https://github.com/XiaoMiSum/migoo/blob/master/LICENSE</url>
+            <url>https://github.com/XiaoMiSum/ryze/blob/master/LICENSE</url>
         </license>
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:XiaoMiSum/migoo.git</connection>
-        <developerConnection>scm:git:git@github.com:XiaoMiSum/migoo.git</developerConnection>
-        <url>https://xiaomisum.github.io/migoo/</url>
+        <connection>scm:git:git@github.com:XiaoMiSum/ryze.git</connection>
+        <developerConnection>scm:git:git@github.com:XiaoMiSum/ryze.git</developerConnection>
+        <url>https://xiaomisum.github.io/ryze/</url>
     </scm>
 
     <developers>
@@ -64,33 +57,43 @@
             <name>xiao mi</name>
             <email>mi_xiao@qq.com</email>
             <organization>github</organization>
-            <organizationUrl>https://xiaomisum.github.io/migoo/</organizationUrl>
+            <organizationUrl>https://xiaomisum.github.io/ryze/</organizationUrl>
         </developer>
     </developers>
 
     <properties>
         <!-- 单元测试框架 -->
         <junit.version>5.11.4</junit.version>
+        <testng.version>7.9.0</testng.version>
 
         <!-- 协议或工具基础依赖 -->
         <activemq.version>6.1.7</activemq.version>
         <redis.version>5.2.0</redis.version>
-        <mysql.version>9.1.0</mysql.version>
+        <mysql.version>9.3.0</mysql.version>
         <kafka.version>4.0.0</kafka.version>
         <druid.version>1.2.24</druid.version>
         <dubbo.version>3.3.2</dubbo.version>
+        <mongo.version>5.5.1</mongo.version>
         <rabbitmq.version>5.24.0</rabbitmq.version>
-        <simplehttp.version>2.2.2</simplehttp.version>
+        <simplehttp.version>2.2.3</simplehttp.version>
 
         <!-- 工具包 -->
+        <geantyref.version>2.0.1</geantyref.version>
+        <groovy.version>4.0.28</groovy.version>
         <yaml.version>2.3</yaml.version>
         <faker.version>1.0.2</faker.version>
-        <picocli.version>4.7.6</picocli.version>
         <reports.version>5.1.2</reports.version>
+        <allure.version>2.29.1</allure.version>
         <guava.version>33.4.0-jre</guava.version>
         <fastjson.version>2.0.53</fastjson.version>
         <commons-codec.version>1.17.1</commons-codec.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
+        <commons-text.version>1.10.0</commons-text.version>
+        <slf4j-api.version>2.0.17</slf4j-api.version>
+        <logback.version>1.5.18</logback.version>
+        <kryo.version>5.6.2</kryo.version>
+        <freemarker.version>2.3.34</freemarker.version>
+        <caffeine.version>3.1.8</caffeine.version>
 
         <clean.version>3.4.0</clean.version>
         <compiler.version>3.13.0</compiler.version>
@@ -105,22 +108,75 @@
     </properties>
 
     <modules>
-        <module>migoo</module>
-        <module>migoo-coder</module>
-        <module>migoo-core</module>
-        <module>migoo-activemq</module>
-        <module>migoo-dubbo</module>
-        <module>migoo-kafka</module>
-        <module>migoo-rabbitmq</module>
+        <module>ryze</module>
+        <module>ryze-active</module>
+        <module>ryze-dubbo</module>
+        <module>ryze-kafka</module>
+        <module>ryze-rabbit</module>
+        <module>ryze-testng</module>
+        <module>ryze-mongo</module>
     </modules>
 
     <dependencyManagement>
-
         <dependencies>
             <dependency>
-                <groupId>xyz.migoo</groupId>
-                <artifactId>migoo-core</artifactId>
+                <groupId>io.github.xiaomisum</groupId>
+                <artifactId>ryze</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.xiaomisum</groupId>
+                <artifactId>ryze-active</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.xiaomisum</groupId>
+                <artifactId>ryze-dubbo</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.xiaomisum</groupId>
+                <artifactId>ryze-kafka</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.xiaomisum</groupId>
+                <artifactId>ryze-mongo</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.xiaomisum</groupId>
+                <artifactId>ryze-rabbit</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.xiaomisum</groupId>
+                <artifactId>ryze-testng</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.groovy</groupId>
+                <artifactId>groovy</artifactId>
+                <version>${groovy.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongodb-driver-sync</artifactId>
+                <version>${mongo.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng.version}</version>
             </dependency>
 
             <dependency>
@@ -169,12 +225,18 @@
             </dependency>
 
             <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${commons-text.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
                 <version>${yaml.version}</version>
             </dependency>
 
-            <!-- https://mvnrepository.com/artifact/xyz.migoo/simplehttp -->
+            <!-- https://mvnrepository.com/artifact/xyz.ryze/simplehttp -->
             <dependency>
                 <groupId>xyz.migoo</groupId>
                 <artifactId>simplehttp</artifactId>
@@ -233,6 +295,55 @@
                 </exclusions>
             </dependency>
 
+            <dependency>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-java-commons</artifactId>
+                <version>${allure.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-testng</artifactId>
+                <version>${allure.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-api.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.esotericsoftware</groupId>
+                <artifactId>kryo</artifactId>
+                <version>${kryo.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.leangen.geantyref</groupId>
+                <artifactId>geantyref</artifactId>
+                <version>${geantyref.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.freemarker</groupId>
+                <artifactId>freemarker-gae</artifactId>
+                <version>${freemarker.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>${caffeine.version}</version>
+            </dependency>
         </dependencies>
 
     </dependencyManagement>

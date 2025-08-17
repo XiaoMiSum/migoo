@@ -1,5 +1,0 @@
-testclass: redis_preprocessor # redis 后置处理器类型
-config: # 处理器配置
-  datasource: redis_source
-  command: set
-  send: test_redis_preprocessor,redis_preprocessor

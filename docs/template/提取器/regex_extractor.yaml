@@ -1,4 +1,4 @@
-testclass: regex_extractor  # regex 提取器类型
+testclass: regex  # regex 提取器类型
 field: '(\\d+)'  # 提取的 正则表达式
 match_num: 0  # 匹配到多个时，取哪一个值
-variable_name: status # 变量名称
+ref_name: status # 变量名称
