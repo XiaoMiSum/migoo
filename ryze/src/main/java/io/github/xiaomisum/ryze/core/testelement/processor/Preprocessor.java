@@ -32,6 +32,25 @@ import com.alibaba.fastjson2.annotation.JSONType;
 import io.github.xiaomisum.ryze.support.fastjson.deserializer.PreprocessorObjectReader;
 
 /**
+ * 前置处理器接口
+ * <p>
+ * 前置处理器是在测试步骤执行之前运行的特殊处理器，用于执行测试前的准备工作。
+ * 例如设置环境变量、准备测试数据、初始化外部资源等操作。
+ * </p>
+ * <p>
+ * 前置处理器的典型应用场景包括：
+ * <ul>
+ *   <li>在HTTP请求发送前设置请求头或请求参数</li>
+ *   <li>准备测试需要的数据，如创建测试用户或测试数据</li>
+ *   <li>设置或重置测试环境状态</li>
+ *   <li>执行前置条件检查</li>
+ * </ul>
+ * </p>
+ * <p>
+ * 该接口通过 {@link JSONType} 注解指定了特定的反序列化器 {@link PreprocessorObjectReader}，
+ * 用于在从JSON配置文件加载处理器时正确地反序列化前置处理器对象。
+ * </p>
+ *
  * @author xiaomi
  */
 @JSONType(deserializer = PreprocessorObjectReader.class)

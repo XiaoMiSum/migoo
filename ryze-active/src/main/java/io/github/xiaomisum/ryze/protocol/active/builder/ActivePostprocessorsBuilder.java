@@ -35,21 +35,51 @@ import io.github.xiaomisum.ryze.support.Customizer;
 import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
- * active 自定义后置处理器列表构建器，提供 active 自定义后置处理器列表的构建方法
+ * ActiveMQ自定义后置处理器列表构建器
+ * <p>
+ * 提供构建ActiveMQ自定义后置处理器列表的多种方式：
+ * 1. 直接添加已构建的ActivePostprocessor实例
+ * 2. 通过Customizer函数式接口配置并构建ActivePostprocessor实例
+ * 3. 通过ActivePostprocessor.Builder实例构建并添加
+ * 4. 通过Groovy闭包配置并构建ActivePostprocessor实例
+ * </p>
  *
  * @author xiaomi
  */
 public class ActivePostprocessorsBuilder extends ExtensiblePostprocessorsBuilder<ActivePostprocessorsBuilder, DefaultExtractorsBuilder> {
 
+    /**
+     * 创建ActivePostprocessorsBuilder实例
+     *
+     * @return 新的ActivePostprocessorsBuilder实例
+     */
     public static ActivePostprocessorsBuilder builder() {
         return new ActivePostprocessorsBuilder();
     }
 
+    /**
+     * 添加已构建的ActivePostprocessor后置处理器
+     *
+     * @param postprocessor 已构建的ActivePostprocessor实例
+     * @return 当前构建器实例，支持链式调用
+     */
     public ActivePostprocessorsBuilder active(ActivePostprocessor postprocessor) {
         postprocessors.add(postprocessor);
         return self;
     }
 
+    /**
+     * 通过Customizer函数式接口配置并构建ActivePostprocessor实例
+     * <p>
+     * 执行流程：
+     * 1. 创建ActivePostprocessor.Builder实例
+     * 2. 使用Customizer配置Builder
+     * 3. 构建ActivePostprocessor实例并添加到后置处理器列表
+     * </p>
+     *
+     * @param customizer Customizer函数式接口，用于配置ActivePostprocessor.Builder
+     * @return 当前构建器实例，支持链式调用
+     */
     public ActivePostprocessorsBuilder active(Customizer<ActivePostprocessor.Builder> customizer) {
         var builder = ActivePostprocessor.builder();
         customizer.customize(builder);
@@ -57,11 +87,29 @@ public class ActivePostprocessorsBuilder extends ExtensiblePostprocessorsBuilder
         return self;
     }
 
+    /**
+     * 通过ActivePostprocessor.Builder实例构建并添加后置处理器
+     *
+     * @param builder ActivePostprocessor.Builder实例
+     * @return 当前构建器实例，支持链式调用
+     */
     public ActivePostprocessorsBuilder active(ActivePostprocessor.Builder builder) {
         postprocessors.add(builder.build());
         return self;
     }
 
+    /**
+     * 通过Groovy闭包配置并构建ActivePostprocessor实例
+     * <p>
+     * 执行流程：
+     * 1. 创建ActivePostprocessor.Builder实例
+     * 2. 使用Groovy闭包配置Builder
+     * 3. 构建ActivePostprocessor实例并添加到后置处理器列表
+     * </p>
+     *
+     * @param closure Groovy闭包，用于配置ActivePostprocessor.Builder
+     * @return 当前构建器实例，支持链式调用
+     */
     public ActivePostprocessorsBuilder active(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = ActivePostprocessor.Builder.class) Closure<?> closure) {
         var builder = ActivePostprocessor.builder();
         call(closure, builder);

@@ -37,11 +37,29 @@ import io.github.xiaomisum.ryze.core.testelement.TestElementConfigureGroup;
 import java.lang.reflect.Type;
 
 /**
+ * 测试元素配置组对象反序列化器
+ * <p>
+ * 该类实现了FastJSON的ObjectReader接口，用于将JSON数据反序列化为TestElementConfigureGroup对象。
+ * TestElementConfigureGroup用于存储测试元素的配置信息组。
+ * </p>
+ *
  * @author xiaomi
  * Created at 2025/7/19 22:16
  */
 public class TestElementConfigureObjectReader implements ObjectReader<TestElementConfigureGroup> {
 
+    /**
+     * 从JSON读取器中读取并构建测试元素配置组对象
+     * <p>
+     * 该方法会解析JSON数据并直接创建TestElementConfigureGroup实例。
+     * </p>
+     *
+     * @param jsonReader JSON读取器
+     * @param fieldType  字段类型
+     * @param fieldName  字段名称
+     * @param features   特性标志
+     * @return 解析后的测试元素配置组对象
+     */
     @Override
     public TestElementConfigureGroup readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
         var value = jsonReader.readObject();

@@ -26,12 +26,30 @@
 package io.github.xiaomisum.ryze.core.builder;
 
 /**
- * 默认验证器构建，提供Core模块下所有验证器构建方法
+ * 默认验证器构建器，提供Core模块下所有验证器构建方法
+ *
+ * <p>该构建器是 {@link ExtensibleAssertionsBuilder}的具体实现，
+ * 提供了框架核心模块中所有内置验证器的构建方法。</p>
+ *
+ * <p>验证器用于验证测试执行结果是否符合预期，是测试断言机制的核心组件。
+ * 通过该构建器可以方便地构建各种类型的验证器。</p>
+ *
+ * <p>主要功能包括：
+ * <ul>
+ *   <li>提供核心模块下所有验证器的构建方法</li>
+ *   <li>支持流畅的构建器模式</li>
+ *   <li>可作为其他自定义验证器构建器的基础</li>
+ * </ul></p>
  *
  * @author xiaomi
  */
 public class DefaultAssertionsBuilder extends ExtensibleAssertionsBuilder<DefaultAssertionsBuilder> {
 
+    /**
+     * 创建默认验证器构建器实例
+     *
+     * @return 默认验证器构建器实例
+     */
     public static DefaultAssertionsBuilder builder() {
         return new DefaultAssertionsBuilder();
     }

@@ -26,16 +26,27 @@
 package io.github.xiaomisum.ryze.core.assertion;
 
 /**
+ * 验证规则接口，定义了断言验证规则的基本规范
+ * 
+ * <p>所有验证规则都需要实现该接口，提供具体的验证逻辑实现。
+ * 验证规则用于比较实际值和期望值，返回验证结果。</p>
+ * 
+ * <p>常见的验证规则包括相等性比较、包含关系、大小比较、正则匹配等。
+ * 每个规则实现类通常对应一种特定的比较操作。</p>
+ * 
  * @author xiaomi
+ * @see AbstractAssertion 抽象断言类
  */
 public interface Rule {
 
     /**
-     * 断言规格执行
-     *
-     * @param actual   实际值
-     * @param expected 期望值
-     * @return 对比结果
+     * 执行断言规则验证
+     * 
+     * <p>该方法实现具体的验证逻辑，比较实际值和期望值是否符合规则要求。</p>
+     * 
+     * @param actual 实际值，来自测试执行结果
+     * @param expected 期望值，来自断言配置
+     * @return 验证结果，true表示符合规则，false表示不符合规则
      */
     boolean assertThat(Object actual, Object expected);
 }

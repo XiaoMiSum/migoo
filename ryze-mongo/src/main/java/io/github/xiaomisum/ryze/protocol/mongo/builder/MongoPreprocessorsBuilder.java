@@ -35,21 +35,61 @@ import io.github.xiaomisum.ryze.support.Customizer;
 import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
- * mongo 自定义前置处理器列表构建器，提供 mongo 自定义前置处理器列表的构建方法
+ * MongoDB 前置处理器列表构建器
+ * <p>
+ * 该类用于构建 MongoDB 前置处理器列表，提供多种方式添加 MongoDB 前置处理器。
+ * 它继承自 ExtensiblePreprocessorsBuilder，支持链式调用和多种配置方式。
+ * </p>
+ * <p>
+ * 主要功能：
+ * <ul>
+ *   <li>提供多种 mongo 方法重载，支持不同配置方式</li>
+ *   <li>支持直接添加 MongoPreprocessor 实例</li>
+ *   <li>支持使用 Customizer 配置 MongoPreprocessor</li>
+ *   <li>支持使用 Builder 配置 MongoPreprocessor</li>
+ *   <li>支持使用 Groovy Closure 配置 MongoPreprocessor</li>
+ * </ul>
+ * </p>
  *
  * @author xiaomi
  */
 public class MongoPreprocessorsBuilder extends ExtensiblePreprocessorsBuilder<MongoPreprocessorsBuilder, DefaultExtractorsBuilder> {
 
+    /**
+     * 创建 MongoPreprocessorsBuilder 实例
+     * <p>
+     * 静态工厂方法，用于创建 MongoPreprocessorsBuilder 实例。
+     * </p>
+     *
+     * @return MongoPreprocessorsBuilder 实例
+     */
     public static MongoPreprocessorsBuilder builder() {
         return new MongoPreprocessorsBuilder();
     }
 
+    /**
+     * 添加 MongoDB 前置处理器
+     * <p>
+     * 直接添加 MongoPreprocessor 实例到前置处理器列表中。
+     * </p>
+     *
+     * @param preprocessor MongoPreprocessor 实例
+     * @return 当前构建器实例，支持链式调用
+     */
     public MongoPreprocessorsBuilder mongo(MongoPreprocessor preprocessor) {
         preprocessors.add(preprocessor);
         return self;
     }
 
+    /**
+     * 添加 MongoDB 前置处理器
+     * <p>
+     * 使用 Customizer 配置 MongoPreprocessor.Builder，然后构建并添加到前置处理器列表中。
+     * </p>
+     *
+     * @param customizer 用于配置 MongoPreprocessor.Builder 的 Customizer
+     * @return 当前构建器实例，支持链式调用
+     */
     public MongoPreprocessorsBuilder mongo(Customizer<MongoPreprocessor.Builder> customizer) {
         var builder = MongoPreprocessor.builder();
         customizer.customize(builder);
@@ -57,11 +97,29 @@ public class MongoPreprocessorsBuilder extends ExtensiblePreprocessorsBuilder<Mo
         return self;
     }
 
+    /**
+     * 添加 MongoDB 前置处理器
+     * <p>
+     * 使用 MongoPreprocessor.Builder 构建 MongoPreprocessor 实例，然后添加到前置处理器列表中。
+     * </p>
+     *
+     * @param builder MongoPreprocessor.Builder 实例
+     * @return 当前构建器实例，支持链式调用
+     */
     public MongoPreprocessorsBuilder mongo(MongoPreprocessor.Builder builder) {
         preprocessors.add(builder.build());
         return self;
     }
 
+    /**
+     * 添加 MongoDB 前置处理器
+     * <p>
+     * 使用 Groovy Closure 配置 MongoPreprocessor.Builder，然后构建并添加到前置处理器列表中。
+     * </p>
+     *
+     * @param closure 用于配置 MongoPreprocessor.Builder 的 Groovy Closure
+     * @return 当前构建器实例，支持链式调用
+     */
     public MongoPreprocessorsBuilder mongo(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = MongoPreprocessor.Builder.class) Closure<?> closure) {
         var builder = MongoPreprocessor.builder();
         call(closure, builder);

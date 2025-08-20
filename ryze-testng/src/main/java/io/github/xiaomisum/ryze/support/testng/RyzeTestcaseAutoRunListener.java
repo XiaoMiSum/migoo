@@ -30,7 +30,6 @@ package io.github.xiaomisum.ryze.support.testng;
 
 import io.github.xiaomisum.ryze.core.SessionRunner;
 import io.github.xiaomisum.ryze.core.testelement.TestElement;
-import io.github.xiaomisum.ryze.support.testng.annotation.AnnotationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.IHookCallBack;
@@ -43,17 +42,34 @@ import java.util.Objects;
  * 自动运行 RyzeTestNGTestcase，
  * <p>
  * 凡继承此类的测试类，若测试用例的参数为 TestElement，则自动运行
+ * </p>
+ * <p>
+ * 该类实现了TestNG的{@link IHookable}接口，
+ * 允许在测试方法执行前拦截并自定义执行逻辑。
+ * 主要功能是自动识别和执行类型为 {@link TestElement}的测试参数，
+ * 无需在测试方法中手动调用执行逻辑。
+ * </p>
  *
  * @author xiaomi
  */
-public class RyzeTestcaseAutoRunListener implements IHookable {
+public class RyzeTestcaseAutoRunListener implements IHookable, TestNGConstantsInterface {
 
     static Logger logger = LoggerFactory.getLogger(RyzeTestcaseAutoRunListener.class);
 
+    /**
+     * 拦截并运行测试方法
+     * <p>
+     * 该方法会检查测试方法是否为Ryze测试方法，并且第一个参数是否为 {@link TestElement}类型，
+     * 如果符合条件则自动执行该 {@link TestElement}，否则执行原始测试方法。
+     * </p>
+     *
+     * @param iHookCallBack 回调接口，用于执行原始测试方法
+     * @param iTestResult   测试结果
+     */
     @Override
     public void run(IHookCallBack iHookCallBack, ITestResult iTestResult) {
         logger.debug("IHookable run test: {}", iTestResult.getMethod().getMethodName());
-        if (!AnnotationUtils.isRyzeTest(iTestResult.getMethod().getConstructorOrMethod().getMethod())) {
+        if (!(boolean) iTestResult.getAttribute(RYZE_TEST_METHOD)) {
             logger.debug("Method 不是Ryze注解测试，执行原始测试");
             iHookCallBack.runTestMethod(iTestResult);
             return;

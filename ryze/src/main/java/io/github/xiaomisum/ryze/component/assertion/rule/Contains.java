@@ -33,12 +33,63 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 包含性验证规则实现类
+ *
+ * <p>该类实现了包含性验证规则，用于判断实际值是否包含期望值。
+ * 支持字符串、Map和List类型的包含性检查。</p>
+ *
+ * <p>支持的规则关键字: "contains", "contain", "ct", "⊆"</p>
+ *
+ * <p>验证逻辑：
+ * <ul>
+ *   <li>String类型: 检查字符串是否包含指定子串</li>
+ *   <li>Map类型: 检查Map是否包含指定的键或值</li>
+ *   <li>List类型: 检查List是否包含指定元素</li>
+ *   <li>其他类型: 返回false</li>
+ * </ul>
+ * </p>
+ *
+ * <p>使用示例：
+ * <pre>
+ * {
+ *   "testclass": "http"
+ *   "field": "message",
+ *   "expected": "success",
+ *   "rule": "contains"
+ * }
+ *
+ * {
+ *   "testclass": "http"
+ *   "field": "data",
+ *   "expected": "id",
+ *   "rule": "ct"
+ * }
+ * </pre>
+ * </p>
+ *
  * @author xiaomi
- * @date 2019-08-13 22:17
+ * @see Rule 验证规则接口
+ * @since 2019-08-13 22:17
  */
 @KW({"contains", "contain", "ct", "⊆"})
 public class Contains extends BaseRule implements Rule {
 
+    /**
+     * 执行包含性验证
+     *
+     * <p>验证逻辑：
+     * <ul>
+     *   <li>String类型: 检查字符串是否包含指定子串</li>
+     *   <li>Map类型: 检查Map是否包含指定的键或值</li>
+     *   <li>List类型: 检查List是否包含指定元素</li>
+     *   <li>其他类型: 返回false</li>
+     * </ul>
+     * </p>
+     *
+     * @param actual   实际值
+     * @param expected 期望值
+     * @return 验证结果，true表示包含，false表示不包含
+     */
     @Override
     public boolean assertThat(Object actual, Object expected) {
         return switch (actual) {

@@ -36,6 +36,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
+ * 消息摘要函数实现类
+ * 
+ * <p>该类实现了消息摘要算法功能，支持MD5、SHA等常见的摘要算法。
+ * 可用于生成数据的摘要值，常用于密码加密、数据完整性校验等场景。</p>
+ * 
+ * <p>在测试用例中可以通过 ${digest()} 的方式调用该函数。</p>
+ * 
  * @author xiaomi
  */
 public class Digest implements Function {
@@ -47,11 +54,27 @@ public class Digest implements Function {
 
     /**
      * 获取信息摘要，通常为MD5，支持四个参数
-     * 参数：
-     * algorithm: 算法，允许为空，默认为md5
-     * content: 待编码的原始内容，非空
-     * salt：盐，允许为空
-     * upper: 是否将结果转为大写，允许为空，默认 false
+     * 
+     * <p>参数说明：
+     * <ol>
+     *   <li>algorithm: 算法名称，如"md5"、"sha1"等，允许为空，默认为"md5"</li>
+     *   <li>content: 待编码的原始内容，非空</li>
+     *   <li>salt：盐值，用于增加摘要的复杂度，允许为空</li>
+     *   <li>upper: 是否将结果转为大写，允许为空，默认false</li>
+     * </ol>
+     * </p>
+     * 
+     * <p>使用示例：
+     * <pre>
+     * ${digest("md5", "password")}                   // 返回password的md5摘要
+     * ${digest("sha1", "password", "salt", true)}    // 返回password+salt的sha1大写摘要
+     * </pre>
+     * </p>
+     * 
+     * @param context 上下文对象
+     * @param args 参数列表，包含算法、内容、盐值和大小写选项
+     * @return 生成的信息摘要字符串
+     * @throws RuntimeException 当content为空或算法不支持时抛出异常
      */
     @Override
     public Object execute(ContextWrapper context, Args args) {
@@ -67,6 +90,17 @@ public class Digest implements Function {
     }
 
 
+    /**
+     * 执行摘要算法并生成十六进制字符串
+     * 
+     * @param algorithm 算法名称，如"md5"、"sha1"等
+     * @param content 待处理的内容
+     * @param salt 盐值
+     * @param upper 是否转换为大写
+     * @return 生成的十六进制摘要字符串
+     * @throws IllegalArgumentException 当content为空时抛出
+     * @throws RuntimeException 当算法不支持时抛出
+     */
     private String hex(String algorithm, String content, String salt, boolean upper) {
         if (StringUtils.isBlank(content)) {
             throw new IllegalArgumentException("content is null or empty");

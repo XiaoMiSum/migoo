@@ -42,17 +42,54 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
+ * Redis协议JSON拦截器
+ * <p>
+ * 该类用于处理Redis协议相关测试元件的JSON反序列化过程。
+ * 主要功能是将JSON配置转换为对应的Redis配置项对象，并处理配置项的兼容性问题。
+ * </p>
+ *
+ * <p>主要功能：
+ * <ul>
+ *   <li>支持Redis取样器、数据源、前置/后置处理器的反序列化</li>
+ *   <li>处理旧版本配置项的兼容性转换</li>
+ * </ul>
+ * </p>
+ *
  * @author xiaomi
- * Created at 2025/7/21 22:25
+ * @since 2025/7/21 22:25
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class RedisJSONInterceptor implements JSONInterceptor, RedisConstantsInterface {
 
+    /**
+     * 获取支持的类列表
+     * <p>
+     * 返回该拦截器支持处理的类列表，包括：
+     * <ul>
+     *   <li>RedisSampler - Redis取样器</li>
+     *   <li>RedisDatasource - Redis数据源</li>
+     *   <li>RedisPreprocessor - Redis前置处理器</li>
+     *   <li>RedisPostprocessor - Redis后置处理器</li>
+     * </ul>
+     * </p>
+     *
+     * @return 支持的类列表
+     */
     @Override
     public List<Class<?>> getSupportedClasses() {
         return List.of(RedisSampler.class, RedisDatasource.class, RedisPreprocessor.class, RedisPostprocessor.class);
     }
 
+    /**
+     * 反序列化配置项
+     * <p>
+     * 将JSON对象转换为Redis配置项对象。处理旧版本配置项的兼容性问题，
+     * 将分散的主机、端口等字段合并为URL字段。
+     * </p>
+     *
+     * @param value JSON对象
+     * @return Redis配置项对象
+     */
     @Override
     public ConfigureItem<?> deserializeConfigureItem(Object value) {
         if (value instanceof Map configure) {
@@ -64,6 +101,15 @@ public class RedisJSONInterceptor implements JSONInterceptor, RedisConstantsInte
     }
 
 
+    /**
+     * 标准化配置
+     * <p>
+     * 如果配置中没有URL字段，则根据HOST、PORT、USERNAME、PASSWORD、DATABASE字段
+     * 构造标准的Redis URL格式：redis://[username:password@]host[:port][/db]
+     * </p>
+     *
+     * @param testElementMap 测试元件映射表
+     */
     private void standardizeConfig(Map<String, Object> testElementMap) {
         if (StringUtils.isNotBlank((String) testElementMap.get(URL))) {
             return;

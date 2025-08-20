@@ -34,19 +34,42 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 /**
+ * URL编码函数实现类
+ *
+ * <p>该类用于对字符串进行URL编码操作。
+ * 常用于构造URL参数、编码特殊字符等场景。</p>
+ *
+ * <p>在测试用例中可以通过 ${url_encode()} 的方式调用该函数。</p>
+ *
  * @author xiaomi
  */
 public class UrlEncode implements Function {
 
     @Override
     public String key() {
-        return "urlEncode";
+        return "url_encode";
     }
 
     /**
-     * 将传入的字符串进行 url encode，支持一个参数
-     * 参数：
-     * content: 待url encode的字符串，非空
+     * 将传入的字符串进行URL编码，支持一个参数
+     *
+     * <p>参数说明：
+     * <ol>
+     *   <li>content: 待URL编码的字符串，非空</li>
+     * </ol>
+     * </p>
+     *
+     * <p>使用示例：
+     * <pre>
+     * ${url_encode("Hello World")}     // 返回 "Hello%20World"
+     * ${url_encode("中文")}            // 返回 "%E4%B8%AD%E6%96%87"
+     * </pre>
+     * </p>
+     *
+     * @param context 上下文对象
+     * @param args    参数列表，包含待编码的字符串
+     * @return 编码后的字符串
+     * @throws RuntimeException 当参数数量不正确或内容为空时抛出异常
      */
     @Override
     public String execute(ContextWrapper context, Args args) {

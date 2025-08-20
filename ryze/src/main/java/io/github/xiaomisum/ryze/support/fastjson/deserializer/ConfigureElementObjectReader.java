@@ -48,11 +48,38 @@ import static io.github.xiaomisum.ryze.core.testelement.configure.ConfigureEleme
 import static io.github.xiaomisum.ryze.core.testelement.configure.ConfigureElementConstantsInterface.VARIABLE_NAME;
 
 /**
+ * 配置元件对象反序列化器
+ * <p>
+ * 该类实现了FastJSON的ObjectReader接口，用于将JSON数据反序列化为ConfigureElement对象。
+ * 支持自动识别和创建不同类型的配置元件对象。
+ * </p>
+ * <p>
+ * 反序列化逻辑：
+ * 1. 将所有键转换为小写以保证一致性
+ * 2. 根据testClass字段查找对应的配置元件类
+ * 3. 标准化配置结构，将配置属性移到config字段下
+ * 4. 处理variableName和refName的兼容性
+ * </p>
+ *
  * @author xiaomi
  * Created at 2025/7/19 14:14
  */
 @SuppressWarnings({"rawtypes"})
 public class ConfigureElementObjectReader implements ObjectReader<ConfigureElement> {
+    /**
+     * 从JSON读取器中读取并构建配置元件对象
+     * <p>
+     * 该方法会解析JSON数据，根据testClass字段确定具体的配置元件类型，
+     * 并创建对应的配置元件对象实例。
+     * </p>
+     *
+     * @param jsonReader JSON读取器
+     * @param fieldType  字段类型
+     * @param fieldName  字段名称
+     * @param features   特性标志
+     * @return 解析后的配置元件对象
+     * @throws JSONException 当没有匹配的配置元件或JSON格式错误时抛出
+     */
     @Override
     public ConfigureElement readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
         var testElementMap1 = jsonReader.readObject();
@@ -67,6 +94,16 @@ public class ConfigureElementObjectReader implements ObjectReader<ConfigureEleme
         return JSON.parseObject(rawData, pair.getLeft());
     }
 
+    /**
+     * 检查并确定配置元件的类型
+     * <p>
+     * 根据testClass字段在应用配置中查找对应的配置元件类。
+     * </p>
+     *
+     * @param elementMap 配置元件Map
+     * @return 包含配置元件类和键的Pair对象
+     * @throws JSONException 当没有匹配的配置元件时抛出
+     */
     private Pair<Class<? extends ConfigureElement>, String> checkTestElement(Map<String, Object> elementMap) {
         var keyMap = ApplicationConfig.getConfigureElementKeyMap();
         var key = elementMap.get(TEST_CLASS).toString().toLowerCase();
@@ -77,6 +114,16 @@ public class ConfigureElementObjectReader implements ObjectReader<ConfigureEleme
         throw new JSONException("没有匹配的配置元件, JSON String: " + JSON.toJSONString(elementMap));
     }
 
+    /**
+     * 标准化配置结构
+     * <p>
+     * 该方法会重新组织配置元件的结构，将配置属性移到config字段下，
+     * 并处理variableName和refName的兼容性。
+     * </p>
+     *
+     * @param elementMap 配置元件Map
+     * @param key        配置元件键
+     */
     private void standardizeConfig(Map<String, Object> elementMap, String key) {
         elementMap.remove(TEST_CLASS); // 删除测试类
         var variableName = elementMap.remove(VARIABLE_NAME);

@@ -29,8 +29,18 @@ import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
 
 /**
  * 可扩展的验证器列表构建器，可通过此构建器添加自定义验证器
+ * 
+ * <p>该构建器为测试元件提供断言构建功能，允许用户通过扩展此类来添加自定义的断言构建方法。
+ * 它是所有断言构建器的基类，提供了构建断言列表的通用方法。</p>
+ * 
+ * <p>主要功能包括：
+ * <ul>
+ *   <li>提供构建断言列表的框架</li>
+ *   <li>支持通过继承扩展自定义断言构建方法</li>
+ *   <li>与测试元件构建系统集成</li>
+ * </ul></p>
  *
- * @param <SELF>
+ * @param <SELF> 实际的构建器类型，用于实现流畅的构建器模式
  * @author xiaomi
  */
 public abstract class ExtensibleAssertionsBuilder<SELF extends ExtensibleAssertionsBuilder<SELF>> extends AbstractTestElement.AssertionsBuilder<SELF> {

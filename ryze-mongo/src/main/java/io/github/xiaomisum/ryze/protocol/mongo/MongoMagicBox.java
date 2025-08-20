@@ -34,16 +34,47 @@ import io.github.xiaomisum.ryze.support.Customizer;
 import io.github.xiaomisum.ryze.support.groovy.Groovy;
 
 /**
- * 魔法盒子 提供函数式取样器执行入口
+ * MongoDB 魔法盒子工具类
+ * <p>
+ * 提供函数式编程风格的 MongoDB 采样器执行入口，简化 MongoDB 操作的调用方式。
+ * 支持使用 Groovy Closure 或 Java Customizer 来配置 MongoDB 采样器。
+ * </p>
+ * <p>
+ * 主要功能：
+ * <ul>
+ *   <li>提供多种 mongo 方法重载，支持不同配置方式</li>
+ *   <li>封装 MongoDB 采样器的构建和执行过程</li>
+ *   <li>支持带标题和不带标题的 MongoDB 操作执行</li>
+ * </ul>
+ * </p>
  *
  * @author xiaomi
  */
 public class MongoMagicBox extends MagicBox {
 
+    /**
+     * 执行 MongoDB 操作（无标题）
+     * <p>
+     * 使用 Groovy Closure 方式配置并执行 MongoDB 采样器，不指定操作标题。
+     * </p>
+     *
+     * @param closure Groovy Closure，用于配置 MongoSampler.Builder
+     * @return 执行结果
+     */
     public static Result mongo(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = MongoSampler.Builder.class) Closure<?> closure) {
         return mongo("", closure);
     }
 
+    /**
+     * 执行 MongoDB 操作（指定标题）
+     * <p>
+     * 使用 Groovy Closure 方式配置并执行 MongoDB 采样器，指定操作标题。
+     * </p>
+     *
+     * @param title   操作标题，用于标识此次 MongoDB 操作
+     * @param closure Groovy Closure，用于配置 MongoSampler.Builder
+     * @return 执行结果
+     */
     public static Result mongo(String title,
                                @DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = MongoSampler.Builder.class) Closure<?> closure) {
         var builder = MongoSampler.builder();
@@ -51,10 +82,29 @@ public class MongoMagicBox extends MagicBox {
         return MagicBox.runTest(title, builder.build());
     }
 
+    /**
+     * 执行 MongoDB 操作（无标题）
+     * <p>
+     * 使用 Java Customizer 方式配置并执行 MongoDB 采样器，不指定操作标题。
+     * </p>
+     *
+     * @param customizer Java Customizer，用于配置 MongoSampler.Builder
+     * @return 执行结果
+     */
     public static Result mongo(Customizer<MongoSampler.Builder> customizer) {
         return mongo("", customizer);
     }
 
+    /**
+     * 执行 MongoDB 操作（指定标题）
+     * <p>
+     * 使用 Java Customizer 方式配置并执行 MongoDB 采样器，指定操作标题。
+     * </p>
+     *
+     * @param title      操作标题，用于标识此次 MongoDB 操作
+     * @param customizer Java Customizer，用于配置 MongoSampler.Builder
+     * @return 执行结果
+     */
     public static Result mongo(String title, Customizer<MongoSampler.Builder> customizer) {
         var builder = MongoSampler.builder();
         customizer.customize(builder);

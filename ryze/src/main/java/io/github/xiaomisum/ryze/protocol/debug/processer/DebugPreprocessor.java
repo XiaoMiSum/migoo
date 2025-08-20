@@ -81,7 +81,7 @@ public class DebugPreprocessor extends AbstractProcessor<DebugPreprocessor, Debu
         }
     }
 
-    public static class Builder extends AbstractProcessor.PreprocessorBuilder<DebugPreprocessor, Builder, DebugConfigureItem,
+    public static class Builder extends PreprocessorBuilder<DebugPreprocessor, Builder, DebugConfigureItem,
             DebugConfigureItem.Builder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public DebugPreprocessor build() {

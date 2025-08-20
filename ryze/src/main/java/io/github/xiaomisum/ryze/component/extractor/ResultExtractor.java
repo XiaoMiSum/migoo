@@ -33,15 +33,41 @@ import io.github.xiaomisum.ryze.support.ValidateResult;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * 结果提取器，用于提取完整的响应结果内容
+ *
+ * <p>该提取器用于将整个响应结果（如HTTP响应体）提取为一个变量，
+ * 便于后续处理或验证。与JSON提取器和正则表达式提取器不同，
+ * 结果提取器不需要指定提取表达式[field]，而是提取完整的响应内容。</p>
+ *
+ * <p>使用场景示例：
+ * <ul>
+ *   <li>需要对整个响应体进行后续处理</li>
+ *   <li>需要将响应体传递给自定义函数处理</li>
+ *   <li>需要保存完整的响应内容用于调试</li>
+ * </ul></p>
+ *
  * @author xiaomi
  */
 @KW({"ResultExtractor", "result_extractor", "result"})
 public class ResultExtractor extends AbstractExtractor {
 
+    /**
+     * 创建一个新的结果提取器构建器
+     *
+     * @return 结果提取器构建器实例
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * 执行完整结果提取
+     *
+     * <p>将响应体的完整内容提取为字符串并存储到指定变量中。</p>
+     *
+     * @param result 取样结果，包含待提取的响应数据
+     * @return 提取结果对象
+     */
     @Override
     protected ExtractResult extract(SampleResult result) {
         var res = new ExtractResult("Result 提取");
@@ -49,6 +75,14 @@ public class ResultExtractor extends AbstractExtractor {
         return res;
     }
 
+    /**
+     * 验证提取器配置的有效性
+     *
+     * <p>与基类的验证逻辑不同，结果提取器只验证引用名称[refName]是否为空，
+     * 因为它不需要提取表达式[field]。</p>
+     *
+     * @return 验证结果，包含所有验证错误信息
+     */
     @Override
     public ValidateResult validate() {
         ValidateResult result = new ValidateResult();
@@ -58,8 +92,14 @@ public class ResultExtractor extends AbstractExtractor {
         return result;
     }
 
-    public static class Builder extends AbstractExtractor.Builder<ResultExtractor.Builder, ResultExtractor> {
+    /**
+     * 结果提取器构建器，提供链式调用方式创建结果提取器实例
+     */
+    public static class Builder extends AbstractExtractor.Builder<Builder, ResultExtractor> {
 
+        /**
+         * 构造一个新的结果提取器构建器实例
+         */
         public Builder() {
             super(new ResultExtractor());
         }

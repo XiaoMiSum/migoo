@@ -37,25 +37,71 @@ import io.github.xiaomisum.ryze.support.ValidateResult;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * JDBC数据源配置元件
+ * <p>
+ * 该类实现了JDBC数据源的配置和管理功能，基于Druid连接池实现。
+ * 负责初始化数据库连接池，并将其注册到测试上下文中供其他元件使用。
+ * </p>
+ *
+ * <p>主要功能：
+ * <ul>
+ *   <li>配置和初始化Druid连接池</li>
+ *   <li>注册数据源到测试上下文</li>
+ *   <li>验证数据源配置的有效性</li>
+ *   <li>释放连接池资源</li>
+ * </ul>
+ * </p>
+ *
  * @author xiaomi
  */
 @KW({"jdbc", "jdbc_datasource", "jdbc_data_source"})
 public class JDBCDatasource extends AbstractConfigureElement<JDBCDatasource, JDBCConfigureItem, TestSuiteResult>
         implements Closeable, JDBCConstantsInterface {
+    /**
+     * Druid数据源实例
+     * <p>用于管理数据库连接池</p>
+     */
     @JSONField(serialize = false)
     private final DruidDataSource dataSource = new DruidDataSource();
 
+    /**
+     * 默认构造函数
+     */
     public JDBCDatasource() {
     }
 
+    /**
+     * 带构建器的构造函数
+     *
+     * @param builder 构建器实例
+     */
     public JDBCDatasource(Builder builder) {
         super(builder);
     }
 
+    /**
+     * 创建JDBC数据源构建器
+     *
+     * @return JDBC数据源构建器实例
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * 验证数据源配置的有效性
+     * <p>
+     * 检查必需的配置项是否完整，包括：
+     * <ul>
+     *   <li>数据源引用名称</li>
+     *   <li>数据库连接URL</li>
+     *   <li>数据库用户名</li>
+     *   <li>数据库密码</li>
+     * </ul>
+     * </p>
+     *
+     * @return 验证结果
+     */
     @Override
     public ValidateResult validate() {
         var result = super.validate();
@@ -74,6 +120,14 @@ public class JDBCDatasource extends AbstractConfigureElement<JDBCDatasource, JDB
         return result;
     }
 
+    /**
+     * 处理数据源配置
+     * <p>
+     * 初始化Druid连接池，设置连接参数，并将数据源注册到测试上下文的本地变量中。
+     * </p>
+     *
+     * @param context 测试上下文包装器
+     */
     @Override
     protected void doProcess(ContextWrapper context) {
         try {
@@ -92,11 +146,20 @@ public class JDBCDatasource extends AbstractConfigureElement<JDBCDatasource, JDB
         context.getSessionRunner().getContext().getLocalVariablesWrapper().put(refName, dataSource);
     }
 
+    /**
+     * 获取测试结果对象
+     *
+     * @return 测试套件结果对象
+     */
     @Override
     protected TestSuiteResult getTestResult() {
         return new TestSuiteResult("JDBC数据源配置：" + refName);
     }
 
+    /**
+     * 关闭数据源
+     * <p>释放Druid连接池占用的资源</p>
+     */
     @Override
     public void close() {
         dataSource.close();
@@ -104,14 +167,27 @@ public class JDBCDatasource extends AbstractConfigureElement<JDBCDatasource, JDB
 
     /**
      * JDBC数据源 测试元件 构建类
+     * <p>
+     * 提供链式调用方式创建JDBC数据源实例。
+     * </p>
      */
     public static class Builder extends AbstractConfigureElement.Builder<JDBCDatasource, Builder, JDBCConfigureItem, JDBCConfigureItem.Builder, TestSuiteResult> {
 
+        /**
+         * 构建JDBC数据源实例
+         *
+         * @return JDBC数据源实例
+         */
         @Override
         public JDBCDatasource build() {
             return new JDBCDatasource(this);
         }
 
+        /**
+         * 获取配置项构建器
+         *
+         * @return JDBC配置项构建器
+         */
         @Override
         protected JDBCConfigureItem.Builder getConfigureItemBuilder() {
             return JDBCConfigureItem.builder();

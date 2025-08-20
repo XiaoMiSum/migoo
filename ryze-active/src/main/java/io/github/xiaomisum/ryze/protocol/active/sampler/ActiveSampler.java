@@ -49,8 +49,34 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Objects;
 
 /**
+ * ActiveMQ消息取样器，用于向ActiveMQ发送消息
+ * <p>
+ * 该类实现了ActiveMQ消息的发送功能，支持发送到Topic或Queue。它继承自AbstractSampler，
+ * 提供了完整的测试组件生命周期管理，包括配置处理、消息发送、结果收集等。
+ * </p>
+ * <p>
+ * 主要功能包括：
+ * <ul>
+ *   <li>支持配置ActiveMQ连接参数（Broker URL、用户名、密码）</li>
+ *   <li>支持发送消息到Topic或Queue</li>
+ *   <li>支持多种消息格式（字符串、数字、布尔值、JSON对象等）</li>
+ *   <li>自动管理连接和会话资源</li>
+ *   <li>提供详细的请求和响应信息记录</li>
+ * </ul>
+ * </p>
+ * <p>
+ * 使用示例：
+ * <pre>
+ * ActiveSampler.builder()
+ *     .config(c -> c.brokerUrl("tcp://localhost:61616")
+ *                   .topic("test.topic")
+ *                   .message("Hello ActiveMQ"))
+ *     .build();
+ * </pre>
+ * </p>
+ *
  * @author mi.xiao
- * @date 2021/4/10 21:10
+ * @since 2021/4/10 21:10
  */
 @KW({"active_mq", "activemq", "active"})
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -62,28 +88,67 @@ public class ActiveSampler extends AbstractSampler<ActiveSampler, ActiveConfigur
     @JSONField(serialize = false)
     private String message;
 
+    /**
+     * 默认构造函数
+     */
     public ActiveSampler() {
         super();
     }
 
+    /**
+     * 使用构建器构造ActiveSampler实例
+     *
+     * @param builder 构建器实例
+     */
     public ActiveSampler(Builder builder) {
         super(builder);
     }
 
+    /**
+     * 获取构建器实例
+     *
+     * @return ActiveSampler.Builder 构建器实例
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * 创建测试结果实例
+     *
+     * @return DefaultSampleResult 测试结果实例
+     */
     @Override
     protected DefaultSampleResult getTestResult() {
         return new DefaultSampleResult(runtime.id, runtime.title);
     }
 
+    /**
+     * 执行消息发送操作
+     *
+     * @param context 上下文包装器
+     * @param result  测试结果
+     */
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
         Active.execute(runtime.config, factory, message, result);
     }
 
+    /**
+     * 处理请求前的配置和准备工作
+     * <p>
+     * 主要完成以下操作：
+     * <ol>
+     *   <li>合并本地配置和全局配置</li>
+     *   <li>创建ActiveMQ 连接池;</li>
+     *   <li>处理消息内容格式</li>
+     *   <li>构建请求信息</li>
+     * </ol>
+     * </p>
+     *
+     * @param context 上下文包装器
+     * @param result  测试结果
+     */
     @Override
     protected void handleRequest(ContextWrapper context, DefaultSampleResult result) {
         super.handleRequest(context, result);
@@ -103,6 +168,19 @@ public class ActiveSampler extends AbstractSampler<ActiveSampler, ActiveConfigur
         result.setRequest(RealActiveRequest.build(runtime.getConfig(), message));
     }
 
+    /**
+     * 处理响应后的工作
+     * <p>
+     * 主要完成以下操作：
+     * <ol>
+     *   <li>设置空的响应结果（ActiveMQ发送操作本身不返回响应内容）</li>
+     *   <li>释放连接工厂资源</li>
+     * </ol>
+     * </p>
+     *
+     * @param context 上下文包装器
+     * @param result  测试结果
+     */
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
@@ -110,39 +188,81 @@ public class ActiveSampler extends AbstractSampler<ActiveSampler, ActiveConfigur
         factory = null;
     }
 
+    /**
+     * ActiveSampler构建器类
+     * <p>
+     * 提供构建ActiveSampler实例的方法，包括配置构建器、前置处理器构建器、
+     * 后置处理器构建器、断言构建器和变量提取器构建器。
+     * </p>
+     */
     public static class Builder extends AbstractSampler.Builder<ActiveSampler, Builder, ActiveConfigureItem,
             ActiveConfigureItem.Builder, ActiveConfigureElementsBuilder, ActivePreprocessorsBuilder, ActivePostprocessorsBuilder,
             DefaultAssertionsBuilder, DefaultExtractorsBuilder, DefaultSampleResult> {
+        /**
+         * 构建ActiveSampler实例
+         *
+         * @return ActiveSampler实例
+         */
         @Override
         public ActiveSampler build() {
             return new ActiveSampler(this);
         }
 
+        /**
+         * 获取断言构建器
+         *
+         * @return DefaultAssertionsBuilder 断言构建器
+         */
         @Override
         protected DefaultAssertionsBuilder getAssertionsBuilder() {
             return DefaultAssertionsBuilder.builder();
         }
 
+        /**
+         * 获取变量提取器构建器
+         *
+         * @return DefaultExtractorsBuilder 变量提取器构建器
+         */
         @Override
         protected DefaultExtractorsBuilder getExtractorsBuilder() {
             return DefaultExtractorsBuilder.builder();
         }
 
+        /**
+         * 获取配置元件构建器
+         *
+         * @return ActiveConfigureElementsBuilder 配置元件构建器
+         */
         @Override
         protected ActiveConfigureElementsBuilder getConfiguresBuilder() {
             return ActiveConfigureElementsBuilder.builder();
         }
 
+        /**
+         * 获取前置处理器构建器
+         *
+         * @return ActivePreprocessorsBuilder 前置处理器构建器
+         */
         @Override
         protected ActivePreprocessorsBuilder getPreprocessorsBuilder() {
             return ActivePreprocessorsBuilder.builder();
         }
 
+        /**
+         * 获取后置处理器构建器
+         *
+         * @return ActivePostprocessorsBuilder 后置处理器构建器
+         */
         @Override
         protected ActivePostprocessorsBuilder getPostprocessorsBuilder() {
             return ActivePostprocessorsBuilder.builder();
         }
 
+        /**
+         * 获取配置项构建器
+         *
+         * @return ActiveConfigureItem.Builder 配置项构建器
+         */
         @Override
         protected ActiveConfigureItem.Builder getConfigureItemBuilder() {
             return ActiveConfigureItem.builder();

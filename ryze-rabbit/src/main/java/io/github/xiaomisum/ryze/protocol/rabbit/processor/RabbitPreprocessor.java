@@ -44,41 +44,96 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Objects;
 
 /**
+ * RabbitMQ 前置处理器
+ * <p>
+ * 该类用于在测试执行前发送 RabbitMQ 消息，通常用于准备测试环境或发送测试开始通知。
+ * 它继承自 AbstractProcessor 并实现了 Preprocessor 接口。
+ * </p>
+ *
  * @author mi.xiao
- * @date 2024/11/04 20:09
+ * @since 2024/11/04 20:09
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
 @KW({"rabbitmq", "rabbit", "rabbit_mq", "rabbit_preprocessor"})
 public class RabbitPreprocessor extends AbstractProcessor<RabbitPreprocessor, RabbitConfigureItem, DefaultSampleResult> implements Preprocessor, RabbitConstantsInterface {
 
+    /**
+     * 连接工厂
+     */
     @JSONField(serialize = false)
     private ConnectionFactory factory;
+
+    /**
+     * 消息内容
+     */
     @JSONField(serialize = false)
     private String message;
 
+    /**
+     * 默认构造函数
+     */
     public RabbitPreprocessor() {
         super();
     }
 
+    /**
+     * 构造函数，使用构建器创建 RabbitPreprocessor 实例
+     *
+     * @param builder 构建器实例
+     */
     public RabbitPreprocessor(Builder builder) {
         super(builder);
     }
 
+    /**
+     * 创建构建器实例
+     * <p>
+     * 工厂方法，用于创建 RabbitPreprocessor.Builder 构建器实例。
+     * </p>
+     *
+     * @return RabbitPreprocessor.Builder 实例
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * 获取测试结果对象
+     * <p>
+     * 创建并返回用于记录测试结果的 DefaultSampleResult 对象。
+     * </p>
+     *
+     * @return 测试结果对象
+     */
     @Override
     protected DefaultSampleResult getTestResult() {
         return new DefaultSampleResult(runtime.getId(), StringUtils.isBlank(runtime.getTitle()) ? "Rabbit 前置处理器" : runtime.getTitle());
 
     }
 
+    /**
+     * 执行采样操作
+     * <p>
+     * 使用 Rabbit 工具类执行消息发送操作。
+     * </p>
+     *
+     * @param context 上下文包装器
+     * @param result  采样结果对象
+     */
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
         Rabbit.execute(factory, runtime.getConfig(), message, result);
     }
 
+    /**
+     * 处理请求
+     * <p>
+     * 在发送消息前处理请求，包括合并配置项、创建连接工厂和准备消息内容。
+     * </p>
+     *
+     * @param context 上下文包装器
+     * @param result  采样结果对象
+     */
     @Override
     protected void handleRequest(ContextWrapper context, DefaultSampleResult result) {
         super.handleRequest(context, result);
@@ -98,6 +153,15 @@ public class RabbitPreprocessor extends AbstractProcessor<RabbitPreprocessor, Ra
         result.setRequest(RealRabbitRequest.build(runtime.getConfig(), message));
     }
 
+    /**
+     * 处理响应
+     * <p>
+     * 在发送消息后处理响应，包括设置响应结果和清理资源。
+     * </p>
+     *
+     * @param context 上下文包装器
+     * @param result  采样结果对象
+     */
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
@@ -105,18 +169,45 @@ public class RabbitPreprocessor extends AbstractProcessor<RabbitPreprocessor, Ra
         factory = null;
     }
 
-    public static class Builder extends AbstractProcessor.PreprocessorBuilder<RabbitPreprocessor, Builder, RabbitConfigureItem,
+    /**
+     * RabbitMQ 前置处理器构建器
+     * <p>
+     * 用于构建 RabbitMQ 前置处理器的内部构建器类。
+     * </p>
+     */
+    public static class Builder extends PreprocessorBuilder<RabbitPreprocessor, Builder, RabbitConfigureItem,
             RabbitConfigureItem.Builder, DefaultExtractorsBuilder, DefaultSampleResult> {
+        /**
+         * 构建 RabbitPreprocessor 实例
+         *
+         * @return RabbitPreprocessor 实例
+         */
         @Override
         public RabbitPreprocessor build() {
             return new RabbitPreprocessor(this);
         }
 
+        /**
+         * 获取提取器构建器
+         * <p>
+         * 创建并返回 DefaultExtractorsBuilder 实例。
+         * </p>
+         *
+         * @return DefaultExtractorsBuilder 实例
+         */
         @Override
         protected DefaultExtractorsBuilder getExtractorsBuilder() {
             return DefaultExtractorsBuilder.builder();
         }
 
+        /**
+         * 获取配置项构建器
+         * <p>
+         * 创建并返回 RabbitConfigureItem.Builder 实例。
+         * </p>
+         *
+         * @return RabbitConfigureItem.Builder 实例
+         */
         @Override
         protected RabbitConfigureItem.Builder getConfigureItemBuilder() {
             return RabbitConfigureItem.builder();

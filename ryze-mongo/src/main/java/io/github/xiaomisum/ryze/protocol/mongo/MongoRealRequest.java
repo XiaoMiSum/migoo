@@ -33,19 +33,68 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * MongoDB 真实请求信息类
+ * <p>
+ * 该类用于封装和格式化 MongoDB 操作的请求信息，包括连接地址、数据库名、集名称、操作类型和条件等。
+ * 它继承自 SampleResult.Real，提供了将 MongoDB 配置项转换为可读格式的请求信息的功能。
+ * </p>
+ * <p>
+ * 主要功能：
+ * <ul>
+ *   <li>存储 MongoDB 操作的详细信息</li>
+ *   <li>提供请求信息的格式化输出</li>
+ *   <li>支持从 MongoConfigItem 构建实例</li>
+ * </ul>
+ * </p>
+ */
 public class MongoRealRequest extends SampleResult.Real {
 
 
+    /**
+     * MongoDB 连接地址
+     */
     private String url;
+    
+    /**
+     * 数据库名称
+     */
     private String database;
+    
+    /**
+     * 集合名称
+     */
     private String collection;
+    
+    /**
+     * 操作类型（find、insert、update、delete）
+     */
     private String action;
+    
+    /**
+     * 操作条件
+     */
     private Map<String, Object> condition;
 
+    /**
+     * 构造方法，根据字节数组创建 MongoRealRequest 实例
+     *
+     * @param bytes 字节数组
+     */
     public MongoRealRequest(byte[] bytes) {
         super(bytes);
     }
 
+    /**
+     * 根据 MongoConfigItem 构建 MongoRealRequest 实例
+     * <p>
+     * 该静态方法将 MongoConfigItem 配置信息转换为 MongoRealRequest 实例，
+     * 用于在采样结果中展示请求信息。
+     * </p>
+     *
+     * @param configure MongoDB 配置项
+     * @return MongoRealRequest 实例
+     */
     public static MongoRealRequest build(MongoConfigItem configure) {
         var result = new MongoRealRequest(Objects.isNull(configure.getData()) ? new byte[0] :
                 JSON.toJSONBytes(configure.getData()));
@@ -57,6 +106,15 @@ public class MongoRealRequest extends SampleResult.Real {
         return result;
     }
 
+    /**
+     * 格式化请求信息
+     * <p>
+     * 将 MongoDB 操作的详细信息格式化为可读的字符串，包括连接地址、数据库名、
+     * 集合名、操作类型、条件和数据等信息。
+     * </p>
+     *
+     * @return 格式化后的请求信息字符串
+     */
     @Override
     public String format() {
 

@@ -29,7 +29,9 @@
 package io.github.xiaomisum.ryze.support.testng.dataprovider;
 
 import io.github.xiaomisum.ryze.support.TestDataLoader;
+import io.github.xiaomisum.ryze.support.testng.TestNGConstantsInterface;
 import io.github.xiaomisum.ryze.support.testng.annotation.AnnotationUtils;
+import io.github.xiaomisum.ryze.support.testng.annotation.Datasource;
 import io.leangen.geantyref.TypeFactory;
 import org.testng.ITestNGMethod;
 import org.testng.annotations.DataProvider;
@@ -41,21 +43,42 @@ import java.util.Objects;
 
 /**
  * 数据源提供者
+ * <p>
+ * 该类提供了TestNG数据提供者方法，用于从外部文件加载测试数据。
+ * 支持串行和并行两种执行模式，通过 {@link Datasource}注解进行配置。
+ * </p>
  *
  * @author xiaomi
  */
-public class RyzeDatasource {
-
-    public static final String DATASOURCE_PROVIDER = "__ryze_testng_data_provider__";
-    public static final String DATASOURCE_PROVIDER_PARALLEL = "__ryze_testng_data_provider_parallel__";
+public class RyzeDatasource implements TestNGConstantsInterface {
 
     private static final Object[][] EMPTY_DATA = new Object[][]{};
 
+    /**
+     * 并行数据提供者
+     * <p>
+     * 该方法提供并行执行的测试数据，每条数据会在独立的线程中执行。
+     * 适用于相互独立的测试用例，可以显著提高执行效率。
+     * </p>
+     *
+     * @param method TestNG测试方法
+     * @return 测试数据数组
+     */
     @DataProvider(name = DATASOURCE_PROVIDER_PARALLEL)
     public static Object[][] datasourceParallel(ITestNGMethod method) {
         return datasource(method);
     }
 
+    /**
+     * 串行数据提供者
+     * <p>
+     * 该方法提供串行执行的测试数据，所有数据会按顺序在同一个线程中执行。
+     * 适用于有依赖关系的测试用例或需要保持执行顺序的场景。
+     * </p>
+     *
+     * @param method TestNG测试方法
+     * @return 测试数据数组
+     */
     @DataProvider(name = DATASOURCE_PROVIDER)
     public static Object[][] datasource(ITestNGMethod method) {
         var datasource = AnnotationUtils.getDatasource(method.getConstructorOrMethod().getMethod());

@@ -33,12 +33,31 @@ import io.github.xiaomisum.ryze.core.context.Context;
 import java.util.List;
 
 /**
- * SessionRunner 变量包装器
+ * 会话变量包装器
+ * <p>
+ * 该类用于管理会话作用域的变量，继承自AbstractVariablesWrapper。它主要用于SessionRunner中，
+ * 管理特定会话范围内的变量，这些变量在整个会话执行期间可见和可访问。
+ * </p>
+ * <p>
+ * SessionVariablesWrapper提供了对会话级别变量的管理能力，包括变量的获取、设置、删除等操作。
+ * 会话变量的作用域介于全局变量和测试变量之间，会覆盖同名的全局变量，但会被同名的测试变量覆盖。
+ * 会话变量的生命周期与会话执行周期一致，会话结束后这些变量通常会被销毁。
+ * </p>
  *
  * @author xiaomi
  */
 public class SessionVariablesWrapper extends AbstractVariablesWrapper {
 
+    /**
+     * 构造一个新的会话变量包装器实例
+     * <p>
+     * 该构造函数接收一个上下文链，用于初始化变量包装器。对于会话变量包装器，
+     * 上下文链通常包含全局上下文、测试套件上下文和当前会话上下文，
+     * 用于支持变量的继承和覆盖机制。
+     * </p>
+     *
+     * @param contextChain 上下文链，定义了变量的作用域层次结构，不能为空
+     */
     public SessionVariablesWrapper(List<Context> contextChain) {
         super(contextChain);
     }

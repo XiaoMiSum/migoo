@@ -31,15 +31,42 @@ import io.github.xiaomisum.ryze.core.testelement.KW;
 import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
 
 /**
+ * 结果断言类，用于验证整个响应结果
+ * 
+ * <p>该类继承自AbstractAssertion，用于对整个响应结果进行验证，
+ * 而不是特定字段。它将响应的完整内容作为实际值与期望值进行比较。</p>
+ * 
+ * <p>使用示例：
+ * <pre>
+ * {
+ *   "testclass": "result"
+ *   "expected": "success",
+ *   "rule": "contains"
+ * }
+ * </pre>
+ * </p>
+ * 
  * @author xiaomi
+ * @see AbstractAssertion 抽象断言类
  */
 @KW({"ResultAssertion", "Result_Assertion", "result"})
 public class ResultAssertion extends AbstractAssertion {
 
+    /**
+     * 创建结果断言构建器
+     * 
+     * @return 结果断言构建器
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * 初始化断言结果，将响应的完整内容作为实际值
+     * 
+     * @param result 取样结果对象
+     * @return 断言结果对象
+     */
     @Override
     protected AssertionResult initialized(SampleResult result) {
         var res = new AssertionResult("响应断言: ");
@@ -47,8 +74,14 @@ public class ResultAssertion extends AbstractAssertion {
         return res;
     }
 
+    /**
+     * 结果断言构建器类
+     */
     public static class Builder extends AbstractAssertion.Builder<Builder, ResultAssertion> {
 
+        /**
+         * 构造函数，创建结果断言构建器
+         */
         public Builder() {
             super(new ResultAssertion());
         }

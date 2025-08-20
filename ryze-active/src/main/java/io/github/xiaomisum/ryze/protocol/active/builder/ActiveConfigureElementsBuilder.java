@@ -34,21 +34,51 @@ import io.github.xiaomisum.ryze.support.Customizer;
 import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
- * active 自定义配置元件列表构建器，提供 active 自定义配置元件列表的构建方法
+ * ActiveMQ自定义配置元件列表构建器
+ * <p>
+ * 提供构建ActiveMQ自定义配置元件列表的多种方式：
+ * 1. 直接添加已构建的ActiveDefaults实例
+ * 2. 通过Customizer函数式接口配置并构建ActiveDefaults实例
+ * 3. 通过ActiveDefaults.Builder实例构建并添加
+ * 4. 通过Groovy闭包配置并构建ActiveDefaults实例
+ * </p>
  *
  * @author xiaomi
  */
 public class ActiveConfigureElementsBuilder extends ExtensibleConfigureElementsBuilder<ActiveConfigureElementsBuilder> {
 
+    /**
+     * 创建ActiveConfigureElementsBuilder实例
+     *
+     * @return 新的ActiveConfigureElementsBuilder实例
+     */
     public static ActiveConfigureElementsBuilder builder() {
         return new ActiveConfigureElementsBuilder();
     }
 
+    /**
+     * 添加已构建的ActiveDefaults配置元件
+     *
+     * @param defaults 已构建的ActiveDefaults实例
+     * @return 当前构建器实例，支持链式调用
+     */
     public ActiveConfigureElementsBuilder active(ActiveDefaults defaults) {
         configureElements.add(defaults);
         return self;
     }
 
+    /**
+     * 通过Customizer函数式接口配置并构建ActiveDefaults实例
+     * <p>
+     * 执行流程：
+     * 1. 创建ActiveDefaults.Builder实例
+     * 2. 使用Customizer配置Builder
+     * 3. 构建ActiveDefaults实例并添加到配置元件列表
+     * </p>
+     *
+     * @param customizer Customizer函数式接口，用于配置ActiveDefaults.Builder
+     * @return 当前构建器实例，支持链式调用
+     */
     public ActiveConfigureElementsBuilder active(Customizer<ActiveDefaults.Builder> customizer) {
         var builder = ActiveDefaults.builder();
         customizer.customize(builder);
@@ -56,11 +86,29 @@ public class ActiveConfigureElementsBuilder extends ExtensibleConfigureElementsB
         return self;
     }
 
+    /**
+     * 通过ActiveDefaults.Builder实例构建并添加配置元件
+     *
+     * @param builder ActiveDefaults.Builder实例
+     * @return 当前构建器实例，支持链式调用
+     */
     public ActiveConfigureElementsBuilder active(ActiveDefaults.Builder builder) {
         configureElements.add(builder.build());
         return self;
     }
 
+    /**
+     * 通过Groovy闭包配置并构建ActiveDefaults实例
+     * <p>
+     * 执行流程：
+     * 1. 创建ActiveDefaults.Builder实例
+     * 2. 使用Groovy闭包配置Builder
+     * 3. 构建ActiveDefaults实例并添加到配置元件列表
+     * </p>
+     *
+     * @param closure Groovy闭包，用于配置ActiveDefaults.Builder
+     * @return 当前构建器实例，支持链式调用
+     */
     public ActiveConfigureElementsBuilder active(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = ActiveDefaults.Builder.class) Closure<?> closure) {
         var builder = ActiveDefaults.builder();
         call(closure, builder);

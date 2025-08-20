@@ -45,8 +45,34 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Objects;
 
 /**
+ * ActiveMQ后置处理器，在测试执行后发送ActiveMQ消息
+ * <p>
+ * 该类实现了在测试流程执行后向ActiveMQ发送消息的功能。它继承自AbstractProcessor，
+ * 可以作为测试流程中的后置步骤，在主要测试逻辑执行完成后进行清理或通知操作。
+ * </p>
+ * <p>
+ * 主要应用场景：
+ * <ul>
+ *   <li>测试完成后发送清理消息</li>
+ *   <li>通知其他系统测试已完成</li>
+ *   <li>发送测试结果到指定队列</li>
+ * </ul>
+ * </p>
+ * <p>
+ * 执行流程：
+ * <ol>
+ *   <li>合并本地配置和全局配置</li>
+ *   <li>创建ActiveMQ连接工厂</li>
+ *   <li>处理消息内容格式</li>
+ *   <li>构建请求信息</li>
+ *   <li>执行消息发送</li>
+ *   <li>设置测试结果</li>
+ *   <li>释放资源</li>
+ * </ol>
+ * </p>
+ *
  * @author mi.xiao
- * @date 2021/4/13 20:08
+ * @since 2021/4/13 20:08
  */
 @KW({"active_mq", "activemq", "active", "active_postprocessor"})
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -58,29 +84,68 @@ public class ActivePostprocessor extends AbstractProcessor<ActivePostprocessor, 
     @JSONField(serialize = false)
     private String message;
 
+    /**
+     * 默认构造函数
+     */
     public ActivePostprocessor() {
         super();
     }
 
+    /**
+     * 使用构建器构造ActivePostprocessor实例
+     *
+     * @param builder 构建器实例
+     */
     public ActivePostprocessor(Builder builder) {
         super(builder);
     }
 
+    /**
+     * 获取构建器实例
+     *
+     * @return ActivePostprocessor.Builder 构建器实例
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * 创建测试结果实例
+     *
+     * @return DefaultSampleResult 测试结果实例
+     */
     @Override
     protected DefaultSampleResult getTestResult() {
         return new DefaultSampleResult(runtime.getId(), StringUtils.isBlank(runtime.getTitle()) ? "Active 后置处理器" : runtime.getTitle());
     }
 
+    /**
+     * 执行消息发送操作
+     *
+     * @param context 上下文包装器
+     * @param result  测试结果
+     */
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
         Active.execute(runtime.getConfig(), factory, message, result);
     }
 
 
+    /**
+     * 处理请求前的配置和准备工作
+     * <p>
+     * 主要完成以下操作：
+     * <ol>
+     *   <li>合并本地配置和全局配置</li>
+     *   <li>创建ActiveMQ连接工厂</li>
+     *   <li>处理消息内容格式</li>
+     *   <li>构建请求信息</li>
+     * </ol>
+     * </p>
+     *
+     * @param context 上下文包装器
+     * @param result  测试结果
+     */
     @Override
     protected void handleRequest(ContextWrapper context, DefaultSampleResult result) {
         super.handleRequest(context, result);
@@ -100,6 +165,19 @@ public class ActivePostprocessor extends AbstractProcessor<ActivePostprocessor, 
         result.setRequest(RealActiveRequest.build(runtime.getConfig(), message));
     }
 
+    /**
+     * 处理响应后的工作
+     * <p>
+     * 主要完成以下操作：
+     * <ol>
+     *   <li>设置空的响应结果（ActiveMQ发送操作本身不返回响应内容）</li>
+     *   <li>释放连接工厂资源</li>
+     * </ol>
+     * </p>
+     *
+     * @param context 上下文包装器
+     * @param result  测试结果
+     */
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
@@ -108,18 +186,39 @@ public class ActivePostprocessor extends AbstractProcessor<ActivePostprocessor, 
         factory = null;
     }
 
-    public static class Builder extends AbstractProcessor.PostprocessorBuilder<ActivePostprocessor, Builder, ActiveConfigureItem,
+    /**
+     * ActivePostprocessor构建器类
+     * <p>
+     * 提供构建ActivePostprocessor实例的方法，包括配置构建器和变量提取器构建器。
+     * </p>
+     */
+    public static class Builder extends PostprocessorBuilder<ActivePostprocessor, Builder, ActiveConfigureItem,
             ActiveConfigureItem.Builder, DefaultExtractorsBuilder, DefaultSampleResult> {
+        /**
+         * 构建ActivePostprocessor实例
+         *
+         * @return ActivePostprocessor实例
+         */
         @Override
         public ActivePostprocessor build() {
             return new ActivePostprocessor(this);
         }
 
+        /**
+         * 获取变量提取器构建器
+         *
+         * @return DefaultExtractorsBuilder 变量提取器构建器
+         */
         @Override
         protected DefaultExtractorsBuilder getExtractorsBuilder() {
             return DefaultExtractorsBuilder.builder();
         }
 
+        /**
+         * 获取配置项构建器
+         *
+         * @return ActiveConfigureItem.Builder 配置项构建器
+         */
         @Override
         protected ActiveConfigureItem.Builder getConfigureItemBuilder() {
             return ActiveConfigureItem.builder();

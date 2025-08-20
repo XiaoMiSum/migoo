@@ -35,21 +35,51 @@ import io.github.xiaomisum.ryze.support.Customizer;
 import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
- * active 自定义前置处理器列表构建器，提供 active 自定义前置处理器列表的构建方法
+ * ActiveMQ自定义前置处理器列表构建器
+ * <p>
+ * 提供构建ActiveMQ自定义前置处理器列表的多种方式：
+ * 1. 直接添加已构建的ActivePreprocessor实例
+ * 2. 通过Customizer函数式接口配置并构建ActivePreprocessor实例
+ * 3. 通过ActivePreprocessor.Builder实例构建并添加
+ * 4. 通过Groovy闭包配置并构建ActivePreprocessor实例
+ * </p>
  *
  * @author xiaomi
  */
 public class ActivePreprocessorsBuilder extends ExtensiblePreprocessorsBuilder<ActivePreprocessorsBuilder, DefaultExtractorsBuilder> {
 
+    /**
+     * 创建ActivePreprocessorsBuilder实例
+     *
+     * @return 新的ActivePreprocessorsBuilder实例
+     */
     public static ActivePreprocessorsBuilder builder() {
         return new ActivePreprocessorsBuilder();
     }
 
+    /**
+     * 添加已构建的ActivePreprocessor前置处理器
+     *
+     * @param preprocessor 已构建的ActivePreprocessor实例
+     * @return 当前构建器实例，支持链式调用
+     */
     public ActivePreprocessorsBuilder active(ActivePreprocessor preprocessor) {
         preprocessors.add(preprocessor);
         return self;
     }
 
+    /**
+     * 通过Customizer函数式接口配置并构建ActivePreprocessor实例
+     * <p>
+     * 执行流程：
+     * 1. 创建ActivePreprocessor.Builder实例
+     * 2. 使用Customizer配置Builder
+     * 3. 构建ActivePreprocessor实例并添加到前置处理器列表
+     * </p>
+     *
+     * @param customizer Customizer函数式接口，用于配置ActivePreprocessor.Builder
+     * @return 当前构建器实例，支持链式调用
+     */
     public ActivePreprocessorsBuilder active(Customizer<ActivePreprocessor.Builder> customizer) {
         var builder = ActivePreprocessor.builder();
         customizer.customize(builder);
@@ -57,11 +87,29 @@ public class ActivePreprocessorsBuilder extends ExtensiblePreprocessorsBuilder<A
         return self;
     }
 
+    /**
+     * 通过ActivePreprocessor.Builder实例构建并添加前置处理器
+     *
+     * @param builder ActivePreprocessor.Builder实例
+     * @return 当前构建器实例，支持链式调用
+     */
     public ActivePreprocessorsBuilder active(ActivePreprocessor.Builder builder) {
         preprocessors.add(builder.build());
         return self;
     }
 
+    /**
+     * 通过Groovy闭包配置并构建ActivePreprocessor实例
+     * <p>
+     * 执行流程：
+     * 1. 创建ActivePreprocessor.Builder实例
+     * 2. 使用Groovy闭包配置Builder
+     * 3. 构建ActivePreprocessor实例并添加到前置处理器列表
+     * </p>
+     *
+     * @param closure Groovy闭包，用于配置ActivePreprocessor.Builder
+     * @return 当前构建器实例，支持链式调用
+     */
     public ActivePreprocessorsBuilder active(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = ActivePreprocessor.Builder.class) Closure<?> closure) {
         var builder = ActivePreprocessor.builder();
         call(closure, builder);

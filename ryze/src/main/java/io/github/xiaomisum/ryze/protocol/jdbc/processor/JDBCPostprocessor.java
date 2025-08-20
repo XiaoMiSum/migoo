@@ -41,40 +41,94 @@ import io.github.xiaomisum.ryze.protocol.jdbc.config.JDBCConfigureItem;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * JDBC后置处理器
+ * <p>
+ * 该类在测试步骤执行后运行，用于执行JDBC SQL语句。通常用于清理数据、
+ * 记录日志或执行其他后续操作。
+ * </p>
+ *
+ * <p>主要功能：
+ * <ul>
+ *   <li>执行SQL语句</li>
+ *   <li>记录请求和响应信息</li>
+ *   <li>支持结果提取</li>
+ * </ul>
+ * </p>
+ *
  * @author xiaomi
  */
 @KW(value = {"jdbc_postprocessor", "jdbc_post_processor", "jdbc"})
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class JDBCPostprocessor extends AbstractProcessor<JDBCPostprocessor, JDBCConfigureItem, DefaultSampleResult> implements Postprocessor, JDBCConstantsInterface {
 
+    /**
+     * 数据源实例
+     * <p>用于获取数据库连接</p>
+     */
     @JSONField(serialize = false)
     private DruidDataSource datasource;
 
+    /**
+     * 执行结果字节数组
+     * <p>存储SQL执行结果</p>
+     */
     @JSONField(serialize = false)
     private byte[] bytes;
 
+    /**
+     * 带构建器的构造函数
+     *
+     * @param builder 构建器实例
+     */
     public JDBCPostprocessor(Builder builder) {
         super(builder);
     }
 
+    /**
+     * 默认构造函数
+     */
     public JDBCPostprocessor() {
         super();
     }
 
+    /**
+     * 创建JDBC后置处理器构建器
+     *
+     * @return JDBC后置处理器构建器实例
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * 获取测试结果对象
+     *
+     * @return 默认采样结果对象
+     */
     @Override
     protected DefaultSampleResult getTestResult() {
         return new DefaultSampleResult(runtime.getId(), StringUtils.isBlank(runtime.getTitle()) ? "JDBC 后置处理器" : runtime.getTitle());
     }
 
+    /**
+     * 执行采样操作
+     * <p>调用JDBC.execute方法执行SQL语句</p>
+     *
+     * @param context 测试上下文包装器
+     * @param result  采样结果对象
+     */
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
         bytes = JDBC.execute(datasource, runtime.getConfig().getSql(), result);
     }
 
+    /**
+     * 处理请求信息
+     * <p>设置请求数据源和SQL语句信息</p>
+     *
+     * @param context 测试上下文包装器
+     * @param result  采样结果对象
+     */
     @Override
     protected void handleRequest(ContextWrapper context, DefaultSampleResult result) {
         super.handleRequest(context, result);
@@ -82,6 +136,13 @@ public class JDBCPostprocessor extends AbstractProcessor<JDBCPostprocessor, JDBC
         result.setRequest(new RealJDBCRequest(datasource.getUrl(), datasource.getUsername(), datasource.getPassword(), runtime.getConfig().getSql()));
     }
 
+    /**
+     * 处理响应信息
+     * <p>设置响应结果</p>
+     *
+     * @param context 测试上下文包装器
+     * @param result  采样结果对象
+     */
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
@@ -90,19 +151,37 @@ public class JDBCPostprocessor extends AbstractProcessor<JDBCPostprocessor, JDBC
 
     /**
      * JDBC 后置处理器构建器
+     * <p>
+     * 提供链式调用方式创建JDBC后置处理器实例。
+     * </p>
      */
-    public static class Builder extends AbstractProcessor.PostprocessorBuilder<JDBCPostprocessor, Builder, JDBCConfigureItem,
+    public static class Builder extends PostprocessorBuilder<JDBCPostprocessor, Builder, JDBCConfigureItem,
             JDBCConfigureItem.Builder, DefaultExtractorsBuilder, DefaultSampleResult> {
+        /**
+         * 构建JDBC后置处理器实例
+         *
+         * @return JDBC后置处理器实例
+         */
         @Override
         public JDBCPostprocessor build() {
             return new JDBCPostprocessor(this);
         }
 
+        /**
+         * 获取提取器构建器
+         *
+         * @return 默认提取器构建器
+         */
         @Override
         protected DefaultExtractorsBuilder getExtractorsBuilder() {
             return DefaultExtractorsBuilder.builder();
         }
 
+        /**
+         * 获取配置项构建器
+         *
+         * @return JDBC配置项构建器
+         */
         @Override
         protected JDBCConfigureItem.Builder getConfigureItemBuilder() {
             return JDBCConfigureItem.builder();

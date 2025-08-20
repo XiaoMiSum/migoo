@@ -32,6 +32,13 @@ import io.github.xiaomisum.ryze.core.Result;
 import io.github.xiaomisum.ryze.core.SessionRunner;
 
 /**
+ * 可执行测试组件接口
+ * <p>
+ * 该接口扩展了TestElement接口，定义了测试组件的执行方法，是所有可执行测试组件的顶层接口。
+ * 实现该接口的测试组件可以通过SessionRunner执行，并返回相应的执行结果。
+ * </p>
+ *
+ * @param <T> 测试执行结果类型，必须是Result的子类
  * @author xiaomi
  * Created at 2025/7/20 11:55
  */
@@ -41,10 +48,13 @@ public interface TestElementExecutable<T extends Result> extends TestElement<T> 
     /**
      * 执行测试组件
      * <p>
-     * 用户应避免直接调用该方法，推荐使用 {@link SessionRunner#runTest} 方法。
+     * 该方法是测试组件执行的入口点，负责执行测试组件的核心逻辑并返回执行结果。
+     * 用户应避免直接调用该方法，推荐使用 {@link SessionRunner#runTest} 方法来执行测试组件，
+     * 以确保正确的执行环境和上下文管理。
+     * </p>
      *
-     * @param session 每个测试用例使用各自的 SessionRunner
-     * @return 执行结果
+     * @param session 每个测试用例使用各自的 SessionRunner，提供执行环境和上下文信息
+     * @return 执行结果，包含测试执行的状态、时间等信息
      */
     T run(SessionRunner session);
 

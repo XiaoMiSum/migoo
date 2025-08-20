@@ -40,7 +40,19 @@ import static io.qameta.allure.util.ResultsUtils.getStatus;
 import static io.qameta.allure.util.ResultsUtils.getStatusDetails;
 
 /**
- * Allure 测试报告监听器
+ * Allure 测试报告监听器接口
+ * <p>
+ * AllureReportListener 提供了与 Allure 测试报告框架集成的功能，
+ * 用于在测试执行过程中生成详细的测试步骤报告。
+ * </p>
+ * <p>
+ * 该接口主要功能包括：
+ * <ul>
+ *   <li>启动测试步骤并设置步骤状态</li>
+ *   <li>停止测试步骤</li>
+ *   <li>根据测试结果设置适当的 Allure 状态</li>
+ * </ul>
+ * </p>
  *
  * @author xiaomi
  * Created at 2025/7/20 14:15
@@ -48,9 +60,14 @@ import static io.qameta.allure.util.ResultsUtils.getStatusDetails;
 public interface AllureReportListener<T extends AbstractTestElement<?, ?, ?>> extends ReporterListener<T> {
 
     /**
-     * 功能上相当于 <code>Allure.step(...)</code>
+     * 启动 Allure 测试步骤
+     * <p>
+     * 功能上相当于 <code>Allure.step(...)</code>，创建一个新的测试步骤并启动它。
+     * 根据测试结果中的异常信息或状态设置步骤的 Allure 状态和详细信息。
+     * </p>
      *
-     * @param name 步骤名称
+     * @param name    步骤名称
+     * @param context 上下文包装器，包含测试执行过程中的各种信息
      */
     static void startStep(String name, ContextWrapper context) {
         String uuid = context.getUuid();
@@ -63,6 +80,14 @@ public interface AllureReportListener<T extends AbstractTestElement<?, ?, ?>> ex
         }
     }
 
+    /**
+     * 停止 Allure 测试步骤
+     * <p>
+     * 结束指定上下文关联的测试步骤。
+     * </p>
+     *
+     * @param context 上下文包装器，用于标识要停止的测试步骤
+     */
     static void stopStep(ContextWrapper context) {
         Allure.getLifecycle().stopStep(context.getUuid());
     }

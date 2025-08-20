@@ -42,12 +42,30 @@ import static io.github.xiaomisum.ryze.protocol.rabbit.RabbitConstantsInterface.
 import static io.github.xiaomisum.ryze.protocol.rabbit.RabbitConstantsInterface.EXCHANGE_TYPE_FANOUT;
 
 /**
+ * RabbitMQ 操作工具类
+ * <p>
+ * 该类提供 RabbitMQ 消息发送的核心功能，包括连接管理、队列声明、交换机声明、消息发布等功能。
+ * 主要用于执行 RabbitMQ 消息发送操作，并处理相关配置。
+ * </p>
+ *
  * @author xiaomi
- * Created at 2025/7/26 22:24
+ * @since 2025/7/26 22:24
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class Rabbit {
 
+    /**
+     * 执行 RabbitMQ 消息发送操作
+     * <p>
+     * 该方法负责建立与 RabbitMQ 服务器的连接，声明队列和交换机（如果配置了交换机），
+     * 并将指定的消息发布到队列中。执行完成后会关闭连接和通道。
+     * </p>
+     *
+     * @param factory 连接工厂，用于创建与 RabbitMQ 服务器的连接
+     * @param config  RabbitMQ 配置项，包含连接信息、队列配置、交换机配置等
+     * @param message 要发送的消息内容
+     * @param result  采样结果对象，用于记录执行时间和结果状态
+     */
     public static void execute(ConnectionFactory factory, RabbitConfigureItem config, String message, DefaultSampleResult result) {
         try (var connection = factory.newConnection(); var channel = connection.createChannel()) {
             var queue = config.getQueue();
@@ -75,6 +93,16 @@ public class Rabbit {
         }
     }
 
+    /**
+     * 根据配置获取消息的基本属性
+     * <p>
+     * 根据提供的 RabbitMQ 配置项构造 AMQP.BasicProperties 对象，
+     * 该对象包含消息的各种属性，如内容类型、编码、优先级等。
+     * </p>
+     *
+     * @param config RabbitMQ 配置项
+     * @return AMQP.BasicProperties 对象，如果配置中没有属性设置则返回 null
+     */
     private static AMQP.BasicProperties getBasicProperties(RabbitConfigureItem config) {
         AMQP.BasicProperties properties = null;
         if (Objects.nonNull(config.getProps())) {
@@ -98,6 +126,16 @@ public class Rabbit {
         return properties;
     }
 
+    /**
+     * 根据配置处理 RabbitMQ 连接请求
+     * <p>
+     * 根据提供的 RabbitMQ 配置项创建并配置 ConnectionFactory 对象，
+     * 用于建立与 RabbitMQ 服务器的连接。
+     * </p>
+     *
+     * @param config RabbitMQ 配置项，包含连接所需的各种参数
+     * @return 配置好的 ConnectionFactory 对象
+     */
     public static ConnectionFactory handleRequest(RabbitConfigureItem config) {
         var factory = new ConnectionFactory();
         factory.setConnectionTimeout(config.getTimeout());

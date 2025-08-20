@@ -29,29 +29,77 @@ import io.github.xiaomisum.ryze.core.testelement.TestElementConstantsInterface;
 import org.apache.kafka.clients.producer.ProducerConfig;
 
 /**
+ * Kafka常量接口，定义了Kafka协议测试中使用的所有常量
+ * <p>
+ * 该接口继承自TestElementConstantsInterface，定义了Kafka协议测试中使用的所有常量，
+ * 包括默认引用名称、消息属性名称、Kafka生产者配置等常量定义，
+ * 为整个Kafka协议测试模块提供统一的常量定义。
+ * </p>
+ * <p>
+ * 主要功能：
+ * <ul>
+ *   <li>定义Kafka测试的默认引用名称</li>
+ *   <li>定义Kafka消息属性名称</li>
+ *   <li>定义Kafka生产者配置常量</li>
+ *   <li>提供常量统一管理</li>
+ * </ul>
+ * </p>
+ *
  * @author xiaomi
- * Created in 2021/11/11 11:08
+ * @since 2021/11/11 11:08
+ * @see TestElementConstantsInterface
+ * @see ProducerConfig
  */
 public interface KafkaConstantsInterface extends TestElementConstantsInterface {
 
+    /**
+     * 默认配置引用名称键，用于标识默认的Kafka配置
+     */
     String DEF_REF_NAME_KEY = "__kafka_configure_element_default_ref_name__";
 
+    /**
+     * Kafka消息内容属性名称
+     */
     String KAFKA_MESSAGE = "message";
 
+    /**
+     * Kafka主题属性名称
+     */
     String KAFKA_TOPIC = "topic";
 
+    /**
+     * Kafka消息键属性名称
+     */
     String KAFKA_KEY = "key";
 
+    /**
+     * Kafka服务器地址配置键，对应ProducerConfig.BOOTSTRAP_SERVERS_CONFIG
+     */
     String BOOTSTRAP_SERVERS = ProducerConfig.BOOTSTRAP_SERVERS_CONFIG;
 
+    /**
+     * Kafka确认机制配置键，对应ProducerConfig.ACKS_CONFIG
+     */
     String ACKS = ProducerConfig.ACKS_CONFIG;
 
+    /**
+     * Kafka重试次数配置键，对应ProducerConfig.RETRIES_CONFIG
+     */
     String RETRIES = ProducerConfig.RETRIES_CONFIG;
 
+    /**
+     * Kafka延迟时间配置键，对应ProducerConfig.LINGER_MS_CONFIG
+     */
     String LINGER_MS = ProducerConfig.LINGER_MS_CONFIG;
 
+    /**
+     * Kafka键序列化器配置键，对应ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG
+     */
     String KEY_SERIALIZER = ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
 
+    /**
+     * Kafka值序列化器配置键，对应ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG
+     */
     String VALUE_SERIALIZER = ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
 
 }

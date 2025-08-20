@@ -91,7 +91,7 @@ public class RedisPostprocessor extends AbstractProcessor<RedisPostprocessor, Re
     /**
      * Redis 后置处理器构建器
      */
-    public static class Builder extends AbstractProcessor.PreprocessorBuilder<RedisPostprocessor, Builder, RedisConfigureItem,
+    public static class Builder extends PreprocessorBuilder<RedisPostprocessor, Builder, RedisConfigureItem,
             RedisConfigureItem.Builder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public RedisPostprocessor build() {

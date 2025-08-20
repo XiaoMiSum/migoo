@@ -36,26 +36,67 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Objects;
 
 /**
+ * RabbitMQ 实际请求对象
+ * <p>
+ * 该类用于封装和格式化 RabbitMQ 请求的相关信息，包括服务器地址、认证信息、
+ * 队列配置、交换机配置以及消息内容等，用于在测试结果中展示请求详情。
+ * </p>
+ *
  * @author xiaomi
- * Created at 2025/7/26 22:24
+ * @since 2025/7/26 22:24
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class RealRabbitRequest extends SampleResult.Real {
 
+    /**
+     * RabbitMQ 服务器地址
+     */
     private String address;
 
+    /**
+     * 用户名
+     */
     private String username;
+    
+    /**
+     * 密码
+     */
     private String password;
+    
+    /**
+     * 虚拟主机
+     */
     private String virtualHost;
 
+    /**
+     * 队列配置
+     */
     private RabbitConfigureItem.Queue queue;
 
+    /**
+     * 交换机配置
+     */
     private RabbitConfigureItem.Exchange exchange;
 
+    /**
+     * 构造函数，使用字节数组初始化请求对象
+     *
+     * @param bytes 请求内容的字节数组表示
+     */
     public RealRabbitRequest(byte[] bytes) {
         super(bytes);
     }
 
+    /**
+     * 根据 RabbitMQ 配置和消息内容构建 RealRabbitRequest 对象
+     * <p>
+     * 该方法用于创建 RealRabbitRequest 实例，并根据配置信息填充相关字段。
+     * </p>
+     *
+     * @param config  RabbitMQ 配置项
+     * @param message 消息内容
+     * @return 构建好的 RealRabbitRequest 对象
+     */
     public static RealRabbitRequest build(RabbitConfigureItem config, String message) {
         var result = new RealRabbitRequest(message.getBytes());
         result.address = config.getHost() + ":" + config.getPort();
@@ -67,6 +108,15 @@ public class RealRabbitRequest extends SampleResult.Real {
         return result;
     }
 
+    /**
+     * 格式化请求信息
+     * <p>
+     * 将 RabbitMQ 请求的相关信息格式化为字符串，包括服务器地址、认证信息、
+     * 队列配置、交换机配置以及消息内容等。
+     * </p>
+     *
+     * @return 格式化后的请求信息字符串
+     */
     @Override
     public String format() {
         var buf = new StringBuilder();

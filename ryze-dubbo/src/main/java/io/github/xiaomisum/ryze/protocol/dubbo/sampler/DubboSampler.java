@@ -49,40 +49,101 @@ import org.apache.dubbo.rpc.service.GenericService;
 import java.util.Objects;
 
 /**
+ * Dubbo取样器实现类
+ * <p>
+ * 该类用于在测试执行后调用Dubbo服务，通常用于数据清理、结果验证或执行后置操作。
+ * 它继承自AbstractSampler并实现了Sampler接口，提供了完整的Dubbo服务调用能力。
+ * </p>
+ * <p>
+ * 主要功能包括：
+ * 1. 配置Dubbo服务引用（ReferenceConfig）
+ * 2. 执行Dubbo服务调用
+ * 3. 处理请求和响应数据
+ * 4. 支持配置合并和上下文变量处理
+ * </p>
+ *
  * @author mi.xiao
- * @date 2021/4/10 21:10
+ * @since 2021/4/13 20:08
  */
 @KW({"dubbo", "dubbo_sampler"})
 public class DubboSampler extends AbstractSampler<DubboSampler, DubboConfigureItem, DefaultSampleResult> implements Sampler<DefaultSampleResult>, DubboConstantsInterface {
 
+    /**
+     * Dubbo服务引用配置对象，用于创建和配置Dubbo服务的引用
+     * 不参与JSON序列化
+     */
     @JSONField(serialize = false)
     private ReferenceConfig<GenericService> request;
 
+    /**
+     * Dubbo服务调用的响应结果
+     * 不参与JSON序列化
+     */
     @JSONField(serialize = false)
     private Object response;
 
+    /**
+     * 默认构造函数，创建一个空的Dubbo取样器实例
+     */
     public DubboSampler() {
         super();
     }
 
+    /**
+     * 带构建器的构造函数，使用指定的构建器创建Dubbo取样器实例
+     *
+     * @param builder Dubbo取样器构建器
+     */
     public DubboSampler(Builder builder) {
         super(builder);
     }
 
+    /**
+     * 创建Dubbo取样器构建器实例
+     *
+     * @return Dubbo取样器构建器
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * 获取测试结果对象，用于记录处理器执行的结果信息
+     *
+     * @return DefaultSampleResult测试结果对象
+     */
     @Override
     protected DefaultSampleResult getTestResult() {
         return new DefaultSampleResult(runtime.id, runtime.title);
     }
 
+    /**
+     * 执行Dubbo服务调用的核心方法
+     * <p>
+     * 该方法通过Dubbo工具类执行实际的服务调用，记录执行开始和结束时间，
+     * 并将结果存储在response字段中。
+     * </p>
+     *
+     * @param context 测试上下文包装器，提供变量替换和上下文信息
+     * @param result  测试结果对象，用于记录执行时间和结果信息
+     */
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
         response = Dubbo.execute(request, runtime.config, result);
     }
 
+    /**
+     * 处理Dubbo请求配置
+     * <p>
+     * 该方法在服务调用前执行，主要完成以下任务：
+     * 1. 合并本地配置和上下文中的配置信息
+     * 2. 创建Dubbo服务引用配置对象
+     * 3. 构建请求信息并设置到测试结果中
+     * </p>
+     *
+     * @param context 测试上下文包装器，提供变量替换和上下文信息
+     * @param result  测试结果对象，用于记录请求信息
+     */
     @Override
     protected void handleRequest(ContextWrapper context, DefaultSampleResult result) {
         super.handleRequest(context, result);
@@ -96,45 +157,98 @@ public class DubboSampler extends AbstractSampler<DubboSampler, DubboConfigureIt
         result.setRequest(RealDubboRequest.build(runtime.config, request.getRegistry().getAddress()));
     }
 
+    /**
+     * 处理Dubbo响应结果
+     * <p>
+     * 该方法在服务调用后执行，主要完成以下任务：
+     * 1. 设置请求信息到测试结果中
+     * 2. 将响应结果转换为字节数组并设置到测试结果中
+     * </p>
+     *
+     * @param context 测试上下文包装器，提供变量替换和上下文信息
+     * @param result  测试结果对象，用于记录响应信息
+     */
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
         result.setResponse(SampleResult.DefaultReal.build(JSON.toJSONBytes(response)));
     }
 
+    /**
+     * Dubbo取样器构建器类
+     * <p>
+     * 提供构建Dubbo取样器实例的方法，继承自AbstractProcessor的取样器构建器。
+     * </p>
+     */
     public static class Builder extends AbstractSampler.Builder<DubboSampler, Builder, DubboConfigureItem,
             DubboConfigureItem.Builder, DubboConfigureElementsBuilder, DubboPreprocessorsBuilder, DubboPostprocessorsBuilder,
             DefaultAssertionsBuilder, DefaultExtractorsBuilder, DefaultSampleResult> {
+
+        /**
+         * 构建Dubbo取样器实例
+         *
+         * @return Dubbo取样器实例
+         */
         @Override
         public DubboSampler build() {
             return new DubboSampler(this);
         }
 
+        /**
+         * 获取提取器构建器实例
+         *
+         * @return 默认提取器构建器
+         */
         @Override
         protected DefaultAssertionsBuilder getAssertionsBuilder() {
             return DefaultAssertionsBuilder.builder();
         }
 
+        /**
+         * 获取提取器构建器实例
+         *
+         * @return 默认提取器构建器
+         */
         @Override
         protected DefaultExtractorsBuilder getExtractorsBuilder() {
             return DefaultExtractorsBuilder.builder();
         }
 
+        /**
+         * 获取配置元件构建器
+         *
+         * @return DubboConfigureElementsBuilder 配置元件构建器
+         */
         @Override
         protected DubboConfigureElementsBuilder getConfiguresBuilder() {
             return DubboConfigureElementsBuilder.builder();
         }
 
+        /**
+         * 获取前置处理器构建器
+         *
+         * @return DubboPreprocessorsBuilder 前置处理器构建器
+         */
         @Override
         protected DubboPreprocessorsBuilder getPreprocessorsBuilder() {
             return DubboPreprocessorsBuilder.builder();
         }
 
+        /**
+         * 获取取样器构建器
+         *
+         * @return DubboPostprocessorsBuilder 取样器构建器
+         */
         @Override
         protected DubboPostprocessorsBuilder getPostprocessorsBuilder() {
             return DubboPostprocessorsBuilder.builder();
         }
 
+        /**
+         * 获取Dubbo配置项构建器实例
+         *
+         * @return Dubbo配置项构建器
+         */
         @Override
         protected DubboConfigureItem.Builder getConfigureItemBuilder() {
             return DubboConfigureItem.builder();

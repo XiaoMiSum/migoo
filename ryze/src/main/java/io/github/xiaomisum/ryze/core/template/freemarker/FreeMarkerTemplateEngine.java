@@ -40,18 +40,58 @@ import java.util.regex.Pattern;
 
 
 /**
- * FreeMarker 模板引擎
+ * FreeMarker 模板引擎实现类
+ * 
+ * <p>该类是框架的模板引擎实现，基于FreeMarker模板引擎提供表达式计算功能。
+ * 它支持变量替换、函数调用、条件判断等模板操作。</p>
+ * 
+ * <p>主要功能包括：
+ * <ul>
+ *   <li>表达式计算：支持变量引用、函数调用等表达式计算</li>
+ *   <li>模板缓存：通过缓存机制提高模板执行效率</li>
+ *   <li>类型处理：支持返回原始类型或字符串类型的结果</li>
+ *   <li>函数适配：将框架内置函数适配到模板引擎中</li>
+ * </ul></p>
+ * 
+ * <p>执行流程：
+ * <ol>
+ *   <li>检查表达式是否需要计算，不需要则直接返回</li>
+ *   <li>判断是否为简单变量引用，是则直接获取变量值</li>
+ *   <li>判断是否需要返回原始类型</li>
+ *   <li>注册内置函数和变量到模板模型</li>
+ *   <li>执行模板计算并返回结果</li>
+ * </ol></p>
+ *
+ * @author xiaomi
  */
 public class FreeMarkerTemplateEngine implements TemplateEngine {
 
+    /**
+     * FreeMarker表达式匹配模式，用于识别${variable}形式的表达式
+     */
     private static final Pattern FREEMARKER_EXPRESSION = Pattern.compile("^\\$\\{([a-zA-Z\\u4e00-\\u9fff$_][a-zA-Z\\u4e00-\\u9fff0-9$_]*)}$");
+    
+    /**
+     * 简单表达式匹配模式，用于识别${...}形式的表达式
+     */
     private static final Pattern SIMPLE_EXPRESSION = Pattern.compile("^\\$\\{((?![{}])[\\S ])+}$");
 
-    // 缓存 template 以降低内存开销
+    /**
+     * 模板缓存，用于缓存已编译的模板以降低内存开销
+     */
     private static final LoadingCache<String, Template> templateCache = Caffeine.newBuilder().maximumSize(1000)
             .build(key -> new Template("ryze-freemarker-template", key, SingletonHolder.cfg));
 
 
+    /**
+     * 基于模型和表达式进行计算
+     * 
+     * <p>该方法使用提供的模型数据对表达式进行计算，支持变量替换和函数调用。</p>
+     *
+     * @param model 表达式计算所需的模型数据
+     * @param expression 待计算的表达式
+     * @return 表达式计算结果
+     */
     @Override
     public Object evaluate(Map<String, Object> model, String expression) {
         if (expression == null) {
@@ -83,6 +123,14 @@ public class FreeMarkerTemplateEngine implements TemplateEngine {
         }
     }
 
+    /**
+     * 判断表达式是否应该返回原始类型
+     * 
+     * <p>对于简单的变量引用表达式，应该返回原始类型而不是字符串类型。</p>
+     *
+     * @param template 待判断的表达式
+     * @return 是否应该返回原始类型
+     */
     private boolean shouldReturnOriginalType(String template) {
         if (template.startsWith("${") && template.endsWith("}")) {
             if (SIMPLE_EXPRESSION.matcher(template).matches()) {
@@ -98,6 +146,15 @@ public class FreeMarkerTemplateEngine implements TemplateEngine {
         return false;
     }
 
+    /**
+     * 基于上下文和表达式进行计算
+     * 
+     * <p>该方法使用提供的上下文对表达式进行计算，会自动注册内置函数和变量。</p>
+     *
+     * @param context 测试上下文
+     * @param expression 待计算的表达式
+     * @return 表达式计算结果
+     */
     @Override
     public Object evaluate(ContextWrapper context, String expression) {
         if (expression == null) {
@@ -126,8 +183,14 @@ public class FreeMarkerTemplateEngine implements TemplateEngine {
         return evaluate(model, expression);
     }
 
+    /**
+     * 单例持有者，用于延迟初始化FreeMarker配置
+     */
     private static class SingletonHolder {
 
+        /**
+         * FreeMarker配置实例
+         */
         private static final Configuration cfg;
 
         static {
@@ -152,11 +215,30 @@ public class FreeMarkerTemplateEngine implements TemplateEngine {
         }
     }
 
+    /**
+     * 模板对象处理器，用于获取模板计算结果的原始对象
+     * 
+     * <p>由于FreeMarker没有直接获取原始对象的API，通过该处理器以取巧的方式获取计算结果的原始对象。</p>
+     */
     protected static class TemplateObjectHandler implements TemplateMethodModelEx {
 
+        /**
+         * 处理器名称
+         */
         protected static final String NAME = "ryze_object_handler";
+        
+        /**
+         * 存储处理结果的对象
+         */
         private Object object;
 
+        /**
+         * 执行方法，保存参数中的第一个对象并返回标识字符串
+         *
+         * @param arguments 参数列表
+         * @return 标识字符串
+         * @throws TemplateModelException 模板模型异常
+         */
         @Override
         public Object exec(List arguments) throws TemplateModelException {
             object = DeepUnwrap.unwrap((TemplateModel) arguments.getFirst());

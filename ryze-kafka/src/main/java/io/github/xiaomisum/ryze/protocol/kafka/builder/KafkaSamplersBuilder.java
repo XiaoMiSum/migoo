@@ -34,26 +34,66 @@ import io.github.xiaomisum.ryze.support.Customizer;
 import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
- * kafka 自定义取样器列表构建器，提供 kafka 自定义取样器列表的构建方法
+ * Kafka取样器构建器类，用于构建Kafka测试场景中的取样器列表
+ * <p>
+ * 该类继承自ExtensibleChildrenBuilder，提供了构建Kafka取样器的便捷方法，
+ * 支持多种构建方式，包括直接传入取样器对象、使用构建器模式、使用自定义函数式接口或Groovy闭包。
+ * </p>
+ * <p>
+ * 取样器是Kafka测试的核心组件，负责执行实际的Kafka消息发送操作。
+ * </p>
+ * <p>
+ * 主要功能：
+ * <ul>
+ *   <li>提供多种方式添加Kafka取样器</li>
+ *   <li>支持函数式编程风格</li>
+ *   <li>支持Groovy DSL语法</li>
+ * </ul>
+ * </p>
  *
  * @author xiaomi
+ * @see ExtensibleChildrenBuilder
+ * @see KafkaSampler
  */
 public class KafkaSamplersBuilder extends ExtensibleChildrenBuilder<KafkaSamplersBuilder> {
 
+    /**
+     * 创建KafkaSamplersBuilder实例的静态工厂方法
+     *
+     * @return 新创建的KafkaSamplersBuilder实例
+     */
     public static KafkaSamplersBuilder builder() {
         return new KafkaSamplersBuilder();
     }
 
+    /**
+     * 添加Kafka取样器到构建器中
+     *
+     * @param child 已构建的Kafka取样器对象
+     * @return 当前构建器实例，支持链式调用
+     */
     public KafkaSamplersBuilder kafka(KafkaSampler child) {
         this.children.add(child);
         return self;
     }
 
+    /**
+     * 使用构建器添加Kafka取样器到构建器中
+     *
+     * @param child Kafka取样器构建器
+     * @return 当前构建器实例，支持链式调用
+     */
     public KafkaSamplersBuilder kafka(KafkaSampler.Builder child) {
         this.children.add(child.build());
         return self;
     }
 
+    /**
+     * 使用自定义函数式接口添加Kafka取样器到构建器中
+     *
+     * @param customizer Kafka取样器构建器的自定义函数式接口
+     * @return 当前构建器实例，支持链式调用
+     */
     public KafkaSamplersBuilder kafka(Customizer<KafkaSampler.Builder> customizer) {
         var builder = KafkaSampler.builder();
         customizer.customize(builder);
@@ -61,6 +101,12 @@ public class KafkaSamplersBuilder extends ExtensibleChildrenBuilder<KafkaSampler
         return self;
     }
 
+    /**
+     * 使用Groovy闭包添加Kafka取样器到构建器中
+     *
+     * @param closure Groovy闭包，用于配置Kafka取样器构建器
+     * @return 当前构建器实例，支持链式调用
+     */
     public KafkaSamplersBuilder kafka(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = KafkaSampler.Builder.class) Closure<?> closure) {
         var builder = KafkaSampler.builder();
         call(closure, builder);

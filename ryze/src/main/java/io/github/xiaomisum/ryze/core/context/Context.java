@@ -29,15 +29,32 @@ import io.github.xiaomisum.ryze.core.config.ConfigureGroup;
 
 /**
  * 测试上下文接口，通过该接口可以获取每个测试元件的上下文信息
+ * <p>
+ * 在migoo测试框架中，上下文(Context)是管理测试执行过程中各种配置和状态的核心概念。
+ * 每个测试元件(TestElement)都关联一个上下文实例，通过该上下文可以访问配置信息、变量以及其他运行时数据。
+ * </p>
+ * <p>
+ * 上下文按照作用域分为多个层级：
+ * <ul>
+ *   <li>全局上下文(GlobalContext) - 整个测试运行期间的全局配置</li>
+ *   <li>测试套件上下文(TestSuiteContext) - 特定测试套件范围内的配置</li>
+ *   <li>会话上下文(SessionContext) - 特定会话范围内的配置</li>
+ *   <li>测试上下文(TestContext) - 单个测试范围内的配置</li>
+ * </ul>
+ * </p>
  *
  * @author xiaomi
  */
 public interface Context {
 
     /**
-     * 获取当前 TestElement 的配置组数据。TestElement 的配置组数据运行时初始化，属于运行时配置数据。
+     * 获取当前 TestElement 的配置组数据
+     * <p>
+     * TestElement 的配置组数据在运行时初始化，属于运行时配置数据。配置组包含该测试元件相关的所有配置信息，
+     * 如变量、HTTP配置、数据库配置等。这些配置可能来自不同层级的上下文，通过合并机制实现配置的继承和覆盖。
+     * </p>
      *
-     * @return TestElement 的配置组数据
+     * @return TestElement 的配置组数据，如果未设置则返回null
      */
     ConfigureGroup getConfigGroup();
 }

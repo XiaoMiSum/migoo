@@ -41,17 +41,54 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
+ * JDBC协议JSON拦截器
+ * <p>
+ * 该类用于处理JDBC协议相关测试元件的JSON反序列化过程。
+ * 主要功能是将JSON配置转换为对应的JDBC配置项对象，并处理配置项的兼容性问题。
+ * </p>
+ *
+ * <p>主要功能：
+ * <ul>
+ *   <li>支持JDBC取样器、数据源、前置/后置处理器的反序列化</li>
+ *   <li>处理旧版本配置项的兼容性转换（如statement转sql）</li>
+ * </ul>
+ * </p>
+ *
  * @author xiaomi
- * Created at 2025/7/21 22:25
+ * @since 2025/7/21 22:25
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class JDBCJSONInterceptor implements JSONInterceptor, JDBCConstantsInterface {
 
+    /**
+     * 获取支持的类列表
+     * <p>
+     * 返回该拦截器支持处理的类列表，包括：
+     * <ul>
+     *   <li>JDBCSampler - JDBC取样器</li>
+     *   <li>JDBCDatasource - JDBC数据源</li>
+     *   <li>JDBCPreprocessor - JDBC前置处理器</li>
+     *   <li>JDBCPostprocessor - JDBC后置处理器</li>
+     * </ul>
+     * </p>
+     *
+     * @return 支持的类列表
+     */
     @Override
     public List<Class<?>> getSupportedClasses() {
         return List.of(JDBCSampler.class, JDBCDatasource.class, JDBCPreprocessor.class, JDBCPostprocessor.class);
     }
 
+    /**
+     * 反序列化配置项
+     * <p>
+     * 将JSON对象转换为JDBC配置项对象。处理旧版本配置项的兼容性问题，
+     * 将废弃的"statement"字段转换为"sql"字段。
+     * </p>
+     *
+     * @param value JSON对象
+     * @return JDBC配置项对象
+     */
     @Override
     public ConfigureItem<?> deserializeConfigureItem(Object value) {
         if (value instanceof Map configure) {

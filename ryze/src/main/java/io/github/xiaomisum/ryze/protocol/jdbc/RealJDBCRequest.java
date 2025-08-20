@@ -32,17 +32,40 @@ import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * JDBC请求实体类
+ * <p>
+ * 该类用于封装JDBC请求的相关信息，包括数据库连接信息和SQL语句。
+ * 实现了SampleResult.Real接口，用于在测试报告中展示JDBC请求的详细信息。
+ * </p>
+ *
  * @author xiaomi
- * Created at 2025/7/21 19:11
+ * @since 2025/7/21 19:11
  */
 public class RealJDBCRequest extends SampleResult.Real implements JDBCConstantsInterface {
 
+    /**
+     * 数据库连接URL
+     */
     private final String url;
 
+    /**
+     * 数据库用户名
+     */
     private final String username;
 
+    /**
+     * 数据库密码
+     */
     private final String password;
 
+    /**
+     * 构造JDBC请求对象
+     *
+     * @param url 数据库连接URL
+     * @param username 数据库用户名
+     * @param password 数据库密码
+     * @param sql 要执行的SQL语句
+     */
     public RealJDBCRequest(String url, String username, String password, String sql) {
         super(sql.getBytes());
         this.url = url;
@@ -51,13 +74,20 @@ public class RealJDBCRequest extends SampleResult.Real implements JDBCConstantsI
     }
 
     /**
-     * 设置 JDBC请求信息，格式如下
+     * 格式化JDBC请求信息
      * <p>
+     * 将JDBC请求信息格式化为易于阅读的字符串格式，包含数据库连接信息和SQL语句。
+     * 格式如下：
+     * <pre>
      * jdbc:mysql://localhost:3306/dbname?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-     * username
-     * password
-     * <p>
-     * data
+     * username: root
+     * password: password
+     *
+     * SELECT * FROM users WHERE id = 1
+     * </pre>
+     * </p>
+     *
+     * @return 格式化后的请求信息字符串
      */
     @Override
     public String format() {

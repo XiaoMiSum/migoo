@@ -47,11 +47,37 @@ import static io.github.xiaomisum.ryze.core.assertion.AssertionConstantsInterfac
 import static io.github.xiaomisum.ryze.core.testelement.TestElementConstantsInterface.TEST_CLASS;
 
 /**
+ * 断言对象反序列化器
+ * <p>
+ * 该类实现了FastJSON的ObjectReader接口，用于将JSON数据反序列化为Assertion对象。
+ * 支持自动识别和创建不同类型的断言对象，如JSON断言等。
+ * </p>
+ * <p>
+ * 反序列化逻辑：
+ * 1. 如果未指定testClass，则默认使用JSONAssertion
+ * 2. 如果未指定rule，则默认使用"=="
+ * 3. 根据testClass查找对应的断言类并创建实例
+ * </p>
+ *
  * @author xiaomi
  * Created at 2025/7/19 14:54
  */
 public class AssertionObjectReader implements ObjectReader<Assertion> {
 
+    /**
+     * 从JSON读取器中读取并构建断言对象
+     * <p>
+     * 该方法会解析JSON数据，根据testClass字段确定具体的断言类型，
+     * 并创建对应的断言对象实例。
+     * </p>
+     *
+     * @param jsonReader JSON读取器
+     * @param fieldType  字段类型
+     * @param fieldName  字段名称
+     * @param features   特性标志
+     * @return 解析后的断言对象
+     * @throws JSONException 当没有匹配的断言器或JSON格式错误时抛出
+     */
     @Override
     public Assertion readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
         var testElementMap = jsonReader.readObject();
@@ -67,6 +93,16 @@ public class AssertionObjectReader implements ObjectReader<Assertion> {
         return JSON.parseObject(JSON.toJSONString(testElementMap), pair.getLeft());
     }
 
+    /**
+     * 检查并确定测试元素的类型
+     * <p>
+     * 根据testClass字段在应用配置中查找对应的断言类。
+     * </p>
+     *
+     * @param testElementMap 测试元素Map
+     * @return 包含断言类和键的Pair对象
+     * @throws JSONException 当没有匹配的断言器时抛出
+     */
     private Pair<Class<? extends Assertion>, String> checkTestElement(Map<String, Object> testElementMap) {
         var keyMap = ApplicationConfig.getAssertionKeyMap();
         var key = testElementMap.get(TEST_CLASS).toString().toLowerCase(Locale.ROOT);

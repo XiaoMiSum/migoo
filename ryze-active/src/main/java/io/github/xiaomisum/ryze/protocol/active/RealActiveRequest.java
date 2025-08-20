@@ -33,26 +33,67 @@ import io.github.xiaomisum.ryze.protocol.active.config.ActiveConfigureItem;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * ActiveMQ实际请求信息类，用于封装和格式化ActiveMQ请求的详细信息
+ * <p>
+ * 该类继承自SampleResult.Real，用于存储和展示ActiveMQ消息发送的请求信息。
+ * 包含了连接参数、目标信息和消息内容等，提供格式化输出功能。
+ * </p>
+ * <p>
+ * 主要功能：
+ * <ul>
+ *   <li>存储ActiveMQ连接和消息发送的详细信息</li>
+ *   <li>提供格式化输出方法，便于查看和记录请求详情</li>
+ *   <li>支持通过配置项和消息内容构建实例</li>
+ * </ul>
+ * </p>
+ *
  * @author xiaomi
  * Created at 2025/7/26 22:24
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class RealActiveRequest extends SampleResult.Real {
 
+    /**
+     * ActiveMQ服务器地址
+     */
     private String address;
 
+    /**
+     * 消息发送目标Topic
+     */
     private String topic;
 
+    /**
+     * 消息发送目标Queue
+     */
     private String queue;
 
+    /**
+     * 连接用户名
+     */
     private String username;
 
+    /**
+     * 连接密码
+     */
     private String password;
 
+    /**
+     * 构造函数，使用字节数组初始化请求内容
+     *
+     * @param bytes 请求内容字节数组
+     */
     public RealActiveRequest(byte[] bytes) {
         super(bytes);
     }
 
+    /**
+     * 根据ActiveMQ配置项和消息内容构建RealActiveRequest实例
+     *
+     * @param config  ActiveMQ配置项
+     * @param message 消息内容
+     * @return RealActiveRequest实例
+     */
     public static RealActiveRequest build(ActiveConfigureItem config, String message) {
         var result = new RealActiveRequest(message.getBytes());
         result.address = config.getBrokerUrl();
@@ -63,6 +104,21 @@ public class RealActiveRequest extends SampleResult.Real {
         return result;
     }
 
+    /**
+     * 格式化输出请求信息
+     * <p>
+     * 输出内容包括：
+     * <ul>
+     *   <li>服务器地址</li>
+     *   <li>用户名和密码</li>
+     *   <li>Topic（如果设置了）</li>
+     *   <li>Queue（如果设置了）</li>
+     *   <li>消息内容（如果存在）</li>
+     * </ul>
+     * </p>
+     *
+     * @return 格式化后的请求信息字符串
+     */
     @Override
     public String format() {
         var buf = new StringBuilder();

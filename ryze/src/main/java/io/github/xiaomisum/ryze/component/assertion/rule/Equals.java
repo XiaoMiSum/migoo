@@ -30,12 +30,53 @@ import io.github.xiaomisum.ryze.core.assertion.Rule;
 import io.github.xiaomisum.ryze.core.testelement.KW;
 
 /**
+ * 相等性验证规则实现类
+ *
+ * <p>该类实现了相等性验证规则，用于判断实际值和期望值是否相等。
+ * 对于数字类型，使用数值比较；对于其他类型，使用字符串比较。</p>
+ *
+ * <p>支持的规则关键字: "==", "===", "eq", "equal", "equals", "is"</p>
+ *
+ * <p>使用示例：
+ * <pre>
+ * {
+ *   "testclass": "http"
+ *   "field": "code",
+ *   "expected": 200,
+ *   "rule": "=="
+ * }
+ *
+ * {
+ *   "testclass": "http"
+ *   "field": "message",
+ *   "expected": "success",
+ *   "rule": "equals"
+ * }
+ * </pre>
+ * </p>
+ *
  * @author xiaomi
- * @date 2019-08-13 22:17
+ * @see Rule 验证规则接口
+ * @see NumberEquals 数字相等性验证规则
+ * @since 2019-08-13 22:17
  */
 @KW({"==", "===", "eq", "equal", "equals", "is"})
 public class Equals extends BaseRule implements Rule {
 
+    /**
+     * 执行相等性验证
+     *
+     * <p>验证逻辑：
+     * <ol>
+     *   <li>如果实际值或期望值是数字类型，则使用NumberEquals进行数值比较</li>
+     *   <li>否则使用字符串比较</li>
+     * </ol>
+     * </p>
+     *
+     * @param actual   实际值
+     * @param expected 期望值
+     * @return 验证结果，true表示相等，false表示不相等
+     */
     @Override
     public boolean assertThat(Object actual, Object expected) {
         if (actual instanceof Number || expected instanceof Number) {

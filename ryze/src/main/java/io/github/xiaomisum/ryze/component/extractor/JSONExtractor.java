@@ -33,15 +33,61 @@ import io.github.xiaomisum.ryze.core.testelement.KW;
 import io.github.xiaomisum.ryze.core.testelement.sampler.SampleResult;
 
 /**
+ * JSON提取器，用于从JSON格式的响应数据中提取指定字段的值
+ * 
+ * <p>该提取器使用JsonPath表达式从JSON格式的响应体中提取数据。
+ * JsonPath是一种专门用于解析JSON文档的查询语言，类似于XPath之于XML。</p>
+ * 
+ * <p>使用示例：
+ * <pre>
+ * 假设响应体为：{"user":{"name":"John","age":30}}
+ * 
+ * 提取用户名：
+ * field = "$.user.name"
+ * refName = "userName"
+ * 
+ * 提取年龄：
+ * field = "$.user.age"
+ * refName = "userAge"
+ * </pre></p>
+ * 
+ * <p>支持的JsonPath语法包括：
+ * <ul>
+ *   <li>$ - 根对象</li>
+ *   <li>. - 子节点</li>
+ *   <li>[] - 数组索引</li>
+ *   <li>* - 通配符</li>
+ * </ul></p>
+ * 
  * @author xiaomi
+ * @see JSONPath
  */
 @KW({"JSONExtractor", "json_extractor", "json"})
 public class JSONExtractor extends AbstractExtractor {
 
+    /**
+     * 创建一个新的JSON提取器构建器
+     * 
+     * @return JSON提取器构建器实例
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * 执行JSON数据提取
+     * 
+     * <p>使用FastJSON2的JSONPath工具从响应体中提取数据：
+     * <ol>
+     *   <li>获取响应体的字符串表示</li>
+     *   <li>使用JsonPath表达式提取数据</li>
+     *   <li>封装提取结果</li>
+     *   <li>处理提取失败情况</li>
+     * </ol></p>
+     * 
+     * @param result 取样结果，包含待提取的响应数据
+     * @return 提取结果对象
+     */
     @Override
     protected ExtractResult extract(SampleResult result) {
         var res = new ExtractResult("JSON 提取: " + field);
@@ -55,8 +101,14 @@ public class JSONExtractor extends AbstractExtractor {
         return res;
     }
 
+    /**
+     * JSON提取器构建器，提供链式调用方式创建JSON提取器实例
+     */
     public static class Builder extends AbstractExtractor.Builder<Builder, JSONExtractor> {
 
+        /**
+         * 构造一个新的JSON提取器构建器实例
+         */
         public Builder() {
             super(new JSONExtractor());
         }

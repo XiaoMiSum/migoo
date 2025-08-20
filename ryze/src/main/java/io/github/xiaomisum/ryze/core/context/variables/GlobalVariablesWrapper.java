@@ -33,11 +33,31 @@ import io.github.xiaomisum.ryze.core.context.Context;
 import java.util.List;
 
 /**
+ * 全局变量包装器
+ * <p>
+ * 该类用于管理全局作用域的变量，继承自AbstractVariablesWrapper。它主要用于GlobalContext中，
+ * 管理整个测试运行期间全局可见的变量，这些变量在所有测试、会话和测试套件中都可见和可访问。
+ * </p>
+ * <p>
+ * GlobalVariablesWrapper提供了对全局变量的管理能力，包括变量的获取、设置、删除等操作。
+ * 全局变量具有最低的作用域优先级，会被同名的会话变量或测试变量覆盖。全局变量的生命周期
+ * 贯穿整个测试运行过程，从测试开始到结束都有效。
+ * </p>
+ *
  * @author xiaomi
  * Created at 2025/7/20 14:02
  */
 public class GlobalVariablesWrapper extends AbstractVariablesWrapper {
 
+    /**
+     * 构造一个新的全局变量包装器实例
+     * <p>
+     * 该构造函数接收一个上下文链，用于初始化变量包装器。对于全局变量包装器，
+     * 上下文链通常以全局上下文为主，用于管理整个测试运行期间的全局变量。
+     * </p>
+     *
+     * @param contextChain 上下文链，定义了变量的作用域层次结构，不能为空
+     */
     public GlobalVariablesWrapper(List<Context> contextChain) {
         super(contextChain);
     }

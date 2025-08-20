@@ -28,12 +28,32 @@
 
 package io.github.xiaomisum.ryze.core.testelement.sampler;
 
+/**
+ * 默认取样结果实现类，提供基本的取样结果功能实现。
+ *
+ * <p>该类是 {@link SampleResult}的默认实现，
+ * 用于不需要特殊处理的取样器。它继承了SampleResult的所有功能，
+ * 包括记录执行时间、存储请求响应数据等。</p>
+ *
+ * @author xiaomi
+ */
 public class DefaultSampleResult extends SampleResult {
 
+    /**
+     * 基于标题的构造函数
+     *
+     * @param title 结果标题
+     */
     public DefaultSampleResult(String title) {
         super(title);
     }
 
+    /**
+     * 基于ID和标题的构造函数
+     *
+     * @param id    结果ID
+     * @param title 结果标题
+     */
     public DefaultSampleResult(String id, String title) {
         super(id, title);
     }

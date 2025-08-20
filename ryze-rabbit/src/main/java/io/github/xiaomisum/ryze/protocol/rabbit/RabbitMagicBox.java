@@ -34,16 +34,39 @@ import io.github.xiaomisum.ryze.support.Customizer;
 import io.github.xiaomisum.ryze.support.groovy.Groovy;
 
 /**
- * 魔法盒子 提供函数式取样器执行入口
+ * RabbitMQ 魔法盒子工具类
+ * <p>
+ * 提供函数式接口用于执行 RabbitMQ 相关测试操作的便捷方法。
+ * 通过该类可以快速构建和执行 RabbitMQ 测试场景。
+ * </p>
  *
  * @author xiaomi
  */
 public class RabbitMagicBox extends MagicBox {
 
+    /**
+     * 执行 RabbitMQ 消息发送操作（无标题）
+     * <p>
+     * 使用 Groovy Closure 方式配置 RabbitSampler 并执行测试。
+     * </p>
+     *
+     * @param closure Groovy Closure，用于配置 RabbitSampler
+     * @return 测试执行结果
+     */
     public static Result rabbit(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = RabbitSampler.Builder.class) Closure<?> closure) {
         return rabbit("", closure);
     }
 
+    /**
+     * 执行 RabbitMQ 消息发送操作（带标题）
+     * <p>
+     * 使用 Groovy Closure 方式配置 RabbitSampler 并执行测试。
+     * </p>
+     *
+     * @param title   测试标题
+     * @param closure Groovy Closure，用于配置 RabbitSampler
+     * @return 测试执行结果
+     */
     public static Result rabbit(String title,
                                 @DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = RabbitSampler.Builder.class) Closure<?> closure) {
         var builder = RabbitSampler.builder();
@@ -51,10 +74,29 @@ public class RabbitMagicBox extends MagicBox {
         return MagicBox.runTest(title, builder.build());
     }
 
+    /**
+     * 执行 RabbitMQ 消息发送操作（无标题）
+     * <p>
+     * 使用 Customizer 方式配置 RabbitSampler 并执行测试。
+     * </p>
+     *
+     * @param customizer Customizer，用于配置 RabbitSampler
+     * @return 测试执行结果
+     */
     public static Result rabbit(Customizer<RabbitSampler.Builder> customizer) {
         return rabbit("", customizer);
     }
 
+    /**
+     * 执行 RabbitMQ 消息发送操作（带标题）
+     * <p>
+     * 使用 Customizer 方式配置 RabbitSampler 并执行测试。
+     * </p>
+     *
+     * @param title      测试标题
+     * @param customizer Customizer，用于配置 RabbitSampler
+     * @return 测试执行结果
+     */
     public static Result rabbit(String title, Customizer<RabbitSampler.Builder> customizer) {
         var builder = RabbitSampler.builder();
         customizer.customize(builder);

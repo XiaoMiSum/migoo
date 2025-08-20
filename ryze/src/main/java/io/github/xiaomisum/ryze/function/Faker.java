@@ -33,6 +33,17 @@ import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.Method;
 import java.util.Locale;
 
+/**
+ * Faker数据生成函数实现类
+ * 
+ * <p>该类基于com.github.javafaker.Faker库实现，用于生成各种类型的模拟数据，
+ * 如姓名、地址、电话号码、邮箱等。常用于测试场景中需要大量模拟数据的情况。</p>
+ * 
+ * <p>在测试用例中可以通过 ${faker()} 的方式调用该函数。</p>
+ * 
+ * @author xiaomi
+ * @see <a href="https://github.com/DiUS/java-faker">Java Faker库</a>
+ */
 public class Faker implements Function {
 
     @Override
@@ -41,10 +52,27 @@ public class Faker implements Function {
     }
 
     /**
-     * 通过 Faker库生成假数据，支持2个参数
-     * 参数：
-     * key: 假数据类型，格式为 Faker库的ClassName.Method
-     * local: 语言，可控，默认为 zh-CN
+     * 通过Faker库生成假数据，支持2个参数
+     * 
+     * <p>参数说明：
+     * <ol>
+     *   <li>key: 假数据类型，格式为Faker库的ClassName.Method，如"name.fullName"、"address.city"</li>
+     *   <li>locale: 语言区域设置，可选，默认为"zh-CN"（中文）</li>
+     * </ol>
+     * </p>
+     * 
+     * <p>使用示例：
+     * <pre>
+     * ${faker("name.fullName")}              // 生成中文姓名
+     * ${faker("address.city", "en-US")}      // 生成英文城市名
+     * ${faker("phoneNumber.cellPhone")}      // 生成手机号码
+     * </pre>
+     * </p>
+     * 
+     * @param context 上下文对象
+     * @param args 参数列表，包含数据类型和语言区域设置
+     * @return 生成的模拟数据
+     * @throws RuntimeException 当参数格式错误或反射调用失败时抛出异常
      */
     @Override
     public Object execute(ContextWrapper context, Args args) {

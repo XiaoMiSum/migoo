@@ -31,12 +31,31 @@ package io.github.xiaomisum.ryze.core.testelement.processor;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 
 /**
+ * 处理器接口，定义了处理器的基本行为
+ * <p>
+ * 处理器是在测试执行过程中用于执行特定处理逻辑的组件，分为前置处理器和后置处理器两种类型。
+ * 前置处理器在测试步骤执行前运行，后置处理器在测试步骤执行后运行。
+ * </p>
+ * <p>
+ * 处理器的主要用途包括：
+ * <ul>
+ *   <li>在测试步骤执行前准备数据或环境</li>
+ *   <li>在测试步骤执行后清理资源或处理结果</li>
+ *   <li>提取测试结果中的变量供后续步骤使用</li>
+ *   <li>执行特定的验证逻辑</li>
+ * </ul>
+ * </p>
+ *
  * @author xiaomi
  */
 public interface Processor {
 
     /**
-     * 是否禁用
+     * 是否禁用当前处理器
+     * <p>
+     * 当返回true时表示禁用该处理器，处理器将不会被执行。
+     * 默认实现返回false，表示默认不禁用。
+     * </p>
      *
      * @return true 表示禁用，默认不禁用
      */
@@ -45,9 +64,13 @@ public interface Processor {
     }
 
     /**
-     * 前\后置处理器执行
+     * 执行处理器逻辑
+     * <p>
+     * 这是处理器的核心方法，在测试执行过程中会被调用。
+     * 根据处理器类型（前置或后置），该方法会在测试步骤的相应阶段被调用。
+     * </p>
      *
-     * @return 处理结果
+     * @param context 上下文包装器，包含测试执行过程中的各种信息
      */
     void process(ContextWrapper context);
 }

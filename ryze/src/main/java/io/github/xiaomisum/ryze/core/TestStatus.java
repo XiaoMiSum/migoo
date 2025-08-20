@@ -28,19 +28,45 @@ package io.github.xiaomisum.ryze.core;
 import io.qameta.allure.model.Status;
 
 /**
- * 测试状态，当前仅在前后置处理器结果中用到
+ * 测试状态枚举
+ * <p>
+ * 定义了测试执行过程中可能出现的各种状态，用于标识测试元素（如测试套件、取样器等）的执行结果状态。
+ * 每种状态都对应一个Allure报告状态，便于生成标准化的测试报告。
+ * </p>
+ *
+ * @author xiaomi
  */
 public enum TestStatus {
 
 
-    //      FAILED("failed"),
-    //    BROKEN("broken"),
-    //    PASSED("passed"),
-    //    SKIPPED("skipped");
+    /**
+     * 禁用状态
+     * <p>表示测试元素被禁用，不会被执行</p>
+     */
     disabled(Status.SKIPPED),
+    
+    /**
+     * 通过状态
+     * <p>表示测试元素执行成功，所有验证都通过</p>
+     */
     passed(Status.PASSED),
+    
+    /**
+     * 失败状态
+     * <p>表示测试元素执行过程中断言失败</p>
+     */
     failed(Status.FAILED),
+    
+    /**
+     * 损坏状态
+     * <p>表示测试元素执行过程中发生系统错误或异常</p>
+     */
     broken(Status.BROKEN),
+    
+    /**
+     * 跳过状态
+     * <p>表示测试元素被跳过执行</p>
+     */
     skipped(Status.SKIPPED);
 
     private final Status allureStatus;
@@ -49,27 +75,57 @@ public enum TestStatus {
         this.allureStatus = allureStatus;
     }
 
+    /**
+     * 判断当前状态是否为通过状态
+     *
+     * @return 如果是通过状态返回true，否则返回false
+     */
     public boolean isPassed() {
         return this == passed;
     }
 
+    /**
+     * 判断当前状态是否为失败状态
+     *
+     * @return 如果是失败状态返回true，否则返回false
+     */
     public boolean isFailed() {
         return this == failed;
     }
 
+    /**
+     * 判断当前状态是否为损坏状态
+     *
+     * @return 如果是损坏状态返回true，否则返回false
+     */
     public boolean isBroken() {
         return this == broken;
     }
 
+    /**
+     * 判断当前状态是否为跳过状态
+     *
+     * @return 如果是跳过状态返回true，否则返回false
+     */
     public boolean isSkipped() {
         return this == skipped;
     }
 
+    /**
+     * 判断当前状态是否为禁用状态
+     *
+     * @return 如果是禁用状态返回true，否则返回false
+     */
     public boolean isDisabled() {
         return this == disabled;
     }
 
 
+    /**
+     * 获取对应的Allure报告状态
+     *
+     * @return Allure状态枚举值
+     */
     public Status getAllureStatus() {
         return allureStatus;
     }

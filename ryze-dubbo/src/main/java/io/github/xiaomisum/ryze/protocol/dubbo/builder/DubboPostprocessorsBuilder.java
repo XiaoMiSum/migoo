@@ -35,21 +35,60 @@ import io.github.xiaomisum.ryze.support.Customizer;
 import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
- * dubbo 自定义后置处理器列表构建器，提供 dubbo 自定义后置处理器列表的构建方法
+ * Dubbo后置处理器列表构建器
+ * <p>
+ * 该类用于构建Dubbo协议相关的后置处理器列表，提供多种方式添加Dubbo后置处理器。
+ * 它继承自ExtensiblePostprocessorsBuilder，支持链式调用和多种配置方式。
+ * </p>
+ * <p>
+ * 主要功能包括：
+ * 1. 支持直接添加DubboPostprocessor后置处理器对象
+ * 2. 支持通过Customizer函数式接口自定义后置处理器
+ * 3. 支持通过Builder构建器添加后置处理器
+ * 4. 支持通过Groovy闭包方式添加后置处理器
+ * </p>
+ * <p>
+ * 在测试框架中，该构建器用于收集和管理Dubbo相关的后置处理器，
+ * 这些处理器会在测试用例执行完成后按顺序执行。
+ * </p>
  *
  * @author xiaomi
  */
 public class DubboPostprocessorsBuilder extends ExtensiblePostprocessorsBuilder<DubboPostprocessorsBuilder, DefaultExtractorsBuilder> {
 
+    /**
+     * 创建Dubbo后置处理器列表构建器实例
+     *
+     * @return Dubbo后置处理器列表构建器实例
+     */
     public static DubboPostprocessorsBuilder builder() {
         return new DubboPostprocessorsBuilder();
     }
 
+    /**
+     * 添加Dubbo后置处理器对象到后置处理器列表中
+     * <p>
+     * 该方法直接将已构建好的DubboPostprocessor对象添加到后置处理器列表中。
+     * </p>
+     *
+     * @param postprocessor 已构建好的Dubbo后置处理器对象
+     * @return 当前构建器实例，支持链式调用
+     */
     public DubboPostprocessorsBuilder dubbo(DubboPostprocessor postprocessor) {
         postprocessors.add(postprocessor);
         return self;
     }
 
+    /**
+     * 通过自定义函数添加Dubbo后置处理器到后置处理器列表中
+     * <p>
+     * 该方法使用Customizer函数式接口来自定义Dubbo后置处理器，
+     * 通过回调方式配置DubboPostprocessor.Builder，然后构建并添加到后置处理器列表中。
+     * </p>
+     *
+     * @param customizer 自定义配置函数，用于配置DubboPostprocessor.Builder
+     * @return 当前构建器实例，支持链式调用
+     */
     public DubboPostprocessorsBuilder dubbo(Customizer<DubboPostprocessor.Builder> customizer) {
         var builder = DubboPostprocessor.builder();
         customizer.customize(builder);
@@ -57,11 +96,32 @@ public class DubboPostprocessorsBuilder extends ExtensiblePostprocessorsBuilder<
         return self;
     }
 
+    /**
+     * 通过构建器添加Dubbo后置处理器到后置处理器列表中
+     * <p>
+     * 该方法接收一个已配置的DubboPostprocessor.Builder对象，
+     * 构建DubboPostprocessor实例并添加到后置处理器列表中。
+     * </p>
+     *
+     * @param builder Dubbo后置处理器构建器
+     * @return 当前构建器实例，支持链式调用
+     */
     public DubboPostprocessorsBuilder dubbo(DubboPostprocessor.Builder builder) {
         postprocessors.add(builder.build());
         return self;
     }
 
+    /**
+     * 通过Groovy闭包添加Dubbo后置处理器到后置处理器列表中
+     * <p>
+     * 该方法使用Groovy闭包语法来自定义Dubbo后置处理器，
+     * 通过Groovy.call方法执行闭包配置DubboPostprocessor.Builder，
+     * 然后构建并添加到后置处理器列表中。
+     * </p>
+     *
+     * @param closure Groovy闭包，用于配置DubboPostprocessor.Builder
+     * @return 当前构建器实例，支持链式调用
+     */
     public DubboPostprocessorsBuilder dubbo(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = DubboPostprocessor.Builder.class) Closure<?> closure) {
         var builder = DubboPostprocessor.builder();
         call(closure, builder);

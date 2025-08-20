@@ -26,11 +26,27 @@
 package io.github.xiaomisum.ryze.core.assertion;
 
 /**
+ * 断言常量接口，定义了断言相关的常量
+ * 
+ * <p>该接口定义了断言配置中使用的标准字段名常量，
+ * 用于确保字段名的一致性和可维护性。</p>
+ * 
  * @author xiaomi
  */
 public interface AssertionConstantsInterface {
 
+    /**
+     * 字段名常量，用于标识要验证的数据字段
+     */
     String FIELD = "field";
+    
+    /**
+     * 期望值常量，用于标识断言的期望值
+     */
     String EXPECTED = "expected";
+    
+    /**
+     * 规则常量，用于标识断言的验证规则
+     */
     String RULE = "rule";
 }

@@ -42,12 +42,31 @@ import java.util.Iterator;
 import java.util.Objects;
 
 /**
- * 数据过滤拦截器
+ * 数据过滤拦截器，用于根据数据源注解中的slice配置过滤测试数据
+ * <p>
+ * 该类实现了TestNG的 {@link IDataProviderInterceptor}接口，
+ * 在数据提供者返回测试数据后、测试方法执行前对数据进行过滤处理。
+ * 主要功能是根据 {@link Datasource}注解中的slice属性对测试数据进行切片，
+ * 只执行指定范围或指定索引的测试数据。
+ * </p>
  *
  * @author xiaomi
  */
 public class RyzeDatasourceFilterInterceptor implements IDataProviderInterceptor {
 
+    /**
+     * 拦截并过滤测试数据提供者返回的数据
+     * <p>
+     * 该方法会检查测试方法上的数据源注解，如果存在slice配置，则根据配置对数据进行过滤，
+     * 只保留指定索引的数据项用于测试执行。
+     * </p>
+     *
+     * @param original           原始数据迭代器
+     * @param dataProviderMethod 数据提供者方法
+     * @param method             测试方法
+     * @param iTestContext       测试上下文
+     * @return 过滤后的数据迭代器
+     */
     @Override
     public Iterator<Object[]> intercept(Iterator<Object[]> original, IDataProviderMethod dataProviderMethod,
                                         ITestNGMethod method, ITestContext iTestContext) {

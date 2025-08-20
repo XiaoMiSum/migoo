@@ -36,7 +36,7 @@ import io.github.xiaomisum.ryze.support.fastjson.deserializer.TestElementObjectR
  * 测试元件是能根据其父上下文链独立执行的一个逻辑执行单元。
  * 测试元件使用 {@link KW} 注解配置关键字，
  * 若未使用该注解则通过 this.getClass().getSimpleName()获取类名用作关键字，以便识别测试集中组件的类型（代码风格中组件类型是已知的）。
- * 配置方式: test_class: http_sampler
+ * 配置方式: testclass: http_sampler
  *
  * <p>测试元件是整个工具的核心，
  * 环境管理、变量管理、前置处理器、后置处理器、插值表达式、函数、断言、配置继承、取样器、控制器、用例引用等功能都将围绕测试元件展开。

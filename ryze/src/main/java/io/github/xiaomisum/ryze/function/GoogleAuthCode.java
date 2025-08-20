@@ -37,6 +37,13 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 /**
+ * 谷歌验证码生成函数实现类
+ *
+ * <p>该类实现了Google Authenticator两步验证算法，用于生成6位数字验证码。
+ * 常用于需要双因素认证的测试场景，如登录验证、交易确认等。</p>
+ *
+ * <p>在测试用例中可以通过 ${google2fa()} 的方式调用该函数。</p>
+ *
  * @author xiaomi
  */
 public class GoogleAuthCode implements Function {
@@ -52,10 +59,24 @@ public class GoogleAuthCode implements Function {
 
     /**
      * 获取谷歌验证码，支持一个参数，且不允许为空
-     * 参数顺序：
-     * secret: 谷歌验证器安全码，非空，通过该安全码生成谷歌验证码
+     *
+     * <p>参数说明：
+     * <ol>
+     *   <li>secret: 谷歌验证器安全码，非空，通过该安全码生成谷歌验证码</li>
+     * </ol>
+     * </p>
+     *
+     * <p>使用示例：
+     * <pre>
+     * ${google2fa("SECRETKEY")}     // 根据安全码生成当前的6位验证码
+     * </pre>
+     * </p>
+     *
+     * @param context 上下文对象
+     * @param args    参数列表，包含谷歌验证器安全码
+     * @return 6位数字的谷歌验证码
+     * @throws RuntimeException 当安全码为空时抛出异常
      */
-
     @Override
     public Object execute(ContextWrapper context, Args args) {
         checkMethodArgCount(args, 1, 1);
@@ -66,6 +87,12 @@ public class GoogleAuthCode implements Function {
     }
 
 
+    /**
+     * 根据安全码生成谷歌验证码
+     *
+     * @param secretKey 安全码
+     * @return 6位数字的谷歌验证码
+     */
     private String generateVerifyCode(String secretKey) {
         var t = (System.currentTimeMillis() / 1000L) / 30L;
         byte[] decodedKey = new Base32().decode(secretKey);
@@ -77,6 +104,15 @@ public class GoogleAuthCode implements Function {
         }
     }
 
+    /**
+     * 基于HmacSHA1算法生成验证码
+     *
+     * @param key 安全码字节数组
+     * @param t   时间窗口
+     * @return 验证码数字
+     * @throws NoSuchAlgorithmException 当算法不支持时抛出
+     * @throws InvalidKeyException      当密钥无效时抛出
+     */
     private int generateVerifyCode(byte[] key, long t) throws NoSuchAlgorithmException, InvalidKeyException {
         byte[] data = new byte[8];
         var value = t;

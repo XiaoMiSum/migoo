@@ -34,26 +34,66 @@ import io.github.xiaomisum.ryze.support.Customizer;
 import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
- * rabbit 自定义配置元件列表构建器，提供 rabbit 自定义配置元件列表的构建方法
+ * RabbitMQ 自定义配置元件列表构建器
+ * <p>
+ * 该类提供 RabbitMQ 自定义配置元件列表的构建方法，用于构建和管理一组 RabbitMQ 配置元件。
+ * 支持多种方式添加配置元件，包括直接添加、使用构建器、使用自定义器和使用 Groovy Closure。
+ * </p>
  *
  * @author xiaomi
  */
 public class RabbitConfigureElementsBuilder extends ExtensibleConfigureElementsBuilder<RabbitConfigureElementsBuilder> {
 
+    /**
+     * 创建 RabbitConfigureElementsBuilder 实例
+     * <p>
+     * 工厂方法，用于创建 RabbitConfigureElementsBuilder 构建器实例。
+     * </p>
+     *
+     * @return RabbitConfigureElementsBuilder 实例
+     */
     public static RabbitConfigureElementsBuilder builder() {
         return new RabbitConfigureElementsBuilder();
     }
 
+    /**
+     * 添加 RabbitDefaults 配置元件
+     * <p>
+     * 直接添加已构建好的 RabbitDefaults 配置元件到配置元件列表中。
+     * </p>
+     *
+     * @param child RabbitDefaults 配置元件实例
+     * @return 当前构建器实例，支持链式调用
+     */
     public RabbitConfigureElementsBuilder rabbit(RabbitDefaults child) {
         this.configureElements.add(child);
         return self;
     }
 
+    /**
+     * 添加通过构建器创建的 RabbitDefaults 配置元件
+     * <p>
+     * 使用 RabbitDefaults.Builder 构建器创建配置元件并添加到配置元件列表中。
+     * </p>
+     *
+     * @param builder RabbitDefaults.Builder 构建器实例
+     * @return 当前构建器实例，支持链式调用
+     */
     public RabbitConfigureElementsBuilder rabbit(RabbitDefaults.Builder builder) {
         this.configureElements.add(builder.build());
         return self;
     }
 
+    /**
+     * 使用自定义器添加 RabbitDefaults 配置元件
+     * <p>
+     * 通过 Customizer 自定义 RabbitDefaults.Builder 并构建配置元件，
+     * 然后添加到配置元件列表中。
+     * </p>
+     *
+     * @param customizer Customizer，用于自定义 RabbitDefaults.Builder
+     * @return 当前构建器实例，支持链式调用
+     */
     public RabbitConfigureElementsBuilder rabbit(Customizer<RabbitDefaults.Builder> customizer) {
         var builder = RabbitDefaults.builder();
         customizer.customize(builder);
@@ -61,6 +101,16 @@ public class RabbitConfigureElementsBuilder extends ExtensibleConfigureElementsB
         return self;
     }
 
+    /**
+     * 使用 Groovy Closure 添加 RabbitDefaults 配置元件
+     * <p>
+     * 通过 Groovy Closure 自定义 RabbitDefaults.Builder 并构建配置元件，
+     * 然后添加到配置元件列表中。
+     * </p>
+     *
+     * @param closure Groovy Closure，用于自定义 RabbitDefaults.Builder
+     * @return 当前构建器实例，支持链式调用
+     */
     public RabbitConfigureElementsBuilder rabbit(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = RabbitDefaults.Builder.class) Closure<?> closure) {
         var builder = RabbitDefaults.builder();
         call(closure, builder);

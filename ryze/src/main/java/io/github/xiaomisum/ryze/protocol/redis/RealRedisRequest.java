@@ -34,15 +34,31 @@ import org.apache.commons.lang3.StringUtils;
 import java.nio.charset.StandardCharsets;
 
 /**
+ * Redis实际请求类
+ * <p>
+ * 该类封装了Redis请求的详细信息，包括连接URL、命令和参数等。
+ * 实现了SampleResult.Real接口，用于在测试报告中展示Redis请求的详细信息。
+ * </p>
+ *
  * @author xiaomi
- * Created at 2025/7/21 19:11
+ * @since 2025/7/21 19:11
  */
 public class RealRedisRequest extends SampleResult.Real implements RedisConstantsInterface {
 
+    /**
+     * Redis连接URL
+     */
     private final String url;
 
-    public RealRedisRequest(String url, String command, String args) {
-        super((COMMAND + ": " + command + "\n" + ARGS + ": " + args + "\n\n").getBytes(StandardCharsets.UTF_8));
+    /**
+     * 构造Redis实际请求对象
+     *
+     * @param url Redis连接URL
+     * @param command Redis命令
+     * @param send Redis命令参数
+     */
+    public RealRedisRequest(String url, String command, String send) {
+        super((COMMAND + ": " + command + "\n" + SEND + ": " + send + "\n\n").getBytes(StandardCharsets.UTF_8));
         this.url = url;
     }
 
@@ -51,7 +67,7 @@ public class RealRedisRequest extends SampleResult.Real implements RedisConstant
      * <p>
      * redis(s)://username:password@localhost:3306/db
      * command
-     * args
+     * send
      * <p>
      * data
      */

@@ -32,11 +32,30 @@ import java.lang.annotation.Target;
 
 /**
  * 关键字注解 KW = keyword 缩写，以取代 alias 注解
- *
+ * <p>
+ * 该注解用于标识测试元素的关键字，可以为测试元素类指定一个或多个关键字标识符。
+ * 这些关键字可用于在配置文件或脚本中引用特定的测试元素类型，提供了一种灵活的方式来
+ * 映射测试元素类与配置标识符之间的关系。
+ * </p>
+ * <p>
+ * 使用示例：
+ * <pre>
+ * &#64;KW("http_sampler")
+ * public class HTTPSampler extends AbstractSampler { ... }
+ * </pre>
+ * </p>
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface KW {
 
+    /**
+     * 定义测试元素的关键字数组
+     * <p>
+     * 可以为同一个测试元素类指定多个关键字，这样在配置中使用任一关键字都可以匹配到该类
+     * </p>
+     *
+     * @return 关键字数组
+     */
     String[] value();
 }

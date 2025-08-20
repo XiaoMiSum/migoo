@@ -34,26 +34,62 @@ import io.github.xiaomisum.ryze.support.Customizer;
 import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
- * active 自定义取样器列表构建器，提供 active 自定义取样器列表的构建方法
+ * ActiveMQ自定义取样器列表构建器
+ * <p>
+ * 提供构建ActiveMQ自定义取样器列表的多种方式：
+ * 1. 直接添加已构建的ActiveSampler实例
+ * 2. 通过Customizer函数式接口配置并构建ActiveSampler实例
+ * 3. 通过ActiveSampler.Builder实例构建并添加
+ * 4. 通过Groovy闭包配置并构建ActiveSampler实例
+ * </p>
  *
  * @author xiaomi
  */
 public class ActiveSamplersBuilder extends ExtensibleChildrenBuilder<ActiveSamplersBuilder> {
 
+    /**
+     * 创建ActiveSamplersBuilder实例
+     *
+     * @return 新的ActiveSamplersBuilder实例
+     */
     public static ActiveSamplersBuilder builder() {
         return new ActiveSamplersBuilder();
     }
 
+    /**
+     * 添加已构建的ActiveSampler取样器
+     *
+     * @param child 已构建的ActiveSampler实例
+     * @return 当前构建器实例，支持链式调用
+     */
     public ActiveSamplersBuilder active(ActiveSampler child) {
         this.children.add(child);
         return self;
     }
 
+    /**
+     * 通过ActiveSampler.Builder实例构建并添加取样器
+     *
+     * @param child ActiveSampler.Builder实例
+     * @return 当前构建器实例，支持链式调用
+     */
     public ActiveSamplersBuilder active(ActiveSampler.Builder child) {
         this.children.add(child.build());
         return self;
     }
 
+    /**
+     * 通过Customizer函数式接口配置并构建ActiveSampler实例
+     * <p>
+     * 执行流程：
+     * 1. 创建ActiveSampler.Builder实例
+     * 2. 使用Customizer配置Builder
+     * 3. 构建ActiveSampler实例并添加到取样器列表
+     * </p>
+     *
+     * @param customizer Customizer函数式接口，用于配置ActiveSampler.Builder
+     * @return 当前构建器实例，支持链式调用
+     */
     public ActiveSamplersBuilder active(Customizer<ActiveSampler.Builder> customizer) {
         var builder = ActiveSampler.builder();
         customizer.customize(builder);
@@ -61,6 +97,18 @@ public class ActiveSamplersBuilder extends ExtensibleChildrenBuilder<ActiveSampl
         return self;
     }
 
+    /**
+     * 通过Groovy闭包配置并构建ActiveSampler实例
+     * <p>
+     * 执行流程：
+     * 1. 创建ActiveSampler.Builder实例
+     * 2. 使用Groovy闭包配置Builder
+     * 3. 构建ActiveSampler实例并添加到取样器列表
+     * </p>
+     *
+     * @param closure Groovy闭包，用于配置ActiveSampler.Builder
+     * @return 当前构建器实例，支持链式调用
+     */
     public ActiveSamplersBuilder active(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = ActiveSampler.Builder.class) Closure<?> closure) {
         var builder = ActiveSampler.builder();
         call(closure, builder);

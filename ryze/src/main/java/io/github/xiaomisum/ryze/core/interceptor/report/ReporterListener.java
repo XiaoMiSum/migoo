@@ -34,14 +34,37 @@ import io.github.xiaomisum.ryze.core.testelement.TestElement;
 import org.slf4j.Logger;
 
 /**
- * 测试报告监听器
+ * 测试报告监听器接口
+ * <p>
+ * ReporterListener 是测试报告生成的核心接口，继承自 RyzeInterceptor，
+ * 用于在测试执行过程中收集信息并生成测试报告。
+ * </p>
+ * <p>
+ * 该接口提供了以下功能：
+ * <ul>
+ *   <li>打印异常堆栈信息到日志</li>
+ *   <li>在测试框架环境中重新抛出异常</li>
+ *   <li>提供测试元素的拦截处理能力</li>
+ * </ul>
+ * </p>
  *
+ * @param <T> 测试元素类型
  * @author xiaomi
  * Created at 2025/7/20 14:15
  */
 public interface ReporterListener<T extends TestElement<?>> extends RyzeInterceptor<T> {
 
 
+    /**
+     * 打印异常堆栈信息到日志
+     * <p>
+     * 如果 throwable 不为 null，则使用指定的日志记录器记录异常信息和堆栈跟踪。
+     * 如果当前会话在测试框架支持模式下运行，则重新抛出异常。
+     * </p>
+     *
+     * @param throwable 异常对象
+     * @param log       日志记录器
+     */
     default void printStackTrace(Throwable throwable, Logger log) {
         if (throwable == null) {
             return;

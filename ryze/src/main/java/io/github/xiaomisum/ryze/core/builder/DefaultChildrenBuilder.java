@@ -28,10 +28,29 @@ package io.github.xiaomisum.ryze.core.builder;
 /**
  * 默认子集合构建器，提供 TestSuite 及 core模块下的 协议取样器构建
  *
+ * <p>该构建器是 {@link ExtensibleChildrenBuilder}的具体实现，
+ * 提供了测试套件(TestSuite)以及核心模块中所有协议取样器的构建方法。</p>
+ *
+ * <p>子集合构建器用于构建测试容器的子元件列表，是构建测试结构树的重要工具。
+ * 通过该构建器可以方便地将各种测试元件组织成树状结构。</p>
+ *
+ * <p>主要功能包括：
+ * <ul>
+ *   <li>提供测试套件的构建方法</li>
+ *   <li>提供核心模块下各协议取样器的构建方法</li>
+ *   <li>支持流畅的构建器模式</li>
+ *   <li>可作为其他自定义子集合构建器的基础</li>
+ * </ul></p>
+ *
  * @author xiaomi
  */
 public class DefaultChildrenBuilder extends ExtensibleChildrenBuilder<DefaultChildrenBuilder> {
 
+    /**
+     * 创建默认子集合构建器实例
+     *
+     * @return 默认子集合构建器实例
+     */
     public static DefaultChildrenBuilder builder() {
         return new DefaultChildrenBuilder();
     }

@@ -112,7 +112,7 @@ public class Collections {
     @SafeVarargs
     public static <T> List<T> newArrayList(T... elements) {
         if (elements != null) {
-            return newArrayList(java.util.Arrays.asList(elements));
+            return newArrayList(Arrays.asList(elements));
         }
         return new ArrayList<>();
     }

@@ -31,23 +31,53 @@ import org.apache.hc.core5.http.Header;
 import java.util.List;
 
 /**
+ * HTTP实际结果抽象基类
+ * <p>
+ * 该类是HTTP请求和响应结果的抽象基类，提供了HTTP协议特有的属性和方法。
+ * 包含HTTP版本信息和响应头列表，为HTTP请求和响应结果提供统一的处理接口。
+ * </p>
+ *
  * @author xiaomi
  */
 public abstract class HTTPRealResult extends SampleResult.Real {
 
 
+    /**
+     * HTTP协议版本
+     * <p>例如："HTTP/1.1" 或 "HTTP/2"</p>
+     */
     protected String version;
 
+    /**
+     * HTTP响应头列表
+     * <p>包含响应中的所有HTTP头信息</p>
+     */
     protected List<Header> headers;
 
+    /**
+     * 构造HTTP实际结果对象
+     *
+     * @param bytes 结果字节数组
+     */
     public HTTPRealResult(byte[] bytes) {
         super(bytes);
     }
 
+    /**
+     * 获取HTTP响应头列表
+     *
+     * @return HTTP响应头列表
+     */
     public List<Header> headers() {
         return headers;
     }
 
+    /**
+     * 添加响应头信息到字符串缓冲区
+     * <p>将所有响应头以"名称: 值"的格式添加到缓冲区中</p>
+     *
+     * @param buf 字符串缓冲区
+     */
     protected void header(StringBuilder buf) {
         if (headers == null || headers.isEmpty()) {
             return;

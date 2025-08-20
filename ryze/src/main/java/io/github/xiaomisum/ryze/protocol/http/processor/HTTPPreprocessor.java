@@ -100,7 +100,7 @@ public class HTTPPreprocessor extends AbstractProcessor<HTTPPreprocessor, HTTPCo
     /**
      * HTTP 前置处理器构建器
      */
-    public static class Builder extends AbstractProcessor.PreprocessorBuilder<HTTPPreprocessor, Builder, HTTPConfigureItem,
+    public static class Builder extends PreprocessorBuilder<HTTPPreprocessor, Builder, HTTPConfigureItem,
             HTTPConfigureItem.Builder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public HTTPPreprocessor build() {

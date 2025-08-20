@@ -36,6 +36,13 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 /**
+ * 时间戳函数实现类
+ *
+ * <p>该类用于获取当前时间的时间戳或格式化时间字符串。
+ * 常用于生成时间标识、记录操作时间等场景。</p>
+ *
+ * <p>在测试用例中可以通过 ${timestamp()} 的方式调用该函数。</p>
+ *
  * @author mi.xiao
  */
 public class Timestamp implements Function {
@@ -47,10 +54,27 @@ public class Timestamp implements Function {
 
     /**
      * 获取当前时间，支持一个参数
-     * 参数：
-     * format: 指定日期时间格式，如：yyyy-MM-dd、yyyy-MM-dd HH:mm:ss、yyyyMMdd、yyyyMMddHHmmss
-     * <p>
-     * 当格式化参数未传递时，则返回当前时间戳
+     *
+     * <p>参数说明：
+     * <ol>
+     *   <li>format: 指定日期时间格式，如：yyyy-MM-dd、yyyy-MM-dd HH:mm:ss、yyyyMMdd、yyyyMMddHHmmss</li>
+     * </ol>
+     * </p>
+     *
+     * <p>当格式化参数未传递时，则返回当前时间戳</p>
+     *
+     * <p>使用示例：
+     * <pre>
+     * ${timestamp()}                                // 返回当前时间戳
+     * ${timestamp("yyyy-MM-dd")}                    // 返回当前日期，格式为yyyy-MM-dd
+     * ${timestamp("yyyy-MM-dd HH:mm:ss")}           // 返回当前日期时间，格式为yyyy-MM-dd HH:mm:ss
+     * ${timestamp("yyyyMMddHHmmss")}                // 返回当前日期时间，格式为yyyyMMddHHmmss
+     * </pre>
+     * </p>
+     *
+     * @param context 上下文对象
+     * @param args    参数列表，包含日期时间格式
+     * @return 格式化后的时间字符串或时间戳
      */
     @Override
     public String execute(ContextWrapper context, Args args) {

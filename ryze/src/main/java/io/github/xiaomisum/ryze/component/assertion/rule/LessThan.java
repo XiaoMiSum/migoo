@@ -31,12 +31,48 @@ import io.github.xiaomisum.ryze.core.testelement.KW;
 import java.math.BigDecimal;
 
 /**
+ * 小于验证规则实现类
+ *
+ * <p>该类实现了小于验证规则，用于判断实际值是否小于期望值。
+ * 使用BigDecimal进行数值比较，确保精度。</p>
+ *
+ * <p>支持的规则关键字: "<", "less", "lessThan", "lt"</p>
+ *
+ * <p>使用示例：
+ * <pre>
+ * {
+ *   "testclass": "http"
+ *   "field": "age",
+ *   "expected": 65,
+ *   "rule": "<"
+ * }
+ *
+ * {
+ *   "testclass": "http"
+ *   "field": "score",
+ *   "expected": 60,
+ *   "rule": "lessThan"
+ * }
+ * </pre>
+ * </p>
+ *
  * @author xiaomi
- * @date 2019-08-13 22:17
+ * @see Rule 验证规则接口
+ * @since 2019-08-13 22:17
  */
 @KW({"<", "less", "lessThan", "lt"})
 public class LessThan extends BaseRule implements Rule {
 
+    /**
+     * 执行小于验证
+     *
+     * <p>使用BigDecimal进行数值比较，确保精度。
+     * null值被当作0处理。</p>
+     *
+     * @param actual   实际值
+     * @param expected 期望值
+     * @return 验证结果，true表示实际值小于期望值，false表示实际值不小于期望值
+     */
     @Override
     public boolean assertThat(Object actual, Object expected) {
         var b1 = new BigDecimal(objectToString(actual, "0"));

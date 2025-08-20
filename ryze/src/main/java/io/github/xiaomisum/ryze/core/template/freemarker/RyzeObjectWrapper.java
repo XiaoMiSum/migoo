@@ -33,15 +33,55 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * ObjectWrapper 对象包装为 TemplateModel 类型。
+ * ObjectWrapper 对象包装器，将Java对象包装为FreeMarker的TemplateModel类型
+ *
+ * <p>该类是FreeMarker模板引擎的对象包装器实现，负责将Java对象转换为FreeMarker可以处理的TemplateModel对象。
+ * 它扩展了FreeMarker的 {@link DefaultObjectWrapper}类，
+ * 提供了对框架中常用类型的特殊处理。</p>
+ *
+ * <p>主要功能包括：
+ * <ul>
+ *   <li>将Java对象包装为FreeMarker模板模型</li>
+ *   <li>处理常用数据类型如字符串、数字、日期、集合等</li>
+ *   <li>支持自定义类型包装逻辑</li>
+ * </ul></p>
+ *
+ * @author xiaomi
  */
 @SuppressWarnings("rawtypes")
 public class RyzeObjectWrapper extends DefaultObjectWrapper {
 
+    /**
+     * 构造函数
+     *
+     * @param incompatibleImprovements 版本兼容性改进设置
+     */
     public RyzeObjectWrapper(Version incompatibleImprovements) {
         super(incompatibleImprovements);
     }
 
+    /**
+     * 将Java对象包装为TemplateModel对象
+     *
+     * <p>该方法根据对象类型选择合适的TemplateModel实现进行包装：
+     * <ul>
+     *   <li>null值包装为null</li>
+     *   <li>已为TemplateModel类型的对象直接返回</li>
+     *   <li>字符串包装为SimpleScalar</li>
+     *   <li>数字包装为SimpleNumber</li>
+     *   <li>日期类型包装为SimpleDate</li>
+     *   <li>Map类型包装为DefaultMapAdapter</li>
+     *   <li>布尔值包装为TemplateBooleanModel</li>
+     *   <li>迭代器包装为DefaultIteratorAdapter</li>
+     *   <li>枚举包装为DefaultEnumerationAdapter</li>
+     *   <li>数组包装为DefaultArrayAdapter</li>
+     *   <li>其他类型调用handleUnknownType处理</li>
+     * </ul></p>
+     *
+     * @param obj 待包装的Java对象
+     * @return 包装后的TemplateModel对象
+     * @throws TemplateModelException 模板模型异常
+     */
     public TemplateModel wrap(Object obj) throws TemplateModelException {
         return switch (obj) {
             case null -> super.wrap(null);

@@ -29,6 +29,15 @@
 package io.github.xiaomisum.ryze.support.fastjson.deserializer;
 
 /**
+ * 后置处理器对象反序列化器
+ * <p>
+ * 该类继承自 {@link ProcessorObjectReader}，专门用于将JSON数据反序列化为后置处理器对象。
+ * 后置处理器在测试元素执行完成后运行，通常用于清理资源、记录日志等操作。
+ * </p>
+ * <p>
+ * 反序列化逻辑完全复用父类{@link ProcessorObjectReader}的实现。
+ * </p>
+ *
  * @author xiaomi
  * Created at 2025/7/19 14:39
  */

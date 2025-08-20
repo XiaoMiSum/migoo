@@ -51,8 +51,20 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * 测试容器抽象类，负责调度子元件执行
+ * 测试容器抽象类
+ * <p>
+ * 负责调度子元件执行，是所有测试容器类的基类。该类继承自AbstractTestElementExecutable，
+ * 提供了容器类测试组件的核心功能，包括子元素管理、执行调度、结果收集等。
+ * </p>
+ * <p>
+ * 测试容器可以包含多个子测试元素（如其他容器或取样器），并负责按顺序执行这些子元素，
+ * 收集和汇总执行结果。容器在执行过程中会处理前置处理器、后置处理器和拦截器等组件，
+ * 确保测试执行流程的完整性和一致性。
+ * </p>
  *
+ * @param <SELF>   测试容器自身类型，用于支持链式调用和类型安全的返回值
+ * @param <CONFIG> 测试容器配置项类型，必须是ConfigureItem的子类
+ * @param <R>      测试结果类型，必须是Result的子类
  * @author xiaomi
  */
 @SuppressWarnings("all")
@@ -60,17 +72,38 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
         CONFIG extends ConfigureItem<CONFIG>, R extends Result>
         extends AbstractTestElementExecutable<SELF, CONFIG, R> {
 
+    /**
+     * 子测试元素列表
+     * <p>存储容器包含的所有子测试元素，在JSON序列化中对应"children"字段，序列化顺序为10</p>
+     */
     @JSONField(name = CHILDREN, ordinal = 10)
     protected List<TestElement<R>> children;
 
+    /**
+     * 默认构造函数
+     */
     public TestContainerExecutable() {
     }
 
+    /**
+     * 基于构建器的构造函数
+     *
+     * @param builder 测试容器构建器实例
+     */
     public TestContainerExecutable(Builder builder) {
         super(builder);
         this.children = builder.children;
     }
 
+    /**
+     * 执行子测试元素
+     * <p>
+     * 该方法是测试容器的核心执行逻辑，负责按顺序执行所有子测试元素，并处理前置处理器、
+     * 后置处理器和拦截器等组件。如果某个子元素是取样器且执行失败，则会中断后续执行。
+     * </p>
+     *
+     * @param context 上下文包装器，提供执行环境和变量管理
+     */
     protected void executeChildren(ContextWrapper context) {
         if (children == null) {
             return;
@@ -114,6 +147,14 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
 
     }
 
+    /**
+     * 验证测试容器
+     * <p>
+     * 验证测试容器及其所有子元素的数据有效性，确保测试可以正常执行。
+     * </p>
+     *
+     * @return 验证结果
+     */
     @Override
     public ValidateResult validate() {
         ValidateResult result = super.validate();
@@ -127,6 +168,14 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
         return result;
     }
 
+    /**
+     * 复制测试容器
+     * <p>
+     * 创建当前测试容器的深拷贝副本，包括所有子元素的复制。
+     * </p>
+     *
+     * @return 复制的测试容器实例
+     */
     @Override
     public SELF copy() {
         SELF self = super.copy();
@@ -140,22 +189,40 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
         return self;
     }
 
+    /**
+     * 获取子测试元素列表
+     *
+     * @return 子测试元素列表
+     */
     public List<TestElement<R>> getChildren() {
         return children;
     }
 
+    /**
+     * 设置子测试元素列表
+     *
+     * @param children 子测试元素列表
+     */
     public void setChildren(List<TestElement<R>> children) {
         this.children = children;
     }
 
     /**
      * 容器基础构建器
+     * <p>
+     * 该构建器为测试容器提供构建支持，继承自AbstractTestElementExecutable.Builder，
+     * 支持配置项、前置处理器、后置处理器等组件的配置，同时扩展了子元素配置功能。
+     * </p>
      *
-     * @param <ELE>               容器类型
-     * @param <SELF>              自己的类型
-     * @param <CONFIG>            容器配置类型
-     * @param <CONFIGURE_BUILDER> 容器配置类型构建器
-     * @param <R>                 处理结果类型
+     * @param <ELE>                   容器类型，必须是TestContainerExecutable的子类
+     * @param <SELF>                  自己的类型，用于支持链式调用
+     * @param <CONFIG>                容器配置类型，必须是ConfigureItem的子类
+     * @param <CONFIGURE_BUILDER>     容器配置类型构建器，必须是ConfigureBuilder的子类
+     * @param <CONFIGURES_BUILDER>    配置元素构建器，必须是ExtensibleConfigureElementsBuilder的子类
+     * @param <PREPROCESSORS_BUILDER> 前置处理器构建器，必须是ExtensiblePreprocessorsBuilder的子类
+     * @param <POSTPROCESSORS_BUILDER>后置处理器构建器，必须是ExtensiblePostprocessorsBuilder的子类
+     * @param <CHILDREN_BUILDER>      子元素构建器，必须是ExtensibleChildrenBuilder的子类
+     * @param <R>                     处理结果类型，必须是Result的子类
      */
     public static abstract class Builder<ELE extends TestContainerExecutable<ELE, CONFIG, R>,
             SELF extends Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, CONFIGURES_BUILDER, PREPROCESSORS_BUILDER, POSTPROCESSORS_BUILDER, CHILDREN_BUILDER, R>,
@@ -168,13 +235,16 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
             R extends Result>
             extends AbstractTestElementExecutable.Builder<ELE, SELF, CONFIG, CONFIGURE_BUILDER, CONFIGURES_BUILDER, PREPROCESSORS_BUILDER, POSTPROCESSORS_BUILDER, R> {
 
+        /**
+         * 子测试元素列表
+         */
         protected List<TestElement<?>> children;
 
         /**
-         * 子节点
+         * 设置子节点列表
          *
-         * @param children 子节点
-         * @return 当前对象
+         * @param children 子节点列表
+         * @return 当前构建器实例，用于链式调用
          */
         public SELF children(List<TestElement<?>> children) {
             this.children = Collections.addAllIfNonNull(this.children, children);
@@ -182,6 +252,14 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
         }
 
 
+        /**
+         * 通过类型和自定义器配置子节点
+         *
+         * @param type       子节点构建器类型
+         * @param customizer 子节点自定义器
+         * @param <T>        子节点构建器类型
+         * @return 当前构建器实例，用于链式调用
+         */
         public <T extends ExtensibleChildrenBuilder> SELF children(Class<T> type, Customizer<T> customizer) {
             try {
                 T builder = type.getConstructor().newInstance();
@@ -193,6 +271,12 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
             return self;
         }
 
+        /**
+         * 通过自定义器配置子节点
+         *
+         * @param customizer 子节点自定义器
+         * @return 当前构建器实例，用于链式调用
+         */
         public SELF children(Customizer<CHILDREN_BUILDER> customizer) {
             CHILDREN_BUILDER builder = getChildrenBuilder();
             customizer.customize(builder);
@@ -200,12 +284,26 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
             return self;
         }
 
+        /**
+         * 通过类型和闭包配置子节点
+         *
+         * @param type    子节点构建器类型
+         * @param closure Groovy闭包
+         * @param <T>     子节点构建器类型
+         * @return 当前构建器实例，用于链式调用
+         */
         public <T extends ExtensibleChildrenBuilder> SELF children(Class<T> type, @DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "T") Closure<T> closure) {
             var builder = Groovy.builder(type, closure);
             this.children = Collections.addAllIfNonNull(this.children, builder.build());
             return self;
         }
 
+        /**
+         * 通过闭包配置子节点
+         *
+         * @param closure Groovy闭包
+         * @return 当前构建器实例，用于链式调用
+         */
         public SELF children(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, type = "CHILDREN_BUILDER") Closure<?> closure) {
             CHILDREN_BUILDER builder = getChildrenBuilder();
             Groovy.call(closure, builder);
@@ -213,8 +311,20 @@ public abstract class TestContainerExecutable<SELF extends TestContainerExecutab
             return self;
         }
 
+        /**
+         * 获取配置元素构建器
+         * <p>抽象方法，由具体子类实现</p>
+         *
+         * @return 配置元素构建器实例
+         */
         protected abstract CONFIGURES_BUILDER getConfiguresBuilder();
 
+        /**
+         * 获取子元素构建器
+         * <p>抽象方法，由具体子类实现</p>
+         *
+         * @return 子元素构建器实例
+         */
         protected abstract CHILDREN_BUILDER getChildrenBuilder();
 
     }

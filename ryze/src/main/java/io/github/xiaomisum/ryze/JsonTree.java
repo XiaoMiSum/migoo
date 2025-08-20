@@ -40,21 +40,62 @@ import java.util.Optional;
 import static io.github.xiaomisum.ryze.core.testelement.TestElementConstantsInterface.*;
 
 /**
+ * JSON测试用例树结构解析器
+ * <p>
+ * 该类负责将原始JSON测试用例转换为Ryze框架可识别的标准化格式，主要功能包括：
+ * 1. 解析并标准化测试用例结构
+ * 2. 处理测试用例中的变量定义
+ * 3. 转换键名为小写以保持一致性
+ * 4. 递归处理嵌套的测试组件
+ * 5. 兼容旧版本的键名（如将CHILD替换为CHILDREN）
+ * </p>
+ *
  * @author xiaomi
  */
 public class JsonTree extends JSONObject {
 
+    /**
+     * 构造函数，接收Map类型的测试用例数据
+     *
+     * @param testcase 测试用例数据，可以是JSONObject或其他Map类型
+     */
     public JsonTree(Map<String, Object> testcase) {
         this(testcase instanceof JSONObject json ? json : new JSONObject(testcase));
     }
 
 
+    /**
+     * 构造函数，接收JSONObject类型的测试用例数据
+     * <p>
+     * 初始化流程：
+     * 1. 替换过期的键名（如将CHILD替换为CHILDREN）
+     * 2. 预处理测试用例数据，确保数据结构一致性
+     * 3. 初始化并标准化测试用例结构
+     * </p>
+     *
+     * @param testcase JSONObject类型的测试用例数据
+     */
     public JsonTree(JSONObject testcase) {
         replaceExpiredKeys(testcase);
         var json = prepare(testcase);
         initialize(json, isRyzeTestFramework(json));
     }
 
+    /**
+     * 初始化并标准化测试用例结构
+     * <p>
+     * 处理流程：
+     * 1. 如果是Ryze测试框架组件，先移除变量定义以减少遍历次数
+     * 2. 遍历所有键值对：
+     *    - 将Ryze组件的键名转换为小写
+     *    - 递归处理嵌套的JSONObject和JSONArray对象
+     * 3. 根据组件类型设置测试类标识
+     * 4. 重新添加变量定义到Ryze组件中
+     * </p>
+     *
+     * @param json    预处理后的测试用例数据
+     * @param isRyze  是否为Ryze测试框架组件
+     */
     private void initialize(JSONObject json, boolean isRyze) {
         // 1、先删除 Ryze组件中的变量，减少一次遍历
         var variables = isRyze ? json.remove(VARIABLES) : null;
@@ -87,10 +128,22 @@ public class JsonTree extends JSONObject {
         }
     }
 
+    /**
+     * 解析JSONObject对象，如果是Ryze测试框架组件则递归创建JsonTree实例
+     *
+     * @param json 待解析的JSONObject对象
+     * @return 解析后的对象，如果是Ryze组件则返回新的JsonTree实例，否则返回原对象
+     */
     private JSONObject parse(JSONObject json) {
         return isRyzeTestFramework(json) ? new JsonTree(json) : json;
     }
 
+    /**
+     * 预处理Map对象，确保数据结构一致性
+     *
+     * @param object 待处理的Map对象
+     * @return 处理后的JSONObject对象
+     */
     private JSONObject prepare(Map<?, ?> object) {
         var json = new JSONObject(object.size());
         object.keySet().forEach(key -> {
@@ -105,6 +158,12 @@ public class JsonTree extends JSONObject {
         return json;
     }
 
+    /**
+     * 预处理List对象，确保数据结构一致性
+     *
+     * @param items 待处理的List对象
+     * @return 处理后的JSONArray对象
+     */
     private JSONArray prepare(List<?> items) {
         var temp = new JSONArray(items.size());
         items.forEach(item -> {
@@ -117,18 +176,44 @@ public class JsonTree extends JSONObject {
         return temp;
     }
 
+    /**
+     * 判断是否为Ryze测试框架组件
+     *
+     * @param json 待判断的JSONObject对象
+     * @return 如果是Ryze测试框架组件返回true，否则返回false
+     */
     private boolean isRyzeTestFramework(JSONObject json) {
         return isRyzeTestsuite(json) || isRyzeSampler(json);
     }
 
+    /**
+     * 判断是否为Ryze测试套件组件
+     *
+     * @param json 待判断的JSONObject对象
+     * @return 如果是Ryze测试套件组件返回true，否则返回false
+     */
     private boolean isRyzeTestsuite(JSONObject json) {
         return ((json.containsKey(CHILDREN) || json.containsKey(CHILD)) && json.containsKey(TITLE));
     }
 
+    /**
+     * 判断是否为Ryze取样器组件
+     *
+     * @param json 待判断的JSONObject对象
+     * @return 如果是Ryze取样器组件返回true，否则返回false
+     */
     private boolean isRyzeSampler(JSONObject json) {
         return json.containsKey(TEST_CLASS);
     }
 
+    /**
+     * 替换过期的键名，保持向后兼容性
+     * <p>
+     * 目前主要处理将旧版本的CHILD键名替换为CHILDREN
+     * </p>
+     *
+     * @param json 需要处理的JSONObject对象
+     */
     private void replaceExpiredKeys(JSONObject json) {
         if (!isRyzeTestFramework(json)) {
             return;

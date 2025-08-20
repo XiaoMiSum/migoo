@@ -29,8 +29,22 @@ import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
 
 /**
  * 可扩展的前置处理器列表构建器，可通过扩展此类实现自定义的前置处理器列表构建器
+ * 
+ * <p>该构建器用于构建测试元件的前置处理器列表，允许用户通过继承此类来添加自定义的前置处理器构建方法。
+ * 它是所有前置处理器列表构建器的基类，提供了构建前置处理器列表的通用方法。</p>
+ * 
+ * <p>前置处理器在测试元件核心业务逻辑执行前运行，用于执行准备工作、数据初始化等操作。</p>
+ * 
+ * <p>主要功能包括：
+ * <ul>
+ *   <li>提供构建前置处理器列表的框架</li>
+ *   <li>支持通过继承扩展自定义前置处理器构建方法</li>
+ *   <li>与测试元件构建系统集成</li>
+ *   <li>支持与提取器构建器集成</li>
+ * </ul></p>
  *
- * @param <SELF>
+ * @param <SELF> 实际的构建器类型，用于实现流畅的构建器模式
+ * @param <EXTRACTORS_BUILDER> 提取器构建器类型
  * @author xiaomi
  */
 public abstract class ExtensiblePreprocessorsBuilder<SELF extends ExtensiblePreprocessorsBuilder<SELF, EXTRACTORS_BUILDER>,

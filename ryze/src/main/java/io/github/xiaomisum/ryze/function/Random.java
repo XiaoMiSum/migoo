@@ -32,6 +32,13 @@ import io.github.xiaomisum.ryze.core.function.Function;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
+ * 随机数生成函数实现类
+ * 
+ * <p>该类用于生成伪随机整数，支持指定上限值。
+ * 常用于需要随机数据的测试场景，如随机ID、随机数量等。</p>
+ * 
+ * <p>在测试用例中可以通过 ${random()} 的方式调用该函数。</p>
+ * 
  * @author xiaomi
  */
 public class Random implements Function {
@@ -43,9 +50,26 @@ public class Random implements Function {
 
     /**
      * 生成（伪）随机数，支持一个参数
-     * 参数：
-     * bound: 最大值，允许为空
-     * 当传入的bound值小于1或空值时，则不限制返回的数据（可能为正数，也可能为负数）
+     * 
+     * <p>参数说明：
+     * <ol>
+     *   <li>bound: 随机数的上限值（不包含），允许为空</li>
+     * </ol>
+     * </p>
+     * 
+     * <p>当传入的bound值小于1或空值时，则不限制返回的数据范围（可能为正数，也可能为负数）</p>
+     * 
+     * <p>使用示例：
+     * <pre>
+     * ${random()}        // 生成任意整数随机数
+     * ${random(100)}     // 生成0-99之间的随机数
+     * ${random(1000)}    // 生成0-999之间的随机数
+     * </pre>
+     * </p>
+     * 
+     * @param context 上下文对象
+     * @param args 参数列表，包含随机数上限值
+     * @return 生成的随机整数
      */
     @Override
     public Integer execute(ContextWrapper context, Args args) {

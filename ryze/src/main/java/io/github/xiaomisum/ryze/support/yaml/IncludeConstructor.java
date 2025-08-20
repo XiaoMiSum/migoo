@@ -42,9 +42,18 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
- * 支持 yaml文件引入
+ * 支持YAML文件引入的构造器
  * <p>
- * 格式为：!include filepath 或 !include [filepath1, filepath2] 或 !import filepath 或 !import [filepath1, filepath2]
+ * 该构造器扩展了SnakeYAML的默认构造器，增加了对YAML文件包含功能的支持。
+ * 允许在YAML文件中使用!include和!import标签引入其他YAML文件的内容。
+ * </p>
+ * <p>
+ * 支持的格式：
+ * <ul>
+ *   <li>单文件引入：!include filepath 或 !import filepath</li>
+ *   <li>多文件引入：!include [filepath1, filepath2] 或 !import [filepath1, filepath2]</li>
+ * </ul>
+ * </p>
  *
  * @author xiaomi
  */
@@ -52,10 +61,24 @@ public class IncludeConstructor extends Constructor {
 
     private final File basePath;
 
+    /**
+     * 默认构造函数
+     * <p>
+     * 创建一个不指定基础路径的包含构造器。
+     * </p>
+     */
     public IncludeConstructor() {
         this(null);
     }
 
+    /**
+     * 带基础路径的构造函数
+     * <p>
+     * 创建一个指定基础路径的包含构造器，用于解析相对路径的引入文件。
+     * </p>
+     *
+     * @param basePath 基础路径，用于解析相对路径，可以为null
+     */
     public IncludeConstructor(File basePath) {
         super(new LoaderOptions());
         this.basePath = basePath;
@@ -63,14 +86,32 @@ public class IncludeConstructor extends Constructor {
         this.yamlConstructors.put(new Tag("!import"), new IncludeConstruct());
     }
 
+    /**
+     * 包含构造器内部类
+     * <p>
+     * 处理!include和!import标签的构造逻辑，支持单文件和多文件引入。
+     * </p>
+     */
     private class IncludeConstruct extends AbstractConstruct {
+        /**
+         * 构造节点内容
+         * <p>
+         * 根据节点类型处理文件引入：
+         * 1. 标量节点：处理单文件引入
+         * 2. 序列节点：处理多文件引入
+         * </p>
+         *
+         * @param node YAML节点
+         * @return 引入文件的内容或内容列表
+         * @throws RuntimeException 当节点类型不支持或文件加载失败时抛出
+         */
         @Override
         public Object construct(Node node) {
             if (node instanceof ScalarNode scalarNode) {
                 String filename = constructScalar(scalarNode);
                 String path = Paths.get(filename).isAbsolute() ? filename : basePath == null ? filename : new File(basePath, filename).getAbsolutePath();
                 try {
-                    return TestDataLoader.readFile(path);
+                    return TestDataLoader.toJavaObject(path, Object.class);
                 } catch (Exception e) {
                     throw new RuntimeException("加载 !include\\!import YAML文件错误: " + path, e);
                 }

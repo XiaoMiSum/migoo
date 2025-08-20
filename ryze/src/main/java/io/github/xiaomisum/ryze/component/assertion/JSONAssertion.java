@@ -34,16 +34,47 @@ import io.github.xiaomisum.ryze.support.ValidateResult;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * JSON断言类，用于验证JSON格式响应数据的特定字段
+ *
+ * <p>该类继承自AbstractAssertion，专门用于处理JSON格式的响应数据。
+ * 它使用JSONPath表达式从响应中提取特定字段的值，并与期望值进行比较。</p>
+ *
+ * <p>使用示例：
+ * <pre>
+ * {
+ *   "testclass": "json"
+ *   "field": "$.data.id",
+ *   "expected": 123,
+ *   "rule": "=="
+ * }
+ * </pre>
+ * </p>
+ *
  * @author xiaomi
+ * @see AbstractAssertion 抽象断言类
  */
 @KW({"JSONAssertion", "json_assertion", "json"})
 public class JSONAssertion extends AbstractAssertion {
 
 
+    /**
+     * 创建JSON断言构建器
+     *
+     * @return JSON断言构建器
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * 初始化断言结果，从JSON响应中提取指定字段的值
+     *
+     * <p>该方法使用field属性作为JSONPath表达式从响应中提取实际值。
+     * 如果提取过程中发生异常，则actualValue设置为null。</p>
+     *
+     * @param result 取样结果对象
+     * @return 断言结果对象
+     */
     @Override
     protected AssertionResult initialized(SampleResult result) {
         var res = new AssertionResult("JSON断言: ");
@@ -56,6 +87,13 @@ public class JSONAssertion extends AbstractAssertion {
         return res;
     }
 
+    /**
+     * 验证断言配置的有效性
+     *
+     * <p>该方法检查field字段是否为空，如果为空则返回验证失败结果。</p>
+     *
+     * @return 验证结果
+     */
     @Override
     public ValidateResult validate() {
         ValidateResult result = new ValidateResult();
@@ -65,8 +103,14 @@ public class JSONAssertion extends AbstractAssertion {
         return result;
     }
 
+    /**
+     * JSON断言构建器类
+     */
     public static class Builder extends AbstractAssertion.Builder<Builder, JSONAssertion> {
 
+        /**
+         * 构造函数，创建JSON断言构建器
+         */
         public Builder() {
             super(new JSONAssertion());
         }

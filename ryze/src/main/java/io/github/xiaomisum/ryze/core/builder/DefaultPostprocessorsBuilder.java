@@ -28,10 +28,29 @@ package io.github.xiaomisum.ryze.core.builder;
 /**
  * 默认后置处理器列表构建器，提供 core模块下的所有后置处理器构建
  *
+ * <p>该构建器是 {@link ExtensiblePostprocessorsBuilder}的具体实现，
+ * 提供了核心模块中所有后置处理器的构建方法。</p>
+ *
+ * <p>后置处理器在测试元件核心业务逻辑执行完成后运行，用于执行清理工作、结果处理等操作。
+ * 通过该构建器可以方便地构建各种类型的后置处理器。</p>
+ *
+ * <p>主要功能包括：
+ * <ul>
+ *   <li>提供核心模块下所有后置处理器的构建方法</li>
+ *   <li>支持与提取器构建器集成</li>
+ *   <li>支持流畅的构建器模式</li>
+ *   <li>可作为其他自定义后置处理器构建器的基础</li>
+ * </ul></p>
+ *
  * @author xiaomi
  */
 public class DefaultPostprocessorsBuilder extends ExtensiblePostprocessorsBuilder<DefaultPostprocessorsBuilder, DefaultExtractorsBuilder> {
 
+    /**
+     * 创建默认后置处理器列表构建器实例
+     *
+     * @return 默认后置处理器列表构建器实例
+     */
     public static DefaultPostprocessorsBuilder builder() {
         return new DefaultPostprocessorsBuilder();
     }

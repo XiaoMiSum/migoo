@@ -39,19 +39,88 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
+ * HTTP响应断言类，用于验证HTTP请求的响应结果
+ *
+ * <p>该类继承自AbstractAssertion，专门用于处理HTTP协议的响应断言。
+ * 支持对HTTP响应的状态码、响应头、响应体等不同部分进行验证。</p>
+ *
+ * <p>字段说明：
+ * <ul>
+ *   <li>status/statusCode/statusLine: 验证响应状态码</li>
+ *   <li>header[索引].字段名: 验证响应头信息</li>
+ *   <li>body或空: 验证响应体内容</li>
+ * </ul>
+ * </p>
+ *
+ * <p>使用示例：
+ * <pre>
+ * {
+ *   "testclass": "http"
+ *   "field": "status",
+ *   "expected": 200,
+ *   "rule": "=="
+ * }
+ *
+ * {
+ *   "testclass": "http"
+ *   "field": "header[0].Content-Type",
+ *   "expected": "application/json",
+ *   "rule": "contains"
+ * }
+ *
+ * {
+ *   "testclass": "http"
+ *   "field": "body",
+ *   "expected": "success",
+ *   "rule": "contains"
+ * }
+ * </pre>
+ * </p>
+ *
  * @author xiaomi
+ * @see AbstractAssertion 抽象断言类
  */
 @KW({"HTTPAssertion", "HTTP_Assertion", "http", "https"})
 public class HTTPResponseAssertion extends AbstractAssertion {
 
+    /**
+     * 状态码相关字段名列表
+     */
     private static final List<String> STATUS = Arrays.asList("line", "status", "code", "statuscode", "statusline", "status_code", "status_line");
+
+    /**
+     * 响应体字段名
+     */
     private static final String BODY = "body";
+
+    /**
+     * 响应头字段名匹配模式
+     */
     private static final Pattern PATTERN = Pattern.compile("^header(\\[\\d+])?(\\.\\w+.?)?");
 
+    /**
+     * 创建HTTP响应断言构建器
+     *
+     * @return HTTP响应断言构建器
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * 初始化断言结果，根据字段名提取相应的HTTP响应数据
+     *
+     * <p>该方法根据field字段的值决定提取HTTP响应的哪部分数据：
+     * <ul>
+     *   <li>status相关字段: 提取响应状态码</li>
+     *   <li>header相关字段: 提取响应头信息</li>
+     *   <li>body或空字段: 提取响应体内容</li>
+     * </ul>
+     * </p>
+     *
+     * @param result 取样结果对象
+     * @return 断言结果对象
+     */
     @Override
     protected AssertionResult initialized(SampleResult result) {
         var res = new AssertionResult("HTTP响应断言: ");
@@ -68,8 +137,14 @@ public class HTTPResponseAssertion extends AbstractAssertion {
     }
 
 
+    /**
+     * HTTP响应断言构建器类
+     */
     public static class Builder extends AbstractAssertion.Builder<Builder, HTTPResponseAssertion> {
 
+        /**
+         * 构造函数，创建HTTP响应断言构建器
+         */
         public Builder() {
             super(new HTTPResponseAssertion());
         }

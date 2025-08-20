@@ -32,15 +32,32 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
+ * HTTP实际响应结果类
+ * <p>
+ * 该类封装了HTTP响应的详细信息，包括状态码、状态消息、响应头和响应体等。
+ * 实现了SampleResult.Real接口，用于在测试报告中展示HTTP响应的详细信息。
+ * </p>
+ *
  * @author xiaomi
  */
 public class RealHTTPRealResultResponse extends HTTPRealResult {
 
+    /**
+     * HTTP状态码
+     */
     private int statusCode;
 
+    /**
+     * HTTP状态消息
+     */
     private String message;
 
 
+    /**
+     * 构造HTTP实际响应结果对象
+     *
+     * @param response HTTP响应对象
+     */
     public RealHTTPRealResultResponse(Response response) {
         super(Objects.isNull(response) ? new byte[0] : response.bytes());
         if (Objects.isNull(response)) {
@@ -54,8 +71,11 @@ public class RealHTTPRealResultResponse extends HTTPRealResult {
 
 
     /**
-     * 设置 HTTP响应信息，格式如下
+     * 格式化HTTP响应信息
      * <p>
+     * 将HTTP响应信息格式化为易于阅读的字符串格式，包含响应行、响应头和响应体。
+     * 格式遵循HTTP协议标准格式：
+     * <pre>
      * HTTP/1.1 200 OK
      * Content-Type: text/html; charset=utf-8
      * Content-Length: 55743
@@ -71,8 +91,8 @@ public class RealHTTPRealResultResponse extends HTTPRealResult {
      * X-XSS-Protection: 1; mode=block
      * Vary: Accept-Encoding,Cookie
      * Age: 7
-     * <p>
-     * <!DOCTYPE html>
+     *
+     * Response body: <!DOCTYPE html>
      * <html lang="en">
      * <head>
      * <meta charset="utf-8">
@@ -83,6 +103,10 @@ public class RealHTTPRealResultResponse extends HTTPRealResult {
      * <p>Hello, world!</p>
      * </body>
      * </html>
+     * </pre>
+     * </p>
+     *
+     * @return 格式化后的响应信息字符串
      */
     @Override
     public String format() {
@@ -95,6 +119,11 @@ public class RealHTTPRealResultResponse extends HTTPRealResult {
         return buf.toString();
     }
 
+    /**
+     * 获取HTTP状态码
+     *
+     * @return HTTP状态码
+     */
     public int statusCode() {
         return statusCode;
     }

@@ -100,7 +100,7 @@ public class HTTPPostprocessor extends AbstractProcessor<HTTPPostprocessor, HTTP
     /**
      * HTTP 后置处理器构建器
      */
-    public static class Builder extends AbstractProcessor.PostprocessorBuilder<HTTPPostprocessor, Builder, HTTPConfigureItem,
+    public static class Builder extends PostprocessorBuilder<HTTPPostprocessor, Builder, HTTPConfigureItem,
             HTTPConfigureItem.Builder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public HTTPPostprocessor build() {

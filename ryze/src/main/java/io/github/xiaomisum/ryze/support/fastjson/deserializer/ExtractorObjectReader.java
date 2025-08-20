@@ -48,11 +48,37 @@ import static io.github.xiaomisum.ryze.core.testelement.configure.ConfigureEleme
 import static io.github.xiaomisum.ryze.core.testelement.configure.ConfigureElementConstantsInterface.VARIABLE_NAME;
 
 /**
+ * 提取器对象反序列化器
+ * <p>
+ * 该类实现了FastJSON的ObjectReader接口，用于将JSON数据反序列化为Extractor对象。
+ * 支持自动识别和创建不同类型的提取器对象，如JSON提取器等。
+ * </p>
+ * <p>
+ * 反序列化逻辑：
+ * 1. 如果未指定testClass，则默认使用JSONExtractor
+ * 2. 处理variableName和refName的兼容性
+ * 3. 根据testClass查找对应的提取器类并创建实例
+ * </p>
+ *
  * @author xiaomi
  * Created at 2025/7/19 14:54
  */
 public class ExtractorObjectReader implements ObjectReader<Extractor> {
 
+    /**
+     * 从JSON读取器中读取并构建提取器对象
+     * <p>
+     * 该方法会解析JSON数据，根据testClass字段确定具体的提取器类型，
+     * 并创建对应的提取器对象实例。
+     * </p>
+     *
+     * @param jsonReader JSON读取器
+     * @param fieldType  字段类型
+     * @param fieldName  字段名称
+     * @param features   特性标志
+     * @return 解析后的提取器对象
+     * @throws JSONException 当没有匹配的提取器或JSON格式错误时抛出
+     */
     @Override
     public Extractor readObject(JSONReader jsonReader, Type fieldType, Object fieldName, long features) {
         var testElementMap = jsonReader.readObject();
@@ -68,6 +94,16 @@ public class ExtractorObjectReader implements ObjectReader<Extractor> {
         return JSON.parseObject(JSON.toJSONString(testElementMap), pair.getLeft());
     }
 
+    /**
+     * 检查并确定提取器的类型
+     * <p>
+     * 根据testClass字段在应用配置中查找对应的提取器类。
+     * </p>
+     *
+     * @param testElementMap 提取器Map
+     * @return 包含提取器类和键的Pair对象
+     * @throws JSONException 当没有匹配的提取器时抛出
+     */
     private Pair<Class<? extends Extractor>, String> checkTestElement(Map<String, Object> testElementMap) {
         var keyMap = ApplicationConfig.getExtractorKeyMap();
         var key = testElementMap.get(TEST_CLASS).toString().toLowerCase(Locale.ROOT);

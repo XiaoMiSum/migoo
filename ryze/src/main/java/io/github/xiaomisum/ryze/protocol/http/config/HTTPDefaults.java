@@ -35,6 +35,19 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Objects;
 
 /**
+ * HTTP 默认配置元件
+ * <p>
+ * 该类实现了HTTP配置和管理功能
+ * </p>
+ *
+ * <p>主要功能：
+ * <ul>
+ *   <li>设置HTTP默认配置</li>
+ *   <li>注册默认配置到测试上下文</li>
+ *   <li>验证配置的有效性</li>
+ * </ul>
+ * </p>
+ *
  * @author xiaomi
  */
 @KW(value = {"http_defaults", "http"})
@@ -78,7 +91,7 @@ public class HTTPDefaults extends AbstractConfigureElement<HTTPDefaults, HTTPCon
     /**
      * HTTP默认配置 测试元件 构建类
      */
-    public static class Builder extends AbstractConfigureElement.Builder<HTTPDefaults, HTTPDefaults.Builder, HTTPConfigureItem, HTTPConfigureItem.Builder, TestSuiteResult> {
+    public static class Builder extends AbstractConfigureElement.Builder<HTTPDefaults, Builder, HTTPConfigureItem, HTTPConfigureItem.Builder, TestSuiteResult> {
 
         @Override
         public HTTPDefaults build() {

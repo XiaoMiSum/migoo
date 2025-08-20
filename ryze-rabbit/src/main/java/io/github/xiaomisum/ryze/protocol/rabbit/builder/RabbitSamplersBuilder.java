@@ -34,26 +34,66 @@ import io.github.xiaomisum.ryze.support.Customizer;
 import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
- * rabbit 自定义取样器列表构建器，提供 rabbit 自定义取样器列表的构建方法
+ * RabbitMQ 自定义取样器列表构建器
+ * <p>
+ * 该类提供 RabbitMQ 自定义取样器列表的构建方法，用于构建和管理一组 RabbitMQ 取样器。
+ * 支持多种方式添加取样器，包括直接添加、使用构建器、使用自定义器和使用 Groovy Closure。
+ * </p>
  *
  * @author xiaomi
  */
 public class RabbitSamplersBuilder extends ExtensibleChildrenBuilder<RabbitSamplersBuilder> {
 
+    /**
+     * 创建 RabbitSamplersBuilder 实例
+     * <p>
+     * 工厂方法，用于创建 RabbitSamplersBuilder 构建器实例。
+     * </p>
+     *
+     * @return RabbitSamplersBuilder 实例
+     */
     public static RabbitSamplersBuilder builder() {
         return new RabbitSamplersBuilder();
     }
 
+    /**
+     * 添加 RabbitSampler 取样器
+     * <p>
+     * 直接添加已构建好的 RabbitSampler 取样器到取样器列表中。
+     * </p>
+     *
+     * @param child RabbitSampler 取样器实例
+     * @return 当前构建器实例，支持链式调用
+     */
     public RabbitSamplersBuilder rabbit(RabbitSampler child) {
         this.children.add(child);
         return self;
     }
 
+    /**
+     * 添加通过构建器创建的 RabbitSampler 取样器
+     * <p>
+     * 使用 RabbitSampler.Builder 构建器创建取样器并添加到取样器列表中。
+     * </p>
+     *
+     * @param child RabbitSampler.Builder 构建器实例
+     * @return 当前构建器实例，支持链式调用
+     */
     public RabbitSamplersBuilder rabbit(RabbitSampler.Builder child) {
         this.children.add(child.build());
         return self;
     }
 
+    /**
+     * 使用自定义器添加 RabbitSampler 取样器
+     * <p>
+     * 通过 Customizer 自定义 RabbitSampler.Builder 并构建取样器，
+     * 然后添加到取样器列表中。
+     * </p>
+     *
+     * @param customizer Customizer，用于自定义 RabbitSampler.Builder
+     * @return 当前构建器实例，支持链式调用
+     */
     public RabbitSamplersBuilder rabbit(Customizer<RabbitSampler.Builder> customizer) {
         var builder = RabbitSampler.builder();
         customizer.customize(builder);
@@ -61,6 +101,16 @@ public class RabbitSamplersBuilder extends ExtensibleChildrenBuilder<RabbitSampl
         return self;
     }
 
+    /**
+     * 使用 Groovy Closure 添加 RabbitSampler 取样器
+     * <p>
+     * 通过 Groovy Closure 自定义 RabbitSampler.Builder 并构建取样器，
+     * 然后添加到取样器列表中。
+     * </p>
+     *
+     * @param closure Groovy Closure，用于自定义 RabbitSampler.Builder
+     * @return 当前构建器实例，支持链式调用
+     */
     public RabbitSamplersBuilder rabbit(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = RabbitSampler.Builder.class) Closure<?> closure) {
         var builder = RabbitSampler.builder();
         call(closure, builder);

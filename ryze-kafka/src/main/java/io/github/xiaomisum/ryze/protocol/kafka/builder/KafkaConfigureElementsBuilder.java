@@ -34,26 +34,63 @@ import io.github.xiaomisum.ryze.support.Customizer;
 import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
- * kafka 自定义配置元件列表构建器，提供 kafka 自定义配置元件列表的构建方法
+ * Kafka配置元件构建器类，用于构建Kafka测试场景中的配置元件列表
+ * <p>
+ * 该类继承自ExtensibleConfigureElementsBuilder，提供了构建Kafka配置元件的便捷方法，
+ * 支持多种构建方式，包括直接传入配置对象、使用构建器模式、使用自定义函数式接口或Groovy闭包。
+ * </p>
+ * <p>
+ * 主要功能：
+ * <ul>
+ *   <li>提供多种方式添加Kafka配置元件</li>
+ *   <li>支持函数式编程风格</li>
+ *   <li>支持Groovy DSL语法</li>
+ * </ul>
+ * </p>
  *
  * @author xiaomi
+ * @see ExtensibleConfigureElementsBuilder
+ * @see KafkaDefaults
  */
 public class KafkaConfigureElementsBuilder extends ExtensibleConfigureElementsBuilder<KafkaConfigureElementsBuilder> {
 
+    /**
+     * 创建KafkaConfigureElementsBuilder实例的静态工厂方法
+     *
+     * @return 新创建的KafkaConfigureElementsBuilder实例
+     */
     public static KafkaConfigureElementsBuilder builder() {
         return new KafkaConfigureElementsBuilder();
     }
 
+    /**
+     * 添加Kafka配置元件到构建器中
+     *
+     * @param defaults 已构建的Kafka默认配置对象
+     * @return 当前构建器实例，支持链式调用
+     */
     public KafkaConfigureElementsBuilder kafka(KafkaDefaults defaults) {
         this.configureElements.add(defaults);
         return self;
     }
 
+    /**
+     * 使用构建器添加Kafka配置元件到构建器中
+     *
+     * @param builder Kafka默认配置构建器
+     * @return 当前构建器实例，支持链式调用
+     */
     public KafkaConfigureElementsBuilder kafka(KafkaDefaults.Builder builder) {
         this.configureElements.add(builder.build());
         return self;
     }
 
+    /**
+     * 使用自定义函数式接口添加Kafka配置元件到构建器中
+     *
+     * @param customizer Kafka默认配置构建器的自定义函数式接口
+     * @return 当前构建器实例，支持链式调用
+     */
     public KafkaConfigureElementsBuilder kafka(Customizer<KafkaDefaults.Builder> customizer) {
         var builder = KafkaDefaults.builder();
         customizer.customize(builder);
@@ -61,6 +98,12 @@ public class KafkaConfigureElementsBuilder extends ExtensibleConfigureElementsBu
         return self;
     }
 
+    /**
+     * 使用Groovy闭包添加Kafka配置元件到构建器中
+     *
+     * @param closure Groovy闭包，用于配置Kafka默认配置构建器
+     * @return 当前构建器实例，支持链式调用
+     */
     public KafkaConfigureElementsBuilder kafka(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = KafkaDefaults.Builder.class) Closure<?> closure) {
         var builder = KafkaDefaults.builder();
         call(closure, builder);

@@ -28,7 +28,6 @@ package io.github.xiaomisum.ryze.component.timer;
 import io.github.xiaomisum.ryze.core.builder.DefaultExtractorsBuilder;
 import io.github.xiaomisum.ryze.core.config.ConfigureItem;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
-import io.github.xiaomisum.ryze.core.testelement.AbstractTestElement;
 import io.github.xiaomisum.ryze.core.testelement.KW;
 import io.github.xiaomisum.ryze.core.testelement.processor.AbstractProcessor;
 import io.github.xiaomisum.ryze.core.testelement.processor.Postprocessor;
@@ -37,7 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author mi.xiao
- * @date 2021/4/7 19:49
+ * @since 2021/4/7 19:49
  */
 @KW({"SyncTimer", "Timer", "sync_timer", "def_timer", "defTimer"})
 public class SyncTimer extends AbstractProcessor<SyncTimer, SyncTimer.TimerConfigureItem, DefaultSampleResult> implements Postprocessor {
@@ -102,7 +101,7 @@ public class SyncTimer extends AbstractProcessor<SyncTimer, SyncTimer.TimerConfi
             return this;
         }
 
-        public static class Builder extends AbstractTestElement.ConfigureBuilder<Builder, TimerConfigureItem> {
+        public static class Builder extends ConfigureBuilder<Builder, TimerConfigureItem> {
 
             protected int timeout;
 
@@ -122,7 +121,7 @@ public class SyncTimer extends AbstractProcessor<SyncTimer, SyncTimer.TimerConfi
     /**
      * 定时器 构建器
      */
-    public static class Builder extends AbstractProcessor.PostprocessorBuilder<SyncTimer, Builder, TimerConfigureItem,
+    public static class Builder extends PostprocessorBuilder<SyncTimer, Builder, TimerConfigureItem,
             TimerConfigureItem.Builder, DefaultExtractorsBuilder, DefaultSampleResult> {
         @Override
         public SyncTimer build() {

@@ -35,26 +35,66 @@ import io.github.xiaomisum.ryze.support.Customizer;
 import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
 /**
- * rabbit 自定义前置处理器列表构建器，提供 rabbit 自定义前置处理器列表的构建方法
+ * RabbitMQ 自定义前置处理器列表构建器
+ * <p>
+ * 该类提供 RabbitMQ 自定义前置处理器列表的构建方法，用于构建和管理一组 RabbitMQ 前置处理器。
+ * 支持多种方式添加前置处理器，包括直接添加、使用构建器、使用自定义器和使用 Groovy Closure。
+ * </p>
  *
  * @author xiaomi
  */
 public class RabbitPreprocessorsBuilder extends ExtensiblePreprocessorsBuilder<RabbitPreprocessorsBuilder, DefaultExtractorsBuilder> {
 
+    /**
+     * 创建 RabbitPreprocessorsBuilder 实例
+     * <p>
+     * 工厂方法，用于创建 RabbitPreprocessorsBuilder 构建器实例。
+     * </p>
+     *
+     * @return RabbitPreprocessorsBuilder 实例
+     */
     public static RabbitPreprocessorsBuilder builder() {
         return new RabbitPreprocessorsBuilder();
     }
 
+    /**
+     * 添加 RabbitPreprocessor 前置处理器
+     * <p>
+     * 直接添加已构建好的 RabbitPreprocessor 前置处理器到前置处理器列表中。
+     * </p>
+     *
+     * @param preprocessor RabbitPreprocessor 前置处理器实例
+     * @return 当前构建器实例，支持链式调用
+     */
     public RabbitPreprocessorsBuilder rabbit(RabbitPreprocessor preprocessor) {
         this.preprocessors.add(preprocessor);
         return self;
     }
 
+    /**
+     * 添加通过构建器创建的 RabbitPreprocessor 前置处理器
+     * <p>
+     * 使用 RabbitPreprocessor.Builder 构建器创建前置处理器并添加到前置处理器列表中。
+     * </p>
+     *
+     * @param builder RabbitPreprocessor.Builder 构建器实例
+     * @return 当前构建器实例，支持链式调用
+     */
     public RabbitPreprocessorsBuilder rabbit(RabbitPreprocessor.Builder builder) {
         this.preprocessors.add(builder.build());
         return self;
     }
 
+    /**
+     * 使用自定义器添加 RabbitPreprocessor 前置处理器
+     * <p>
+     * 通过 Customizer 自定义 RabbitPreprocessor.Builder 并构建前置处理器，
+     * 然后添加到前置处理器列表中。
+     * </p>
+     *
+     * @param customizer Customizer，用于自定义 RabbitPreprocessor.Builder
+     * @return 当前构建器实例，支持链式调用
+     */
     public RabbitPreprocessorsBuilder rabbit(Customizer<RabbitPreprocessor.Builder> customizer) {
         var builder = RabbitPreprocessor.builder();
         customizer.customize(builder);
@@ -62,6 +102,16 @@ public class RabbitPreprocessorsBuilder extends ExtensiblePreprocessorsBuilder<R
         return self;
     }
 
+    /**
+     * 使用 Groovy Closure 添加 RabbitPreprocessor 前置处理器
+     * <p>
+     * 通过 Groovy Closure 自定义 RabbitPreprocessor.Builder 并构建前置处理器，
+     * 然后添加到前置处理器列表中。
+     * </p>
+     *
+     * @param closure Groovy Closure，用于自定义 RabbitPreprocessor.Builder
+     * @return 当前构建器实例，支持链式调用
+     */
     public RabbitPreprocessorsBuilder rabbit(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = RabbitPreprocessor.Builder.class) Closure<?> closure) {
         var builder = RabbitPreprocessor.builder();
         call(closure, builder);

@@ -35,10 +35,23 @@ import java.lang.annotation.Target;
 import java.util.Map;
 
 /**
- * ryze 框架支持，标记 一个TestNg 测试方法需支持 ryze框架
+ * ryze 框架支持，标记一个TestNg测试方法需支持ryze框架
  * <p>
- * 在测试执行前 @BeforeMethod 中调用创建 session，
- * 在测试执行后 @AfterMethod 中调用销毁 session
+ * 该注解用于标记TestNG测试方法，表明该方法是一个Ryze测试方法。
+ * 在测试执行前会在@BeforeMethod中调用创建session，
+ * 在测试执行后会在@AfterMethod中调用销毁session。
+ * </p>
+ * <p>
+ * Ryze测试方法的特点：
+ * <ul>
+ *   <li>支持从外部文件加载测试数据</li>
+ *   <li>自动管理测试框架会话</li>
+ *   <li>支持测试用例的并行执行</li>
+ *   <li>支持测试数据切片</li>
+ * </ul>
+ * </p>
+ *
+ * @author xiaomi
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
@@ -46,13 +59,24 @@ public @interface RyzeTest {
 
     /**
      * 数据源：文件路径
+     * <p>
+     * 指定测试数据文件的路径，支持多种协议：
+     * <ul>
+     *   <li>本地文件：/path/to/file.json 或 file:/path/to/file.yaml</li>
+     *   <li>类路径资源：classpath:file.json</li>
+     * </ul>
+     * </p>
      *
-     * @return 数据源
+     * @return 数据源文件路径
      */
     String value() default "";
 
     /**
      * 测试用例是否并行执行
+     * <p>
+     * 当设置为true时，测试方法会对数据源中的每条数据并行执行。
+     * 适用于独立的测试用例，可以显著提高执行效率。
+     * </p>
      *
      * @return true表示并行执行，false表示顺序执行
      */
@@ -61,7 +85,7 @@ public @interface RyzeTest {
     /**
      * 测试用例的分片，默认为空，表示不分片
      *
-     * @return
+     * @return 测试用例类型
      * @see Datasource
      */
     Class<?> type() default Map.class;

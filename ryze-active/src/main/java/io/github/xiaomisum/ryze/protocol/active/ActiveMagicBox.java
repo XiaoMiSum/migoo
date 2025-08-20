@@ -34,16 +34,44 @@ import io.github.xiaomisum.ryze.support.Customizer;
 import io.github.xiaomisum.ryze.support.groovy.Groovy;
 
 /**
- * 魔法盒子 提供函数式取样器执行入口
+ * ActiveMQ协议魔法盒子类
+ * <p>
+ * 提供函数式编程方式执行ActiveMQ取样器的便捷入口，支持多种配置方式：
+ * 1. 通过Groovy闭包方式配置取样器
+ * 2. 通过Customizer函数式接口配置取样器
+ * </p>
  *
  * @author xiaomi
  */
 public class ActiveMagicBox extends MagicBox {
 
+    /**
+     * 通过Groovy闭包执行ActiveMQ取样器测试（无标题）
+     * <p>
+     * 执行流程：
+     * 1. 调用带标题的重载方法，标题传空字符串
+     * </p>
+     *
+     * @param closure Groovy闭包，用于配置ActiveSampler.Builder
+     * @return 测试执行结果
+     */
     public static Result active(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = ActiveSampler.Builder.class) Closure<?> closure) {
         return active("", closure);
     }
 
+    /**
+     * 通过Groovy闭包执行ActiveMQ取样器测试（带标题）
+     * <p>
+     * 执行流程：
+     * 1. 创建ActiveSampler.Builder实例
+     * 2. 使用Groovy闭包配置Builder
+     * 3. 构建ActiveSampler实例并执行测试
+     * </p>
+     *
+     * @param title   测试标题
+     * @param closure Groovy闭包，用于配置ActiveSampler.Builder
+     * @return 测试执行结果
+     */
     public static Result active(String title,
                                 @DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = ActiveSampler.Builder.class) Closure<?> closure) {
         var builder = ActiveSampler.builder();
@@ -51,10 +79,33 @@ public class ActiveMagicBox extends MagicBox {
         return MagicBox.runTest(title, builder.build());
     }
 
+    /**
+     * 通过Customizer函数式接口执行ActiveMQ取样器测试（无标题）
+     * <p>
+     * 执行流程：
+     * 1. 调用带标题的重载方法，标题传空字符串
+     * </p>
+     *
+     * @param customizer Customizer函数式接口，用于配置ActiveSampler.Builder
+     * @return 测试执行结果
+     */
     public static Result active(Customizer<ActiveSampler.Builder> customizer) {
         return active("", customizer);
     }
 
+    /**
+     * 通过Customizer函数式接口执行ActiveMQ取样器测试（带标题）
+     * <p>
+     * 执行流程：
+     * 1. 创建ActiveSampler.Builder实例
+     * 2. 使用Customizer配置Builder
+     * 3. 构建ActiveSampler实例并执行测试
+     * </p>
+     *
+     * @param title      测试标题
+     * @param customizer Customizer函数式接口，用于配置ActiveSampler.Builder
+     * @return 测试执行结果
+     */
     public static Result active(String title, Customizer<ActiveSampler.Builder> customizer) {
         var builder = ActiveSampler.builder();
         customizer.customize(builder);

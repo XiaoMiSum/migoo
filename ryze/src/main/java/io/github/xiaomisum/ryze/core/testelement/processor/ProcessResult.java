@@ -31,6 +31,12 @@ package io.github.xiaomisum.ryze.core.testelement.processor;
 import io.github.xiaomisum.ryze.core.TestStatus;
 
 /**
+ * 处理器执行结果类
+ * <p>
+ * ProcessResult 用于封装处理器执行的结果信息，包括处理器的标题、执行状态和错误信息。
+ * 该类主要用于跟踪和记录处理器的执行情况，便于测试报告生成和问题诊断。
+ * </p>
+ *
  * @author xiaomi
  */
 public class ProcessResult {
@@ -45,26 +51,56 @@ public class ProcessResult {
      */
     private String message;
 
+    /**
+     * 构造函数，使用指定的标题创建处理器执行结果
+     *
+     * @param title 处理器标题
+     */
     public ProcessResult(String title) {
         this.title = title;
     }
 
+    /**
+     * 获取处理器执行状态
+     *
+     * @return 执行状态
+     */
     public TestStatus getStatus() {
         return status;
     }
 
+    /**
+     * 设置处理器执行状态
+     *
+     * @param status 执行状态
+     */
     public void setStatus(TestStatus status) {
         this.status = status;
     }
 
+    /**
+     * 获取失败时的异常信息
+     *
+     * @return 异常信息
+     */
     public String getMessage() {
         return message;
     }
 
+    /**
+     * 设置失败时的异常信息
+     *
+     * @param message 异常信息
+     */
     public void setMessage(String message) {
         this.message = message;
     }
 
+    /**
+     * 获取处理器标题
+     *
+     * @return 处理器标题
+     */
     public String getTitle() {
         return title;
     }

@@ -33,11 +33,51 @@ import jakarta.jms.Session;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * ActiveMQ消息发送核心类，封装了ActiveMQ消息发送的具体实现
+ * <p>
+ * 该类提供了ActiveMQ消息发送的核心功能，封装了连接创建、会话管理、消息发送和资源释放等操作。
+ * 作为工具类，提供了静态方法供其他组件调用。
+ * </p>
+ * <p>
+ * 主要功能：
+ * <ul>
+ *   <li>创建ActiveMQ连接和会话</li>
+ *   <li>根据配置确定消息目标（Topic或Queue）</li>
+ *   <li>发送文本消息</li>
+ *   <li>自动管理资源（连接、会话、生产者）</li>
+ *   <li>处理异常情况</li>
+ * </ul>
+ * </p>
+ * <p>
+ * 执行流程：
+ * <ol>
+ *   <li>创建连接和会话</li>
+ *   <li>根据配置确定消息目标（优先使用Queue，否则使用Topic）</li>
+ *   <li>创建消息生产者</li>
+ *   <li>创建文本消息</li>
+ *   <li>发送消息</li>
+ *   <li>关闭生产者</li>
+ * </ol>
+ * </p>
+ *
  * @author mi.xiao
- * @date 2021/4/13 20:08
+ * @since 2021/4/13 20:08
  */
 public class Active {
 
+    /**
+     * 执行ActiveMQ消息发送操作
+     * <p>
+     * 该方法完成完整的消息发送流程，包括连接管理、消息发送和资源释放。
+     * 使用try-with-resources确保连接和会话能被正确关闭。
+     * </p>
+     *
+     * @param config   ActiveMQ配置项，包含连接参数和消息目标信息
+     * @param factory  连接工厂，用于创建ActiveMQ连接
+     * @param message  要发送的消息内容
+     * @param result   测试结果，用于记录执行时间和结果状态
+     * @throws RuntimeException 当消息发送过程中发生异常时抛出
+     */
     public static void execute(ActiveConfigureItem config, ConnectionFactory factory, String message, DefaultSampleResult result) {
         MessageProducer producer = null;
         result.sampleStart();
@@ -56,7 +96,6 @@ public class Active {
                 } catch (Exception ignored) {
                 }
             }
-
         }
     }
 }

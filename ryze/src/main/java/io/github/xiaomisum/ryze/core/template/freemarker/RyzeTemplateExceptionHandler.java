@@ -32,10 +32,34 @@ import freemarker.template.TemplateExceptionHandler;
 import java.io.Writer;
 
 /**
- * 自定义的 TemplateException 处理器。
+ * 自定义的模板异常处理器，用于处理FreeMarker模板执行过程中的异常
+ *
+ * <p>该类实现了FreeMarker的 {@link TemplateExceptionHandler}接口，
+ * 提供了针对框架的模板异常处理逻辑。当模板执行过程中发生异常时，
+ * 该处理器会捕获异常并提供更友好的错误信息。</p>
+ *
+ * <p>主要功能包括：
+ * <ul>
+ *   <li>捕获和处理模板执行异常</li>
+ *   <li>提供详细的错误信息</li>
+ *   <li>处理特殊对象包装器相关的异常</li>
+ * </ul></p>
+ *
+ * @author xiaomi
  */
 public class RyzeTemplateExceptionHandler implements TemplateExceptionHandler {
 
+    /**
+     * 处理模板异常
+     *
+     * <p>当FreeMarker模板执行过程中发生异常时，该方法会被调用。
+     * 它会构建包含详细错误信息的异常并重新抛出。</p>
+     *
+     * @param te  模板异常
+     * @param env 模板执行环境
+     * @param out 输出写入器
+     * @throws TemplateException 模板异常
+     */
     @Override
     public void handleTemplateException(TemplateException te, Environment env, Writer out) throws TemplateException {
         StringBuilder builder = new StringBuilder();

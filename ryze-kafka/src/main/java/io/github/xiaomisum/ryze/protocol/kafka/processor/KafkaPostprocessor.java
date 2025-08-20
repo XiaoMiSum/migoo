@@ -43,43 +43,105 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Objects;
 
 /**
+ * Kafka后置处理器类，
+ * <p>
+ * 该类实现了Postprocessor接口，继承自AbstractProcessor。
+ * 后置处理器通常用于数据清理工作。
+ * </p>
+ * <p>
+ * 主要功能：
+ * <ul>
+ *   <li>执行Kafka消息发送操作</li>
+ *   <li>处理响应数据</li>
+ *   <li>支持变量提取</li>
+ * </ul>
+ * </p>
+ * <p>
+ * 业务处理逻辑：
+ * <ol>
+ *   <li>初始化测试结果对象</li>
+ *   <li>处理请求阶段：合并配置项、处理消息内容</li>
+ *   <li>执行阶段：调用Kafka客户端发送消息</li>
+ *   <li>响应处理阶段：封装响应结果</li>
+ * </ol>
+ * </p>
+ *
  * @author mi.xiao
- * @date 2021/4/13 20:08
+ * @see AbstractProcessor
+ * @see Postprocessor
+ * @see KafkaConstantsInterface
+ * @since 2021/4/13 20:08
  */
 @KW({"kafka_postprocessor", "kafka_post_processor", "kafka"})
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class KafkaPostprocessor extends AbstractProcessor<KafkaPostprocessor, KafkaConfigureItem, DefaultSampleResult> implements Postprocessor, KafkaConstantsInterface {
 
+    /**
+     * 响应数据字节数组，用于存储Kafka发送操作的响应结果
+     */
     @JSONField(serialize = false)
     private byte[] response;
 
+    /**
+     * 消息内容字符串，用于存储实际发送的Kafka消息内容
+     */
     @JSONField(serialize = false)
     private String message;
 
+    /**
+     * 默认构造函数
+     */
     public KafkaPostprocessor() {
         super();
     }
 
+    /**
+     * 使用构建器创建KafkaPostprocessor实例的构造函数
+     *
+     * @param builder KafkaPostprocessor构建器
+     */
     public KafkaPostprocessor(Builder builder) {
         super(builder);
     }
 
+    /**
+     * 创建KafkaPostprocessor构建器的静态工厂方法
+     *
+     * @return KafkaPostprocessor.Builder实例
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * 获取测试结果对象，用于记录测试执行结果
+     *
+     * @return DefaultSampleResult测试结果对象
+     */
     @Override
     protected DefaultSampleResult getTestResult() {
         return new DefaultSampleResult(runtime.getId(), StringUtils.isBlank(runtime.getTitle()) ? "Kafka 后置处理器" : runtime.getTitle());
 
     }
 
+    /**
+     * 执行Kafka消息发送操作的核心方法
+     *
+     * @param context 测试上下文对象
+     * @param result  测试结果对象
+     */
     @Override
     protected void sample(ContextWrapper context, DefaultSampleResult result) {
         response = Kafka.execute(runtime.getConfig(), message, result);
     }
 
 
+    /**
+     * 处理请求阶段，合并配置项并准备消息内容
+     *
+     * @param context 测试上下文对象
+     * @param result  测试结果对象
+     */
     @Override
     protected void handleRequest(ContextWrapper context, DefaultSampleResult result) {
         super.handleRequest(context, result);
@@ -97,24 +159,52 @@ public class KafkaPostprocessor extends AbstractProcessor<KafkaPostprocessor, Ka
         result.setRequest(RealKafkaRequest.build(runtime.getConfig(), message));
     }
 
+    /**
+     * 处理响应阶段，封装响应结果
+     *
+     * @param context 测试上下文对象
+     * @param result  测试结果对象
+     */
     @Override
     protected void handleResponse(ContextWrapper context, DefaultSampleResult result) {
         super.handleResponse(context, result);
         result.setResponse(SampleResult.DefaultReal.build(response));
     }
 
-    public static class Builder extends AbstractProcessor.PostprocessorBuilder<KafkaPostprocessor, Builder, KafkaConfigureItem,
+    /**
+     * KafkaPostprocessor构建器类，用于构建KafkaPostprocessor实例
+     * <p>
+     * 该构建器继承自AbstractProcessor.PostprocessorBuilder，提供了构建KafkaPostprocessor实例的所有必要方法。
+     * </p>
+     */
+    public static class Builder extends PostprocessorBuilder<KafkaPostprocessor, Builder, KafkaConfigureItem,
             KafkaConfigureItem.Builder, DefaultExtractorsBuilder, DefaultSampleResult> {
+
+        /**
+         * 构建KafkaPostprocessor实例
+         *
+         * @return KafkaPostprocessor实例
+         */
         @Override
         public KafkaPostprocessor build() {
             return new KafkaPostprocessor(this);
         }
 
+        /**
+         * 获取提取器构建器
+         *
+         * @return DefaultExtractorsBuilder实例
+         */
         @Override
         protected DefaultExtractorsBuilder getExtractorsBuilder() {
             return DefaultExtractorsBuilder.builder();
         }
 
+        /**
+         * 获取配置项构建器
+         *
+         * @return KafkaConfigureItem.Builder实例
+         */
         @Override
         protected KafkaConfigureItem.Builder getConfigureItemBuilder() {
             return KafkaConfigureItem.builder();
