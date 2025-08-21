@@ -6,7 +6,7 @@
 
 2. 启动 Active
 
-        docker run --detach --name same-active -p 61616:61616 -p 8161:8161 --rm apache/activemq-artemis:latest
+        docker run  --detach --name same-active -p 61616:61616 -p 8161:8161 apache/activemq-artemis:latest
 
 3. 访问 web控制台，用户名密码：artemis
 

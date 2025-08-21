@@ -35,6 +35,8 @@ import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.ITestResult;
 
+import java.util.Objects;
+
 /**
  * 方法执行监听器，用于监听@Test注解的测试方法是否是ryze测试方法，并管理测试会话
  * <p>
@@ -87,7 +89,8 @@ public class RyzeInvokedMethodListener implements IInvokedMethodListener, TestNG
      * @param testResult 测试结果
      */
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
-        if (!method.isTestMethod() || !(boolean) testResult.getAttribute(RYZE_TEST_METHOD)) {
+        if (!method.isTestMethod() || (Objects.nonNull(testResult.getAttribute(RYZE_TEST_METHOD)) &&
+                !(boolean) testResult.getAttribute(RYZE_TEST_METHOD))) {
             return;
         }
         SessionRunner.removeSession();

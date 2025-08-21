@@ -41,10 +41,7 @@ import xyz.migoo.simplehttp.Form;
 import xyz.migoo.simplehttp.Request;
 import xyz.migoo.simplehttp.RequestEntity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static org.apache.hc.core5.http.HttpVersion.HTTP_1_1;
 import static org.apache.hc.core5.http.HttpVersion.HTTP_2;
@@ -78,7 +75,7 @@ public class HTTPClient extends Request implements HTTPConstantsInterface {
      * @param url    请求URL
      */
     protected HTTPClient(String method, String url) {
-        super(method, url);
+        super(method.toUpperCase(Locale.ROOT), url);
     }
 
     /**

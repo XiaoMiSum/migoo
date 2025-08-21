@@ -343,7 +343,7 @@ public class HTTPConfigureItem implements ConfigureItem<HTTPConfigureItem>, HTTP
      * @return HTTP方法，默认为"GET"
      */
     public String getMethod() {
-        return StringUtils.isBlank(method) ? GET : method;
+        return StringUtils.isBlank(method) ? GET : method.toUpperCase();
     }
 
     /**

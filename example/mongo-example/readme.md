@@ -6,7 +6,7 @@
 
 2. 启动 MongoDB
 
-        docker run -d --name same-mongo -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=123456 -v D:/mongodb/data:/data/db mongo
+        docker run -d --name same-mongo -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=123456 mongo
 
 3. 使用数据库客户端连接 mongo
 

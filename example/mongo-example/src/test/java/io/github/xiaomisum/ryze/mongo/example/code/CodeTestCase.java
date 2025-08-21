@@ -29,14 +29,14 @@ public class CodeTestCase {
                     )
             );
             suite.preprocessors(MongoPreprocessorsBuilder.class, builder -> builder
-                    .mongo(mongo -> mongo.config(config -> config.insert(Collections.of("name", "${tick}", "author", "ryze", "isbn", "${randomString(10)}"))))
+                    .mongo(mongo -> mongo.config(config -> config.insert(Collections.of("name", "${tick}", "author", "ryze", "isbn", "${random_string(10)}"))))
             );
             suite.postprocessors(MongoPostprocessorsBuilder.class, builder -> builder
                     .mongo(mongo -> mongo.config(config -> config.delete(condition -> condition.put("name", Map.of("$eq", "${tick}")))))
             );
             suite.children(MongoSamplersBuilder.class, builder -> builder
                     .mongo(mongo -> mongo.title("步骤1").variables("username", "ryze")
-                            .config(config -> config.action("insert").dataList(list -> list.add(Collections.of("name", "${tick}", "author", "ryze", "isbn", "${randomString(10)}")))))
+                            .config(config -> config.action("insert").dataList(list -> list.add(Collections.of("name", "${tick}", "author", "ryze", "isbn", "${random_string(10)}")))))
             );
             suite.children(MongoSamplersBuilder.builder()
                     .mongo(mongo -> mongo.title("步骤2").variables("username", "ryze")
@@ -50,7 +50,7 @@ public class CodeTestCase {
     @RyzeTest
     public void test2() {
         MongoMagicBox.mongo("测试用例- test2()", sampler -> {
-            sampler.variables("name", "${randomString(10)}");
+            sampler.variables("name", "${random_string(10)}");
             sampler.configureElements(MongoConfigureElementsBuilder.class, builder -> builder
                     .mongo(mongo -> mongo.config(config -> config
                             .url("mongodb://root:123456@127.0.0.1:27017/?authSource=admin")
@@ -59,7 +59,7 @@ public class CodeTestCase {
                     )
             );
             sampler.preprocessors(MongoPreprocessorsBuilder.class, builder -> builder
-                    .mongo(mongo -> mongo.config(config -> config.insert(Collections.of("name", "${name}", "author", "ryze", "isbn", "${randomString(10)}"))))
+                    .mongo(mongo -> mongo.config(config -> config.insert(Collections.of("name", "${name}", "author", "ryze", "isbn", "${random_string(10)}"))))
             );
             sampler.config(config -> config.action("find").condition(condition -> condition.put("name", Map.of("$eq", "${name}"))))
                     .assertions(assertion -> assertion.json("$.name", "${name}"));
@@ -79,8 +79,8 @@ public class CodeTestCase {
                     )
             );
             sampler.config(config -> config.insertList(list -> {
-                list.add(Collections.of("name", "ryze", "author", "ryze", "isbn", "${randomString(10)}"));
-                list.add(Collections.of("name", "ryze", "author", "ryze", "isbn", "${randomString(10)}"));
+                list.add(Collections.of("name", "ryze", "author", "ryze", "isbn", "${random_string(10)}"));
+                list.add(Collections.of("name", "ryze", "author", "ryze", "isbn", "${random_string(10)}"));
             }));
         });
 

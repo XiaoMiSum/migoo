@@ -69,7 +69,7 @@ public class RyzeTestcaseAutoRunListener implements IHookable, TestNGConstantsIn
     @Override
     public void run(IHookCallBack iHookCallBack, ITestResult iTestResult) {
         logger.debug("IHookable run test: {}", iTestResult.getMethod().getMethodName());
-        if (!(boolean) iTestResult.getAttribute(RYZE_TEST_METHOD)) {
+        if (Objects.nonNull(iTestResult.getAttribute(RYZE_TEST_METHOD)) && !(boolean) iTestResult.getAttribute(RYZE_TEST_METHOD)) {
             logger.debug("Method 不是Ryze注解测试，执行原始测试");
             iHookCallBack.runTestMethod(iTestResult);
             return;

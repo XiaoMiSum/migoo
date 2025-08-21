@@ -22,7 +22,7 @@ public class CodeTestCase {
             suite.preprocessors(pre ->
                     pre.http(http -> {
                                 http.title("前置处理器新增用户");
-                                http.config(config -> config.method("PUT").path("/user").body("t_body"));
+                                http.config(config -> config.method("PUT").path("/user").body("${t_body}"));
                                 http.extractors(extract -> extract.json("t_id", "$.data.id"));
                             }
                     )
@@ -34,7 +34,7 @@ public class CodeTestCase {
                 child.http(http -> http.title("步骤2——修改用户：id = ${t_id}")
                         .config(config -> config.method("POST").path("/user").body(body -> {
                             body.put("id", "ryze");
-                            body.put("name", "ryze_http_preprocessor");
+                            body.put("name", "ryze_http_sampler");
                             body.put("age", 1);
                         }))
                         .validators(validator -> validator.httpStatus(200)));
@@ -53,10 +53,11 @@ public class CodeTestCase {
             sampler.configureElements(ele -> ele.http(http -> http.config(config -> config.protocol("http").host("127.0.0.1").port("58081"))));
             sampler.preprocessors(pre -> pre.http(http ->
                     http.title("前置处理器修改用户：ryze").config(config -> config.method("POST").path("/user").body(body -> {
-                        body.put("id", "ryze");
-                        body.put("name", "ryze_http_preprocessor");
-                        body.put("age", 1);
-                    }))));
+                                body.put("id", "ryze");
+                                body.put("name", "ryze_http_preprocessor");
+                                body.put("age", 1);
+                            })).extractors(extract -> extract.json("name", "$.data.name"))
+                            .extractors(extract -> extract.json("id", "$.data.id"))));
             sampler.config(config -> config.method("GET").path("/user/${id}"));
             sampler.validators(validator -> validator.json("$.data.name", "${name}"));
         });
@@ -66,11 +67,11 @@ public class CodeTestCase {
     @RyzeTest
     public void test3() {
         MagicBox.http(http -> {
+            http.variables("id", 1);
             http.title("步骤1——获取用户：id = ${id}");
             http.config(config -> config.protocol("http").host("127.0.0.1").port("58081")
                     .method("GET").path("/user/${id}"));
             http.assertions(assertions -> assertions.json("$.data.id", "${id}"));
-
         });
 
         MagicBox.http(http -> {

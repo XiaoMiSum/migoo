@@ -1,9 +1,9 @@
 title: Active_MQ_测试用例 # 包含配置原件、前置处理器、后置处理器、多个取样器（执行步骤）
 configelements:
   - !import '配置元件/active_defaults.yaml'
-PreProcessors: # 前置处理器
+preprocessors: # 前置处理器
   - !import '处理器/active_preprocessor.yaml'
-PostProcessors: # 后置处理器
+postprocessors: # 后置处理器
   - !import '处理器/active_postprocessor.yaml'
 children: # 执行步骤
   - title: 步骤1

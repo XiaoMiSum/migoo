@@ -7,13 +7,15 @@ variables: # 变量
     age: 1
 configelements:
   - !include '配置元件/http_defaults.yaml'
-PreProcessors: # 前置处理器
+preprocessors: # 前置处理器
   - !include '处理器/http_preprocessor.yaml'
-PostProcessors: # 后置处理器
+postprocessors: # 后置处理器
   - !include '处理器/http_postprocessor.yaml'
 children: # 执行步骤
   - title: 步骤1_get_user_id_1
     testclass: http_sampler
+    interceptors:
+      - ExampleInterceptor
     config:
       method: get
       path: '/user/${user_id}'
@@ -26,7 +28,7 @@ children: # 执行步骤
       path: '/user'
       body: ${t_data}
     validators:
-      - { testclass: http_assertion, field: 'status', expected: '200' }
+      - { testclass: http_assertion, field: 'status', expected: '300' }
   - title: 步骤3_get_user_id_ryze
     testclass: http_sampler
     config:

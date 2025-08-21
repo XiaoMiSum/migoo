@@ -8,6 +8,6 @@ import xyz.migoo.framework.apilog.core.ApiErrorLogFrameworkService;
 public class ErrorLogServiceImpl implements ApiErrorLogFrameworkService {
     @Override
     public void createApiErrorLog(ApiErrorLog apiErrorLog) {
-
+        System.out.println("[ErrorLogServiceImpl][createApiErrorLog] apiErrorLog: " + apiErrorLog);
     }
 }
