@@ -41,6 +41,7 @@ import io.github.xiaomisum.ryze.core.builder.ExtensibleExtractorsBuilder;
 import io.github.xiaomisum.ryze.core.builder.IBuilder;
 import io.github.xiaomisum.ryze.core.builder.LazyBuilder;
 import io.github.xiaomisum.ryze.core.config.ConfigureItem;
+import io.github.xiaomisum.ryze.core.config.InterceptorConfigureItem;
 import io.github.xiaomisum.ryze.core.context.ContextWrapper;
 import io.github.xiaomisum.ryze.core.extractor.AbstractExtractor;
 import io.github.xiaomisum.ryze.core.extractor.Extractor;
@@ -75,7 +76,6 @@ import io.github.xiaomisum.ryze.support.KryoUtil;
 import io.github.xiaomisum.ryze.support.groovy.Groovy;
 
 import java.util.*;
-import java.util.function.Supplier;
 
 import static io.github.xiaomisum.ryze.support.groovy.Groovy.call;
 
@@ -565,6 +565,16 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         /**
+         * 设置测试组件拦截器
+         *
+         * @param interceptor 拦截器
+         * @return 当前构建器实例，用于链式调用
+         */
+        public SELF interceptors(RyzeInterceptor interceptor) {
+            return interceptors(Collections.newArrayList(interceptor));
+        }
+
+        /**
          * 设置测试组件拦截器列表
          *
          * @param ryzeInterceptors 拦截器列表
@@ -576,14 +586,47 @@ public abstract class AbstractTestElement<SELF extends AbstractTestElement<SELF,
         }
 
         /**
-         * 通过供应器添加测试组件拦截器
+         * 通过自定义构建器添加测试组件拦截器
          *
-         * @param supplier 拦截器供应器
+         * @param customizer 拦截器构建器自定义函数
+         * @return 构建器实例
+         */
+        public SELF interceptors(Customizer<InterceptorConfigureItem.Builder> customizer) {
+            var builder = InterceptorConfigureItem.builder();
+            customizer.customize(builder);
+            return interceptors((List<RyzeInterceptor>) builder.build());
+        }
+
+        /**
+         * 使用Groovy闭包添加测试组件拦截器
+         *
+         * @param closure Groovy闭包，用于配置测试组件拦截器构建器
+         * @return 当前构建器实例，支持链式调用
+         */
+        public SELF interceptors(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = InterceptorConfigureItem.Builder.class) Closure<?> closure) {
+            var builder = new InterceptorConfigureItem.Builder();
+            Groovy.call(closure, builder);
+            return interceptors((List<RyzeInterceptor>) builder.build());
+        }
+
+        /**
+         * 设置测试组件拦截器列表
+         *
+         * @param interceptors 拦截器列表
          * @return 当前构建器实例，用于链式调用
          */
-        public SELF interceptors(Supplier<RyzeInterceptor> supplier) {
-            this.ryzeInterceptors = Collections.addAllIfNonNull(this.ryzeInterceptors, Collections.newArrayList(supplier.get()));
-            return self;
+        public SELF interceptors(InterceptorConfigureItem interceptors) {
+            return interceptors((List<RyzeInterceptor>) interceptors);
+        }
+
+        /**
+         * 设置测试组件拦截器列表
+         *
+         * @param builder 拦截器构建器
+         * @return 当前构建器实例，用于链式调用
+         */
+        public SELF interceptors(InterceptorConfigureItem.Builder builder) {
+            return interceptors((List<RyzeInterceptor>) builder.build());
         }
 
         /**

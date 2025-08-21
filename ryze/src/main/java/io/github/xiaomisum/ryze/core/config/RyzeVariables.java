@@ -179,12 +179,34 @@ public class RyzeVariables extends JSONObject implements ConfigureItem<RyzeVaria
         }
 
         /**
+         * 添加变量映射到配置中
+         *
+         * @param variables 变量映射
+         * @return 构建器实例
+         */
+        public Builder apply(Map<? extends String, ?> variables) {
+            this.variables.putAll(variables);
+            return this;
+        }
+
+        /**
          * 添加变量配置到当前配置中
          *
          * @param variables 变量配置
          * @return 构建器实例
          */
         public Builder put(RyzeVariables variables) {
+            this.variables.merge(variables);
+            return this;
+        }
+
+        /**
+         * 添加变量配置到当前配置中
+         *
+         * @param variables 变量配置
+         * @return 构建器实例
+         */
+        public Builder apply(RyzeVariables variables) {
             this.variables.merge(variables);
             return this;
         }
@@ -201,6 +223,17 @@ public class RyzeVariables extends JSONObject implements ConfigureItem<RyzeVaria
         }
 
         /**
+         * 通过消费者函数添加变量
+         *
+         * @param consumer 消费者函数
+         * @return 构建器实例
+         */
+        public Builder apply(Consumer<RyzeVariables> consumer) {
+            consumer.accept(variables);
+            return this;
+        }
+
+        /**
          * 添加单个变量到配置中
          *
          * @param name  变量名称
@@ -208,6 +241,18 @@ public class RyzeVariables extends JSONObject implements ConfigureItem<RyzeVaria
          * @return 构建器实例
          */
         public Builder put(String name, Object value) {
+            this.variables.put(name, value);
+            return this;
+        }
+
+        /**
+         * 添加单个变量到配置中
+         *
+         * @param name  变量名称
+         * @param value 变量值
+         * @return 构建器实例
+         */
+        public Builder apply(String name, Object value) {
             this.variables.put(name, value);
             return this;
         }

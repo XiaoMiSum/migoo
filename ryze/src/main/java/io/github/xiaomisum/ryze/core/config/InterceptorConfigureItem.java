@@ -59,7 +59,7 @@ import java.util.List;
  * @author xiaomi
  * Created at 2025/7/20 14:51
  */
-@SuppressWarnings({"rawtypes"})
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class InterceptorConfigureItem<T extends RyzeInterceptor> extends ArrayList<T> implements ConfigureItem<InterceptorConfigureItem<T>> {
 
     /**
@@ -76,6 +76,10 @@ public class InterceptorConfigureItem<T extends RyzeInterceptor> extends ArrayLi
      */
     public InterceptorConfigureItem(List<T> interceptors) {
         super(interceptors);
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -123,5 +127,34 @@ public class InterceptorConfigureItem<T extends RyzeInterceptor> extends ArrayLi
     @Override
     public InterceptorConfigureItem<T> evaluate(ContextWrapper context) {
         return this;
+    }
+
+    /**
+     * 攔截器，提供流畅的API用于构建变量配置
+     * <p>
+     * 提供了多种方式来添加变量到配置中。</p>
+     */
+    public static class Builder {
+
+        /**
+         * 拦截器配置项实例
+         */
+        private final InterceptorConfigureItem interceptors = new InterceptorConfigureItem<>();
+
+        /**
+         * 添加拦截器配置到当前配置中
+         *
+         * @param interceptor 变量配置
+         * @return 构建器实例
+         */
+        public Builder apply(RyzeInterceptor<?> interceptor) {
+            interceptors.add(interceptor);
+            return this;
+        }
+
+        public InterceptorConfigureItem build() {
+            return interceptors;
+        }
+
     }
 }
