@@ -30,7 +30,7 @@ import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 import freemarker.template.utility.DeepUnwrap;
 import io.github.xiaomisum.ryze.context.ContextWrapper;
-import io.github.xiaomisum.ryze.function.builtin.Args;
+import io.github.xiaomisum.ryze.function.Args;
 import io.github.xiaomisum.ryze.function.Function;
 
 import java.util.List;

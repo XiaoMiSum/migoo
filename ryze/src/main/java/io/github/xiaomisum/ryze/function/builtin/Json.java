@@ -27,6 +27,7 @@ package io.github.xiaomisum.ryze.function.builtin;
 
 import com.alibaba.fastjson2.JSONObject;
 import io.github.xiaomisum.ryze.context.ContextWrapper;
+import io.github.xiaomisum.ryze.function.Args;
 import io.github.xiaomisum.ryze.function.Function;
 
 /**

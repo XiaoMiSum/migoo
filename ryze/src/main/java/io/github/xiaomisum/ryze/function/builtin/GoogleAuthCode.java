@@ -26,6 +26,7 @@
 package io.github.xiaomisum.ryze.function.builtin;
 
 import io.github.xiaomisum.ryze.context.ContextWrapper;
+import io.github.xiaomisum.ryze.function.Args;
 import io.github.xiaomisum.ryze.function.Function;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.lang3.StringUtils;
