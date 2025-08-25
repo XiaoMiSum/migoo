@@ -98,6 +98,6 @@ public class IsEmpty extends ProxyMatcher {
      */
     @Override
     public void describeTo(Description description) {
-        description.appendText("is empty or is null ");
+        description.appendText("is empty or is null");
     }
 }

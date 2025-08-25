@@ -102,7 +102,7 @@ public class EqualsMatcher extends ProxyMatcher {
     public void describeTo(Description description) {
         var isPrimitiveOrWrapper = PrimitiveTypeChecker.isPrimitiveOrWrapper(expectedValue);
         description.appendText("equals ").appendValue(isPrimitiveOrWrapper ? expectedValue : JSON.toJSONString(expectedValue))
-                .appendText(strict || isPrimitiveOrWrapper ? " (%s%s)".formatted(isPrimitiveOrWrapper ? "any" : "", strict ? " ignore case" : "") : "");
+                .appendText(strict ? " ignore case" : "");
 
     }
 }
