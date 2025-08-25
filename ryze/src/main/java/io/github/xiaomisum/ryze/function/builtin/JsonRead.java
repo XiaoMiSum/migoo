@@ -91,6 +91,12 @@ public class JsonRead implements Function {
         if (Objects.isNull(json) || StringUtils.isBlank(path)) {
             throw new IllegalArgumentException("json or jsonpath con not be null");
         }
+        if (json instanceof String str) {
+            if (!JSON.isValid(str)) {
+                throw new IllegalArgumentException("thr first arg require json");
+            }
+            return JSONPath.extract(str, path);
+        }
         return JSONPath.extract(JSON.toJSONString(json), path);
     }
 }
