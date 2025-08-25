@@ -98,9 +98,9 @@ public class AnyContainsMatcher extends ProxyMatcher {
             expectedValue = Collections.newArrayList(expectedArray);
         }
         if (expectedValue instanceof Collection<?> expectedCollection && PrimitiveTypeChecker.isPrimitiveOrWrapper(actualValue)) {
-            return expectedCollection.stream().anyMatch(e -> Comparator.contains(actualValue, e, strict));
+            return expectedCollection.stream().anyMatch(e -> Comparator.contains(actualValue, e, !strict));
         }
-        return Comparator.contains(actualValue, expectedValue, strict);
+        return Comparator.contains(actualValue, expectedValue, !strict);
     }
 
     /**
@@ -114,7 +114,7 @@ public class AnyContainsMatcher extends ProxyMatcher {
     public void describeTo(Description description) {
         var isPrimitiveOrWrapper = PrimitiveTypeChecker.isPrimitiveOrWrapper(expectedValue);
         description.appendText("equals ").appendValue(isPrimitiveOrWrapper ? expectedValue : JSON.toJSONString(expectedValue))
-                .appendText(strict || isPrimitiveOrWrapper ? " (%s%s)".formatted(isPrimitiveOrWrapper ? "any" : "", strict ? " ignore case" : "") : "");
+                .appendText(strict || isPrimitiveOrWrapper ? " (%s%s)".formatted(isPrimitiveOrWrapper ? "any" : "", !strict ? " ignore case" : "") : "");
 
     }
 }

@@ -63,7 +63,6 @@
 
     <properties>
         <!-- 单元测试框架 -->
-        <junit.version>5.11.4</junit.version>
         <testng.version>7.9.0</testng.version>
 
         <!-- 协议或工具基础依赖 -->
@@ -266,12 +265,6 @@
                 <groupId>com.github.javafaker</groupId>
                 <artifactId>javafaker</artifactId>
                 <version>${faker.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-engine</artifactId>
-                <version>${junit.version}</version>
             </dependency>
 
             <dependency>

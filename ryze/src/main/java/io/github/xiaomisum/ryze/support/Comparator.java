@@ -132,8 +132,8 @@ public class Comparator {
         visited.add(key);
 
         // 1. 基本类型兼容比较
-        if (handleBasicTypes(a, b, ignoreCase)) {
-            return true;
+        if (PrimitiveTypeChecker.isPrimitiveOrWrapper(a) && PrimitiveTypeChecker.isPrimitiveOrWrapper(b)) {
+            return handleBasicTypes(a, b, ignoreCase);
         }
 
         // 2. 数字类型兼容比较

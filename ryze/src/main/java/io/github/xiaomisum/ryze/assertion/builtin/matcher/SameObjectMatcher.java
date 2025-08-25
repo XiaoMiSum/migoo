@@ -101,7 +101,7 @@ public class SameObjectMatcher extends ProxyMatcher {
         }
 
         // 2. 递归比较所有字段
-        return Comparator.areEqual(actualValue, expectedValue, strict);
+        return Comparator.areEqual(actualValue, expectedValue, !strict);
     }
 
     /**

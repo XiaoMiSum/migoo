@@ -76,6 +76,8 @@ public class PrimitiveTypeChecker {
         PRIMITIVE_TYPES.add(float.class);
         PRIMITIVE_TYPES.add(double.class);
         PRIMITIVE_TYPES.add(void.class);
+        // String 也认为是基础数据类型
+        PRIMITIVE_TYPES.add(String.class);
 
         // 添加所有包装类型
         WRAPPER_TYPES.add(Boolean.class);
@@ -87,6 +89,8 @@ public class PrimitiveTypeChecker {
         WRAPPER_TYPES.add(Float.class);
         WRAPPER_TYPES.add(Double.class);
         WRAPPER_TYPES.add(Void.class);
+        // String 也认为是基础数据类型
+        WRAPPER_TYPES.add(String.class);
     }
 
     /**

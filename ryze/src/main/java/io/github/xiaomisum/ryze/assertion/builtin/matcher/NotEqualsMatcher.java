@@ -101,9 +101,9 @@ public class NotEqualsMatcher extends ProxyMatcher {
             expectedValue = Collections.newArrayList(expectedArray);
         }
         if (expectedValue instanceof Collection<?> expectedCollection && PrimitiveTypeChecker.isPrimitiveOrWrapper(actualValue)) {
-            return expectedCollection.stream().filter(e -> Comparator.areEqual(actualValue, e, strict)).toList().isEmpty();
+            return expectedCollection.stream().filter(e -> Comparator.areEqual(actualValue, e, !strict)).toList().isEmpty();
         }
-        return !Comparator.areEqual(actualValue, expectedValue, strict);
+        return !Comparator.areEqual(actualValue, expectedValue, !strict);
     }
 
     /**
@@ -117,7 +117,7 @@ public class NotEqualsMatcher extends ProxyMatcher {
     public void describeTo(Description description) {
         var isPrimitiveOrWrapper = PrimitiveTypeChecker.isPrimitiveOrWrapper(expectedValue);
         description.appendText("equals ").appendValue(isPrimitiveOrWrapper ? expectedValue : JSON.toJSONString(expectedValue))
-                .appendText(strict || isPrimitiveOrWrapper ? " (%s%s)".formatted(isPrimitiveOrWrapper ? "any" : "", strict ? " ignore case" : "") : "");
+                .appendText(strict || isPrimitiveOrWrapper ? " (%s%s)".formatted(isPrimitiveOrWrapper ? "any" : "", !strict ? " ignore case" : "") : "");
 
     }
 }

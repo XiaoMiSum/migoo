@@ -88,7 +88,7 @@ public class EqualsMatcher extends ProxyMatcher {
      */
     @Override
     public boolean matches(Object actualValue) {
-        return Comparator.areEqual(actualValue, expectedValue, strict);
+        return Comparator.areEqual(actualValue, expectedValue, !strict);
     }
 
     /**
@@ -102,7 +102,7 @@ public class EqualsMatcher extends ProxyMatcher {
     public void describeTo(Description description) {
         var isPrimitiveOrWrapper = PrimitiveTypeChecker.isPrimitiveOrWrapper(expectedValue);
         description.appendText("equals ").appendValue(isPrimitiveOrWrapper ? expectedValue : JSON.toJSONString(expectedValue))
-                .appendText(strict ? " ignore case" : "");
+                .appendText(!strict ? " ignore case" : "");
 
     }
 }

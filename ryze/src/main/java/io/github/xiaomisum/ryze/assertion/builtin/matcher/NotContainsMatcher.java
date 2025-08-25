@@ -109,7 +109,7 @@ public class NotContainsMatcher extends ProxyMatcher {
      */
     @SuppressWarnings("all")
     private boolean containsCompatible(Object actualValue, Object expectedValue) {
-        return Comparator.contains(actualValue, expectedValue, strict);
+        return !Comparator.contains(actualValue, expectedValue, !strict);
     }
 
     /**
@@ -123,6 +123,6 @@ public class NotContainsMatcher extends ProxyMatcher {
     public void describeTo(Description description) {
         var isPrimitiveOrWrapper = PrimitiveTypeChecker.isPrimitiveOrWrapper(expectedValue);
         description.appendText("contains ").appendValue(isPrimitiveOrWrapper ? expectedValue : JSON.toJSONString(expectedValue))
-                .appendText(strict || isPrimitiveOrWrapper ? " (%s%s)".formatted(isPrimitiveOrWrapper ? "any" : "", strict ? " ignore case" : "") : "");
+                .appendText(strict || isPrimitiveOrWrapper ? " (%s%s)".formatted(isPrimitiveOrWrapper ? "any" : "", !strict ? " ignore case" : "") : "");
     }
 }

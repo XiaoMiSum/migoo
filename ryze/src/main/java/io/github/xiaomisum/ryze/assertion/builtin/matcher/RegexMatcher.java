@@ -81,7 +81,7 @@ public class RegexMatcher extends ProxyMatcher {
         if (expected == null) {
             throw new IllegalArgumentException("Regex pattern cannot be null");
         }
-        this.pattern = Pattern.compile(expected.toString(), strict ? Pattern.CASE_INSENSITIVE : 0);
+        this.pattern = Pattern.compile(expected.toString(), !strict ? Pattern.CASE_INSENSITIVE : 0);
     }
 
     /**
